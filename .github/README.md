@@ -48,7 +48,7 @@ cd chat-example
 
 #### 步骤 2：下载 TUIKit 组件
 
-通过 `github clone` 方式下载 TUIKit 组件及其相关依赖， 为了方便您的后续使用，建议您通过以下命令将整个 `chat-uikit-vue` 复制到您项目的 src目录下，并重命名为TUIKit：
+通过 `git clone` 方式下载 TUIKit 组件及其相关依赖， 为了方便您的后续使用，建议您通过以下命令将整个 `chat-uikit-vue` 复制到您项目的 src目录下，并重命名为TUIKit：
 
 ```shell
 # 项目根目录命令行执行
