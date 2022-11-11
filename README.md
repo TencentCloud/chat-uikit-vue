@@ -38,7 +38,7 @@ npm install -g @vue/cli@4.5.0 sass sass-loader@10.1.1
 vue create chat-example
 ```
 
-![vue-cli-config](https://user-images.githubusercontent.com/57951148/192585190-bbac85d2-08a9-4c0b-9d87-b1a468950732.jpg)
+![vue-cli-config](https://user-images.githubusercontent.com/57951148/201250381-8fa8d225-f93b-40b3-ad63-48336f9c7244.png)
 
 创建完成后，切换到项目所在目录
 
