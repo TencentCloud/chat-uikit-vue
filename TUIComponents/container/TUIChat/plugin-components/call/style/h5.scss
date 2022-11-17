@@ -1,0 +1,45 @@
+.call {
+  &-main-h5 {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100vw;
+    height: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+
+    .call-main-content {
+      border-radius: 12px 12px 0 0;
+      background-color: #ffffff;
+    }
+
+    .call-main-voice,
+    .call-main-video {
+      height: 30px;
+      padding: 10px;
+      font-size: 16px;
+      border-bottom: 1px solid #F7F8FA;
+      display: flex;
+      justify-content: center;
+
+      i {
+        margin-right: 10px;
+      }
+    }
+
+    footer {
+      border-top: 10px solid #F7F8FA;
+      height: 30px;
+      font-size: 16px;
+      padding: 10px;
+      text-align: center;
+      align-items: center;
+    }
+  }
+}
