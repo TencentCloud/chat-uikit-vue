@@ -1,0 +1,94 @@
+.call {
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+
+  &-icon {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .icon-down-arrow {
+      margin: 12px 1px 0;
+    }
+  }
+
+  &-main {
+    position: absolute;
+    z-index: 5;
+    background: #ffffff;
+    top: 37px;
+    left: calc(-50% + 20px);
+    border-radius: 2px;
+    display: flex;
+    flex-direction: column;
+    width: 80px;
+    border: 0.5px solid #e0e0e0;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+
+    &-voice,
+    &-video {
+      height: 34px;
+      text-align: center;
+      font-size: 13px;
+      line-height: 34px;
+      align-items: center;
+    }
+
+    &-voice:hover,
+    &-video:hover {
+      background: #dceafd;
+    }
+  }
+
+  &-main:before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: calc(50% - 9px);
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #e0e0e0;
+  }
+
+  &-main:after {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: calc(50% - 8px);
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ffffff;
+  }
+
+  .uncall-dialog {
+    width: 500px;
+    height: 300px;
+    background: linear-gradient(180deg, #E9F3FF 0%, #F4F8FF 100%);
+    border-radius: 20px;
+
+    &-body {
+      a {
+        font-family: PingFangSC-Regular;
+        font-weight: 400;
+        color: #006EFF;
+        letter-spacing: 0;
+      }
+    }
+  }
+}
+
+.call-kit-container {
+  position: fixed;
+  left: calc(50% - 25rem);
+  top: calc(50% - 18rem);
+  width: 50rem;
+  height: 36rem;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+
+  &-left {
+    left: calc(50% - 25rem + 150px);
+  }
+}
