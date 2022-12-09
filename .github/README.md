@@ -11,6 +11,20 @@ chat-uikit-vue Web 端 和 H5 端界面效果如下图所示：
 <img width="1015" alt="page02" src="https://user-images.githubusercontent.com/57951148/192585298-c79960ed-a6a9-4927-89b9-31c1b3f68740.png">
 <img width="2072" alt="page00" src="https://user-images.githubusercontent.com/57951148/192585375-6260280f-4a67-4b64-a908-efcedee1c253.png">
 
+本文介绍如何快速集成腾讯云 Web IM SDK 的 VUE UI 组件库。对于其他平台，请参考文档：
+
+[**chat-uikit-ios**](https://github.com/TencentCloud/chat-uikit-ios)
+
+[**chat-uikit-flutter**](https://github.com/TencentCloud/chat-uikit-flutter)
+
+[**chat-uikit-vue**](https://github.com/TencentCloud/chat-uikit-vue)
+
+[**chat-uikit-react**](https://github.com/TencentCloud/chat-uikit-react)
+
+[**chat-uikit-uniapp**](https://github.com/TencentCloud/chat-uikit-uniapp)
+
+[**chat-uikit-wechat**](https://github.com/TencentCloud/chat-uikit-wechat)
+
 ## 发送您的第一条消息
 
 ### 开发环境要求
