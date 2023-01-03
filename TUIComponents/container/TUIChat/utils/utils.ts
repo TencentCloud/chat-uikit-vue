@@ -1,6 +1,6 @@
 import { formatTime } from '../../../utils/date';
 import { decodeText } from './decodeText';
-import TIM from 'tim-js-sdk';
+import TIM from '../../../../TUICore/tim';
 import constant from '../../constant';
 import { Message } from '../interface';
 
@@ -16,7 +16,7 @@ export function handleAvatar(item: any) {
     case TIM.TYPES.CONV_GROUP:
       avatar = isUrl(item?.groupProfile?.avatar)
         ? item?.groupProfile?.avatar
-        : 'https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg';
+        : 'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg';
       break;
     case TIM.TYPES.CONV_SYSTEM:
       avatar = isUrl(item?.groupProfile?.avatar)
@@ -60,6 +60,48 @@ export function handleAt(item: any) {
   }
   return showAtType;
 }
+
+export function handleReferenceForShow (message: any) {
+  const data = {
+    referenceMessageForShow: '',
+    referenceMessageType: 0,
+  }
+  if (!message || !message?.ID || !message?.type) return data;
+  switch (message.type) {
+    case TIM.TYPES.MSG_TEXT:
+      data.referenceMessageForShow = message?.payload?.text;
+      data.referenceMessageType = 1;
+      break;
+    case TIM.TYPES.MSG_CUSTOM:
+      data.referenceMessageForShow = '[自定义消息]';
+      data.referenceMessageType = 2;
+      break;
+    case TIM.TYPES.MSG_IMAGE:
+      data.referenceMessageForShow = '[图片]';
+      data.referenceMessageType = 3;
+      break;
+    case TIM.TYPES.MSG_AUDIO:
+      data.referenceMessageForShow = '[语音]';
+      data.referenceMessageType = 4;
+      break;
+    case TIM.TYPES.MSG_VIDEO:
+      data.referenceMessageForShow = '[视频]';
+      data.referenceMessageType = 5;
+      break;
+    case TIM.TYPES.MSG_FILE:
+      data.referenceMessageForShow = '[文件]';
+      data.referenceMessageType = 6;
+      break;
+    case TIM.TYPES.MSG_FACE:
+      data.referenceMessageForShow = '[表情]';
+      data.referenceMessageType = 8;
+      break;
+  }
+  return data;
+}
+
+
+
 // Internal display of processing message box
 export function handleShowLastMessage(item: any) {
   const { t } = (window as any).TUIKitTUICore.config.i18n.useI18n();

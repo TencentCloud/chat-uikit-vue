@@ -58,12 +58,14 @@
     .input {
       flex: 1;
       position: relative;
+      display: flex;
+      flex-direction: column;
 
       textarea {
         width: 100%;
-        height: 100%;
+        line-height: 20px;
         margin: 0;
-        padding: 2px 20px 20px;
+        padding: 2px 20px;
         resize: none;
         box-sizing: border-box;
         border: none;
@@ -211,7 +213,6 @@
     max-width: 220px;
     width: 72px;
     word-break: keep-all;
-    padding: 12px 0;
     top: 30px;
     border-radius: 8px;
     display: flex;
@@ -397,10 +398,9 @@
   }
 }
 
-.reference {
+.reply {
   display: flex;
   width: 100%;
-  padding-bottom: 10px;
 
   &-box {
     flex: 1;
@@ -438,6 +438,46 @@
         text-overflow: ellipsis;
         width: 100%;
         overflow: hidden;
+      }
+    }
+  }
+}
+
+.reference {
+  width: auto;
+  padding-bottom: 0px;
+  margin: 0px 100px 10px 10px;
+  display: flex;
+
+  &-box {
+    padding: 0;
+    overflow: hidden;
+    width: max-content;
+    padding: 10px;
+    background-color: #fbfbfb;
+    display: flex;
+    border-radius: 8px;
+
+    &-show {
+      width: max-content;
+      padding-right: 10px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      flex: 1;
+
+      &-name {
+        padding-right: 5px;
+      }
+
+      span {
+        width: max-content;
+        font-family: 'PingFang SC';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 17px;
+        color: #666666;
       }
     }
   }

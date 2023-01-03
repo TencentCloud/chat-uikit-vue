@@ -11,6 +11,8 @@ import MessageTip from './message-tip.vue';
 import MessageBubble from './message-bubble.vue';
 import MessageRevoked from './message-revoked.vue';
 import MessageSystem from './message-system.vue';
+import MessageTool from './message-tool.vue';
+import MessageEmojiReact from './message-emoji-react.vue';
 
 export {
   MessageText,
@@ -26,4 +28,6 @@ export {
   MessageBubble,
   MessageRevoked,
   MessageSystem,
+  MessageTool,
+  MessageEmojiReact
 };

@@ -195,7 +195,6 @@ const Call = defineComponent({
               type: mediaType,
             });
           } catch (error) {
-            Call?.TUIServer?.TUICore?.TUIServer?.TUICallKit?.afterCalling();
             handleUnsupportDialog(error);
           }
           break;
@@ -207,7 +206,6 @@ const Call = defineComponent({
               type: mediaType,
             });
           } catch (error) {
-            Call?.TUIServer?.TUICore?.TUIServer?.TUICallKit?.afterCalling();
             handleUnsupportDialog(error);
           }
           break;

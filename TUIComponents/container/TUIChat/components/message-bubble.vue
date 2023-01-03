@@ -10,12 +10,29 @@
         {{ message.nameCard || message.nick || message.from }}
       </label>
       <div :class="['content content-' + message.flow]" @click.prevent.right="toggleDialog">
+        <div
+          class="message-replie-area"
+          :class="[message?.flow === 'in' ? '' : 'message-replies-area-reverse']"
+          v-if="message?.cloudCustomData && referenceMessage && referenceMessage?.messageRootID"
+          @click="showRepliesDialog(message, false)"
+        >
+          <MessageReference
+            :message="message"
+            :referenceMessage="referenceMessage"
+            :referenceForShow="referenceForShow"
+            :url="url"
+            :face="face"
+            :allMessageID="allMessageID"
+            type="reply"
+          />
+        </div>
         <slot />
         <div v-if="dropdown" ref="dropdownRef" class="dropdown-inner">
           <div class="dialog" :class="[message.flow === 'in' ? '' : 'dialog-right']" @click="dropdown = false">
             <slot name="dialog" />
           </div>
         </div>
+        <MessageEmojiReact :message="message" type="content" />
       </div>
     </main>
     <label class="message-label fail" v-if="message.status === 'fail'" @click="resendMessage(message)">!</label>
@@ -31,54 +48,42 @@
   <div
     class="message-reference-area"
     :class="[message.flow === 'in' ? '' : 'message-reference-area-reverse']"
-    v-if="message.cloudCustomData && referenceMessage"
+    v-if="message?.cloudCustomData && referenceMessage && !referenceMessage?.messageRootID"
     @click="jumpToAim(referenceMessage)"
   >
-    <div
-      v-if="referenceMessage?.messageID && allMessageID.indexOf(referenceMessage.messageID) !== -1"
-      class="message-reference-area-show"
-    >
-      <p>{{ referenceForShow.nick || referenceForShow.from }}:</p>
-      <div class="face-box" v-if="referenceMessage.messageType === type.typeText">
-        <div v-for="(item, index) in face" :key="index">
-          <span class="text-box" v-if="item.name === 'text'">{{ item.text }}</span>
-          <img class="text-img" v-else-if="item.name === 'img'" :src="item.src" />
-        </div>
-      </div>
-      <span v-if="referenceMessage.messageType === type.typeCustom">{{ referenceMessage.messageAbstract }}</span>
-      <img
-        v-if="referenceMessage.messageType === type.typeImage"
-        class="message-img"
-        :src="referenceForShow.payload.imageInfoArray[1].url"
-      />
-      <div
-        v-if="referenceMessage.messageType === type.typeAudio"
-        class="message-audio"
-        :class="[message.flow === 'out' && 'reserve']"
-      >
-        <label>{{ referenceForShow.payload.second }}s</label>
-        <i class="icon icon-voice"></i>
-      </div>
-      <div v-if="referenceMessage.messageType === type.typeVideo" class="message-video-cover">
-        <img class="message-videoimg" :src="referenceForShow.payload.snapshotUrl" />
-      </div>
-      <img v-if="referenceMessage.messageType === type.typeFace" class="message-img" :src="url" />
-    </div>
-    <div v-else class="message-reference-area-show">
-      <span>{{ referenceMessage?.messageSender }}</span>
-      <span>{{ referenceMessage?.messageAbstract }}</span>
-    </div>
+    <MessageReference
+      :message="message"
+      :referenceMessage="referenceMessage"
+      :referenceForShow="referenceForShow"
+      :url="url"
+      :face="face"
+      :allMessageID="allMessageID"
+      type="reference"
+    />
   </div>
+  <label
+    class="message-replies"
+    :class="[message.flow === 'in' ? '' : 'message-replies-reverse']"
+    v-if="replies?.length"
+    @click="showRepliesDialog(message, true)"
+  >
+    <i class="icon icon-msg-replies"></i>
+    <span>{{ replies?.length + $t('TUIChat.条回复') }}</span>
+  </label>
 </template>
 
 <script lang="ts">
 import { decodeText } from '../utils/decodeText';
 import constant from '../../constant';
-import { defineComponent, watchEffect, reactive, toRefs, ref, nextTick } from 'vue';
+import { defineComponent, watchEffect, reactive, toRefs, ref, nextTick, watch } from 'vue';
 import { onClickOutside, onLongPress, useElementBounding } from '@vueuse/core';
-import { JSONToObject } from '../utils/utils';
+import { deepCopy, JSONToObject } from '../utils/utils';
 import { handleErrorPrompts } from '../../utils';
 import TUIChat from '../index.vue';
+import MessageReference from './message-reference.vue';
+import { Message } from '../interface';
+import { TUIEnv } from '../../../../../TUIKit/TUIPlugin';
+import MessageEmojiReact from './message-emoji-react.vue';
 
 const messageBubble = defineComponent({
   props: {
@@ -87,8 +92,8 @@ const messageBubble = defineComponent({
       default: () => ({}),
     },
     messagesList: {
-      type: Object,
-      default: () => ({}),
+      type: Array,
+      default: () => [],
     },
     isH5: {
       type: Boolean,
@@ -98,32 +103,51 @@ const messageBubble = defineComponent({
       type: Boolean,
       default: false,
     },
+    needReplies: {
+      type: Boolean,
+      default: true,
+    },
+    flow: {
+      type: String,
+      default: '',
+    },
   },
-  emits: ['jumpID', 'resendMessage', 'showReadReceiptDialog', 'dropDownOpen'],
+  emits: ['jumpID', 'resendMessage', 'showReadReceiptDialog', 'showRepliesDialog', 'dropDownOpen'],
+  components: {
+    MessageReference,
+    MessageEmojiReact,
+  },
   setup(props: any, ctx: any) {
     const { t } = (window as any).TUIKitTUICore.config.i18n.useI18n();
     const { TUIServer } = TUIChat;
     const data = reactive({
-      message: {},
-      messagesList: {},
+      env: TUIEnv(),
+      message: {} as Message,
+      messagesList: [],
       show: false,
       type: {},
       referenceMessage: {},
       referenceForShow: {},
       allMessageID: '',
       needGroupReceipt: false,
+      needReplies: true,
+      replies: [],
       face: [],
       url: '',
     });
 
     watchEffect(() => {
       data.type = constant;
-      data.message = props.data;
       data.messagesList = props.messagesList;
+      data.message = deepCopy(
+        data.messagesList?.find((item: any) => (item as any)?.ID === props.message?.ID) || props.data
+      );
       data.needGroupReceipt = props.needGroupReceipt;
+      data.needReplies = props.needReplies;
       if ((data.message as any).cloudCustomData) {
         const messageIDList: any[] = [];
         const cloudCustomData = JSONToObject((data.message as any).cloudCustomData);
+        data.replies = cloudCustomData?.messageReplies?.replies || [];
         data.referenceMessage = cloudCustomData.messageReply ? cloudCustomData.messageReply : '';
         for (let index = 0; index < (data.messagesList as any).length; index++) {
           // To determine whether the referenced message is still in the message list, the corresponding field of the referenced message is displayed if it is in the message list. Otherwise, messageabstract/messagesender is displayed
@@ -141,6 +165,8 @@ const messageBubble = defineComponent({
             }
           }
         }
+      } else {
+        data.replies = [];
       }
     });
 
@@ -154,37 +180,67 @@ const messageBubble = defineComponent({
         ctx.emit('dropDownOpen', dropdownRef);
         nextTick(() => {
           const dialogDom = (dropdownRef as any)?.value?.children[0];
+          const dialogElement = document.getElementsByClassName('dialog-item')[0] as HTMLElement;
           const parentDom = (dropdownRef as any)?.value?.offsetParent;
           const parentBound = useElementBounding(parentDom);
-          const messageListDom = document.getElementById('messageEle');
+          const messageListDom = document.getElementById('messageEle') as HTMLElement;
           const messageListBound = useElementBounding(messageListDom);
           const leftRange = messageListBound?.left?.value;
           const rightRange =
-            messageListBound?.left?.value + (messageListDom as any).clientWidth - dialogDom.clientWidth;
+            messageListBound?.left?.value + (messageListDom as any).clientWidth - dialogDom.clientWidth + 76;
           const topRange = messageListBound?.top?.value;
           const bottomRange =
             messageListBound?.top?.value + (messageListDom as any).clientHeight - dialogDom.clientHeight;
           const { clientX, clientY } = e;
+          if (data?.env?.isH5) {
+            if (parentBound?.top?.value <= dialogElement?.clientHeight) {
+              dialogDom.style.bottom = `-${dialogElement?.clientHeight}px`;
+            } else {
+              if (data?.message?.flow === 'in') {
+                dialogDom.style.top = `-${dialogElement?.clientHeight - 20}px`;
+              } else {
+                dialogDom.style.top = `-${dialogElement?.clientHeight}px`;
+              }
+            }
+            const centerWidth = parentBound?.left?.value + parentBound?.width?.value / 2;
+            if (
+              centerWidth > dialogElement.clientWidth / 2 &&
+              centerWidth < messageListDom?.clientWidth - dialogElement.clientWidth / 2
+            ) {
+              dialogDom.style.left = 'calc(50% - 135px)';
+            } else if (centerWidth <= dialogElement.clientWidth / 2) {
+              dialogDom.style.left = '-20px';
+            } else {
+              dialogDom.style.left = `-${dialogElement.clientWidth / 2 + 10}px`;
+            }
+            return;
+          }
           switch (true) {
             case clientX > leftRange && clientX < rightRange:
-              dialogDom.style.left = `${e.clientX - parentBound?.left?.value}px`;
+              dialogDom.style.left = `${Math.max(e.clientX - parentBound?.left?.value - 76, -40)}px`;
               break;
             case clientX <= leftRange:
               dialogDom.style.left = '20px';
               break;
             case clientX >= rightRange:
-              dialogDom.style.right = `${parentBound?.left?.value + parentDom?.clientWidth - e.clientX}px`;
+              dialogDom.style.right = `${Math.max(
+                parentBound?.left?.value + parentDom?.clientWidth - e.clientX - 256,
+                -10
+              )}px`;
               break;
           }
           switch (true) {
             case clientY > topRange && clientY < bottomRange:
               dialogDom.style.top = `${e.clientY - parentBound?.top?.value}px`;
+              dialogDom.style.cssText = dialogDom.style.cssText.replace('align-items:end;', '');
               break;
             case clientY <= topRange:
               dialogDom.style.top = '0px';
+              dialogDom.style.cssText = dialogDom.style.cssText.replace('align-items:end;', '');
               break;
             case clientY >= bottomRange:
               dialogDom.style.bottom = `${parentBound?.top?.value + parentDom?.clientHeight - e.clientY}px`;
+              dialogDom.style.cssText += 'align-items:end;';
               break;
           }
         });
@@ -207,7 +263,12 @@ const messageBubble = defineComponent({
       dropdown.value = false;
     });
 
-    onLongPress(htmlRefHook, toggleDialog);
+    const toggleDialogH5 = (e: any) => {
+      if (data?.env?.isH5) toggleDialog(e);
+      return;
+    };
+
+    onLongPress(htmlRefHook, toggleDialogH5);
 
     const resendMessage = (message: any) => {
       ctx.emit('resendMessage', message);
@@ -221,7 +282,11 @@ const messageBubble = defineComponent({
     };
 
     const readReceiptStyle = (message: any) => {
-      if (message.isPeerRead || message.readReceiptInfo.unreadCount === 0) {
+      if (
+        message?.readReceiptInfo?.isPeerRead ||
+        (message?.readReceiptInfo?.isPeerRead === undefined && message?.isPeerRead) ||
+        message?.readReceiptInfo?.unreadCount === 0
+      ) {
         return '';
       }
       return 'unRead';
@@ -230,7 +295,10 @@ const messageBubble = defineComponent({
     const readReceiptCont = (message: any) => {
       switch (message.conversationType) {
         case TUIServer.TUICore.TIM.TYPES.CONV_C2C:
-          if (message.isPeerRead) {
+          if (
+            message?.readReceiptInfo?.isPeerRead ||
+            (message?.readReceiptInfo?.isPeerRead === undefined && message?.isPeerRead)
+          ) {
             return t('TUIChat.已读');
           }
           return t('TUIChat.未读');
@@ -251,7 +319,26 @@ const messageBubble = defineComponent({
     };
 
     const showReadReceiptDialog = (message: any) => {
-      ctx.emit('showReadReceiptDialog', message);
+      ctx.emit('showReadReceiptDialog', message, 'receipt');
+    };
+
+    const showRepliesDialog = (message: any, isRoot: boolean) => {
+      if (isRoot) {
+        ctx.emit('showRepliesDialog', message, 'replies');
+        return;
+      }
+      if ((data.referenceMessage as any)?.messageRootID) {
+        const message = data.messagesList?.find(
+          (item: Message) => item.ID === (data.referenceMessage as any)?.messageRootID
+        );
+        if (message) {
+          ctx.emit('showRepliesDialog', message, 'replies');
+          return;
+        } else {
+          const message = t('TUIChat.无法定位到原消息');
+          handleErrorPrompts(message, props);
+        }
+      }
     };
 
     return {
@@ -266,6 +353,7 @@ const messageBubble = defineComponent({
       readReceiptStyle,
       readReceiptCont,
       showReadReceiptDialog,
+      showRepliesDialog,
     };
   },
 });
@@ -323,7 +411,23 @@ export default messageBubble;
     }
   }
 }
-.message-reference-area-reverse {
+.message-replies {
+  display: flex;
+  align-self: start;
+  margin-left: 44px;
+  margin-right: 8px;
+  padding: 2px;
+  color: #999999;
+  font-size: 10px;
+  i {
+    margin: 4px;
+  }
+  span {
+    line-height: 20px;
+  }
+}
+.message-reference-area-reverse,
+.message-replies-reverse {
   align-self: end;
   margin-right: 44px;
   margin-left: 8px;
@@ -431,6 +535,7 @@ export default messageBubble;
     letter-spacing: 0;
     word-wrap: break-word;
     word-break: break-all;
+    width: fit-content;
     &-in {
       background: #fbfbfb;
       border-radius: 0px 10px 10px 10px;
@@ -472,7 +577,9 @@ export default messageBubble;
 .dialog {
   position: absolute;
   z-index: 1;
-  margin: 10px 0;
+  display: flex;
+  flex-direction: row;
+  width: fit-content;
   &-right {
     right: 0;
   }

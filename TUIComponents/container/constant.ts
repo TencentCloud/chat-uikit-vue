@@ -9,6 +9,7 @@ const constant: any = {
     delete: 'delete',
     forward: 'forward',
     reply: 'reply',
+    reference: 'reference'
   },
   at: '@',
   all: '所有人',

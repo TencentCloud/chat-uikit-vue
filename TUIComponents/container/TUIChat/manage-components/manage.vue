@@ -74,9 +74,9 @@
               class="avatar"
               :src="
                 conversation?.groupProfile?.avatar ||
-                'https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'
+                'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
               "
-              onerror="this.src='https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+              onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
             />
           </li>
           <li>

@@ -126,7 +126,7 @@ export default defineComponent({
             });
             VuexStore?.commit('handleTask', 6);
           } catch (error) {
-            (window as any)?.TUIKitTUICore?.TUIServer?.TUICallKit?.afterCalling();
+            console.warn(error);
           }
           if ((window as any)?.TUIKitTUICore?.TUIServer?.TUICallKit) {
             TUIAegis.getInstance().reportEvent({
@@ -205,7 +205,6 @@ a {
   .call {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
     align-items: center;
     &-C2C {
       cursor: pointer;
