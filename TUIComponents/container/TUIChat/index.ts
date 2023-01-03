@@ -10,6 +10,7 @@ import Words from './plugin-components/words';
 import Evaluate from './plugin-components/evaluate';
 import TypingHeader from './plugin-components/typingHeader';
 import ReadReceiptDialog from './plugin-components/readReceiptDialog';
+import Replies from './plugin-components/replies';
 import Call from './plugin-components/call';
 
 let sendComponents: any = {
@@ -29,6 +30,7 @@ export const messageComponents: any = {
 export const otherComponents: any = {
   TypingHeader,
   ReadReceiptDialog,
+  Replies,
 };
 
 export function getComponents(type: string) {

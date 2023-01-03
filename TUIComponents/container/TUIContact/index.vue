@@ -63,9 +63,9 @@
                     class="avatar"
                     :src="
                       item?.avatar ||
-                      'https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'
+                      'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
                     "
-                    onerror="this.src='https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+                    onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
                   />
                 </aside>
                 <main class="content">
@@ -133,9 +133,9 @@
                 class="avatar"
                 :src="
                   searchGroup?.avatar ||
-                  'https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'
+                  'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
                 "
-                onerror="this.src='https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+                onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
               />
             </aside>
             <main class="content">
@@ -151,7 +151,7 @@
           </li>
         </ul>
       </aside>
-      <main class="TUI-contact-main" v-show="!!currentGroup?.groupID || columnName === 'system' || !env.isH5">
+      <main class="TUI-contact-main" v-show="!!currentGroup?.groupID || !!currentFriend?.userID || columnName === 'system' ">
         <header class="TUI-contact-main-h5-title" v-if="env.isH5">
           <i class="icon icon-back" @click="back"></i>
           <h1>{{ currentGroup?.name || $t('TUIContact.系统通知') }}</h1>
@@ -172,7 +172,7 @@
             <img
               class="avatar"
               :src="currentGroup?.avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/group_avatar.png'"
-              onerror="this.src='https://sdk-web-1252463788.cos.ap-hongkong.myqcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+              onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
             />
           </header>
           <main class="TUI-contact-main-info-main" v-if="isNeedPermission">
@@ -317,6 +317,7 @@ const TUIContact = defineComponent({
     });
 
     const handleListItem = async (item: any) => {
+      console.warn('tuicontact', item);
       switch (data.columnName) {
         case 'group':
           data.currentGroup = item;
@@ -408,6 +409,7 @@ const TUIContact = defineComponent({
     };
     const back = () => {
       (data.currentGroup as any) = {};
+      (data.currentFriend as any) = {};
       data.columnName = '';
     };
 

@@ -156,14 +156,14 @@ const ReadReceiptDialog = defineComponent({
     const toggleShow = () => {
       data.show = !data.show;
       if (!data.show) {
-        ctx.emit('closeDialog');
+        ctx.emit('closeDialog','receipt');
         close();
       }
     };
 
     onClickOutside(dialog, () => {
       data.show = false;
-      ctx.emit('closeDialog');
+      ctx.emit('closeDialog','receipt');
       close();
     });
 

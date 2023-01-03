@@ -65,6 +65,15 @@ export default class TUIChatServer extends IComponentServer {
         const [selfInfo] = memberList;
         this.currentStore.selfInfo = selfInfo;
       });
+      this?.TUICore?.TUIServer?.TUIGroup?.getGroupMemberList(
+        {
+          groupID: conversation.groupProfile.groupID,
+          count: 100,
+          offset: 0,
+        }
+      ).then((res: any) => {
+        this.currentStore.allMemberList = res.data;
+      })
     } else {
       this.currentStore.userInfo.isGroup = false;
       this.currentStore.userInfo.list = [conversation?.userProfile];
@@ -210,6 +219,38 @@ export default class TUIChatServer extends IComponentServer {
       this.TUICore.setAwaitFunc(config.TUIName, config.callback);
     });
   }
+
+  /**
+   * 重试异步函数
+   * Retry asynchronous functions
+   * 默认执行一次，之后按时间间隔列表重复执行直到成功，重复次数完毕后仍失败则失败
+   * Execute once by default, and then repeat it according to the time interval list until it succeeds. 
+   * If it still fails after the number of repetitions is complete, it will reject.
+   * 
+   * @param {callback} callback 回调函数/callback function
+   * @param {Array<number>} intervalList 间隔时间列表/interval list
+   * @param {callback} retryBreakFn 强制重复结束条件函数/break retry function
+   * @returns {Promise} 返回异步函数/return
+   */
+  public handlePromiseCallbackRetry(callback: any, intervalList: Array<number> = [], retryBreakFn: any = function () { return false; }): Promise<any> {
+    return new Promise<void>((resolve, reject) => {
+      let times = 0;
+      function tryFn() {
+        times++;
+        callback()
+          .then(resolve)
+          .catch((error: any) => {
+            if (times > intervalList.length || (retryBreakFn && retryBreakFn(error))) {
+              reject(error);
+              return;
+            }
+            setTimeout(tryFn, intervalList[times - 1]);
+          })
+      }
+      tryFn();
+    })
+  }
+
 
   /**
    * 文件上传进度函数处理
@@ -694,6 +735,10 @@ export default class TUIChatServer extends IComponentServer {
     return this.handlePromiseCallback(async (resolve: any, reject: any) => {
       try {
         const imResponse = await this.TUICore.tim.revokeMessage(message);
+        const cloudCustomData = JSONToObject(message?.cloudCustomData);
+        if (cloudCustomData?.messageReply?.messageRootID) {
+          await this.revokeReplyMessage(message);
+        }
         resolve(imResponse);
       } catch (error) {
         reject(error);
@@ -743,6 +788,182 @@ export default class TUIChatServer extends IComponentServer {
         reject(error);
       }
     });
+  }
+
+  /**
+   * 变更消息
+   * modify message
+   * 
+   * @param {Array.<message>} message 消息实例/message
+   * @returns {Promise}
+   */
+  public modifyMessage(message: any): Promise<any> {
+    return this.handlePromiseCallback(async (resolve: any, reject: any) => {
+      try {
+        const imResponse = await this.TUICore.tim.modifyMessage(message);
+        resolve(imResponse);
+      } catch (error) {
+        // 修改消息失败
+        // Modify message error
+        const code = (error as any)?.code;
+        const data = (error as any)?.data;
+        if (code === 2480) {
+          console.warn('MODIFY_MESSAGE_ERROR', '修改消息发生冲突，data.message 是最新的消息', 'data.message:', data?.message);
+        } else if (code === 2481) {
+          console.warn('MODIFY_MESSAGE_ERROR', '不支持修改直播群消息');
+        } else if (code === 20026) {
+          console.warn('MODIFY_MESSAGE_ERROR', '消息不存在');
+        }
+        reject(error);
+      }
+    })
+  }
+  /**
+   * 回复消息
+   * reply message
+   * @param {Array.<message>} message 消息实例/message
+   * @returns {Promise}
+   */
+  public replyMessage(message: any, messageRoot?: any): Promise<any> {
+    const replyFunction = () => {
+      return this.handlePromiseCallback(async (resolve: any, reject: any) => {
+        try {
+          const repliesObject = {
+            messageAbstract: message?.payload?.text,
+            messageSender: message?.from,
+            messageID: message?.ID,
+            messageType: message?.type,
+            messageTime: message?.time,
+            messageSequence: message?.sequence,
+            version: 1,
+          }
+          if (!messageRoot) {
+            const cloudCustomData = JSONToObject(message?.cloudCustomData);
+            const messageRootID = cloudCustomData?.messageReply?.messageRootID;
+            messageRoot = await this?.currentStore?.messageList?.find((item: any) => item?.ID === messageRootID) || this.findMessage(messageRootID);
+          }
+          const rootCloudCustomData = messageRoot?.cloudCustomData ? JSONToObject(messageRoot?.cloudCustomData) : { messageReplies: {} };
+          if (rootCloudCustomData?.messageReplies?.replies) {
+            rootCloudCustomData.messageReplies.replies = [...rootCloudCustomData?.messageReplies?.replies, repliesObject];
+          } else {
+            rootCloudCustomData.messageReplies = { replies: [repliesObject], version: 1 }
+          }
+          messageRoot.cloudCustomData = JSON.stringify(rootCloudCustomData);
+          const imResponse = this.modifyMessage(messageRoot);
+          resolve(imResponse);
+        } catch (error) {
+          reject(error);
+        }
+      })
+    }
+    const retryBreakFunction = function (error: any) {
+      if (error && error?.code === 2480) return false;
+      return true;
+    }
+    return this.handlePromiseCallbackRetry(replyFunction, [500, 1000, 3000], retryBreakFunction);
+  }
+
+  /**
+ * 撤回回复消息
+ * revoke reply message
+ * @param {Array.<message>} message 消息实例/message
+ * @returns {Promise}
+ */
+  public revokeReplyMessage(message: any, messageRoot?: any): Promise<any> {
+    const revokeReplyFunction = () => {
+      return this.handlePromiseCallback(async (resolve: any, reject: any) => {
+        try {
+          if (!messageRoot) {
+            const cloudCustomData = JSONToObject(message?.cloudCustomData);
+            const messageRootID = cloudCustomData?.messageReply?.messageRootID;
+            messageRoot = await this?.currentStore?.messageList?.find((item: any) => item?.ID === messageRootID) || this.findMessage(messageRootID);
+          }
+          const rootCloudCustomData = messageRoot?.cloudCustomData ? JSONToObject(messageRoot?.cloudCustomData) : { messageReplies: {} };
+          if (rootCloudCustomData?.messageReplies?.replies) {
+            const index = rootCloudCustomData.messageReplies.replies.findIndex((item: any) => item?.messageID === message?.ID);
+            rootCloudCustomData?.messageReplies?.replies?.splice(index, 1);
+          }
+          messageRoot.cloudCustomData = JSON.stringify(rootCloudCustomData);
+          const imResponse = this.modifyMessage(messageRoot);
+          resolve(imResponse);
+        } catch (error) {
+          reject(error);
+        }
+      })
+    }
+    const retryBreakFunction = function (error: any) {
+      if (error && error?.code === 2480) return false;
+      return true;
+    }
+    return this.handlePromiseCallbackRetry(revokeReplyFunction, [500, 1000, 3000], retryBreakFunction);
+  }
+
+  /**
+   * 表情回应
+   * emoji react
+   * @param {Array.<message>} message 消息实例/message
+   * @returns {Promise}
+   */
+  public emojiReact(message: any, emojiID: any): Promise<any> {
+    const emojiReactFunction = () => {
+      return this.handlePromiseCallback(async (resolve: any, reject: any) => {
+        try {
+          if (!message || !message?.ID || !emojiID) reject();
+          const userID = this.TUICore?.TUIServer?.TUIProfile?.store?.profile?.userID;
+          message = await this?.currentStore?.messageList?.find((item: any) => item?.ID === message?.ID) || this.findMessage(message?.ID);
+          const cloudCustomData = message?.cloudCustomData ? JSONToObject(message?.cloudCustomData) : { messageReact: {} };
+          if (cloudCustomData?.messageReact?.reacts) {
+            if (cloudCustomData?.messageReact?.reacts[emojiID]) {
+              const index = cloudCustomData?.messageReact?.reacts[emojiID]?.indexOf(userID);
+              if (index === -1) {
+                cloudCustomData?.messageReact?.reacts[emojiID]?.push(userID);
+              } else {
+                cloudCustomData?.messageReact?.reacts[emojiID]?.splice(index, 1);
+                if (cloudCustomData?.messageReact?.reacts[emojiID]?.length === 0) {
+                  delete cloudCustomData?.messageReact?.reacts[emojiID];
+                }
+              }
+            } else {
+              cloudCustomData.messageReact.reacts[emojiID] = [userID];
+            }
+          } else {
+            cloudCustomData.messageReact = {
+              reacts: {},
+              version: 1
+            }
+            cloudCustomData.messageReact.reacts[emojiID] = [userID];
+          }
+          message.cloudCustomData = JSON.stringify(cloudCustomData);
+          const imResponse = this.modifyMessage(message);
+          resolve(imResponse);
+        } catch (error) {
+          reject(error);
+        }
+      })
+    }
+    const retryBreakFunction = function (error: any) {
+      if (error && error?.code === 2480) return false;
+      return true;
+    }
+    return this.handlePromiseCallbackRetry(emojiReactFunction, [500, 1000, 3000], retryBreakFunction);
+  }
+
+
+  /**
+   * 查询消息
+   * find message
+   * @param {String} messageID 消息实例ID/messageID
+   * @returns {Promise}
+   */
+  public findMessage(messageID: string): Promise<any> {
+    return this.handlePromiseCallback(async (resolve: any, reject: any) => {
+      try {
+        const imResponse = await this.TUICore.tim.findMessage(messageID);
+        resolve(imResponse);
+      } catch (error) {
+        reject(error);
+      }
+    })
   }
 
   /**

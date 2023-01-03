@@ -136,6 +136,7 @@ export default class TUICore extends ITUIServer {
             reject,
           });
           TUICore.isLogin = true;
+          (window as any)._isTIMCallKit = true;
           TUICore?.instance?.TUIServer?.TUICallKit?.init({
             SDKAppID: this.SDKAppID,
             userID: options.userID,

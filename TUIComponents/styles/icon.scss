@@ -287,6 +287,13 @@
   background-size: contain;
 }
 
+.icon-msg-replies {
+  width: 12px;
+  height: 12px;
+  background: url('../assets/icon/replies.svg') no-repeat;
+  background-size: contain;
+}
+
 .icon-msg-revoke {
   width: 20px;
   height: 20px;
@@ -343,13 +350,19 @@
   align-items: center;
 }
 
-/* .icon-close {
- * width: 16px;
- *  height: 16px;
- *  background: url('../assets/icon/close.png') no-repeat;
- *  background-size: contain;
- *}
- */
+.icon-expand {
+  width: 20px;
+  height: 20px;
+  background: url('../assets/icon/expand.svg') no-repeat;
+  background-size: contain;
+}
+
+.icon-collapse {
+  width: 20px;
+  height: 20px;
+  background: url('../assets/icon/collapse.svg') no-repeat;
+  background-size: contain;
+}
 
 .icon-close {
   display: inline-block;
