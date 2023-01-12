@@ -64,13 +64,14 @@
 <script lang="ts">
 import { defineComponent, reactive, watchEffect, toRefs, watch, ref } from 'vue';
 import { onClickOutside } from '@vueuse/core';
-import { caculateTimeago } from '../../../utils';
+import { caculateTimeago, handleErrorPrompts } from '../../../utils';
 import { Message, userListItem } from '../../interface';
 import {
   handleImageMessageShowContext,
   handleVideoMessageShowContext,
   handleFaceMessageShowContext,
 } from '../../utils/utils';
+import { TUIEnv } from '../../../../../TUIPlugin';
 const ReadReceiptDialog = defineComponent({
   type: 'custom',
   props: {
@@ -126,6 +127,7 @@ const ReadReceiptDialog = defineComponent({
       ],
       showListNow: 0,
       isMenuOpen: true,
+      env: TUIEnv(),
     });
 
     const dialog: any = ref();
@@ -150,43 +152,51 @@ const ReadReceiptDialog = defineComponent({
         getReadList();
         getUnreadList();
       },
-      { deep: true },
+      { deep: true }
     );
 
     const toggleShow = () => {
       data.show = !data.show;
       if (!data.show) {
-        ctx.emit('closeDialog','receipt');
+        ctx.emit('closeDialog', 'receipt');
         close();
       }
     };
 
     onClickOutside(dialog, () => {
       data.show = false;
-      ctx.emit('closeDialog','receipt');
+      ctx.emit('closeDialog', 'receipt');
       close();
     });
 
     const getReadList = async (more = false) => {
       if (!data.isGroup || !data.message || Object.keys(data.message).length === 0) return;
-      const obj = await ReadReceiptDialog.TUIServer.getGroupReadMemberList(
-        data.message,
-        more ? data.readReceiptList[0].cursor : '',
-      );
-      data.readReceiptList[0].isCompleted = obj?.data?.isCompleted;
-      data.readReceiptList[0].cursor = obj?.data?.cursor || '';
-      const list = obj.data.readUserIDList;
-      const readList: userListItem[] = await handleAvatarAndName(list);
-      data.readReceiptList[0].userList = more
-        ? ([...data.readReceiptList[0].userList, ...readList] as userListItem[])
-        : readList;
+      try {
+        const obj = await ReadReceiptDialog.TUIServer.getGroupReadMemberList(
+          data.message,
+          more ? data.readReceiptList[0].cursor : ''
+        );
+        data.readReceiptList[0].isCompleted = obj?.data?.isCompleted;
+        data.readReceiptList[0].cursor = obj?.data?.cursor || '';
+        const list = obj.data.readUserIDList;
+        const readList: userListItem[] = await handleAvatarAndName(list);
+        data.readReceiptList[0].userList = more
+          ? ([...data.readReceiptList[0].userList, ...readList] as userListItem[])
+          : readList;
+      } catch (error) {
+        if (error && (error as any)?.code === 10062) {
+          const message = t('TUIChat.您当前购买使用的套餐包暂未开通群消息已读回执功能');
+          handleErrorPrompts(message, data.env);
+          console.warn(message);
+        }
+      }
     };
 
     const getUnreadList = async (more = false) => {
       if (!data.isGroup || !data.message || Object.keys(data.message).length === 0) return;
       const obj = await ReadReceiptDialog.TUIServer.getGroupUnreadMemberList(
         data.message,
-        more ? data.readReceiptList[1].cursor : '',
+        more ? data.readReceiptList[1].cursor : ''
       );
       data.readReceiptList[1].isCompleted = obj?.data.isCompleted;
       data.readReceiptList[1].cursor = obj?.data?.cursor || '';

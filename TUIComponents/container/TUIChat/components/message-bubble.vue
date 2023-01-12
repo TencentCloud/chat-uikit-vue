@@ -32,7 +32,7 @@
             <slot name="dialog" />
           </div>
         </div>
-        <MessageEmojiReact :message="message" type="content" />
+        <MessageEmojiReact :message="message" type="content" v-if="needEmojiReact"/>
       </div>
     </main>
     <label class="message-label fail" v-if="message.status === 'fail'" @click="resendMessage(message)">!</label>
@@ -111,6 +111,10 @@ const messageBubble = defineComponent({
       type: String,
       default: '',
     },
+    needEmojiReact: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['jumpID', 'resendMessage', 'showReadReceiptDialog', 'showRepliesDialog', 'dropDownOpen'],
   components: {
@@ -134,11 +138,13 @@ const messageBubble = defineComponent({
       replies: [],
       face: [],
       url: '',
+      needEmojiReact: false,
     });
 
     watchEffect(() => {
       data.type = constant;
       data.messagesList = props.messagesList;
+      data.needEmojiReact = props.needEmojiReact;
       data.message = deepCopy(
         data.messagesList?.find((item: any) => (item as any)?.ID === props.message?.ID) || props.data
       );
@@ -275,7 +281,7 @@ const messageBubble = defineComponent({
     };
 
     const showReadReceiptTag = (message: any) => {
-      if (data.needGroupReceipt && message.flow === 'out' && message.status === 'success' && message.needReadReceipt) {
+      if (message.flow === 'out' && message.status === 'success' && message.needReadReceipt) {
         return true;
       }
       return false;

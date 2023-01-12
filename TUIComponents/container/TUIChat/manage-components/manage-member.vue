@@ -2,17 +2,18 @@
   <main class="member">
     <ul class="list">
       <li class="list-item" v-for="(item, index) in list" :key="index">
-        <aside>
+        <aside @click="handleMemberProfileShow(item)">
           <img
             class="avatar"
             :src="item?.avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'">
-          <span class="name">{{item?.nick || item?.userID}}</span>
-          <span >{{handleRoleName(item)}}</span>
+            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+          />
+          <span class="name">{{ item?.nick || item?.userID }}</span>
+          <span>{{ handleRoleName(item) }}</span>
         </aside>
         <i v-if="item.role !== 'Owner' && isShowDel" class="icon icon-del" @click="submit(item)"></i>
       </li>
-      <li class="list-item" v-if="list.length < total" @click="getMore">{{$t(`TUIChat.manage.查看更多`)}}</li>
+      <li class="list-item" v-if="list.length < total" @click="getMore">{{ $t(`TUIChat.manage.查看更多`) }}</li>
     </ul>
   </main>
 </template>
@@ -41,9 +42,9 @@ const ManageMember = defineComponent({
       default: () => ({}),
     },
   },
-  setup(props:any, ctx:any) {
-    const types:any = TIM.TYPES;
-    const data:any = reactive({
+  setup(props: any, ctx: any) {
+    const types: any = TIM.TYPES;
+    const data: any = reactive({
       total: 0,
       list: [],
       isShowDel: false,
@@ -57,7 +58,7 @@ const ManageMember = defineComponent({
       data.self = props.self;
     });
 
-    const handleRoleName = (item:any) => {
+    const handleRoleName = (item: any) => {
       const { t } = (window as any).TUIKitTUICore.config.i18n.useI18n();
       let name = '';
       switch (item?.role) {
@@ -65,7 +66,7 @@ const ManageMember = defineComponent({
           name = t('TUIChat.manage.管理员');
           break;
         case types.GRP_MBR_ROLE_OWNER:
-          name =  t('TUIChat.manage.群主');
+          name = t('TUIChat.manage.群主');
           break;
       }
       if (name) {
@@ -81,8 +82,12 @@ const ManageMember = defineComponent({
       ctx.emit('more');
     };
 
-    const submit = (item:any) => {
+    const submit = (item: any) => {
       ctx.emit('del', [item]);
+    };
+
+    const handleMemberProfileShow = (user: any) => {
+      ctx.emit('handleMemberProfileShow', user);
     };
 
     return {
@@ -90,6 +95,7 @@ const ManageMember = defineComponent({
       getMore,
       submit,
       handleRoleName,
+      handleMemberProfileShow,
     };
   },
 });
@@ -103,7 +109,7 @@ export default ManageMember;
   .list {
     display: flex;
     flex-direction: column;
-    background: #F4F5F9;
+    background: #f4f5f9;
     padding-top: 22px;
     &-item {
       padding: 13px;
@@ -112,17 +118,24 @@ export default ManageMember;
       align-items: center;
       background: #ffffff;
       font-size: 14px;
+      overflow: hidden;
       &:hover {
-        background: #F1F2F6;
+        background: #f1f2f6;
       }
       aside {
         display: flex;
         align-items: center;
+        width: 100%;
+        overflow: hidden;
         .name {
           padding-left: 8px;
           font-weight: 400;
           font-size: 14px;
           color: #000000;
+          flex: 1;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
         }
       }
     }

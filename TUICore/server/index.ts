@@ -2,6 +2,7 @@ import { TUITheme, TUIi18n, TUIEnv, TUIDirective } from '../../TUIPlugin';
 
 import TIM from '../tim';
 import TIMUploadPlugin from 'tim-upload-plugin';
+import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin';
 
 import ITUIServer from '../interfaces/ITUIServer';
 import TUIStore from '../store';
@@ -51,10 +52,11 @@ export default class TUICore extends ITUIServer {
     this.tim = (window as any).TUIKit;
     // 注册 COS SDK 插件
     this.tim.registerPlugin({ 'tim-upload-plugin': TIMUploadPlugin });
+    this.tim.registerPlugin({ 'tim-profanity-filter-plugin': TIMProfanityFilterPlugin });
 
     this.bindTIMEvent();
     this.TUIEnv = TUIEnv();
-    this.isOfficial = this.SDKAppID === 1400187352;
+    this.isOfficial = this.SDKAppID === 1400187352 || this.SDKAppID === 1400188366;
   }
 
   /**

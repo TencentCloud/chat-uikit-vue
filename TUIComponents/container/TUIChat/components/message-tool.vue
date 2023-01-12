@@ -1,7 +1,16 @@
 <template>
   <div class="dialog-item" :class="env?.isH5 ? 'dialog-item-h5' : 'dialog-item-web'">
-    <MessageEmojiReact v-if="env?.isH5" :message="message" type="dropdown" @handleCollapse="handleCollapse"/>
-    <ul class="dialog-item-list" :class="env?.isH5 ? 'dialog-item-list-h5' : 'dialog-item-list-web'" v-show="showToolList">
+    <MessageEmojiReact
+      v-if="env?.isH5 && needEmojiReact"
+      :message="message"
+      type="dropdown"
+      @handleCollapse="handleCollapse"
+    />
+    <ul
+      class="dialog-item-list"
+      :class="env?.isH5 ? 'dialog-item-list-h5' : 'dialog-item-list-web'"
+      v-show="showToolList"
+    >
       <li
         v-if="
           (message.type === types.MSG_FILE || message.type === types.MSG_VIDEO || message.type === types.MSG_IMAGE) &&
@@ -43,7 +52,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, watch, reactive, toRefs, ref } from 'vue';
+import { defineComponent, watch, reactive, toRefs, ref, watchEffect } from 'vue';
 import { Message } from '../interface';
 import TIM from '../../../../TUICore/tim';
 import { handleErrorPrompts } from '../../utils';
@@ -58,6 +67,10 @@ export default defineComponent({
       type: Object,
       default: () => ({}),
     },
+    needEmojiReact: {
+      type: Boolean,
+      default: false,
+    },
   },
   components: {
     MessageEmojiReact,
@@ -70,8 +83,13 @@ export default defineComponent({
       show: false,
       types: TIM.TYPES,
       env: TUIServer.TUICore.TUIEnv,
-      showToolList:true,
+      showToolList: true,
+      needEmojiReact: false,
     });
+
+    watchEffect(() => {
+      data.needEmojiReact = props.needEmojiReact;
+    })
 
     watch(
       () => props.message,
@@ -144,10 +162,10 @@ export default defineComponent({
       }
     };
 
-    const handleCollapse = (isCollapse:boolean) => {
+    const handleCollapse = (isCollapse: boolean) => {
       if (!data?.env?.isH5) return;
       data.showToolList = isCollapse;
-    }
+    };
 
     return {
       ...toRefs(data),
@@ -185,13 +203,15 @@ export default defineComponent({
     justify-content: space-around;
     width: 100%;
     &-h5 {
+      flex-wrap: nowrap;
       margin: 10px;
       li {
+        padding: 0 5px;
         display: flex;
         flex-direction: column;
         align-items: center;
         font-size: 8px;
-        color: #4F4F4F;
+        color: #4f4f4f;
       }
     }
     &-web {
