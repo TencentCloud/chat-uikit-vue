@@ -61,10 +61,7 @@
                 <aside class="left">
                   <img
                     class="avatar"
-                    :src="
-                      item?.avatar ||
-                      'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
-                    "
+                    :src="item?.avatar || 'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
                     onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
                   />
                 </aside>
@@ -131,10 +128,7 @@
             <aside class="left">
               <img
                 class="avatar"
-                :src="
-                  searchGroup?.avatar ||
-                  'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
-                "
+                :src="searchGroup?.avatar || 'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
                 onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
               />
             </aside>
@@ -151,7 +145,10 @@
           </li>
         </ul>
       </aside>
-      <main class="TUI-contact-main" v-show="!!currentGroup?.groupID || !!currentFriend?.userID || columnName === 'system' ">
+      <main
+        class="TUI-contact-main"
+        v-show="!!currentGroup?.groupID || !!currentFriend?.userID || columnName === 'system'"
+      >
         <header class="TUI-contact-main-h5-title" v-if="env.isH5">
           <i class="icon icon-back" @click="back"></i>
           <h1>{{ currentGroup?.name || $t('TUIContact.系统通知') }}</h1>
@@ -257,18 +254,21 @@
 import { computed, defineComponent, reactive, toRefs, watch } from 'vue';
 import MessageSystem from './components/message-system.vue';
 import { handleErrorPrompts, isArrayEqual } from '../utils';
-import { useStore } from 'vuex';
 
 const TUIContact = defineComponent({
   name: 'TUIContact',
   components: {
     MessageSystem,
   },
-
+  props: {
+    displayOnlineStatus: {
+      type: Boolean,
+      default: false,
+    },
+  },
   setup(props: any, ctx: any) {
     const TUIServer: any = TUIContact.TUIServer;
     const { t } = TUIServer.TUICore.config.i18n.useI18n();
-    const VuexStore = useStore && useStore();
     const data = reactive({
       groupList: [],
       searchGroup: {},
@@ -285,7 +285,7 @@ const TUIContact = defineComponent({
       friendList: [],
       userIDList: [],
       currentFriend: {},
-      displayOnlineStatus: VuexStore?.state?.displayOnlineStatus,
+      displayOnlineStatus: false,
       onlineStatus: false,
       userStatusList: new Map(),
     });
@@ -293,11 +293,14 @@ const TUIContact = defineComponent({
     TUIServer.bind(data);
 
     watch(
-      () => VuexStore?.state?.displayOnlineStatus,
+      () => props.displayOnlineStatus,
       async (newVal: any, oldVal: any) => {
         if (newVal === oldVal) return;
         data.displayOnlineStatus = newVal;
         TUIServer.handleUserStatus(data.displayOnlineStatus, data.userIDList);
+      },
+      {
+        immediate: true,
       }
     );
 
@@ -317,7 +320,6 @@ const TUIContact = defineComponent({
     });
 
     const handleListItem = async (item: any) => {
-      console.warn('tuicontact', item);
       switch (data.columnName) {
         case 'group':
           data.currentGroup = item;

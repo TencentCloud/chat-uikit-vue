@@ -1068,6 +1068,25 @@ export default class TUIChatServer extends IComponentServer {
   }
 
   /**
+   * 校验好友关系
+   * check friend
+   *
+   * @param {string} userID 用户账号
+   * @returns {Promise}
+   */
+  public async checkFriend(userID: string, type: string): Promise<void> {
+    return this.handlePromiseCallback(async (resolve: any, reject: any) => {
+      try {
+        const imResponse = await this.TUICore.tim.checkFriend({ userIDList: [userID], type });
+        const isFriendShip = imResponse?.data?.successUserIDList[0]?.relation;
+        resolve(isFriendShip);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  /**
    * 获取群消息已读成员列表
    * Get the list of memebers who have read the group message.
    *

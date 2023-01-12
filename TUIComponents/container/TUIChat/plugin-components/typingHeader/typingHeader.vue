@@ -231,3 +231,10 @@ const TypingHeader = defineComponent({
 });
 export default TypingHeader;
 </script>
+<style scoped>
+h1 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+</style>

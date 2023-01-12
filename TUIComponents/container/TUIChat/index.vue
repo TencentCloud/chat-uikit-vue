@@ -43,6 +43,7 @@
             :messagesList="messages"
             :needGroupReceipt="needGroupReceipt"
             :needReplies="true"
+            :needEmojiReact="isNeedEmojiReact"
             @jumpID="jumpID"
             @resendMessage="resendMessage"
             @showReadReceiptDialog="showDialog"
@@ -69,10 +70,11 @@
             <template #dialog>
               <MessageTool
                 :message="item"
+                :needEmojiReact="isNeedEmojiReact"
                 @forwardMessage="forwardMessage"
                 @referOrReplyMessage="referOrReplyMessage"
               />
-              <MessageEmojiReact v-if="!env?.isH5" :message="item" type="dropdown" />
+              <MessageEmojiReact v-if="!env?.isH5 && isNeedEmojiReact" :message="item" type="dropdown" />
             </template>
           </MessageBubble>
           <MessageRevoked v-else :isEdit="item.type === types.MSG_TEXT" :data="item" @edit="handleEdit(item)" />
@@ -103,7 +105,7 @@
           </template>
         </component>
       </div>
-      <div class="dialog dialog-conversation" v-if="needGroupReceipt">
+      <div class="dialog dialog-conversation">
         <ReadReceiptDialog
           :message="currentMessage"
           :conversation="conversation"
@@ -306,9 +308,17 @@ const TUIChat: any = defineComponent({
     MessageEmojiReact,
   },
   props: {
-    isSupportGroupReceipt: {
+    isMsgNeedReadReceipt: {
       type: Boolean,
       default: false,
+    },
+    isNeedTyping: {
+      type: Boolean,
+      default: true,
+    },
+    isNeedEmojiReact: {
+      type: Boolean,
+      default: true,
     },
   },
   setup(props) {
@@ -365,8 +375,8 @@ const TUIChat: any = defineComponent({
       inputBlur: false,
       inputComposition: false,
       inputCompositionCont: '',
-      needTyping: true,
-      needReadReceipt: VuexStore?.state?.needReadReceipt,
+      needTyping: props.isNeedTyping,
+      needReadReceipt: false,
       peerNeedReceipt: false,
       needToBottom: false,
       toBottomTipCont: '',
@@ -379,7 +389,8 @@ const TUIChat: any = defineComponent({
         scrollTopMin: Infinity,
         scrollTopMax: 0,
       },
-      isSupportGroupReceipt: false,
+      isMsgNeedReadReceipt: false,
+      isNeedEmojiReact: false,
       dropDownRef: null,
     });
 
@@ -462,15 +473,11 @@ const TUIChat: any = defineComponent({
     });
 
     watchEffect(() => {
-      data.isSupportGroupReceipt = props.isSupportGroupReceipt;
+      data.isMsgNeedReadReceipt = props.isMsgNeedReadReceipt;
+      data.needReadReceipt = data.isMsgNeedReadReceipt;
+      data.needTyping = props.isNeedTyping;
+      data.isNeedEmojiReact = props.isNeedEmojiReact;
     });
-
-    watch(
-      () => VuexStore?.state?.needReadReceipt,
-      (newVal: boolean) => {
-        data.needReadReceipt = newVal;
-      }
-    );
 
     watch(
       () => data?.conversation?.conversationID,
@@ -517,8 +524,8 @@ const TUIChat: any = defineComponent({
     const messages = computed(() => data.messageList.filter((item: any) => !item.isDeleted && !isTypingMessage(item)));
 
     const needGroupReceipt = computed(() => {
-      const { conversation, isSupportGroupReceipt } = data;
-      if (conversation?.type === TUIServer.TUICore.TIM.TYPES.CONV_C2C || isSupportGroupReceipt) {
+      const { conversation, needReadReceipt } = data;
+      if (conversation?.type === TUIServer.TUICore.TIM.TYPES.CONV_C2C || needReadReceipt) {
         return true;
       }
       return false;
@@ -836,7 +843,8 @@ const TUIChat: any = defineComponent({
         list.push(messages?.value[index]?.ID);
         if (list.indexOf(messageID) !== -1 && messages.value[index]?.ID === messageID) {
           scrollToTarget('target', messageAimID.value[index]);
-          messageAimID.value[index].getElementsByClassName('content')[0].classList.add('reference-content');
+          messageAimID.value[index].getElementsByClassName('content')[0].classList.remove('reference-content'); 
+          nextTick(() => {messageAimID.value[index].getElementsByClassName('content')[0].classList.add('reference-content');});
         }
       }
       if (list.indexOf(messageID) === -1) {

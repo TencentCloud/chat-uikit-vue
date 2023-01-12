@@ -32,7 +32,7 @@
           </header>
           <ol>
             <dl v-for="(item, index) in userInfo?.list?.slice(0, showUserNum)" :key="index">
-              <dt>
+              <dt @click="handleMemberProfileShow(item)">
                 <img
                   class="avatar"
                   :src="item?.avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
@@ -73,8 +73,7 @@
             <img
               class="avatar"
               :src="
-                conversation?.groupProfile?.avatar ||
-                'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
+                conversation?.groupProfile?.avatar || 'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
               "
               onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
             />
@@ -111,6 +110,11 @@
         :isShowDel="conversation.groupProfile.selfInfo.role === 'Owner'"
         @more="getMember('more')"
         @del="submit"
+        @handleMemberProfileShow="handleMemberProfileShow"
+      />
+      <MemeberProfile
+        v-else-if="currentTab === 'profile'"
+        :userInfo="currentMember"
       />
       <ManageNotification
         v-else-if="currentTab === 'notification'"
@@ -213,6 +217,7 @@ import Slider from '../../../components/slider/index.vue';
 import ManageName from './manage-name.vue';
 import ManageNotification from './manage-notification.vue';
 import ManageMember from './manage-member.vue';
+import MemeberProfile from './member-profile.vue';
 import Dialog from '../../../components/dialog/index.vue';
 
 import Vuex from 'vuex';
@@ -228,6 +233,7 @@ const manage = defineComponent({
     ManageName,
     ManageNotification,
     ManageMember,
+    MemeberProfile,
     Dialog,
   },
   props: {
@@ -289,6 +295,7 @@ const manage = defineComponent({
         member: [],
         muteMember: [],
       },
+      currentMember: {},
     });
 
     const dialog: any = ref();
@@ -308,6 +315,9 @@ const manage = defineComponent({
           name = '群公告';
           break;
         case 'member':
+          name = '群成员';
+          break;
+        case 'profile':
           name = '群成员';
           break;
         default:
@@ -763,6 +773,11 @@ const manage = defineComponent({
       }
     };
 
+    const handleMemberProfileShow = (user: any) => {
+      data.currentMember = user;
+      setTab('profile');
+    };
+
     return {
       ...toRefs(data),
       isDismissGroupAuth,
@@ -793,6 +808,7 @@ const manage = defineComponent({
       showUserNum,
       dialog,
       handleGroupIDCopy,
+      handleMemberProfileShow,
     };
   },
 });
