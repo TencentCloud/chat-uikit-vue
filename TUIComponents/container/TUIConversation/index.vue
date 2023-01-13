@@ -21,7 +21,6 @@ import { defineComponent, reactive, toRefs, computed, watch } from 'vue';
 import TUIConversationList from './components/list';
 import { caculateTimeago, isArrayEqual } from '../utils';
 import { handleAvatar, handleName, handleShowLastMessage, handleAt } from '../TUIChat/utils/utils';
-import { useStore } from 'vuex';
 
 const TUIConversation = defineComponent({
   name: 'TUIConversation',
@@ -29,10 +28,14 @@ const TUIConversation = defineComponent({
   components: {
     TUIConversationList,
   },
-
+  props: {
+    displayOnlineStatus: {
+      type: Boolean,
+      default: false,
+    },
+  },
   setup(props: any, ctx: any) {
     const TUIServer: any = TUIConversation?.TUIServer;
-    const VuexStore = useStore && useStore();
     const data = reactive({
       currentConversationID: '',
       conversationData: {
@@ -51,7 +54,7 @@ const TUIConversation = defineComponent({
       userIDList: new Set(),
       netWork: '',
       env: TUIServer.TUICore.TUIEnv,
-      displayOnlineStatus: VuexStore?.state?.displayOnlineStatus,
+      displayOnlineStatus: false,
       userStatusList: TUIServer.TUICore.TUIServer.TUIContact?.currentStore?.userStatusList,
     });
 
@@ -61,7 +64,7 @@ const TUIConversation = defineComponent({
 
     watch(
       () => data.currentConversationID,
-      (newVal: any, oldVal: any) => {
+      (newVal: any) => {
         ctx.emit('current', newVal);
       },
       {
@@ -70,13 +73,14 @@ const TUIConversation = defineComponent({
     );
 
     watch(
-      () => VuexStore?.state?.displayOnlineStatus,
+      () => props.displayOnlineStatus,
       async (newVal: any, oldVal: any) => {
         if (newVal === oldVal) return;
         data.displayOnlineStatus = newVal;
         TUIServer.TUICore.TUIServer.TUIContact.handleUserStatus(data.displayOnlineStatus, [...data.userIDList]);
         data.userStatusList = TUIServer.TUICore.TUIServer.TUIContact?.currentStore?.userStatusList;
-      }
+      },
+      { immediate: true }
     );
 
     watch(
