@@ -55,11 +55,14 @@
               v-if="item.type === types.MSG_IMAGE"
               :data="handleImageMessageShowContext(item)"
               :isH5="env.isH5"
+              @uploading="handleUploadingImageOrVideo"
+              @previewImage="handleImagePreview"
             />
             <MessageVideo
               v-if="item.type === types.MSG_VIDEO"
               :data="handleVideoMessageShowContext(item)"
               :isH5="env.isH5"
+              @uploading="handleUploadingImageOrVideo"
             />
             <MessageAudio v-if="item.type === types.MSG_AUDIO" :data="handleAudioMessageShowContext(item)" />
             <MessageFile v-if="item.type === types.MSG_FILE" :data="handleFileMessageShowContext(item)" />
@@ -115,6 +118,12 @@
           ref="readReceiptDialog"
         />
       </div>
+      <imagePreviewer
+        v-if="showImagePreview"
+        :currentImage="currentImagePreview"
+        :imageList="imageList"
+        @close="showImagePreview = false"
+      />
     </div>
     <div class="TUIChat-footer" :class="[isMute && 'disabled', env.isH5 && 'TUIChat-H5-footer']">
       <div class="func" id="func">
@@ -167,6 +176,7 @@
       </div>
       <div class="input">
         <textarea
+          v-show="!isMute"
           ref="inputEle"
           id="input-text-area"
           @paste="pasting"
@@ -190,7 +200,7 @@
           </p>
           {{ $t('发送') }}
         </button>
-        <div class="reference" v-if="reference?.show === 'reference'">
+        <div class="reference" v-if="reference?.show === 'reference' && !isMute">
           <div class="reference-box">
             <div class="reference-box-show">
               <span class="reference-box-show-name"
@@ -338,6 +348,8 @@ const TUIChat: any = defineComponent({
       forwardStatus: false,
       receiptDialogStatus: false,
       repliesDialogStatus: false,
+      showImagePreview: false,
+      currentImagePreview: {} as Message,
       isCompleted: false,
       userInfoView: false,
       userInfo: {
@@ -522,6 +534,11 @@ const TUIChat: any = defineComponent({
     });
 
     const messages = computed(() => data.messageList.filter((item: any) => !item.isDeleted && !isTypingMessage(item)));
+    const imageList = computed(() =>
+      messages?.value?.filter((item: Message) => {
+        return !item.isRevoked && item.type === data.types.MSG_IMAGE;
+      })
+    );
 
     const needGroupReceipt = computed(() => {
       const { conversation, needReadReceipt } = data;
@@ -684,7 +701,7 @@ const TUIChat: any = defineComponent({
         data.isFirstSend = false;
       }
       data.reference.show = '';
-      VuexStore?.commit('handleTask', 0);
+      TUIServer.TUICore.isOfficial && VuexStore?.commit('handleTask', 0);
       return (data.atType = []);
     };
 
@@ -843,8 +860,10 @@ const TUIChat: any = defineComponent({
         list.push(messages?.value[index]?.ID);
         if (list.indexOf(messageID) !== -1 && messages.value[index]?.ID === messageID) {
           scrollToTarget('target', messageAimID.value[index]);
-          messageAimID.value[index].getElementsByClassName('content')[0].classList.remove('reference-content'); 
-          nextTick(() => {messageAimID.value[index].getElementsByClassName('content')[0].classList.add('reference-content');});
+          messageAimID.value[index].getElementsByClassName('content')[0].classList.remove('reference-content');
+          nextTick(() => {
+            messageAimID.value[index].getElementsByClassName('content')[0].classList.add('reference-content');
+          });
         }
       }
       if (list.indexOf(messageID) === -1) {
@@ -938,20 +957,25 @@ const TUIChat: any = defineComponent({
       switch (type) {
         case constant.scrollType.toBottom:
           data.needToBottom = false;
-          messageEle?.value?.lastElementChild.scrollIntoView(false);
-          getImgLoad(messageEle?.value, 'message-img', async () => {
+          nextTick(() => {
             messageEle?.value?.lastElementChild?.scrollIntoView(false);
-            messageEle.value.addEventListener('scroll', onScrolling);
-            await sendMessageReadInView('page');
+            getImgLoad(messageEle?.value, 'message-img', async () => {
+              messageEle?.value?.lastElementChild?.scrollIntoView(false);
+              messageEle.value.addEventListener('scroll', onScrolling);
+              await sendMessageReadInView('page');
+            });
           });
           break;
         case constant.scrollType.toTarget:
-          targetElement?.scrollIntoView(false);
-          getImgLoad(messageEle?.value, 'message-img', async () => {
+          nextTick(() => {
             targetElement?.scrollIntoView(false);
-            messageEle.value.addEventListener('scroll', onScrolling);
-            await sendMessageReadInView('page');
+            getImgLoad(messageEle?.value, 'message-img', async () => {
+              targetElement?.scrollIntoView(false);
+              messageEle.value.addEventListener('scroll', onScrolling);
+              await sendMessageReadInView('page');
+            });
           });
+
           break;
         default:
           break;
@@ -1071,6 +1095,14 @@ const TUIChat: any = defineComponent({
       textArea.scrollTop = textArea.scrollHeight;
     };
 
+    const handleUploadingImageOrVideo = () => {
+      scrollToTarget('bottom');
+    };
+    const handleImagePreview = (message: any) => {
+      data.showImagePreview = !data.showImagePreview;
+      data.currentImagePreview = message;
+    };
+
     return {
       ...toRefs(data),
       conversationType,
@@ -1126,6 +1158,9 @@ const TUIChat: any = defineComponent({
       closeReferenceInEdit,
       forwardMessage,
       referOrReplyMessage,
+      handleUploadingImageOrVideo,
+      handleImagePreview,
+      imageList,
     };
   },
 });

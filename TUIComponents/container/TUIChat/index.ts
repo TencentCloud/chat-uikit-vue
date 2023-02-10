@@ -12,6 +12,7 @@ import TypingHeader from './plugin-components/typingHeader';
 import ReadReceiptDialog from './plugin-components/readReceiptDialog';
 import Replies from './plugin-components/replies';
 import Call from './plugin-components/call';
+import ImagePreviewer from './plugin-components/imagePreviewer';
 
 let sendComponents: any = {
   Face,
@@ -31,6 +32,7 @@ export const otherComponents: any = {
   TypingHeader,
   ReadReceiptDialog,
   Replies,
+  ImagePreviewer,
 };
 
 export function getComponents(type: string) {

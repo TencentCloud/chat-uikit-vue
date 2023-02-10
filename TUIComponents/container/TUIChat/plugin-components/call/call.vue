@@ -164,7 +164,7 @@ const Call = defineComponent({
         name: 'callOptions',
         ext1: 'clickCall-success',
       });
-      VuexStore?.commit('handleTask', 6);
+      (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 6);
       switch (data.conversation?.type) {
         case Call.TUIServer.TUICore.TIM.TYPES.CONV_C2C:
           handleCall(data.conversation, mediaType);

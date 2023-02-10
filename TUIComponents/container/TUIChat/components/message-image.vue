@@ -1,6 +1,6 @@
 <template>
-  <div class="message-image" @click.self="toggleShow">
-    <img class="message-img" :src="data.url" />
+  <div class="message-image" @click.self="toggleShow" ref="skeleton">
+    <img class="message-img" :src="data.url" :width="data.width" :height="data.height" />
     <div class="progress" v-if="data.progress">
       <progress :value="data.progress" max="1"></progress>
     </div>
@@ -28,7 +28,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, watchEffect, reactive, toRefs, computed } from 'vue';
+import { defineComponent, watchEffect, reactive, toRefs, computed, ref, nextTick } from 'vue';
+import { handleSkeletonSize } from '../utils/utils';
 export default defineComponent({
   props: {
     data: {
@@ -40,6 +41,7 @@ export default defineComponent({
       default: false,
     },
   },
+  emits: ['uploading', 'previewImage'],
   setup(props: any, ctx: any) {
     const data = reactive({
       data: {
@@ -48,18 +50,34 @@ export default defineComponent({
       show: false,
     });
 
-    watchEffect(() => {
-      data.data = props.data;
-    });
+    const skeleton: any = ref();
 
     const isWidth = computed(() => {
       const { width = 0, height = 0 } = (data.data as any)?.message?.payload?.imageInfoArray[0];
       return width >= height;
     });
 
+    watchEffect(() => {
+      data.data = props.data;
+      if (!data.data) return;
+      nextTick(() => {
+        if (!data.data.progress) {
+          const { width = 0, height = 0 } = data.data as any;
+          if (width === 0 || height === 0) return;
+          const containerWidth = document.getElementById('app')?.clientWidth || 0;
+          const max = props.isH5 ? Math.min(containerWidth - 180, 300) : 300;
+          const size = handleSkeletonSize(width, height, max, max);
+          skeleton?.value?.style && (skeleton.value.style.width = `${size.width}px`);
+          skeleton?.value?.style && (skeleton.value.style.height = `${size.height}px`);
+        } else {
+          ctx.emit('uploading');
+        }
+      });
+    });
+
     const toggleShow = () => {
       if (!data.data.progress) {
-        data.show = !data.show;
+        ctx.emit('previewImage', (data.data as any).message);
       }
     };
     const downloadImage = (message: any) => {
@@ -88,6 +106,7 @@ export default defineComponent({
     return {
       ...toRefs(data),
       toggleShow,
+      skeleton,
       isWidth,
       downloadImage,
     };
@@ -97,9 +116,13 @@ export default defineComponent({
 <style lang="scss" scoped>
 .message-image {
   position: relative;
+  overflow: hidden;
+  opacity: 1;
   .message-img {
     max-width: min(calc(100vw - 180px), 300px);
     max-height: min(calc(100vw - 180px), 300px);
+    width: inherit;
+    height: inherit;
   }
   .progress {
     position: absolute;
@@ -139,9 +162,9 @@ export default defineComponent({
   position: fixed;
   z-index: 12;
   width: 100vw;
-  height: calc(100vh - 62px);
+  height: 100vh;
   background: rgba(#000000, 0.3);
-  top: 62px;
+  top: 0;
   left: 0;
   display: flex;
   flex-direction: column;

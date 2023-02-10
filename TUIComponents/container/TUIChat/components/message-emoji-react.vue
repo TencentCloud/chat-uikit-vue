@@ -241,6 +241,7 @@ export default defineComponent({
 }
 .emoji-content {
   .emoji-react {
+    margin-top: 3px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;

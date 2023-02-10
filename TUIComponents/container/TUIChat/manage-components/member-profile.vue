@@ -27,8 +27,7 @@
 </template>
 <script lang="ts">
 import TIM from '../../../../TUICore/tim';
-import { reactive, toRefs, watch, watchEffect } from 'vue';
-import { defineComponent } from 'vue-demi';
+import { reactive, toRefs, watch, watchEffect, defineComponent } from 'vue';
 import manage from './manage.vue';
 
 const memberProfile = defineComponent({

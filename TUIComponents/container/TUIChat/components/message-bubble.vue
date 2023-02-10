@@ -9,7 +9,7 @@
       <label class="name" v-if="message.flow === 'in' && message.conversationType === 'GROUP'">
         {{ message.nameCard || message.nick || message.from }}
       </label>
-      <div :class="['content content-' + message.flow]" @click.prevent.right="toggleDialog">
+      <div :class="handleImageOrVideoBubbleStyle(message)" @click.prevent.right="toggleDialog">
         <div
           class="message-replie-area"
           :class="[message?.flow === 'in' ? '' : 'message-replies-area-reverse']"
@@ -32,7 +32,7 @@
             <slot name="dialog" />
           </div>
         </div>
-        <MessageEmojiReact :message="message" type="content" v-if="needEmojiReact"/>
+        <MessageEmojiReact :message="message" type="content" v-if="needEmojiReact && isEmojiReactionInMessage(message)" />
       </div>
     </main>
     <label class="message-label fail" v-if="message.status === 'fail'" @click="resendMessage(message)">!</label>
@@ -84,6 +84,7 @@ import MessageReference from './message-reference.vue';
 import { Message } from '../interface';
 import { TUIEnv } from '../../../../../TUIKit/TUIPlugin';
 import MessageEmojiReact from './message-emoji-react.vue';
+import TIM from '../../../../TUICore/tim/index';
 
 const messageBubble = defineComponent({
   props: {
@@ -347,6 +348,31 @@ const messageBubble = defineComponent({
       }
     };
 
+    const handleImageOrVideoBubbleStyle = (message: Message) => {
+      const classNameList = ['content'];
+      if (!message) return classNameList;
+      classNameList.push(`content-${data.message.flow}`);
+      if (data.message.type === TIM.TYPES.MSG_IMAGE && !isEmojiReactionInMessage(message)) {
+        classNameList.push('content-image');
+      }
+      if (data.message.type === TIM.TYPES.MSG_VIDEO && !isEmojiReactionInMessage(message)) {
+        classNameList.push('content-video');
+      }
+      return classNameList;
+    };
+
+    const isEmojiReactionInMessage = (message: Message) => {
+      try {
+        if (!message?.cloudCustomData) return;
+        const reactList = JSONToObject(message?.cloudCustomData)?.messageReact?.reacts;
+        if (!reactList || Object.keys(reactList).length === 0) return false;
+        return true;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    };
+
     return {
       ...toRefs(data),
       toggleDialog,
@@ -360,6 +386,9 @@ const messageBubble = defineComponent({
       readReceiptCont,
       showReadReceiptDialog,
       showRepliesDialog,
+      handleImageOrVideoBubbleStyle,
+      isEmojiReactionInMessage,
+      TIM,
     };
   },
 });
@@ -549,6 +578,17 @@ export default messageBubble;
     &-out {
       background: #dceafd;
       border-radius: 10px 0px 10px 10px;
+    }
+    &-image {
+      padding: 0px;
+      height: fit-content;
+      border-radius: 10px 0px 10px 10px;
+    }
+    &-video {
+      padding: 0px;
+      height: fit-content;
+      background: transparent;
+      border-radius: 10px;
     }
   }
 }

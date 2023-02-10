@@ -124,7 +124,7 @@ export default defineComponent({
               userID: flow === 'out' ? to : from,
               type: callType,
             });
-            VuexStore?.commit('handleTask', 6);
+            (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 6);
           } catch (error) {
             console.warn(error);
           }
