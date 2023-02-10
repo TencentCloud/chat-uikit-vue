@@ -23,7 +23,10 @@
       />
     </div>
     <img v-if="referenceMessage.messageType === constant.typeFace" class="message-img" :src="url" />
-    <span v-if="referenceMessage.messageType === constant.typeFile || referenceMessage.messageType === constant.typeAudio">{{ referenceMessage?.messageAbstract }}</span>
+    <span
+      v-if="referenceMessage.messageType === constant.typeFile || referenceMessage.messageType === constant.typeAudio"
+      >{{ referenceMessage?.messageAbstract }}</span
+    >
   </div>
   <div v-else :class="`${type} ${message.flow === 'in' && type + '-reverse'}`">
     <p>{{ referenceMessage?.messageSender }}</p>
@@ -171,6 +174,8 @@ export default MessageReference;
   .message-videoimg {
     max-width: min(calc(100vw - 180px), 300px);
     max-height: min(calc(100vw - 180px), 300px);
+    object-fit: contain;
+    align-self: flex-start;
   }
   .face-box {
     display: flex;

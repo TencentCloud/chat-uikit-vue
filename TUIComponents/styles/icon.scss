@@ -229,6 +229,49 @@
   background-size: contain;
 }
 
+.icon-left-arrow {
+  width: 27px;
+  height: 27px;
+  background: url('../assets/icon/arrow-left-center.svg') no-repeat;
+  background-size: contain;
+}
+
+.icon-right-arrow {
+  width: 27px;
+  height: 27px;
+  background: url('../assets/icon/arrow-left-center.svg') no-repeat;
+  background-size: contain;
+  transform: rotate(180deg);
+}
+
+.icon-zoom-out {
+  width: 27px;
+  height: 27px;
+  background: url('../assets/icon/zoom-out.svg') no-repeat;
+  background-size: contain;
+}
+
+.icon-zoom-in {
+  width: 27px;
+  height: 27px;
+  background: url('../assets/icon/zoom-in.svg') no-repeat;
+  background-size: contain;
+}
+
+.icon-refresh-left {
+  width: 27px;
+  height: 27px;
+  background: url('../assets/icon/rotate-left.svg') no-repeat;
+  background-size: contain;
+}
+
+.icon-refresh-right {
+  width: 27px;
+  height: 27px;
+  background: url('../assets/icon/rotate-right.svg') no-repeat;
+  background-size: contain;
+}
+
 .icon-bottom-double {
   width: 12px;
   height: 12px;

@@ -124,7 +124,7 @@ export default defineComponent({
               name: 'messageOptions',
               ext1: 'messageRevoke',
             });
-            VuexStore?.commit('handleTask', 1);
+            (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 1);
           } catch (error) {
             handleErrorPrompts(error, data.env);
           }

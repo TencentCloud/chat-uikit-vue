@@ -61,7 +61,7 @@ export function handleAt(item: any) {
   return showAtType;
 }
 
-export function handleReferenceForShow (message: any) {
+export function handleReferenceForShow(message: any) {
   const data = {
     referenceMessageForShow: '',
     referenceMessageType: 0,
@@ -285,6 +285,8 @@ export function handleImageMessageShowContext(item: any) {
   return {
     progress: item?.status === 'unSend' && item.progress,
     url: item.payload.imageInfoArray[1].url,
+    width: item.payload.imageInfoArray[0].width,
+    height: item.payload.imageInfoArray[0].height,
     message: item,
   };
 }
@@ -295,6 +297,8 @@ export function handleVideoMessageShowContext(item: any) {
     progress: item?.status === 'unSend' && item?.progress,
     url: item?.payload?.videoUrl,
     snapshotUrl: item?.payload?.snapshotUrl,
+    snapshotWidth: item?.payload?.snapshotWidth,
+    snapshotHeight: item?.payload?.snapshotHeight,
     message: item,
   };
 }
@@ -459,16 +463,23 @@ export function translateGroupSystemNotice(message: any) {
 export function getImgLoad(container: any, className: string, callback: any) {
   const images = container?.querySelectorAll(`.${className}`) || [];
   const promiseList = Array.prototype.slice.call(images).map(
-    (node: any) =>
-      new Promise((resolve: any, reject: any) => {
-        const loadImg = new Image();
-        loadImg.src = node.src;
-        loadImg.onload = () => {
+    (node: any) => {
+      return new Promise((resolve: any, reject: any) => {
+        node.onload = () => {
           resolve(node);
-        };
+        }
+        node.onloadeddata = () => {
+          resolve(node);
+        }
+        node.onprogress = () => {
+          resolve(node);
+        }
+        if (node.complete) {
+          resolve(node);
+        }
       })
+    }
   );
-
   return Promise.all(promiseList)
     .then(() => {
       callback && callback();
@@ -579,3 +590,17 @@ export const isMessageTip = (message: Message) => {
   }
   return false;
 };
+
+
+export const handleSkeletonSize = (width: number, height: number, maxWidth: number, maxHeight: number): { width: number, height: number } => {
+  const widthToHeight = width / height;
+  const maxWidthToHeight = maxWidth / maxHeight;
+  if (width <= maxWidth && height <= maxHeight) {
+    return { width, height };
+  } else if ((width <= maxWidth && height > maxHeight) ||
+    (width > maxWidth && height > maxHeight && widthToHeight <= maxWidthToHeight)) {
+    return { width: width * (maxHeight / height), height: maxHeight };
+  } else {
+    return { width: maxWidth, height: height * (maxWidth / width) };
+  }
+}

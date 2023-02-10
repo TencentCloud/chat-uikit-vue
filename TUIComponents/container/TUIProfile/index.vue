@@ -80,7 +80,7 @@ const TUIProfile = defineComponent({
         birthday: profile.birthday,
       };
       if (TUIServer.TUICore.getStore().TUIProfile.profile.nick !== profile.nick) {
-        VuexStore?.commit('handleTask', 2);
+        (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 2);
       }
       try {
         await TUIServer.updateMyProfile(options);
