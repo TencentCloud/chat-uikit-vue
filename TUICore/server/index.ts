@@ -1,4 +1,4 @@
-import { TUITheme, TUIi18n, TUIEnv, TUIDirective } from '../../TUIPlugin';
+import { TUITheme, TUIi18n, TUIEnv, TUIDirective, TUINotification } from '../../TUIPlugin';
 
 import TIM from '../tim';
 import TIMUploadPlugin from 'tim-upload-plugin';

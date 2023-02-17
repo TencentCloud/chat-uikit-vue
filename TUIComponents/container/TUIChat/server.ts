@@ -1,5 +1,7 @@
+import { TUINotification } from '../../../TUIPlugin';
+import Message from '../../../TUICore/tim/index';
 import IComponentServer from '../IComponentServer';
-import { JSONToObject } from './utils/utils';
+import { isTypingMessage, JSONToObject } from './utils/utils';
 
 /**
  * class TUIChatServer
@@ -112,9 +114,12 @@ export default class TUIChatServer extends IComponentServer {
   }
 
   private handleMessageReceived(event: any) {
-    if (event?.data[0]?.conversationID === this?.store?.conversation?.conversationID) {
-      this.currentStore.messageList = [...this.currentStore.messageList, ...event.data];
-    }
+    event?.data?.forEach((message: Message) => {
+      if (message?.conversationID === this?.store?.conversation?.conversationID) {
+        this.currentStore.messageList = [...this.currentStore.messageList, message];
+      }
+      TUINotification.getInstance().notify(message);
+    });
   }
 
   private handleMessageModified(event: any) {

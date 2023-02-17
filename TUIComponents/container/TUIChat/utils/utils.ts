@@ -548,7 +548,7 @@ export function deepCopy(data: any, hash = new WeakMap()) {
   if (hash.has(data)) {
     return hash.get(data);
   }
-  const newData: any = {};
+  const newData: any = Object.create(Object.getPrototypeOf(data));
   const dataKeys = Object.keys(data);
   dataKeys.forEach((value) => {
     const currentDataValue = data[value];
