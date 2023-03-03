@@ -1,6 +1,19 @@
 <template>
   <div class="message-image" @click.self="toggleShow" ref="skeleton">
-    <img class="message-img" :src="data.url" :width="data.width" :height="data.height" />
+    <img
+      class="message-img"
+      :src="data.url"
+      :width="data.width"
+      :height="data.height"
+      :style="
+        isH5
+          ? {
+              maxWidth: data.width ? data.width + 'px' : 'calc(100vw - 180px)',
+              maxHeight: data.height ? data.height + 'px' : 'calc(100vw - 180px)',
+            }
+          : {}
+      "
+    />
     <div class="progress" v-if="data.progress">
       <progress :value="data.progress" max="1"></progress>
     </div>

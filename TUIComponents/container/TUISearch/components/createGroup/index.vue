@@ -135,7 +135,7 @@ const group:any = defineComponent({
         },
         {
           icon: 'https://web.sdk.qcloud.com/im/assets/images/Meeting.svg',
-          label: '临时会议群（Metting）',
+          label: '临时会议群（Meeting）',
           type: group.TUIServer.TUICore.TIM.TYPES.GRP_MEETING,
           detail: '创建后可以随意进出，且支持查看入群前消息；适合用于音视频会议场景、在线教育场景等与实时音视频产品结合的场景。详见',
           src: '产品文档',
