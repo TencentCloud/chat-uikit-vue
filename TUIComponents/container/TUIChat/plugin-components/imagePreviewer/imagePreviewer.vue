@@ -3,7 +3,10 @@
     <div class="image-wrapper" ref="image">
       <ul
         class="image-list"
-        :style="{ width: `${imageList.length * 100}vw`, transform: `translateX(-${currentImageIndex * 100}vw)` }"
+        :style="{
+          width: `${imageList.length * 100}%`,
+          transform: `translateX(-${(currentImageIndex * 100) / imageList.length}%)`,
+        }"
         ref="ul"
       >
         <li class="image-item" v-for="(item, index) in imageList" :key="index">
@@ -210,14 +213,15 @@ onMounted(() => {
   // web: mouse wheel & mac wheel
   image?.value?.addEventListener('wheel', handleWheel);
   // web: close on esc keydown
-  document.onkeydown = (e: any) => {
-    e.preventDefault();
-    if (e?.keyCode === 27) {
-      close();
-    }
-  };
+  document?.addEventListener('keydown', handleEsc);
 });
 
+const handleEsc = (e: any) => {
+  e.preventDefault();
+  if (e?.keyCode === 27) {
+    close();
+  }
+};
 const zoomIn = () => {
   zoom.value += 0.1;
 };
@@ -254,6 +258,7 @@ onUnmounted(() => {
   image?.value?.removeEventListener('touchend', handleTouchEnd);
   image?.value?.removeEventListener('touchcancel;', handleTouchCancel);
   image?.value?.removeEventListener('wheel', handleWheel);
+  document?.removeEventListener('keydown', handleEsc);
 });
 </script>
 
@@ -304,7 +309,7 @@ onUnmounted(() => {
     pointer-events: auto;
   }
   .image-button {
-    position: fixed;
+    position: absolute;
     cursor: pointer;
     width: 40px;
     height: 40px;
@@ -328,13 +333,13 @@ onUnmounted(() => {
     }
   }
   .icon-close {
-    position: fixed;
+    position: absolute;
     cursor: pointer;
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    top: 50px;
-    right: 50px;
+    top: 3%;
+    right: 3%;
     padding: 6px;
     background: rgba(255, 255, 255, 0.8);
     &::before,
@@ -350,13 +355,12 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
 }
-
 .actions-bar {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  position: fixed;
-  bottom: 50px;
+  position: absolute;
+  bottom: 5%;
   padding: 12px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.8);
