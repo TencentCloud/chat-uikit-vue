@@ -1,0 +1,121 @@
+.replies {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 400px;
+  overflow-y: auto;
+  border-radius: 8px 0 0 8px;
+  position: absolute;
+  right: 0;
+  height: calc(100% - 40px);
+  z-index: 2;
+  top: 40px;
+  background: #FFFFFF;
+  box-shadow: 0 1px 10px 0 rgb(2 16 43 / 15%);
+
+  .header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 30px;
+    padding: 10px 0;
+
+    &-title {
+      width: calc(100% - 40px);
+      text-align: left;
+      height: 30px;
+      font-family: PingFangSC-Medium;
+      font-weight: 500;
+      font-size: 16px;
+      color: #333333;
+      line-height: 30px;
+    }
+
+    &-close {
+      width: 20px;
+
+      i {
+        width: 12px;
+        height: 12px;
+      }
+    }
+
+    &-back {
+      width: 20px;
+    }
+  }
+
+  .body {
+    padding: 10px 0;
+    width: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+
+    .body-message {
+      border-bottom: 1px dashed #E0E0E0;
+    }
+
+    .body-list {
+      width: 100%;
+      flex: 1 1 auto;
+      overflow-y: auto;
+
+      &-item {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+        .replies-item {
+          flex: 1;
+        }
+
+        .avatar {
+          width: 36px;
+          height: 36px;
+          margin: 10px 10px 10px 0px;
+          border-radius: 10%;
+        }
+
+        .name {
+          width: calc(100% - 60px);
+          height: 20px;
+          display: inline-block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          line-height: 20px;
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          font-size: 14px;
+          color: #000000;
+          letter-spacing: 0;
+        }
+      }
+
+      .more {
+        text-align: center;
+        color: rgba(0, 0, 0, 0.3);
+        font-size: 12px;
+        padding: 10px;
+      }
+    }
+  }
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 140px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #d8d8d8;
+}
