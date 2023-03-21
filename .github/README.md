@@ -70,9 +70,9 @@ git clone https://github.com/TencentCloud/chat-uikit-vue.git
 
 # 移动并重命名到src目录下
 # macOS
-mv chat-uikit-vue src/TUIKit
+mv chat-uikit-vue/TUIKit src/TUIKit
 # windows
-move chat-uikit-vue src\TUIKit
+move chat-uikit-vue\TUIKit src\TUIKit
 
 # 进入 TUIKit
 cd src/TUIKit
@@ -207,12 +207,30 @@ npm run serve
 请参考 [即时通信 IM - 含 UI 集成方案 - 音视频通话](https://cloud.tencent.com/document/product/269/79861) 教程进行搭建。
 
 ### 常见问题
+#### 1. TUIKit 与 Demo 有何区别？
 
-#### 1. 什么是 UserSig？
+<table style="text-align:center; vertical-align:middle; width:1000px">
+  <tr>
+    <th style="text-align:center;" width="500px">TUIKit 运行效果</th>
+    <th style="text-align:center;" width="500px">Demo 运行效果</th>
+  </tr>
+  <tr>
+    <td><img style="width:500px" src="https://user-images.githubusercontent.com/57951148/225872424-c530e7ef-593d-472a-a77d-420d18bafefa.png"/></td>
+    <td><img style="width:500px" src="https://user-images.githubusercontent.com/57951148/225871366-f24b0abe-2829-4886-83fe-eb129338380a.png"/></td>
+   </tr>
+</table>
+
+TUIKit 是基于腾讯云 Web IM SDK 的一款 VUE UI 组件库，它提供了一些通用的 UI 组件，包含会话、聊天、音视频通话、关系链、资料、群组等功能。通过以上“TUIKit 源码集成”教程，您可以快速接入并体验 TUIKit 中的基础功能，并可以直接将 TUIKit 集成到您的现有项目中进行使用。
+
+Demo 是基于 TUIKit 搭建的一套完整的 即时通信含 UI 解决方案，他是一个基于 VUE3 + TS + TUIKit 的完整项目，其 views/Home.vue 文件中展示了丰富的 TUIKit 组合使用方案供您参考使用。
+ 
+
+
+#### 2. 什么是 UserSig？
 
 UserSig 是用户登录即时通信 IM 的密码，其本质是对 UserID 等信息加密后得到的密文。
 
-#### 2. 如何生成 UserSig？
+#### 3. 如何生成 UserSig？
 
 UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并提供面向项目的接口，在需要 UserSig 时由您的项目向业务服务器发起请求获取动态 UserSig。更多详情请参见 [服务端生成 UserSig](https://cloud.tencent.com/document/product/269/32688#GeneratingdynamicUserSig)。
 
@@ -220,7 +238,7 @@ UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并
 >
 > 本文示例代码采用的获取 UserSig 的方案是在客户端代码中配置 SECRETKEY，该方法中 SECRETKEY 很容易被反编译逆向破解，一旦您的密钥泄露，攻击者就可以盗用您的腾讯云流量，因此**该方法仅适合本地跑通功能调试**。 正确的 UserSig 签发方式请参见上文。
 
-#### 3. Component name "XXXX" should always be multi-word
+#### 4. Component name "XXXX" should always be multi-word
 
 - IM TUIKit web 所使用的 ESLint 版本为 v6.7.2 ，对于模块名的驼峰式格式并不进行严格校验
 - 如果您出现此问题，您可以在 .eslintrc.js 文件中进行如下配置：
@@ -235,6 +253,7 @@ module.exports = {
 };
 ```
 ### 相关文档
+- [快速跑通 Demo](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Demo)
 - [@tencentcloud/chat-uikit-vue npm仓库](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
 - [SDK API手册](https://web.sdk.qcloud.com/im/doc/zh-cn/SDK.html)
 - [SDK 更新日志](https://cloud.tencent.com/document/product/269/38492)
