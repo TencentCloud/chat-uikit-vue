@@ -25,7 +25,7 @@
 import { defineComponent, ref, toRefs, watchEffect, watch } from 'vue';
 import { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion/dist/packages/suggestion/src/suggestion';
 import atIcon from '../../../assets/icon/at.svg';
-import TIM from '@/TUIKit/TUICore/tim';
+import TIM from '../../../../TUICore/tim';
 import { onClickOutside } from '@vueuse/core';
 
 const MessageInputAt = ref();
