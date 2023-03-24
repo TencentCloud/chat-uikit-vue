@@ -78,12 +78,10 @@ mv chat-uikit-vue/TUIKit src/TUIKit
 # windows
 move chat-uikit-vue\TUIKit src\TUIKit
 
-# 进入 TUIKit
-cd src/TUIKit
-
 # 安装TUIKit依赖
-npm i --legacy-peer-deps
+npm i @tencentcloud/chat-uikit-vue --legacy-peer-deps
 ```
+
 成功后目录结构如图所示：  
 <img width="300" src="https://user-images.githubusercontent.com/57951148/192585499-1a4edd85-43cc-4527-9f39-494b7d7e625a.png"/>
 
@@ -274,9 +272,9 @@ npm run serve
 
 ![send your first message](https://user-images.githubusercontent.com/57951148/192585549-2cc65785-0d6d-4d48-a0ce-0abe0b927bf4.png)
 
-### 步骤 8: 拨打您的第一通电话
+#### 步骤 8: 拨打您的第一通电话
 自 @tencentcloud/chat-uikit-vue v1.4.0 版本起自动接入音视频通话功能，无需手动集成。
-如果您是v1.4.0 以下版本，可以通过接入 call-uikit-vue 体验通话功能。详情请参考 [音视频通话 ( Web & H5 )](https://cloud.tencent.com/document/product/269/79861) 
+如果您是 v1.4.0 以下版本，可以通过接入 call-uikit-vue 体验通话功能。详情请参考 [音视频通话 ( Web & H5 )](https://cloud.tencent.com/document/product/269/79861) 
  <img width="1015" alt="page05" src="https://user-images.githubusercontent.com/57951148/196082955-e046f0b1-bba2-491d-91b3-f30f2c6f4aae.png">
 
 ### 常见问题
