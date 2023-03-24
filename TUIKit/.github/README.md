@@ -39,7 +39,11 @@ chat-uikit-vue Web 端 和 H5 端界面效果如下图所示：
 
 #### 步骤 1：创建项目
 
-推荐使用 vue-cli 方式创建项目， 配置 Vue3 + TypeScript + sass。
+TUIKit 支持使用 webpack 或 vite 创建项目工程，配置 Vue3 + TypeScript + sass。
+
+以下是使用 vue-cli 搭建项目工程示例，vite 及 create-vue 搭建示例请参考官网教程 [集成 TUIKit 基础功能](https://cloud.tencent.com/document/product/269/68493)。
+
+使用 vue-cli 方式创建项目， 配置 Vue3 + TypeScript + sass。
 如果您尚未安装 vue-cli ，可以在 terminal 或 cmd 中采用如下方式进行安装：
 
 ```shell
@@ -52,7 +56,7 @@ npm install -g @vue/cli@4.5.0 sass sass-loader@10.1.1
 vue create chat-example
 ```
 
-![vue-cli-config](https://user-images.githubusercontent.com/57951148/201250381-8fa8d225-f93b-40b3-ad63-48336f9c7244.png)
+![vue-cli-config](https://user-images.githubusercontent.com/57951148/201915919-c5359f15-d3d2-4c33-8764-f694943c956b.png)
 
 创建完成后，切换到项目所在目录
 
@@ -91,6 +95,8 @@ npm i --legacy-peer-deps
 import { createApp } from 'vue';
 import App from './App.vue';
 import { TUIComponents, TUICore, genTestUserSig } from './TUIKit';
+// import TUICallKit
+import { TUICallKit } from '@tencentcloud/call-uikit-vue';
 
 const SDKAppID = 0; // Your SDKAppID
 const secretKey = ''; //Your secretKey
@@ -102,6 +108,8 @@ const TUIKit = TUICore.init({
 });
 // TUIKit add TUIComponents
 TUIKit.use(TUIComponents);
+// TUIKit add TUICallKit
+TUIKit.use(TUICallKit);
 
 // login TUIKit
 TUIKit.login({
@@ -141,31 +149,80 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
         <h1>欢迎使用腾讯云即时通信IM</h1>
       </TUIChat>
     </div>
+    <Drag :show="showCall" class="callkit-drag-container" domClassName="callkit-drag-container">
+      <!-- TUICallKit 组件：通话 UI 组件主体 -->
+      <TUICallKit
+        :allowedMinimized="true"
+        :allowedFullScreen="false"
+        :beforeCalling="beforeCalling"
+        :afterCalling="afterCalling"
+        :onMinimized="onMinimized"
+        :onMessageSentByMe="onMessageSentByMe"
+      />
+    </Drag>
+    <Drag :show="showCallMini" class="callkit-drag-container-mini" domClassName="callkit-drag-container-mini">
+      <!-- TUICallKitMini 组件：通话 UI 悬浮窗组件，提供最小化功能 -->
+      <TUICallKitMini style="position: static" />
+    </Drag>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from 'vue';
 import { TUIEnv } from './TUIKit/TUIPlugin';
+import Drag from './TUIKit/TUIComponents/components/drag';
+import { handleErrorPrompts } from './TUIKit/TUIComponents/container/utils';
 
 export default defineComponent({
   name: 'App',
+  components: {
+    Drag,
+  },
   setup() {
     const data = reactive({
       env: TUIEnv(),
       currentModel: 'conversation',
+      showCall: false,
+      showCallMini: false,
     });
+    const TUIServer = (window as any)?.TUIKitTUICore?.TUIServer;
     const handleCurrentConversation = (value: string) => {
       data.currentModel = value ? 'message' : 'conversation';
+    };
+    // beforeCalling：在拨打电话前与收到通话邀请前执行
+    const beforeCalling = (type: string, error: any) => {
+      if (error) {
+        handleErrorPrompts(error, type);
+        return;
+      }
+      data.showCall = true;
+    };
+    // afterCalling：结束通话后执行
+    const afterCalling = () => {
+      data.showCall = false;
+      data.showCallMini = false;
+    };
+    // onMinimized：组件切换最小化状态时执行
+    const onMinimized = (oldMinimizedStatus: boolean, newMinimizedStatus: boolean) => {
+      data.showCall = !newMinimizedStatus;
+      data.showCallMini = newMinimizedStatus;
+    };
+    // onMessageSentByMe：在整个通话过程内发送消息时执行
+    const onMessageSentByMe = async (message: any) => {
+      TUIServer?.TUIChat?.handleMessageSentByMeToView(message);
+      return;
     };
     return {
       ...toRefs(data),
       handleCurrentConversation,
+      beforeCalling,
+      afterCalling,
+      onMinimized,
+      onMessageSentByMe,
     };
   },
 });
 </script>
-
 <style scoped>
 .home-TUIKit-main {
   display: flex;
@@ -189,6 +246,20 @@ export default defineComponent({
   height: 100%;
   position: relative;
 }
+.callkit-drag-container {
+  left: calc(50% - 25rem);
+  top: calc(50% - 18rem);
+  width: 50rem;
+  height: 36rem;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.callkit-drag-container-mini {
+  width: 168px;
+  height: 56px;
+  right: 10px;
+  top: 70px;
+}
 </style>
 
 ```
@@ -203,8 +274,10 @@ npm run serve
 
 ![send your first message](https://user-images.githubusercontent.com/57951148/192585549-2cc65785-0d6d-4d48-a0ce-0abe0b927bf4.png)
 
-### 拨打您的第一通电话
-请参考 [即时通信 IM - 含 UI 集成方案 - 音视频通话](https://cloud.tencent.com/document/product/269/79861) 教程进行搭建。
+### 步骤 8: 拨打您的第一通电话
+自 @tencentcloud/chat-uikit-vue v1.4.0 版本起自动接入音视频通话功能，无需手动集成。
+如果您是v1.4.0 以下版本，可以通过接入 call-uikit-vue 体验通话功能。详情请参考 [音视频通话 ( Web & H5 )](https://cloud.tencent.com/document/product/269/79861) 
+ <img width="1015" alt="page05" src="https://user-images.githubusercontent.com/57951148/196082955-e046f0b1-bba2-491d-91b3-f30f2c6f4aae.png">
 
 ### 常见问题
 #### 1. TUIKit 与 Demo 有何区别？

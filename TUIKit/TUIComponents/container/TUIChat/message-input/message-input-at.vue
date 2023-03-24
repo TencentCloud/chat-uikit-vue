@@ -23,7 +23,7 @@
 </template>
 <script lang="ts">
 import { defineComponent, ref, toRefs, watchEffect, watch } from 'vue';
-import { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion/dist/packages/suggestion/src/suggestion';
+import { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import atIcon from '../../../assets/icon/at.svg';
 import TIM from '../../../../TUICore/tim';
 import { onClickOutside } from '@vueuse/core';

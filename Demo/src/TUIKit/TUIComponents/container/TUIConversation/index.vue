@@ -114,4 +114,4 @@ const TUIConversation = defineComponent({
 export default TUIConversation;
 </script>
 
-<style lang="scss" scoped src="./style/index.scss"></style>
+<style lang="scss" src="./style/index.scss"></style>
