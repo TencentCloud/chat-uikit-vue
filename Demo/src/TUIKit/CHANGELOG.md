@@ -1,3 +1,10 @@
+## 1.4.0 (2022-03-24)
+### 新增
+- 支持 vite & webpack 接入，详见[集成 TUIKit](https://cloud.tencent.com/document/product/269/68493)
+- 支持 音视频通话（TUICallKit） 功能自动集成
+### 修复
+- 修复已知问题，提升稳定性
+
 ## 1.3.6 (2022-03-21)
 ### 新增
 - 优化“音视频通话”集成方式, 详见[使用音视频通话](https://cloud.tencent.com/document/product/269/79861)

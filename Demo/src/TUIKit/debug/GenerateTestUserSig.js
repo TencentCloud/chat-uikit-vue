@@ -1,4 +1,7 @@
-import * as LibGenerateTestUserSig from './lib-generate-test-usersig.min.js';
+// es
+import LibGenerateTestUserSig from './lib-generate-test-usersig-es.min.js';
+// umd
+// import * as LibGenerateTestUserSig from './lib-generate-test-usersig-umd.min.js';
 
 /**
  * Signature expiration time, which should not be too short

@@ -20,5 +20,10 @@ declare module '*.svg' {
   export default content;
 }
 
+declare module '*.json' {
+  const content: any;
+  export default content;
+}
+
 declare module 'aegis-web-sdk';
 

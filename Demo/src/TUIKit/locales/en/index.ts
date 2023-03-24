@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-const TUIChat = require('./TUIChat.json');
-const TUIConversation = require('./TUIConversation.json');
-const TUIGroup = require('./TUIGroup.json');
-const TUIProfile = require('./TUIProfile.json');
-const TUIContact = require('./TUIContact.json');
-const TUISearch = require('./TUISearch.json');
+import TUIChat from "./TUIChat.json";
+import TUIConversation from './TUIConversation.json';
+import TUIGroup from './TUIGroup.json';
+import TUIProfile from './TUIProfile.json';
+import TUIContact from './TUIContact.json';
+import TUISearch from './TUISearch.json';
 
-const message = require('./message.json');
-const component = require('./component.json');
-const time = require('./time.json');
-const Words = require('./words.json');
-const Evaluate = require('./evaluate.json');
+import message from './message.json';
+import component from './component.json';
+import time from './time.json';
+import Words from './words.json';
+import Evaluate from './evaluate.json';
 
 const messages = {
   en: {
