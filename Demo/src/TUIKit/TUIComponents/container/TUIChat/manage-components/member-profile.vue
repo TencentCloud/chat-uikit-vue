@@ -87,6 +87,8 @@ const memberProfile = defineComponent({
 export default memberProfile;
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .memeber-profile {
   flex: 1;
   display: flex;

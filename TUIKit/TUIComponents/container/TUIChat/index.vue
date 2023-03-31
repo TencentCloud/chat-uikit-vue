@@ -28,52 +28,21 @@
           {{ $t('TUIChat.查看更多') }}
         </p>
         <li v-for="(item, index) in messages" :key="index" :id="item?.ID" ref="messageAimID">
-          <MessageTip v-if="isMessageTip(item)" :data="handleTipMessageShowContext(item)" />
-          <MessageBubble
-            v-else-if="!item.isRevoked"
-            :isH5="env.isH5"
-            :data="item"
-            :messagesList="messages"
-            :needGroupReceipt="needGroupReceipt"
-            :needReplies="true"
-            :needEmojiReact="isNeedEmojiReact"
+          <MessageTimestamp :currTime="item?.time" :prevTime="index > 0 ? (messages[index-1]?.time) : 0"></MessageTimestamp>
+          <MessageItem
+            :message="item"
+            :env="env"
+            :types="types"
+            :displayGroupMessageReadReceipt="needGroupReceipt"
+            :displayEmojiReactions="isNeedEmojiReact"
+            :messageList="messages"
+            @handleEditor="handleEditor"
+            @showDialog="showDialog"
+            @uploading="handleUploadingImageOrVideo"
             @jumpID="jumpID"
             @resendMessage="resendMessage"
-            @showReadReceiptDialog="showDialog"
-            @showRepliesDialog="showDialog"
-            @dropDownOpen="handleDropDownOpen"
           >
-            <MessageText v-if="item.type === types.MSG_TEXT" :data="handleTextMessageShowContext(item)" />
-            <MessageImage
-              v-if="item.type === types.MSG_IMAGE"
-              :data="handleImageMessageShowContext(item)"
-              :isH5="env.isH5"
-              @uploading="handleUploadingImageOrVideo"
-              @previewImage="handleImagePreview"
-            />
-            <MessageVideo
-              v-if="item.type === types.MSG_VIDEO"
-              :data="handleVideoMessageShowContext(item)"
-              :isH5="env.isH5"
-              @uploading="handleUploadingImageOrVideo"
-            />
-            <MessageAudio v-if="item.type === types.MSG_AUDIO" :data="handleAudioMessageShowContext(item)" />
-            <MessageFile v-if="item.type === types.MSG_FILE" :data="handleFileMessageShowContext(item)" />
-            <MessageFace v-if="item.type === types.MSG_FACE" :data="handleFaceMessageShowContext(item)" />
-            <MessageLocation v-if="item.type === types.MSG_LOCATION" :data="handleLocationMessageShowContext(item)" />
-            <MessageCustom v-if="item.type === types.MSG_CUSTOM" :data="handleCustomMessageShowContext(item)" />
-            <MessageMerger v-if="item.type === types.MSG_MERGER" :data="handleMergerMessageShowContext(item)" />
-            <template #dialog>
-              <MessageTool
-                :message="item"
-                :needEmojiReact="isNeedEmojiReact"
-                @forwardMessage="forwardMessage"
-                @referOrReplyMessage="referOrReplyMessage"
-              />
-              <MessageEmojiReact v-if="!env?.isH5 && isNeedEmojiReact" :message="item" type="dropdown" />
-            </template>
-          </MessageBubble>
-          <MessageRevoked v-else :isEdit="item.type === types.MSG_TEXT" :data="item" @edit="handleEdit(item)" />
+          </MessageItem>
         </li>
         <div class="to-bottom-tip" v-if="needToBottom" @click="scrollToTarget('bottom')">
           <i class="icon icon-bottom-double"></i>
@@ -181,39 +150,13 @@ import {
   onMounted,
   watchEffect,
 } from 'vue';
-import {
-  MessageText,
-  MessageImage,
-  MessageVideo,
-  MessageAudio,
-  MessageFile,
-  MessageFace,
-  MessageLocation,
-  MessageMerger,
-  MessageCustom,
-  MessageBubble,
-  MessageTip,
-  MessageRevoked,
-  MessageSystem,
-  MessageTool,
-  MessageEmojiReact,
-} from './components';
+import { MessageSystem, MessageItem, MessageTimestamp } from './components';
 import { onClickOutside } from '@vueuse/core';
 import { Manage } from './manage-components';
 
 import {
   handleAvatar,
   handleName,
-  handleTextMessageShowContext,
-  handleImageMessageShowContext,
-  handleVideoMessageShowContext,
-  handleAudioMessageShowContext,
-  handleFileMessageShowContext,
-  handleFaceMessageShowContext,
-  handleLocationMessageShowContext,
-  handleMergerMessageShowContext,
-  handleTipMessageShowContext,
-  handleCustomMessageShowContext,
   getImgLoad,
   isTypingMessage,
   deepCopy,
@@ -236,23 +179,11 @@ import MessageInput from './message-input';
 const TUIChat: any = defineComponent({
   name: 'TUIChat',
   components: {
-    MessageText,
-    MessageImage,
-    MessageVideo,
-    MessageAudio,
-    MessageFile,
-    MessageFace,
-    MessageLocation,
-    MessageMerger,
-    MessageCustom,
-    MessageBubble,
-    MessageTip,
-    MessageRevoked,
     MessageSystem,
+    MessageTimestamp,
     Manage,
-    MessageTool,
-    MessageEmojiReact,
     MessageInput,
+    MessageItem,
   },
   props: {
     isMsgNeedReadReceipt: {
@@ -552,7 +483,7 @@ const TUIChat: any = defineComponent({
         data.isFirstSend = false;
       }
       data.reference.show = '';
-      TUIServer.TUICore.isOfficial && VuexStore?.commit('handleTask', 0);
+      TUIServer.TUICore.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 0);
     };
 
     const handleItem = (item: any) => {
@@ -664,6 +595,25 @@ const TUIChat: any = defineComponent({
       });
     };
 
+    const handleEditor = (message: Message, type: string) => {
+      if (!message || !type) return;
+      switch (type) {
+        case 'reference':
+          referOrReplyMessage(message, type);
+          break;
+        case 'reply':
+          referOrReplyMessage(message, type);
+          break;
+        case 'reedit':
+          if (message?.payload?.text) {
+            messageInput?.value?.reEdit(message?.payload?.text);
+          }
+          break;
+        default:
+          break;
+      }
+    };
+
     const showDialog = async (message: Message, type: string) => {
       if (!message?.ID || !type) return;
       switch (type) {
@@ -681,10 +631,20 @@ const TUIChat: any = defineComponent({
           data.currentMessage = message;
           data.repliesDialogStatus = true;
           break;
+        case 'forward':
+          data.currentMessage = message;
+          conversationData.list = TUIServer.TUICore.getStore().TUIConversation.conversationList;
+          data.forwardStatus = true;
+          break;
+        case 'previewImage':
+          data.showImagePreview = !data.showImagePreview;
+          data.currentImagePreview = message;
+          break;
         default:
           break;
       }
     };
+
     const closeDialog = async (type: string) => {
       if (!type) return;
       switch (type) {
@@ -728,9 +688,17 @@ const TUIChat: any = defineComponent({
         case constant.scrollType.toBottom:
           data.needToBottom = false;
           nextTick(() => {
-            messageEle?.value?.lastElementChild?.scrollIntoView(false);
-            getImgLoad(messageEle?.value, 'message-img', async () => {
+            if (data?.env?.isH5) {
+              handleH5Scroll();
+            } else {
               messageEle?.value?.lastElementChild?.scrollIntoView(false);
+            }
+            getImgLoad(messageEle?.value, 'message-img', async () => {
+              if (data?.env?.isH5) {
+                handleH5Scroll();
+              } else {
+                messageEle?.value?.lastElementChild?.scrollIntoView(false);
+              }
               messageEle.value.addEventListener('scroll', onScrolling);
               await sendMessageReadInView('page');
             });
@@ -750,6 +718,14 @@ const TUIChat: any = defineComponent({
         default:
           break;
       }
+    };
+
+    const handleH5Scroll = () => {
+      if (document?.getElementById('app')?.style) {
+        (document.getElementById('app') as any).style.marginBottom = ``;
+        (document.getElementById('app') as any).style.height = `100%`;
+      }
+      messageEle.value.scrollTop = messageEle.value.scrollHeight;
     };
 
     const onScrolling = () => {
@@ -848,6 +824,7 @@ const TUIChat: any = defineComponent({
     const handleUploadingImageOrVideo = () => {
       scrollToTarget('bottom');
     };
+
     const handleImagePreview = (message: any) => {
       data.showImagePreview = !data.showImagePreview;
       data.currentImagePreview = message;
@@ -881,18 +858,9 @@ const TUIChat: any = defineComponent({
       handleTyping,
       handleItem,
       handleEdit,
+      handleEditor,
       getHistoryMessageList,
       handleApplication,
-      handleTextMessageShowContext,
-      handleImageMessageShowContext,
-      handleVideoMessageShowContext,
-      handleAudioMessageShowContext,
-      handleFileMessageShowContext,
-      handleFaceMessageShowContext,
-      handleLocationMessageShowContext,
-      handleMergerMessageShowContext,
-      handleTipMessageShowContext,
-      handleCustomMessageShowContext,
       pluginComponentList,
       handleSend,
       closeDialog,

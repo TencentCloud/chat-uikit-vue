@@ -124,7 +124,7 @@ export default defineComponent({
               userID: flow === 'out' ? to : from,
               type: callType,
             });
-            (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 6);
+            (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 6);
           } catch (error) {
             console.warn(error);
           }
@@ -157,6 +157,8 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 a {
   color: #679ce1;
 }

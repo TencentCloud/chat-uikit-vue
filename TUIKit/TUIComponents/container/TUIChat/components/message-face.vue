@@ -1,6 +1,13 @@
 <template>
   <div class="message-image" ref="skeleton">
-    <img class="message-img" :src="data.url" />
+    <img class="message-img" :src="data.url" :style="
+        isH5
+          ? {
+              maxWidth: data.width ? data.width + 'px' : 'calc(100vw - 180px)',
+              maxHeight: data.height ? data.height + 'px' : 'calc(100vw - 180px)',
+            }
+          : {}
+      "/>
   </div>
 </template>
 
@@ -13,6 +20,10 @@ export default defineComponent({
     data: {
       type: Object,
       default: () => ({}),
+    },
+    isH5: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props: any, ctx: any) {
@@ -41,6 +52,8 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .text-img {
   width: 20px;
   height: 20px;

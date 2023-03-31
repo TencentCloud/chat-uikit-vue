@@ -56,15 +56,15 @@ const props = defineProps({
   },
   enableTyping: {
     type: Boolean,
-    deafult: true,
+    default: true,
   },
   isH5: {
     type: Boolean,
-    deafult: true,
+    default: true,
   },
   isGroup: {
     type: Boolean,
-    deafult: false,
+    default: false,
   },
 });
 const emits = defineEmits(['sendMessage', 'onTyping']);
@@ -111,11 +111,22 @@ const editor = useEditor({
     emits('onTyping', inputContentEmpty.value, inputBlur.value);
   },
   onFocus() {
+    if (isH5.value && document?.getElementById('app')?.style) {
+      // set app height when keyboard popup
+      const keyboardHeight = document.body.scrollHeight - window.innerHeight;
+      (document.getElementById('app') as any).style.marginBottom = `${keyboardHeight}px`;
+      (document.getElementById('app') as any).style.height = `calc(100% - ${keyboardHeight}px)`;
+    }
     if (!enableTyping.value || isGroup.value) return;
     inputBlur.value = true;
     emits('onTyping', inputContentEmpty.value, inputBlur.value);
   },
   onBlur() {
+    if (isH5.value && document?.getElementById('app')?.style) {
+      // reset app height to normal
+      (document.getElementById('app') as any).style.marginBottom = ``;
+      (document.getElementById('app') as any).style.height = `100%`;
+    }
     if (!enableTyping.value || isGroup.value) return;
     inputBlur.value = true;
     emits('onTyping', inputContentEmpty.value, inputBlur.value);
@@ -373,6 +384,8 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .message-input {
   &-container {
     display: flex;
@@ -417,6 +430,11 @@ defineExpose({
   word-wrap: break-word;
   word-break: break-all;
   white-space: pre-wrap;
+  div,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,p{
+    margin:0;
+    padding:0;
+    font-style:normal;
+  }
   p {
     * {
       vertical-align: bottom;

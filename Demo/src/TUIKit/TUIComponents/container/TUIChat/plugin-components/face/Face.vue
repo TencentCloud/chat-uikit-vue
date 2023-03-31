@@ -1,22 +1,27 @@
 <template>
   <div class="face" id="face">
-      <i class="icon icon-face" title="表情" @click="toggleShow"></i>
-      <main class="face-main" :class="[isH5 && 'face-H5-main']" v-show="show" ref="dialog">
-         <ul class="face-list" v-for="(item, index) in list" :key="index" v-show="currentIndex === index">
-          <li  class="face-list-item" v-for="(childrenItem, childrenIndex) in item" :key="childrenIndex" @click="select(childrenItem, childrenIndex)">
-            <img v-if="index === 0" :src="emojiUrl + emojiMap[childrenItem]">
-            <img class="face-img" v-else :src="faceUrl + childrenItem + '@2x.png'">
-          </li>
-        </ul>
-        <ul class="face-tab">
-          <li  class="face-tab-item" @click="selectFace(0)">
-            <i class="icon icon-face"></i>
-          </li>
-          <li  class="face-tab-item" v-for="(item, index) in bigEmojiList" :key="index" @click="selectFace(index+1)">
-            <img :src="faceUrl + item.list[0] + '@2x.png'">
-          </li>
-        </ul>
-      </main>
+    <i class="icon icon-face" title="表情" @click="toggleShow"></i>
+    <main class="face-main" :class="[isH5 && 'face-H5-main']" v-show="show" ref="dialog">
+      <ul class="face-list" v-for="(item, index) in list" :key="index" v-show="currentIndex === index">
+        <li
+          class="face-list-item"
+          v-for="(childrenItem, childrenIndex) in item"
+          :key="childrenIndex"
+          @click="select(childrenItem, childrenIndex)"
+        >
+          <img v-if="index === 0" :src="emojiUrl + emojiMap[childrenItem]" />
+          <img class="face-img" v-else :src="faceUrl + childrenItem + '@2x.png'" />
+        </li>
+      </ul>
+      <ul class="face-tab">
+        <li class="face-tab-item" @click="selectFace(0)">
+          <i class="icon icon-face"></i>
+        </li>
+        <li class="face-tab-item" v-for="(item, index) in bigEmojiList" :key="index" @click="selectFace(index + 1)">
+          <img :src="faceUrl + item.list[0] + '@2x.png'" />
+        </li>
+      </ul>
+    </main>
   </div>
 </template>
 
@@ -46,20 +51,20 @@ const Face = defineComponent({
       default: () => '',
     },
   },
-  setup(props:any, ctx:any) {
+  setup(props: any, ctx: any) {
     const data = reactive({
       emojiUrl,
       emojiMap,
       emojiName,
       faceUrl,
-      bigEmojiList,
+      bigEmojiList:(window as any)?.TUIKitTUICore?.isOfficial && bigEmojiList || [],
       show: false,
       currentIndex: 0,
       isMute: false,
       transDom: false,
     });
 
-    const dialog:any = ref();
+    const dialog: any = ref();
 
     watchEffect(() => {
       data.show = props.show;
@@ -67,7 +72,7 @@ const Face = defineComponent({
     });
 
     const toggleShow = () => {
-      const main:any = document.getElementsByClassName('face-main')[0];
+      const main: any = document.getElementsByClassName('face-main')[0];
       if (!data.isMute) {
         main.style.display = main.style.display === 'none' ? 'flex' : 'none';
       }
@@ -86,14 +91,14 @@ const Face = defineComponent({
     };
 
     onClickOutside(dialog, () => {
-      const main:any = document.getElementsByClassName('face-main')[0];
+      const main: any = document.getElementsByClassName('face-main')[0];
       if (main) {
         main.style.display = 'none';
       }
     });
 
-    const select = async (item:string, index:number) => {
-      const options:any = {
+    const select = async (item: string, index: number) => {
+      const options: any = {
         name: item,
       };
       if (data.currentIndex === 0) {
@@ -124,14 +129,14 @@ const Face = defineComponent({
     };
 
     const list = computed(() => {
-      const emjiList = [data.emojiName];
+      const emojiList = [data.emojiName];
       for (let i = 0; i < data.bigEmojiList.length; i++) {
-        emjiList.push(data.bigEmojiList[i].list);
+        emojiList.push(data.bigEmojiList[i].list);
       }
-      return emjiList;
+      return emojiList;
     });
 
-    const selectFace = (index:number) => {
+    const selectFace = (index: number) => {
       data.currentIndex = index;
     };
 

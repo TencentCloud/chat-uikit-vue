@@ -21,30 +21,30 @@
         <i class="icon icon-msg-copy"></i>
         <span>{{ $t('TUIChat.打开') }}</span>
       </li>
-      <li v-if="message.type === types.MSG_TEXT" @click="handleMseeage(message, constant.handleMessage.copy)">
+      <li v-if="message.type === types.MSG_TEXT" @click="handleMessage(message, constant.handleMessage.copy)">
         <i class="icon icon-msg-copy"></i>
         <span>{{ $t('TUIChat.复制') }}</span>
       </li>
-      <li v-if="message.status === 'success'" @click="handleMseeage(message, constant.handleMessage.forward)">
+      <li v-if="message.status === 'success'" @click="handleMessage(message, constant.handleMessage.forward)">
         <i class="icon icon-msg-forward"></i>
         <span>{{ $t('TUIChat.转发') }}</span>
       </li>
-      <li v-if="message.status === 'success'" @click="handleMseeage(message, 'reference')">
+      <li v-if="message.status === 'success'" @click="handleMessage(message, constant.handleMessage.reference)">
         <i class="icon icon-msg-quote"></i>
         <span>{{ $t('TUIChat.引用') }}</span>
       </li>
-      <li v-if="message.status === 'success'" @click="handleMseeage(message, 'reply')">
+      <li v-if="message.status === 'success'" @click="handleMessage(message, constant.handleMessage.reply)">
         <i class="icon icon-msg-reply"></i>
         <span>{{ $t('TUIChat.回复') }}</span>
       </li>
       <li
         v-if="message.flow === 'out' && message.status === 'success' && message.type !== types.MSG_CUSTOM"
-        @click="handleMseeage(message, constant.handleMessage.revoke)"
+        @click="handleMessage(message, constant.handleMessage.revoke)"
       >
         <i class="icon icon-msg-revoke"></i>
         <span>{{ $t('TUIChat.撤回') }}</span>
       </li>
-      <li v-if="message.status === 'success'" @click="handleMseeage(message, constant.handleMessage.delete)">
+      <li v-if="message.status === 'success'" @click="handleMessage(message, constant.handleMessage.delete)">
         <i class="icon icon-msg-del"></i>
         <span>{{ $t('TUIChat.删除') }}</span>
       </li>
@@ -115,7 +115,7 @@ export default defineComponent({
       window.open(url, '_blank');
     };
 
-    const handleMseeage = async (message: Message, type: string) => {
+    const handleMessage = async (message: Message, type: string) => {
       switch (type) {
         case constant.handleMessage.revoke:
           try {
@@ -124,7 +124,7 @@ export default defineComponent({
               name: 'messageOptions',
               ext1: 'messageRevoke',
             });
-            (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 1);
+            (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 1);
           } catch (error) {
             handleErrorPrompts(error, data.env);
           }
@@ -151,13 +151,13 @@ export default defineComponent({
             name: 'messageOptions',
             ext1: 'messageForward',
           });
-          ctx.emit('forwardMessage', message);
+          ctx.emit('handleMessage', message, constant.handleMessage.forward);
           break;
         case constant.handleMessage.reference:
-          ctx.emit('referOrReplyMessage', message, 'reference');
+          ctx.emit('handleMessage', message, constant.handleMessage.reference);
           break;
         case constant.handleMessage.reply:
-          ctx.emit('referOrReplyMessage', message, 'reply');
+          ctx.emit('handleMessage', message, constant.handleMessage.reply);
           break;
       }
     };
@@ -170,7 +170,7 @@ export default defineComponent({
     return {
       ...toRefs(data),
       openMessage,
-      handleMseeage,
+      handleMessage,
       constant,
       handleCollapse,
     };
@@ -178,6 +178,8 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .dialog-item {
   background: #ffffff;
   min-width: min-content;
@@ -191,6 +193,7 @@ export default defineComponent({
   flex-wrap: wrap;
   align-items: baseline;
   white-space: nowrap;
+  border: 1px solid #e0e0e0;
   &-web {
     padding: 12px 0;
   }

@@ -162,7 +162,7 @@ const TUISearch = defineComponent({
         const imResponse = await GroupServer.createGroup(options);
         const message = t('TUISearch.创建成功');
         handleSuccessPrompts(message, data.env);
-        (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 3);
+        (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 3);
         toggleOpen();
         if (params.type === TUIServer.TUICore.TIM.TYPES.GRP_AVCHATROOM) {
           GroupServer.joinGroup({
