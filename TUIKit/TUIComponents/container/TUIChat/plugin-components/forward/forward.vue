@@ -102,6 +102,8 @@ export default Forward;
 </script>
 
 <style lang="scss" scoped>
+@import url('../../../../styles/common.scss');
+@import url('../../../../styles/icon.scss');
 .forward {
   position: absolute;
   z-index: 5;

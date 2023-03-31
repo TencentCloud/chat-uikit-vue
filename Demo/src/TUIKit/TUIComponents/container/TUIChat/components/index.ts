@@ -13,6 +13,8 @@ import MessageRevoked from './message-revoked.vue';
 import MessageSystem from './message-system.vue';
 import MessageTool from './message-tool.vue';
 import MessageEmojiReact from './message-emoji-react.vue';
+import MessageItem from './index.vue';
+import MessageTimestamp from './message-timestamp.vue'
 
 export {
   MessageText,
@@ -25,9 +27,11 @@ export {
   MessageMerger,
   MessageCustom,
   MessageTip,
+  MessageTimestamp,
   MessageBubble,
   MessageRevoked,
   MessageSystem,
   MessageTool,
-  MessageEmojiReact
+  MessageEmojiReact,
+  MessageItem
 };

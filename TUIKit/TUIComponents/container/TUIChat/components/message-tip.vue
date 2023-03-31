@@ -30,6 +30,8 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .message-tip {
   margin: 0 auto;
   color: #999999;

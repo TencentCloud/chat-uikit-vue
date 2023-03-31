@@ -91,6 +91,8 @@ export default Custom;
 </script>
 
 <style lang="scss" scoped>
+@import url('../../../../../styles/common.scss');
+@import url('../../../../../styles/icon.scss');
 .custom {
   display: inline-block;
   position: relative;

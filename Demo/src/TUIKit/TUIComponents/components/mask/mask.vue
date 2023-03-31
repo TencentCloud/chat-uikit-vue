@@ -37,6 +37,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import url('../../styles/common.scss');
+@import url('../../styles/icon.scss');
 .mask {
   position: fixed;
   width: 100vw;

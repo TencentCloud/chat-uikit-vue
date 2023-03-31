@@ -60,6 +60,8 @@ export default File;
 </script>
 
 <style lang="scss" scoped>
+@import url('../../../../styles/common.scss');
+@import url('../../../../styles/icon.scss');
 .upload-btn {
   position: relative;
   input {

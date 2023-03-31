@@ -476,7 +476,7 @@ const manage = defineComponent({
     const dismiss = async (group: any) => {
       await GroupServer.dismissGroup(group.groupID);
       manage.TUIServer.store.conversation = {};
-      (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 5);
+      (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 5);
     };
 
     const handleAdmin = async (user: any) => {
@@ -508,7 +508,7 @@ const manage = defineComponent({
       };
       await GroupServer.setGroupMemberMuteTime(options);
       if (type === 'add') {
-        (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 4);
+        (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 4);
       }
       getMember();
     };
@@ -696,7 +696,7 @@ const manage = defineComponent({
 
     const setAllMuteTime = (value: boolean) => {
       updateProfile({ key: 'muteAllMembers', value });
-      (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit('handleTask', 4);
+      (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 4);
     };
 
     const handleManage = (userList: any, type: any) => {

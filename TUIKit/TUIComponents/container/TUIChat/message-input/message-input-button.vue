@@ -21,7 +21,7 @@ const props = defineProps({
   },
   isH5: {
     type: Boolean,
-    deafult: true,
+    default: true,
   },
 });
 const { enableSend } = toRefs(props);
@@ -31,6 +31,8 @@ const sendMessage = () => {
 }
 </script>
 <style scoped lang="scss">
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .message-input-button {
   position: absolute;
   bottom: 20px;

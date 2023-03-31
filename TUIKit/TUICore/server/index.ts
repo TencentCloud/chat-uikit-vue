@@ -143,6 +143,7 @@ export default class TUICore extends ITUIServer {
             SDKAppID: this.SDKAppID,
             userID: options.userID,
             userSig: options.userSig,
+            tim: this.tim,
           });
           if (TUICore?.instance?.TUIServer?.TUICallKit) {
             TUIAegis.getInstance().reportEvent({

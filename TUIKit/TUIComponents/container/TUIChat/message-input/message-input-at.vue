@@ -248,6 +248,8 @@ export default MessageInputAtComponent;
 export { MessageInputAtSuggestion, MessageInputAtComponent };
 </script>
 <style scoped lang="scss">
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .message-input-at {
   position: fixed;
   max-width: 15rem;

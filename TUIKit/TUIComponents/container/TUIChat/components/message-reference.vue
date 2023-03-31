@@ -3,7 +3,10 @@
     v-if="referenceMessage?.messageID && allMessageID.indexOf(referenceMessage.messageID) !== -1"
     :class="`${type} ${message.flow === 'in' && type + '-reverse'}`"
   >
-    <p>{{ referenceForShow.nick || referenceForShow.from }}{{ type === 'reference' ? ':' : '' }}</p>
+    <p class="message-reference-user">
+      <span class="nick">{{ referenceForShow.nick || referenceForShow.from }}</span>
+      <span class="colon">{{ type === 'reference' ? ':' : '' }}</span>
+    </p>
     <div class="face-box" v-if="referenceMessage.messageType === constant.typeText">
       <div v-for="(item, index) in face" :key="index">
         <span class="text-box" v-if="item.name === 'text'">{{ item.text }}</span>
@@ -105,6 +108,8 @@ const MessageReference = defineComponent({
 export default MessageReference;
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .reference {
   width: 100%;
   display: flex;
@@ -198,6 +203,20 @@ export default MessageReference;
     text-overflow: ellipsis;
     word-break: break-all;
     white-space: nowrap;
+  }
+}
+.message-reference-user{
+  display: flex;
+  flex-direction: row;
+  .nick{
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+  }
+  .colon{
+    width: fit-content;
   }
 }
 </style>

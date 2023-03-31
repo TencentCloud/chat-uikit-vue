@@ -53,7 +53,7 @@ const props = defineProps({
   },
   isGroup: {
     type: Boolean,
-    deafult: false,
+    default: false,
   },
   memberList: {
     type: Array,
@@ -81,7 +81,7 @@ const props = defineProps({
   },
   enableTyping: {
     type: Boolean,
-    deafult: true,
+    default: true,
   },
   env: {
     type: Object,
@@ -225,6 +225,8 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .message-input {
   flex: 1;
   position: relative;

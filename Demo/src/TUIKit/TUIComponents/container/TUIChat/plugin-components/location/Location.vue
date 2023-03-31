@@ -79,6 +79,8 @@ export default Location;
 </script>
 
 <style lang="scss" scoped>
+@import url('../../../../styles/common.scss');
+@import url('../../../../styles/icon.scss');
 .location {
   display: inline-block;
   position: relative;

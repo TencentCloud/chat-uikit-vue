@@ -395,6 +395,8 @@ const messageBubble = defineComponent({
 export default messageBubble;
 </script>
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .reverse {
   flex-direction: row-reverse;
   justify-content: flex-start;

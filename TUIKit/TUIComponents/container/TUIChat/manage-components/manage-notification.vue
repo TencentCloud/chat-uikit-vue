@@ -58,6 +58,8 @@ export default ManageNotification;
 </script>
 
 <style lang="scss" scoped>
+@import url('../../../styles/common.scss');
+@import url('../../../styles/icon.scss');
 .notification {
   flex: 1;
   padding: 20px;
