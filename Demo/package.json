@@ -17,7 +17,7 @@
     "core-js": "^3.6.5",
     "element-plus": "^2.1.4",
     "qs": "^6.10.3",
-    "tim-js-sdk": "^2.26.6",
+    "tim-js-sdk": "2.27.1",
     "tim-profanity-filter-plugin": "^0.9.0",
     "tim-upload-plugin": "^1.0.6",
     "vue": "^3.0.0",
