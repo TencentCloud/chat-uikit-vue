@@ -127,7 +127,7 @@ export default defineComponent({
       data.data = props.data;
       if (!data.data) return;
       data.poster = await handlePosterUrl(data.data);
-      await nextTick(async () => {
+      nextTick(async () => {
         const containerWidth = document.getElementById('messageEle')?.clientWidth || 0;
         const max = props.isH5 ? Math.min(containerWidth - 172, 300) : 300;
         let size;

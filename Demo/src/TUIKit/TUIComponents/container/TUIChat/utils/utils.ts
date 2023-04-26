@@ -111,9 +111,10 @@ export function handleShowLastMessage(item: any) {
   let lastMessagePayload = '';
   // Judge the number of unread messages and display them only when the message is enabled without interruption.
   const showUnreadCount =
-    conversation.unreadCount > 0 && conversation.messageRemindType === TIM.TYPES.MSG_REMIND_ACPT_NOT_NOTE
-      ? t(`[${conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}条]`)
-      : '';
+    conversation.unreadCount > 0 &&
+    conversation.messageRemindType === TIM.TYPES.MSG_REMIND_ACPT_NOT_NOTE
+      ? `[${conversation.unreadCount > 99 ? "99+" : conversation.unreadCount}${t('TUIConversation.条')}] `
+      : "";
   // Determine the lastmessage sender of the group. Namecard / Nick / userid is displayed by priority
   if (conversation.type === TIM.TYPES.CONV_GROUP) {
     if (lastMessage.fromAccount === conversation.groupProfile.selfInfo.userID) {
@@ -197,6 +198,8 @@ export function handleTipMessageShowContext(message: any) {
         options.text = `[${t('message.tip.群提示消息')}]`;
         break;
     }
+  } else if (message?.payload?.data === "group_create") {
+    options.text = message?.payload?.extension;
   } else {
     options.text = extractCallingInfoFromMessage(message);
   }
@@ -583,7 +586,10 @@ export const isMessageTip = (message: Message) => {
     message?.type === TIM?.TYPES?.MSG_GRP_TIP ||
     (message?.type === TIM?.TYPES?.MSG_CUSTOM &&
       message?.conversationType === TIM?.TYPES?.CONV_GROUP &&
-      JSONToObject(message?.payload?.data)?.businessID === constant?.TYPE_CALL_MESSAGE)
+        constant?.TYPE_CALL_MESSAGE) ||
+    (message?.type === TIM?.TYPES?.MSG_CUSTOM &&
+      message?.conversationType === TIM?.TYPES?.CONV_GROUP &&
+      message?.payload?.data === "group_create")
   ) {
     return true;
   }
