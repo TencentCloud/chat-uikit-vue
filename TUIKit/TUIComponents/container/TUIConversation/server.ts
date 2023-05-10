@@ -36,12 +36,9 @@ export default class TUIConversationServer extends IComponentServer {
       return;
     }
     this.currentStore.conversationData.list = newValue.conversationList;
-    newValue?.conversationList?.filter((item: any) => {
-      if (item?.userProfile?.userID) {
-        this.currentStore.userIDList.add(item?.userProfile?.userID);
-      }
-    });
-    this.currentStore.userStatusList = this.TUICore.TUIServer.TUIContact.currentStore?.userStatusList;
+    this.currentStore.userIDList = this.currentStore.conversationData.list
+      ?.filter((item: any) => item?.userProfile?.userID)
+      .map((item: any) => item?.userProfile?.userID);
   }
 
   /**
@@ -253,7 +250,6 @@ export default class TUIConversationServer extends IComponentServer {
   public async bind(params: any) {
     this.currentStore = params;
     await this.getConversationList();
-    this.currentStore.userStatusList = this.TUICore.TUIServer.TUIContact.currentStore?.userStatusList;
     return this.currentStore;
   }
 
