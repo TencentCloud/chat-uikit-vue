@@ -51,11 +51,11 @@ const TUIConversation = defineComponent({
           return '';
         },
       },
-      userIDList: new Set(),
+      userIDList: [],
       netWork: '',
       env: TUIServer.TUICore.TUIEnv,
       displayOnlineStatus: false,
-      userStatusList: TUIServer.TUICore.TUIServer.TUIContact?.currentStore?.userStatusList,
+      userStatusList: new Map(),
     });
 
     TUIServer.bind(data);
@@ -78,7 +78,6 @@ const TUIConversation = defineComponent({
         if (newVal === oldVal) return;
         data.displayOnlineStatus = newVal;
         TUIServer.TUICore.TUIServer.TUIContact.handleUserStatus(data.displayOnlineStatus, [...data.userIDList]);
-        data.userStatusList = TUIServer.TUICore.TUIServer.TUIContact?.currentStore?.userStatusList;
       },
       { immediate: true }
     );

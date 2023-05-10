@@ -1,6 +1,6 @@
 {
   "name": "@tencentcloud/chat-uikit-vue",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "dependencies": {
     "@vueuse/core": "8.9.4",
     "tim-js-sdk": "^2.27.1",

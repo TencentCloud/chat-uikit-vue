@@ -89,6 +89,9 @@ export default class TUIContactServer extends IComponentServer {
     userStatusList.forEach((item: { userID?: string; statusType?: number; customStatus?: any }) => {
       const { userID, statusType, customStatus } = item;
       this.currentStore?.userStatusList?.set(userID, { statusType, customStatus });
+      this.TUICore?.TUIServer?.TUIConversation?.currentStore?.userStatusList?.set(
+        userID, { statusType, customStatus }
+      );
     });
   }
 
@@ -417,6 +420,10 @@ export default class TUIContactServer extends IComponentServer {
         imResponse?.data?.successUserList?.forEach((item: any) => {
           if (item && item?.userID) {
             this.currentStore?.userStatusList?.set(item?.userID, {
+              statusType: item?.statusType,
+              customStatus: item?.customStatus,
+            });
+            this.TUICore?.TUIServer?.TUIConversation?.currentStore?.userStatusList?.set(item?.userID, {
               statusType: item?.statusType,
               customStatus: item?.customStatus,
             });
