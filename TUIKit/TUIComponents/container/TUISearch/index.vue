@@ -43,7 +43,6 @@ import CreateGroup from './components/createGroup';
 import Dialog from '../../components/dialog/index.vue';
 import Transfer from '../../components/transfer/index.vue';
 import { useStore } from 'vuex';
-import TUIAegis from '../../../utils/TUIAegis';
 import constant from '../constant';
 import { onClickOutside } from '@vueuse/core';
 import { handleErrorPrompts, handleSuccessPrompts } from '../utils';
@@ -183,36 +182,20 @@ const TUISearch = defineComponent({
         // 通知 TUIConversation 模块切换当前会话
         // Notify TUIConversation to toggle the current conversation
         TUIServer.TUICore.TUIServer.TUIConversation.handleCurrentConversation(imResponse.data.conversation);
-        TUIAegis.getInstance().reportEvent({
-          name: 'conversationType',
-          ext1: type === 'C2C' ? 'TypeC2C-success' : 'TypeGroup-success',
-        });
       });
     };
 
     const showOpen = (type: string) => {
       data.open = true;
-      TUIAegis.getInstance().reportEvent({
-        name: 'conversationType',
-        ext1: 'createConversation',
-      });
       data.searchUserList = [...data.allUserList];
       switch (type) {
         case 'isC2C':
           data.createConversationType = constant.typeC2C;
           data.showTitle = t('TUISearch.发起单聊');
-          TUIAegis.getInstance().reportEvent({
-            name: 'conversationType',
-            ext1: 'createConversation-c2c',
-          });
           return data.showTitle;
         case 'isGroup':
           data.createConversationType = constant.typeGroup;
           data.showTitle = t('TUISearch.发起群聊');
-          TUIAegis.getInstance().reportEvent({
-            name: 'conversationType',
-            ext1: 'createConversation-group',
-          });
           return data.showTitle;
       }
     };

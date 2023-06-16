@@ -57,7 +57,6 @@ import { Message } from '../interface';
 import TIM from '../../../../TUICore/tim';
 import { handleErrorPrompts } from '../../utils';
 import constant from '../../constant';
-import TUIAegis from '../../../../utils/TUIAegis';
 import useClipboard from 'vue-clipboard3';
 import { useStore } from 'vuex';
 import MessageEmojiReact from './message-emoji-react.vue';
@@ -120,10 +119,6 @@ export default defineComponent({
         case constant.handleMessage.revoke:
           try {
             await TUIServer.revokeMessage(message);
-            TUIAegis.getInstance().reportEvent({
-              name: 'messageOptions',
-              ext1: 'messageRevoke',
-            });
             (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 1);
           } catch (error) {
             handleErrorPrompts(error, data.env);
@@ -141,16 +136,8 @@ export default defineComponent({
           break;
         case constant.handleMessage.delete:
           await TUIServer.deleteMessage([message]);
-          TUIAegis.getInstance().reportEvent({
-            name: 'messageOptions',
-            ext1: 'messageDelete',
-          });
           break;
         case constant.handleMessage.forward:
-          TUIAegis.getInstance().reportEvent({
-            name: 'messageOptions',
-            ext1: 'messageForward',
-          });
           ctx.emit('handleMessage', message, constant.handleMessage.forward);
           break;
         case constant.handleMessage.reference:

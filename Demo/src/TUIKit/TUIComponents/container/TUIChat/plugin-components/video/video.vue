@@ -6,7 +6,6 @@
 </template>
 
 <script lang="ts">
-import TUIAegis from '../../../../../utils/TUIAegis';
 import { defineComponent, reactive, toRefs, watchEffect } from 'vue';
 import { handleErrorPrompts } from '../../../utils';
 
@@ -39,10 +38,6 @@ const Video = defineComponent({
       if (e.target.files.length > 0) {
         try {
           await Video.TUIServer.sendVideoMessage(e.target);
-          TUIAegis.getInstance().reportEvent({
-            name: 'messageType',
-            ext1: 'typeVideo',
-          });
         } catch (error) {
           handleErrorPrompts(error, props);
         }

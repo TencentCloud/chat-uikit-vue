@@ -29,7 +29,6 @@
 import { defineComponent, reactive, watchEffect, toRefs, computed, ref } from 'vue';
 import { emojiUrl, emojiMap, emojiName, faceUrl, bigEmojiList } from '../../utils/emojiMap';
 import { onClickOutside } from '@vueuse/core';
-import TUIAegis from '../../../../../utils/TUIAegis';
 import { handleErrorPrompts } from '../../../utils';
 
 const Face = defineComponent({
@@ -115,10 +114,6 @@ const Face = defineComponent({
           // Change large expression display field
           index: data.bigEmojiList[data.currentIndex - 1].icon,
           data: data.bigEmojiList[data.currentIndex - 1].list[index],
-        });
-        TUIAegis.getInstance().reportEvent({
-          name: 'messageType',
-          ext1: 'typeFace',
         });
       } catch (error) {
         handleErrorPrompts(error, props);

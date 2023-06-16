@@ -82,7 +82,7 @@ import { handleErrorPrompts } from '../../utils';
 import TUIChat from '../index.vue';
 import MessageReference from './message-reference.vue';
 import { Message } from '../interface';
-import { TUIEnv } from '../../../../../TUIKit/TUIPlugin';
+import { TUIEnv } from '../../../../TUIPlugin';
 import MessageEmojiReact from './message-emoji-react.vue';
 import TIM from '../../../../TUICore/tim/index';
 

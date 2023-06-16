@@ -10,7 +10,6 @@ import TUIStore from '../store';
 import { TUICoreParams, TUICoreLoginParams, TUIServer } from '../type';
 
 import { isFunction } from '../utils';
-import TUIAegis from '../../utils/TUIAegis';
 
 export default class TUICore extends ITUIServer {
   static instance: TUICore;
@@ -66,21 +65,10 @@ export default class TUICore extends ITUIServer {
    * @returns {TUICore} TUICore的实例
    */
   static init(options: TUICoreParams) {
-    const Aegis = TUIAegis.getInstance();
     if (!TUICore.instance) {
       TUICore.instance = new TUICore(options);
     }
     const { isH5 } = TUIEnv();
-    Aegis.reportEvent({
-      name: 'SDKAppID',
-      ext1: isH5 ? 'IMTUIKitH5External' : 'IMTUIKitWebExternal',
-      ext2: isH5 ? 'IMTUIKitH5External' : 'IMTUIKitWebExternal',
-      ext3: options.SDKAppID,
-    });
-    Aegis.reportEvent({
-      name: 'time',
-      ext1: 'firstRunTime',
-    });
     (window as any).TUIKitTUICore = TUICore.instance;
     TUICore.instance.use(TUITheme);
     TUICore.instance.use(TUIi18n);
@@ -145,14 +133,6 @@ export default class TUICore extends ITUIServer {
             userSig: options.userSig,
             tim: this.tim,
           });
-          if (TUICore?.instance?.TUIServer?.TUICallKit) {
-            TUIAegis.getInstance().reportEvent({
-              name: 'SDKAppID',
-              ext1: 'IMTUIKitWebExternal-call',
-              ext2: 'IMTUIKitWebExternal-call',
-              ext3: this.SDKAppID,
-            });
-          }
           return null;
         })
         .catch((error: any) => {

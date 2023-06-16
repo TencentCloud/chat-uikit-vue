@@ -43,7 +43,6 @@
 </template>
 
 <script lang="ts">
-import TUIAegis from '../../../../../utils/TUIAegis';
 import { onClickOutside } from '@vueuse/core';
 import { defineComponent, reactive, watchEffect, toRefs, ref } from 'vue';
 import Link from '../../../../../utils/link';
@@ -117,18 +116,10 @@ const Evaluate = defineComponent({
 
     const submit = () => {
       Evaluate.TUIServer.sendCustomMessage(data.options);
-      TUIAegis.getInstance().reportEvent({
-        name: 'messageType',
-        ext1: 'typeCustom',
-      });
       toggleShow();
     };
     const openLink = (type: any) => {
       window.open(type.url);
-      TUIAegis.getInstance().reportEvent({
-        name: 'openLink',
-        ext1: type.label,
-      });
     };
     return {
       ...toRefs(data),

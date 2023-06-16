@@ -44,7 +44,6 @@
 <script lang="ts">
 import { defineComponent, reactive, toRefs } from 'vue';
 import { useStore } from 'vuex';
-import TUIAegis from '../../../utils/TUIAegis';
 import TUIProfileEdit from './components/TUIProfileEdit';
 
 const TUIProfile = defineComponent({
@@ -84,10 +83,6 @@ const TUIProfile = defineComponent({
       }
       try {
         await TUIServer.updateMyProfile(options);
-        TUIAegis.getInstance().reportEvent({
-          name: 'changeProfile',
-          ext1: 'changeProfile',
-        });
       } catch (error) {
         console.log(error);
       }

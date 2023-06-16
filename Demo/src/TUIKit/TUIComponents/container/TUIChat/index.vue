@@ -167,7 +167,6 @@ import {
 import { getComponents } from './index';
 
 import { useStore } from 'vuex';
-import TUIAegis from '../../../utils/TUIAegis';
 import constant from '../constant';
 import { handleErrorPrompts } from '../utils';
 import Link from '../../../utils/link';
@@ -476,10 +475,6 @@ const TUIChat: any = defineComponent({
 
     const reportMessageSend = async (event: any) => {
       if (data.isFirstSend) {
-        TUIAegis.getInstance().reportEvent({
-          name: 'sendMessage',
-          ext1: 'sendMessage-success',
-        });
         data.isFirstSend = false;
       }
       data.reference.show = '';
@@ -498,10 +493,6 @@ const TUIChat: any = defineComponent({
       } else {
         TUIServer.resendMessage(message).catch((error: any) => {
           handleErrorPrompts(error, data.env);
-        });
-        TUIAegis.getInstance().reportEvent({
-          name: 'messageOptions',
-          ext1: 'messageResend',
         });
       }
     };
@@ -531,10 +522,6 @@ const TUIChat: any = defineComponent({
           handleErrorPrompts(error, data.env);
           data.showResend = false;
         });
-      TUIAegis.getInstance().reportEvent({
-        name: 'messageOptions',
-        ext1: 'messageResend',
-      });
     };
 
     const handleEdit = (item: any) => {
@@ -589,10 +576,6 @@ const TUIChat: any = defineComponent({
 
     const openLink = (type: any) => {
       window.open(type.url);
-      TUIAegis.getInstance().reportEvent({
-        name: 'openLink',
-        ext1: type.label,
-      });
     };
 
     const handleEditor = (message: Message, type: string) => {

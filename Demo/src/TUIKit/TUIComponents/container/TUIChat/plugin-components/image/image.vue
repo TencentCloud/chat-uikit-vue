@@ -6,7 +6,6 @@
 </template>
 
 <script lang="ts">
-import TUIAegis from '../../../../../utils/TUIAegis';
 import { defineComponent, reactive, toRefs, watchEffect } from 'vue';
 import { handleErrorPrompts } from '../../../utils';
 
@@ -38,10 +37,6 @@ const Image = defineComponent({
       if (e.target.files.length > 0) {
         try {
           await Image.TUIServer.sendImageMessage(e.target);
-          TUIAegis.getInstance().reportEvent({
-            name: 'messageType',
-            ext1: 'typeImage',
-          });
         } catch (error) {
           handleErrorPrompts(error, props);
         }

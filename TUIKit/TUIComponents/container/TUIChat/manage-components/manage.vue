@@ -221,7 +221,6 @@ import MemeberProfile from './member-profile.vue';
 import Dialog from '../../../components/dialog/index.vue';
 
 import Vuex from 'vuex';
-import TUIAegis from '../../../../utils/TUIAegis';
 import { handleErrorPrompts } from '../../utils';
 import useClipboard from 'vue-clipboard3';
 
@@ -687,10 +686,6 @@ const manage = defineComponent({
       }
       if (data.show) {
         getMember();
-        TUIAegis.getInstance().reportEvent({
-          name: 'showGroupManage',
-          ext1: 'showGroupManage',
-        });
       }
     };
 
@@ -705,59 +700,27 @@ const manage = defineComponent({
         userIDList.push(item.userID);
         return item;
       });
-      TUIAegis.getInstance().reportEvent({
-        name: 'groupOptions',
-        ext1: 'groupOptions',
-      });
       switch (type) {
         case 'add':
           addMember(userIDList);
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupAddMember',
-          });
           break;
         case 'remove':
           kickedOut(userIDList);
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupRemoveMember',
-          });
           break;
         case 'addAdmin':
           handleAdmin(userList[0]);
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupAddAdmin',
-          });
           break;
         case 'removeAdmin':
           handleAdmin(userList[0]);
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupRemoveAdmin',
-          });
           break;
         case 'changeOwner':
           changeOwner(userIDList[0]);
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupChangeOwner',
-          });
           break;
         case 'addMute':
           setMemberMuteTime(userIDList[0], 'add');
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupAddMute',
-          });
           break;
         case 'removeMute':
           setMemberMuteTime(userIDList[0], 'remove');
-          TUIAegis.getInstance().reportEvent({
-            name: 'groupOptions',
-            ext1: 'groupRemoveMute',
-          });
           break;
         default:
           break;
