@@ -60,7 +60,6 @@
 import { defineComponent, watchEffect, reactive, toRefs } from 'vue';
 import { isUrl, JSONToObject } from '../utils/utils';
 import constant from '../../constant';
-import TUIAegis from '../../../../utils/TUIAegis';
 import { useStore } from 'vuex';
 
 export default defineComponent({
@@ -110,10 +109,6 @@ export default defineComponent({
 
     const handleCallAgain = async () => {
       const callType = JSON.parse(JSON.parse(props?.data?.message?.payload?.data)?.data)?.call_type;
-      TUIAegis.getInstance().reportEvent({
-        name: 'callOptions',
-        ext1: 'clickCall',
-      });
       switch (data?.data?.message?.conversationType) {
         case (window as any).TUIKitTUICore.TIM.TYPES.CONV_C2C:
           // eslint-disable-next-line no-case-declarations
@@ -127,16 +122,6 @@ export default defineComponent({
             (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 6);
           } catch (error) {
             console.warn(error);
-          }
-          if ((window as any)?.TUIKitTUICore?.TUIServer?.TUICallKit) {
-            TUIAegis.getInstance().reportEvent({
-              name: 'callOptions',
-              ext1: 'clickCall-success',
-            });
-            TUIAegis.getInstance().reportEvent({
-              name: 'callOptions',
-              ext1: 'call-c2c',
-            });
           }
           break;
         case (window as any).TUIKitTUICore.TIM.TYPES.CONV_GROUP:

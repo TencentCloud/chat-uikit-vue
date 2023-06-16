@@ -69,7 +69,6 @@ import { onClickOutside } from '@vueuse/core';
 import { Conversation } from '../../../TUIConversation/interface';
 import Dialog from '../../../../components/dialog';
 import Transfer from '../../../../components/transfer';
-import TUIAegis from '../../../../../utils/TUIAegis';
 import Link from '../../../../../utils/link/index';
 import { useStore } from 'vuex';
 
@@ -154,31 +153,15 @@ const Call = defineComponent({
       data.mediaType = mediaType;
       if (!Call?.TUIServer?.TUICore?.TUIServer?.TUICallKit) {
         handleUnsupportDialog();
-        TUIAegis.getInstance().reportEvent({
-          name: 'callOptions',
-          ext1: 'call-uninstall',
-        });
         return;
       }
-      TUIAegis.getInstance().reportEvent({
-        name: 'callOptions',
-        ext1: 'clickCall-success',
-      });
       (window as any)?.TUIKitTUICore?.isOfficial && VuexStore?.commit && VuexStore?.commit('handleTask', 6);
       switch (data.conversation?.type) {
         case Call.TUIServer.TUICore.TIM.TYPES.CONV_C2C:
           handleCall(data.conversation, mediaType);
-          TUIAegis.getInstance().reportEvent({
-            name: 'callOptions',
-            ext1: 'call-c2c',
-          });
           break;
         case Call.TUIServer.TUICore.TIM.TYPES.CONV_GROUP:
           handleGroupDialog(mediaType);
-          TUIAegis.getInstance().reportEvent({
-            name: 'callOptions',
-            ext1: 'call-group',
-          });
           break;
         default:
           break;
@@ -226,10 +209,6 @@ const Call = defineComponent({
       ) {
         return false;
       }
-      TUIAegis.getInstance().reportEvent({
-        name: 'callOptions',
-        ext1: 'clickCall',
-      });
       return true;
     };
 
@@ -284,10 +263,6 @@ const Call = defineComponent({
     const openLink = (url: any) => {
       if (url) {
         window.open(url);
-        TUIAegis.getInstance().reportEvent({
-          name: 'openLink',
-          ext1: 'callkit-doc',
-        });
       }
     };
 

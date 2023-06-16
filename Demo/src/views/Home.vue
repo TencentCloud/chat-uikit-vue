@@ -376,7 +376,6 @@ import Header from '../components/Header.vue';
 import Menu from '../components/Menu.vue';
 import { useStore } from 'vuex';
 import router from '@/router';
-import TUIAegis from '@/utils/TUIAegis';
 import { cancellation } from '../api';
 import { switchTitle } from '../utils/switchTitle';
 import Link from '../assets/link';
@@ -528,10 +527,6 @@ export default defineComponent({
     const change = (value: any) => {
       if (locale.value !== value) {
         locale.value = value;
-        TUIAegis.getInstance().reportEvent({
-          name: 'language',
-          ext1: locale.value,
-        });
         store.commit('handleTask', 2);
         switchTitle(locale.value);
       }
@@ -553,12 +548,6 @@ export default defineComponent({
 
     const openShowMore = () => {
       data.showMore = !data.showMore;
-      if (data.showMore) {
-        TUIAegis.getInstance().reportEvent({
-          name: 'showMore',
-          ext1: 'showMore',
-        });
-      }
     };
 
     const exitLogin = async () => {
@@ -567,18 +556,10 @@ export default defineComponent({
       data.ruleForm.userInfo.userId = '';
       data.ruleForm.userInfo.userSig = '';
       data.ruleForm.userInfo.expire = '';
-      TUIAegis.getInstance().reportEvent({
-        name: 'logout',
-        ext1: 'logout-success',
-      });
     };
     const openShowProfile = () => {
       TUICore.instance.TUIServer.TUIProfile.setEdit(true);
       data.showProfile = true;
-      TUIAegis.getInstance().reportEvent({
-        name: 'showProfile',
-        ext1: 'showProfile',
-      });
     };
     const openShowAbout = () => {
       data.showAbout = true;
@@ -613,10 +594,6 @@ export default defineComponent({
         phone: deleteInfoList.phone,
       };
       TUIKit.logout().then((res: any) => {
-        TUIAegis.getInstance().reportEvent({
-          name: 'cancellationCount',
-          ext1: 'cancellationCount-success',
-        });
         localStorage.removeItem('TUIKit-userInfo');
         cancellation(options);
         router.push({ name: 'Login' });
@@ -624,18 +601,10 @@ export default defineComponent({
     };
     const openDataLink = (item: any) => {
       window.open(item.url);
-      TUIAegis.getInstance().reportEvent({
-        name: 'openLink',
-        ext1: item.label,
-      });
     };
 
     const openLink = (type: any) => {
       window.open(type.url);
-      TUIAegis.getInstance().reportEvent({
-        name: 'openLink',
-        ext1: type.label,
-      });
     };
 
     const handleCurrentConversation = (value: string) => {

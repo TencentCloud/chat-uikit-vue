@@ -138,8 +138,8 @@ const enterHandler = () => {
 };
 
 const selectItem = (index: number) => {
-  if (!allMemberList?.value?.length) return;
-  const item = allMemberList?.value[index];
+  if (!showMemberList?.value?.length) return;
+  const item = showMemberList?.value[index];
   if (item) {
     command.value &&
       command.value({

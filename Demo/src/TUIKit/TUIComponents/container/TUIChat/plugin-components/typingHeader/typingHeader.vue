@@ -5,7 +5,6 @@
 <script lang="ts">
 import { defineComponent, watchEffect, watch, reactive, toRefs, computed, nextTick } from 'vue';
 import { handleName, JSONToObject, isTypingMessage } from '../../utils/utils';
-import TUIAegis from '../../../../../utils/TUIAegis';
 import constant from '../../../constant';
 const TypingHeader = defineComponent({
   props: {
@@ -157,10 +156,6 @@ const TypingHeader = defineComponent({
         extension: '',
       };
       TypingHeader.TUIServer.sendTypingMessage(data.options);
-      TUIAegis.getInstance().reportEvent({
-        name: 'messageType',
-        ext1: 'typeCustom',
-      });
       return;
     };
 

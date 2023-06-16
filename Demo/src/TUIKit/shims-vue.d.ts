@@ -25,5 +25,4 @@ declare module '*.json' {
   export default content;
 }
 
-declare module 'aegis-web-sdk';
 

@@ -346,6 +346,18 @@ const handleEditorForMessage = () => {
     }
   };
   handleEditorContent(editorJSON);
+  if (
+    content.length > 0 &&
+    content[content.length - 1] &&
+    content[content.length - 1]?.type === "text" &&
+    content[content.length - 1]?.payload?.text?.endsWith("\n")
+  ) {
+    const text = content[content.length - 1].payload.text;
+    content[content.length - 1].payload.text = text?.substring(
+      0,
+      text.lastIndexOf("\n")
+    );
+  }
   return content;
 };
 

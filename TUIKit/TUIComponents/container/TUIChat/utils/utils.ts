@@ -211,27 +211,25 @@ function handleTipGrpUpdated(message: any) {
   const { payload } = message;
   const { newGroupProfile } = payload;
   const { operatorID } = payload;
-  let text = '';
-  const name = Object.keys(newGroupProfile)[0];
-  switch (name) {
-    case 'muteAllMembers':
-      if (newGroupProfile[name]) {
-        text = `${t('message.tip.管理员')} ${operatorID} ${t('message.tip.开启全员禁言')}`;
+  let text = "";
+  if ("muteAllMembers" in newGroupProfile) {
+    if (newGroupProfile["muteAllMembers"]) {
+      text = `${t("message.tip.管理员")} ${operatorID} ${t(
+        "message.tip.开启全员禁言"
+      )}`;
       } else {
-        text = `${t('message.tip.管理员')} ${operatorID} ${t('message.tip.取消全员禁言')}`;
+      text = `${t("message.tip.管理员")} ${operatorID} ${t(
+        "message.tip.取消全员禁言"
+      )}`;
       }
-      break;
-    case 'ownerID':
-      text = `${newGroupProfile[name]} ${t('message.tip.成为新的群主')}`;
-      break;
-    case 'groupName':
-      text = `${operatorID} ${t('message.tip.修改群名为')} ${newGroupProfile[name]}`;
-      break;
-    case 'notification':
-      text = `${operatorID} ${t('message.tip.发布新公告')}`;
-      break;
-    default:
-      break;
+  } else if ("ownerID" in newGroupProfile) {
+    text = `${newGroupProfile["ownerID"]} ${t("message.tip.成为新的群主")}`;
+  } else if ("groupName" in newGroupProfile) {
+    text = `${operatorID} ${t("message.tip.修改群名为")} ${
+      newGroupProfile["groupName"]
+    }`;
+  } else if ("notification" in newGroupProfile) {
+    text = `${operatorID} ${t("message.tip.发布新公告")}`;
   }
   return text;
 }
@@ -414,6 +412,13 @@ export function extractCallingInfoFromMessage(message: any) {
 // Parsing and handling custom message display
 export function handleCustomMessageShowContext(item: any) {
   const { t } = (window as any).TUIKitTUICore.config.i18n.useI18n();
+  const payloadObj = JSONToObject(item?.payload?.data);
+  if (payloadObj?.businessID === constant.typeEvaluate) {
+    if (!(payloadObj?.score > 0)) {
+      payloadObj.score = 1;
+      item.payload.data = JSON.stringify(payloadObj);
+    }
+  }
   return {
     message: item,
     custom: extractCallingInfoFromMessage(item) || `[${t('message.custom.自定义消息')}]`,
@@ -586,7 +591,7 @@ export const isMessageTip = (message: Message) => {
     message?.type === TIM?.TYPES?.MSG_GRP_TIP ||
     (message?.type === TIM?.TYPES?.MSG_CUSTOM &&
       message?.conversationType === TIM?.TYPES?.CONV_GROUP &&
-        constant?.TYPE_CALL_MESSAGE) ||
+      JSONToObject(message?.payload?.data)?.businessID === constant?.TYPE_CALL_MESSAGE) ||
     (message?.type === TIM?.TYPES?.MSG_CUSTOM &&
       message?.conversationType === TIM?.TYPES?.CONV_GROUP &&
       message?.payload?.data === "group_create")

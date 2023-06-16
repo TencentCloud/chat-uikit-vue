@@ -31,7 +31,6 @@
   </ul>
 </template>
 <script lang="ts">
-import TUIAegis from '../../../../../utils/TUIAegis';
 import { defineComponent, reactive, ref, toRefs, watch, watchEffect } from 'vue';
 import LiteItem from '../list-item';
 const TUIConversationList: any = defineComponent({
@@ -91,10 +90,6 @@ const TUIConversationList: any = defineComponent({
 
     const handleItem = (params: any) => {
       const { name, conversation } = params;
-      TUIAegis.getInstance().reportEvent({
-        name: 'conversationOptions',
-        ext1: 'conversationOptions',
-      });
       switch (name) {
         case 'delete':
           handleDeleteConversation(conversation);
@@ -116,10 +111,6 @@ const TUIConversationList: any = defineComponent({
 
     const handleDeleteConversation = (conversation: any) => {
       TUIServer.deleteConversation(conversation.conversationID).then((imResponse: any) => {
-        TUIAegis.getInstance().reportEvent({
-          name: 'conversationOptions',
-          ext1: 'conversationDelete',
-        });
         const { conversationID } = imResponse.data;
         const { conversation } = TUIServer.TUICore.getStore().TUIChat;
         // 删除会话，判断当前删除的会话是否为打开的会话
