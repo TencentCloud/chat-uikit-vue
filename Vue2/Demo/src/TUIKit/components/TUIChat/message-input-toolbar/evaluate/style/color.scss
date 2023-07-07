@@ -1,0 +1,55 @@
+.evaluate {
+  background: #ffffff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  &-header {
+    &-content {
+      font-weight: 500;
+      color: #1c1c1c;
+    }
+  }
+  &-adv {
+    font-weight: 500;
+    color: #999999;
+    a {
+      color: #006eff;
+    }
+  }
+  &-content {
+    &-text {
+      background: #f8f8f8;
+      border: 1px solid #ececec;
+    }
+    .btn {
+      background: #3370ff;
+      font-weight: 400;
+      color: #ffffff;
+      cursor: pointer;
+    }
+    &-list {
+      &-item {
+        font-weight: 400;
+        color: #50545c;
+      }
+    }
+  }
+
+  &-H5 {
+    &-main {
+      background: rgba(0, 0, 0, 0.5);
+      .evaluate-main-content {
+        background: #ffffff;
+        p {
+          a {
+            color: #3370ff;
+          }
+        }
+        .close {
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          color: #3370ff;
+          letter-spacing: 0;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+.words-h5 {
+  width: 100%;
+  box-sizing: border-box;
+  max-height: 80vh;
+  height: fit-content;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  &-header {
+    &-title {
+      font-size: 18px;
+      line-height: 40px;
+    }
+  }
+  &-list {
+    flex: 1;
+    overflow-y: scroll;
+    &-item {
+      cursor: pointer;
+      padding: 12px 0;
+      font-size: 16px;
+      color: #50545c;
+      line-height: 18px;
+      border-bottom: 1px solid #eeeeee;
+    }
+  }
+}

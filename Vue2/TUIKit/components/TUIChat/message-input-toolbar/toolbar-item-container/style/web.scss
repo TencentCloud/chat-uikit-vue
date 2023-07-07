@@ -1,0 +1,20 @@
+.toolbar-item-container {
+  position: relative;
+  width: fit-content;
+  height: fit-content;
+  &-icon {
+    width: 20px;
+    height: 20px;
+    padding: 12px 10px 1px;
+    cursor: pointer;
+  }
+  &-dialog {
+    z-index: 5;
+    position: absolute;
+    background: #ffffff;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+    width: fit-content;
+    height: fit-content;
+    bottom: 35px;
+  }
+}

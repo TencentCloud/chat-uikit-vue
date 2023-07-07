@@ -1,0 +1,45 @@
+{
+  "name": "@tencentcloud/chat-uikit-vue2",
+  "version": "0.0.1",
+  "description": "TUIKit 是基于 IM SDK 实现的一套 UI 组件，其包含会话、聊天、群组、个人资料等功能，基于 TUIKit 组件您可以像搭积木一样快速搭建起自己的业务逻辑。",
+  "scripts": {},
+  "keywords": [
+    "uikit",
+    "chat",
+    "uni-app",
+    "IM",
+    "tencent",
+    "tencentcloud",
+    "messaging",
+    "即时通信",
+    "通信",
+    "WebSocket"
+  ],
+  "dependencies": {
+    "@tencentcloud/chat-uikit-engine": "^0.0.1",
+    "@tencentcloud/tui-core": "^0.0.1",
+    "vue-clipboard3": "2.0.0",
+    "@tiptap/core": "^2.0.0-beta.220",
+    "@tiptap/extension-document": "^2.0.0-beta.220",
+    "@tiptap/extension-image": "^2.0.0-beta.220",
+    "@tiptap/extension-mention": "^2.0.0-beta.220",
+    "@tiptap/extension-paragraph": "^2.0.0-beta.220",
+    "@tiptap/extension-placeholder": "^2.0.0-beta.220",
+    "@tiptap/extension-text": "^2.0.0-beta.220",
+    "@tiptap/pm": "^2.0.0-beta.220",
+    "@tiptap/suggestion": "^2.0.0-beta.220"
+  },
+  "peerDependencies": {
+    "@tiptap/core": "^2.0.0-beta.220",
+    "@tiptap/extension-document": "^2.0.0-beta.220",
+    "@tiptap/extension-image": "^2.0.0-beta.220",
+    "@tiptap/extension-mention": "^2.0.0-beta.220",
+    "@tiptap/extension-paragraph": "^2.0.0-beta.220",
+    "@tiptap/extension-placeholder": "^2.0.0-beta.220",
+    "@tiptap/extension-text": "^2.0.0-beta.220",
+    "@tiptap/pm": "^2.0.0-beta.220",
+    "@tiptap/suggestion": "^2.0.0-beta.220"
+  },
+  "author": "tencentcloud-im",
+  "license": "ISC"
+}
