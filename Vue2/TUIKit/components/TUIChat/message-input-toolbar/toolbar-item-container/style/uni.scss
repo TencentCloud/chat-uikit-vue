@@ -1,0 +1,23 @@
+.toolbar-item-container-uni {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  &-icon {
+    background: #ffffff;
+    border-radius: 15px;
+    width: 60px;
+    height: 60px;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &-title {
+    font-size: 14px;
+    color: #8F959D;
+  }
+}

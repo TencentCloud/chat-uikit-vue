@@ -1,0 +1,27 @@
+.conversation {
+  width: 100%;
+  height: 100%;
+}
+.TUI-conversation {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  .network {
+    display: flex;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    &-content {
+      padding: 5px;
+      font-size: 12px;
+      line-height: 22px;
+    }
+  }
+  .list {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,37 @@
+.TUI-conversation-list-h5 {
+  .TUI-conversation-content {
+    .dialog {
+      left: auto;
+      right: 18px;
+      padding: 0;
+      .conversation-options {
+        padding: 12px;
+        font-size: 16px;
+      }
+      &-item-up {
+        top: -70px;
+      }
+    }
+    .TUI-conversation-item {
+      -webkit-touch-callout: none; /*系统默认菜单被禁用*/
+      -webkit-user-select: none; /*webkit浏览器*/
+      -khtml-user-select: none; /*早期浏览器*/
+      -moz-user-select: none; /*火狐*/
+      -ms-user-select: none; /*IE10*/
+      user-select: none;
+      .content {
+        .name {
+          font-size: 16px;
+        }
+        .middle-box {
+          p {
+            font-size: 14px;
+          }
+        }
+      }
+      .time {
+        font-size: 14px;
+      }
+    }
+  }
+}

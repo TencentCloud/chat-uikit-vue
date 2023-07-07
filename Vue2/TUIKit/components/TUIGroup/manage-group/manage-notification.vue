@@ -1,0 +1,208 @@
+<template>
+  <main v-if="!isUniFrameWork" class="notification">
+    <textarea v-if="isEdit" v-model="input" @keyup.enter="updateProfile"></textarea>
+    <section v-else>
+      <p v-if="!groupProfile.notification">
+        {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
+      </p>
+      <article v-else>{{ groupProfile.notification }}</article>
+    </section>
+    <footer v-if="isAuthorNotification">
+      <button class="btn" v-if="isEdit" @click="updateProfile">
+        {{ TUITranslateService.t(`TUIGroup.发布`) }}
+      </button>
+      <button class="btn" v-else @click="isEdit = !isEdit">
+        {{ TUITranslateService.t(`TUIGroup.编辑`) }}
+      </button>
+    </footer>
+  </main>
+  <div v-else class="edit-h5">
+    <main>
+      <header class="edit-h5-header">
+        <aside class="left">
+          <h1>{{ TUITranslateService.t(`TUIGroup.群公告`) }}</h1>
+        </aside>
+        <span class="close" @click="toggleEdit('notification')">{{
+          TUITranslateService.t(`关闭`)
+        }}</span>
+      </header>
+      <div class="notification">
+        <textarea v-if="isEdit" v-model="input" @keyup.enter="updateProfile"></textarea>
+        <section v-else>
+          <p v-if="!groupProfile.notification">
+            {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
+          </p>
+          <article v-else>{{ groupProfile.notification }}</article>
+        </section>
+        <footer v-if="isAuthorNotification">
+          <button class="btn" v-if="isEdit" @click="updateProfile">
+            {{ TUITranslateService.t(`TUIGroup.发布`) }}
+          </button>
+          <button class="btn" v-else @click="isEdit = !isEdit">
+            {{ TUITranslateService.t(`TUIGroup.编辑`) }}
+          </button>
+        </footer>
+      </div>
+    </main>
+  </div>
+</template>
+  
+<script lang="ts" setup>
+import { TUITranslateService, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import {
+  defineProps,
+  watchEffect,
+  ref,
+  defineEmits,
+} from "../../../adapter-vue";
+
+const props = defineProps({
+  data: {
+    type: Object,
+    default: () => ({}),
+  },
+  isAuthor: {
+    type: Boolean,
+    default: false,
+  },
+});
+
+const groupProfile = ref({});
+const input = ref("");
+const isAuthorNotification = ref(false);
+const isEdit = ref(false);
+const isUniFrameWork = ref(typeof uni !== 'undefined');
+
+watchEffect(() => {
+  groupProfile.value = props.data;
+  input.value = groupProfile.value.notification;
+  isAuthorNotification.value = props.isAuthor;
+});
+
+const emits = defineEmits(["update", "toggleEdit"]);
+
+// 更新群资料
+const updateProfile = () => {
+  if (input.value && input.value !== groupProfile.value.notification) {
+    emits("update", { key: "notification", value: input.value });
+    groupProfile.value.notification = input.value;
+    input.value = "";
+  }
+  isEdit.value = !isEdit.value;
+};
+
+const toggleEdit = async (tabName: string) => {
+  emits("toggleEdit", tabName);
+};
+</script>
+  
+<style lang="scss" scoped>
+@import url("../../../assets/styles/common.scss");
+
+.notification {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+
+  section {
+    flex: 1;
+    font-size: 14px;
+
+    p {
+      text-align: center;
+      padding-bottom: 20px;
+    }
+  }
+
+  textarea {
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #e8e8e9;
+    resize: none;
+    font-size: 14px;
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+}
+
+.btn {
+  background: #3370ff;
+  border: 0 solid #2f80ed;
+  padding: 4px 28px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #ffffff;
+  line-height: 24px;
+  border-radius: 4px;
+
+  &-cancel {
+    background: #ffffff;
+    border: 1px solid #dddddd;
+    color: #828282;
+  }
+}
+
+.edit-h5 {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: flex-end;
+  z-index: 1;
+
+  main {
+    background: #ffffff;
+    flex: 1;
+    padding: 18px;
+    border-radius: 12px 12px 0 0;
+    width: 80vw;
+  }
+
+  &-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .close {
+      font-family: PingFangSC-Regular;
+      font-weight: 400;
+      font-size: 18px;
+      color: #3370ff;
+      letter-spacing: 0;
+      line-height: 27px;
+    }
+  }
+
+  &-footer {
+    display: flex;
+
+    .btn {
+      flex: 1;
+      border: none;
+      background: #147aff;
+      border-radius: 5px;
+      font-family: PingFangSC-Regular;
+      font-weight: 400;
+      font-size: 16px;
+      color: #ffffff;
+      letter-spacing: 0;
+      line-height: 27px;
+      padding: 8px 0;
+
+      &:disabled {
+        opacity: 0.3;
+      }
+    }
+  }
+}
+</style>
+  

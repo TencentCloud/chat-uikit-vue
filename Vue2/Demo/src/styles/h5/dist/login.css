@@ -1,0 +1,189 @@
+.login-h5 {
+  box-sizing: border-box;
+  background: #ffffff;
+  padding: 17px 0;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.login-h5 .login-header {
+  padding: 0 23px;
+}
+.login-h5 .login-header .logo p {
+  padding-left: 12px;
+}
+.login-h5 .login-header .logo p::before {
+  left: 6px;
+}
+.login-h5 .login-header .logo-name {
+  font-weight: normal;
+}
+.login-h5 .login-title {
+  flex-direction: column;
+  padding: 60px 0 18px;
+}
+.login-h5 .login-title p {
+  padding-left: 0;
+  font-size: 27px;
+  line-height: 40px;
+}
+.login-h5 .login-form {
+  flex: 1;
+}
+.login-h5 .login-form-item {
+  font-size: 18px;
+}
+.login-h5 .login-form-footer {
+  display: flex;
+  justify-content: center;
+  padding: 14px 0;
+}
+.login-h5 .login-form-footer a {
+  font-size: 16px;
+  line-height: 27px;
+}
+.login-h5 .login-form-footer a::before {
+  display: none;
+}
+.login-h5 .login-form .login-from-item-disabled {
+  font-size: 18px;
+  line-height: 27px;
+}
+.login-h5 .login-main {
+  padding: 0;
+}
+.login-h5 .login-main-content {
+  padding: 0 23px;
+  background: url("../assets/image/h5/login-bg.png") no-repeat;
+  background-size: 65%;
+  background-position-x: right;
+  align-items: flex-start;
+}
+.login-h5 .login-main .checked-text {
+  font-size: 14px;
+}
+.login-h5 .login-btn {
+  padding-top: 16px;
+  margin-bottom: 0;
+}
+.login-h5 .login-btn button {
+  height: auto !important;
+  font-size: 20px;
+  line-height: 27px;
+  padding: 13px 0;
+}
+.login-h5 .login-footer {
+  background: none;
+  padding: 10px 10px;
+}
+.login-h5 .login-footer-list {
+  flex: 1;
+  display: flex;
+}
+.login-h5 .login-footer-list-item {
+  flex: 1;
+  display: flex;
+  background: url("../assets/image/h5/adv-more.svg") no-repeat;
+  background-size: 100% 100%;
+  border: solid #96C3FF 1px;
+}
+.login-h5 .login-footer-list-item:last-child {
+  background: url("../assets/image/h5/adv-im.svg") no-repeat;
+  background-size: 100% 100%;
+}
+.login-h5 .login-footer-list-item a {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20px;
+}
+.login-h5 .login-footer-list-item a span {
+  padding: 5px 20px;
+  background: #147AFF;
+  box-shadow: 0 4px 5px 0 rgba(255, 255, 255, 0.7), 0 3px 8px 0 rgba(20, 122, 255, 0.55);
+  border-radius: 30.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: PingFangSC-Regular;
+  font-weight: 400;
+  font-size: 15px;
+  color: #FFFFFF;
+  letter-spacing: 0;
+}
+.login-h5 .login-footer-list-item a aside {
+  display: flex;
+  flex-direction: column;
+}
+.login-h5 .login-footer-list-item a aside h1 {
+  font-family: PingFangSC-Regular;
+  font-size: 16px;
+  color: #000000;
+  letter-spacing: 0;
+}
+.login-h5 .login-footer-list-item a aside .sub {
+  align-self: flex-end;
+}
+.login-h5 .login-footer-list-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.login-h5 .login-footer-list-bottom .text-header {
+  display: flex;
+  align-items: center;
+}
+.login-h5 .login-footer-list-bottom .text-header span {
+  padding: 20px 20px;
+  width: 84px;
+  font-family: "PingFang SC";
+  font-style: normal;
+  font-weight: 400;
+  color: #BBBBBB;
+}
+.login-h5 .login-footer-list-bottom i {
+  width: 120px;
+  height: 1px;
+  background: #DBDBDB;
+}
+.login-h5 .login-footer-list-bottom-image {
+  display: flex;
+}
+.login-h5 .login-footer-list-bottom-image .platform {
+  width: 41px;
+  height: 41px;
+  padding: 0 20px;
+}
+.login-h5 .login-footer-list-bottom-image .platform img {
+  width: 100%;
+  height: 100%;
+}
+.login-h5 .mask {
+  position: fixed;
+  width: 100vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 9;
+}
+.login-h5 .mask-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.login-h5 .mask-main span {
+  padding-top: 10px;
+  height: 27px;
+  opacity: 0.8;
+  font-family: TencentSansW7;
+  font-size: 18px;
+  color: #FFFFFF;
+  letter-spacing: 0;
+  text-align: center;
+}

@@ -1,0 +1,73 @@
+.evaluate {
+  position: absolute;
+  z-index: 5;
+  width: 315px;
+  top: -255px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  background: url("https://web.sdk.qcloud.com/im/assets/images/login-background.png")
+    no-repeat;
+  background-color: #ffffff;
+  background-size: cover;
+  background-position-x: 128px;
+  background-position-y: 77px;
+  &-header {
+    &-content {
+      font-style: normal;
+      font-size: 12px;
+      line-height: 17px;
+      text-align: center;
+    }
+  }
+  &-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    &-list {
+      flex: 1;
+      display: flex;
+      &-item {
+        width: 24px;
+        height: 24px;
+        text-align: center;
+        cursor: pointer;
+        padding: 4px 0;
+        font-size: 12px;
+        padding-right: 15px;
+        &:last-child {
+          padding-right: 0 !important;
+        }
+      }
+    }
+    &-text {
+      box-sizing: border-box;
+      width: 288px;
+      height: 90px;
+      margin: 12px 0;
+      padding: 12px;
+      border-radius: 2px;
+      resize: none;
+    }
+    &-button {
+      .btn {
+        border: none;
+        border-radius: 5px;
+        font-size: 12px;
+        text-align: center;
+        line-height: 24px;
+        padding: 2px 46px;
+        cursor: pointer;
+      }
+    }
+  }
+  &-adv {
+    font-size: 12px;
+    text-align: center;
+    a {
+      display: inline-block;
+    }
+  }
+}
