@@ -18,7 +18,7 @@
   
 <script lang="ts" setup>
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { defineProps, defineEmits } from "@tencentcloud/chat-uikit-vue/adapter-vue";
+import { defineProps, defineEmits } from "@tencentcloud/chat-uikit-vue2/adapter-vue";
 
 const props = defineProps({
   item: {

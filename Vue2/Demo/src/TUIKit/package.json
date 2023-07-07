@@ -1,5 +1,5 @@
 {
-  "name": "@tencentcloud/chat-uikit-vue",
+  "name": "@tencentcloud/chat-uikit-vue2",
   "version": "0.0.1",
   "description": "TUIKit 是基于 IM SDK 实现的一套 UI 组件，其包含会话、聊天、群组、个人资料等功能，基于 TUIKit 组件您可以像搭积木一样快速搭建起自己的业务逻辑。",
   "scripts": {},
