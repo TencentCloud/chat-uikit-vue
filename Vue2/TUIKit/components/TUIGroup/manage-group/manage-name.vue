@@ -1,7 +1,7 @@
 <template>
   <div class="name">
     <label>{{ TUITranslateService.t(`TUIGroup.群名称`) }}</label>
-    <div v-if="isEdit" :class="[!isPC ? 'edit-h5' : '']" ref="dialog">
+    <div v-if="isEdit" :class="[!isPC ? 'edit-h5' : '']">
       <main>
         <header class="edit-h5-header" v-if="!isPC">
           <aside class="left">
@@ -16,7 +16,7 @@
             TUITranslateService.t(`关闭`)
           }}</span>
         </header>
-        <div class="input-box">
+        <div class="input-box" ref="nameInputRef">
           <input
             class="input"
             v-if="isEdit"
@@ -57,6 +57,7 @@ import {
   watchEffect,
   ref,
   defineEmits,
+  nextTick,
 } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import editIcon from "../../../assets/icon/edit.png";
@@ -76,8 +77,9 @@ const props = defineProps({
 const groupProfile = ref({});
 const inputGroupName = ref("");
 const isEdit = ref(false);
-const dialog = ref(null);
+const nameInputRef = ref(null);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
+const isUniFrameWork = ref(typeof uni !== 'undefined');
 
 watchEffect(() => {
   groupProfile.value = props.data;
@@ -98,7 +100,7 @@ const updateProfile = () => {
       inputGroupName.value = "";
       Toast({
         message: "群名称修改成功",
-        type: TOAST_TYPE.ERROR
+        type: TOAST_TYPE.SUCCESS
       });
     }
     toggleEdit();
@@ -108,10 +110,46 @@ const updateProfile = () => {
 const toggleEdit = async () => {
   if (props.isAuthor) {
     isEdit.value = !isEdit.value;
+    // 只有 pc 会有这样的情况
+    isPC.value && nextTick(() => {
+      // 点击 dom 外侧更改群组名称并关闭input
+      onClickOutside(nameInputRef.value);
+    })
   }
   if (isEdit.value) {
     inputGroupName.value = groupProfile.value.name;
   }
+};
+
+let clickOutside = false;
+let clickInner = false;
+const onClickOutside = (component: any) => {
+  if (isUniFrameWork.value) {
+    return;
+  }
+  document.addEventListener("mousedown", onClickDocument);
+  component?.addEventListener &&
+    component?.addEventListener("mousedown", onClickTarget);
+};
+
+const onClickDocument = () => {
+  clickOutside = true;
+  if (!clickInner && clickOutside) {
+    updateProfile();
+    removeClickListener(nameInputRef.value);
+  }
+  clickOutside = false;
+  clickInner = false;
+};
+
+const onClickTarget = () => {
+  clickInner = true;
+};
+
+const removeClickListener = (component: any) => {
+  document.removeEventListener("mousedown", onClickDocument);
+  component?.removeEventListener &&
+    component?.removeEventListener("mousedown", onClickTarget);
 };
 </script>
   
