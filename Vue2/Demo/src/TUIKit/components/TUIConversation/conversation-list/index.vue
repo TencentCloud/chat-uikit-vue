@@ -35,6 +35,12 @@
       >
         <aside class="left">
           <img class="avatar" :src="conversation.getAvatar()" />
+          <div 
+            :class="['online-status', Object.keys(statusList).length > 0 &&
+            statusList[conversation.userProfile.userID].statusType === 1 ? 
+            'online-status-online': 'online-status-offline']"
+            v-if="showUserOnlineStatus(conversation)"
+          ></div>
           <span
             class="num"
             v-if="conversation.unreadCount > 0 && !conversation.isMuted"
@@ -64,12 +70,12 @@
                 >{{ conversation.getGroupAtInfo() }}</span
               >
               <p class="middle-box-content">
-                {{ conversation.getLastMessage('text') }}
+                {{ conversation.getLastMessage("text") }}
               </p>
             </div>
           </div>
           <div class="content-footer">
-            <span class="time">{{ conversation.getLastMessage('time')}}</span>
+            <span class="time">{{ conversation.getLastMessage("time") }}</span>
             <Icon v-if="conversation.isMuted" :file="muteIcon"></Icon>
           </div>
         </div>
@@ -137,8 +143,11 @@ import {
   getCurrentInstance,
   defineExpose,
   nextTick,
+  watchEffect,
 } from "../../../adapter-vue";
-import {
+import 
+TUIChatEngine,
+{
   TUIGlobal,
   IConversationModel,
   TUIStore,
@@ -149,22 +158,15 @@ import {
 import { CONV_OPERATION } from "../../../constant";
 import Icon from "../../common/Icon.vue";
 import muteIcon from "../../../assets/icon/mute.svg";
-
-const props = defineProps({
-  displayOnlineStatus: {
-    type: Boolean,
-    default: false,
-  },
-});
 const emits = defineEmits(["handleSwitchConversation"]);
 
-const list = ref();
+const listRef = ref();
 const dialog = ref();
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isApp = ref(TUIGlobal.getPlatform() === "app");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 const toggleID = ref("");
 const currentConversation = ref<IConversationModel>();
 const currentConversationID = ref("");
@@ -173,6 +175,11 @@ const listRectInfo = ref();
 const toggleNowRectInfo = ref();
 const dialogTop = ref(30);
 const isLongpressing = ref(false);
+// 在线状态
+const displayOnlineStatus = ref(false); // 默认关闭
+const userStatusList = ref(new Map());
+const statusList = ref({});
+
 
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
@@ -186,6 +193,26 @@ TUIStore.watch(StoreName.CONV, {
   },
 });
 
+// 初始状态
+TUIStore.watch(StoreName.USER, {
+  displayOnlineStatus: (status: boolean) => {
+    displayOnlineStatus.value = status;
+  },
+  userStatusList: (list: Map<string, {
+      statusType: number;
+      customStatus: string;
+    }>) => {
+      if (list.size === 0) {
+        return;
+      }
+      statusList.value = Object.fromEntries(list.entries())
+  }
+});
+
+const showUserOnlineStatus = (conversation: IConversationModel) => {
+ return  displayOnlineStatus.value && conversation.type === TUIChatEngine.TYPES.CONV_C2C;
+};
+ 
 const handleItem = (params: {
   name: any;
   conversation: IConversationModel;
@@ -319,12 +346,12 @@ const handleDialogPosition = (
       .exec();
   } else {
     // web/h5/uniapp打包h5: 正常使用ref即可
-    if (!list?.value?.children || index >= list?.value?.children?.length) {
+    if (!listRef?.value?.children || index >= listRef?.value?.children?.length) {
       return;
     }
-    const dom = list?.value?.children[index];
+    const dom = listRef?.value?.children[index];
     const domRect = dom.getBoundingClientRect();
-    const listRect = list?.value?.getBoundingClientRect();
+    const listRect = listRef?.value?.getBoundingClientRect();
     if (listRect?.bottom - domRect?.top - 30 <= 100) {
       dialogTop.value = isH5.value ? -70 : -50;
     }
@@ -361,7 +388,7 @@ const onClickOutside = (component: any) => {
 const onClickDocument = (e: any) => {
   if (e?.target?.className?.includes("conversation-options")) {
     return;
-  }else{
+  } else {
     closeToggleListItem();
     removeClickListener();
   }

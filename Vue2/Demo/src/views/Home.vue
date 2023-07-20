@@ -67,11 +67,11 @@
             </div>
           </div>
           <div class="home-TUIKit-main" v-show="currentTab === 'message'">
-            <div class="conversation">
+            <div class="home-conversation">
               <TUISearch :class="['TUISearch', !isPC && 'TUISearch-h5']" :is-relation="false" />
               <TUIConversation :class="['TUIConversation', !isPC && 'TUIConversation-h5']"></TUIConversation>
             </div>
-            <div class="chat">
+            <div class="home-chat">
               <!-- 聊天入口在这里，注意需要当前的 conversationID 才能打开 chat -->
               <TUIChat :class="['TUIChat', !isPC && 'TUIChat-h5']">
                 <div class="container-default">
@@ -92,24 +92,22 @@
             </div>
           </div>
           <div class="home-TUIKit-main" v-show="currentTab === 'relation'">
-            <div class="relation">
-              <TUISearch :is-relation="true" />
-              <TUIContact v-show="currentTab === 'relation'">
-                <div class="container-default contact-default">
-                  <h1>
-                    {{ TUITranslateService.t("Home.欢迎使用") }}
-                    <img class="logo" src="../assets/image/logo.png" alt="" />
-                    {{ TUITranslateService.t("即时通信") }}
-                  </h1>
-                  <p>
-                    {{
-                      TUITranslateService.t("Home.我们为您默认提供了一位“示例好友”和一个“示例客服群”您不用额外添加好友和群聊就可完整体验腾讯云 IM 单聊、群聊的所有功能。")
-                    }}
-                    <br />
-                    {{ TUITranslateService.t("Home.随时随地")}}
-                  </p>
-                </div>
-              </TUIContact>
+            <div class="home-relation">
+              <TUIContact v-show="currentTab === 'relation'" @handleCurrentConversation="handleCurrentConversation"/>
+            </div>
+            <div class="container-default contact-default">
+              <h1>
+                {{ TUITranslateService.t("Home.欢迎使用") }}
+                <img class="logo" src="../assets/image/logo.png" alt="" />
+                {{ TUITranslateService.t("即时通信") }}
+              </h1>
+              <p>
+                {{
+                  TUITranslateService.t("Home.我们为您默认提供了一位“示例好友”和一个“示例客服群”您不用额外添加好友和群聊就可完整体验腾讯云 IM 单聊、群聊的所有功能。")
+                }}
+                <br />
+                {{ TUITranslateService.t("Home.随时随地")}}
+              </p>
             </div>
           </div>
         </div>
@@ -126,10 +124,7 @@
           </div>
         </main>
         <main class="home-h5-content" v-show="currentTab === 'relation'">
-          <header class="home-h5-main-header">
-            <TUISearch :is-relation="true" />
-          </header>
-          <TUIContact></TUIContact>
+          <TUIContact @handleCurrentConversation="handleCurrentConversation"></TUIContact>
         </main>
         <main class="home-h5-content home-h5-profile" v-show="currentTab === 'profile'">
           <MyProfile />
@@ -241,6 +236,10 @@ const exitLogin = () => {
   TUILogin.logout().then(() => {
     router.push({ path: "/" });
   });
+}
+
+const handleCurrentConversation = () => {
+  currentTab.value = "message"
 }
 </script>
 

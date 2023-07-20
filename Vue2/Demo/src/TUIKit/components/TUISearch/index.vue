@@ -1,28 +1,28 @@
 <template>
   <div :class="['TUI-search', !isPC && 'TUI-search-H5']" ref="dialog">
-    <header @click="toggleOptionalShow" v-if="!isRelation">
-      <i class="plus"></i>
+    <header @click.stop="toggleOptionalShow" v-if="!isRelation">
+      <i class="plus" @click="isPC && showDialog('isC2C')" ></i>
       <h1 v-if="!isPC">
         {{ TUITranslateService.t("TUISearch.发起会话") }}
       </h1>
       <ul v-if="optionalShow">
-        <li>
+        <li  @click="showDialog('isC2C')">
           <Icon :file="C2C" v-if="!isPC"></Icon>
-          <h1 @click="showOpen('isC2C')">
+          <h1>
             {{ TUITranslateService.t("TUISearch.发起单聊") }}
           </h1>
         </li>
-        <li>
+        <li @click="showDialog('isGroup')">
           <Icon :file="createGroup" class="create-group"></Icon>
-          <h1 @click="showOpen('isGroup')">
+          <h1>
             {{ TUITranslateService.t("TUISearch.发起群聊") }}
           </h1>
         </li>
       </ul>
     </header>
-    <header @click="toggleOptionalShow" v-if="isRelation">
+    <header @click="showDialog('joinGroup')" v-if="isRelation">
       <i class="plus"></i>
-      <h1 @click="showOpen('joinGroup')">
+      <h1>
         {{ TUITranslateService.t("TUISearch.添加群聊") }}
       </h1>
     </header>
@@ -56,7 +56,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, defineProps, reactive, defineEmits } from "../../adapter-vue";
+import { ref, defineProps, reactive, defineEmits, nextTick, watchEffect } from "../../adapter-vue";
 import 
 TUIChatEngine,
 {
@@ -81,11 +81,16 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isShowSearchDialog: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const emits = defineEmits(["handleSwitchConversation"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
+const isUniFrameWork = ref(typeof uni !== 'undefined');
 
 const optionalShow = ref(isPC.value);
 const dialog = ref(null);
@@ -113,12 +118,20 @@ const groupInfo = reactive({
   ],
 });
 
+watchEffect(() => {
+  if(isUniFrameWork.value) {
+    optionalShow.value = props.isShowSearchDialog;
+  }
+})
+
 const toggleOpen = () => {
   open.value = !open.value;
   if (!open.value) {
     searchUserID.value = "";
     currentDialog.value = DIALOG_CONTENT.USERLIST;
     initGroupOptions();
+    searchUserList.value = [];
+    searchGroupList.value = [];
   }
 };
 
@@ -142,10 +155,13 @@ const initGroupOptions = () => {
 const toggleOptionalShow = () => {
   if (!isPC.value) {
     optionalShow.value = !optionalShow.value;
+    nextTick(() => {
+      onClickOutside(dialog.value);
+    });
   }
 };
 
-const showOpen = async (type: string) => {
+const showDialog = async (type: string) => {
   open.value = true;
   await getFriendList();
   searchUserList.value = [...friendList.value];
@@ -315,6 +331,43 @@ const createGroupConversation = async (params: any) => {
       });
     });
   toggleOpen();
+};
+
+// 点击外侧关闭
+
+let clickOutside = false;
+let clickInner = false;
+const onClickOutside = (component: any) => {
+  if (isUniFrameWork.value) {
+    return;
+  }
+  document.addEventListener("mousedown", onClickDocument);
+  component?.addEventListener &&
+    component?.addEventListener("mousedown", onClickTarget);
+};
+
+const onClickDocument = () => {
+  clickOutside = true;
+  if (!clickInner && clickOutside) {
+    // 关闭弹窗
+    optionalShow.value = false;
+    removeClickListener(dialog.value);
+  }
+  clickOutside = false;
+  clickInner = false;
+};
+
+const onClickTarget = () => {
+  clickInner = true;
+};
+
+const removeClickListener = (component: any) => {
+  if (isUniFrameWork.value) {
+    return;
+  }
+  document.removeEventListener("mousedown", onClickDocument);
+  component?.removeEventListener &&
+    component?.removeEventListener("mousedown", onClickTarget);
 };
 </script>
 

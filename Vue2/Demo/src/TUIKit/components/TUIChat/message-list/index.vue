@@ -43,7 +43,7 @@
             />
             <div
               v-else-if="!item.isRevoked"
-              @longpress="handleToggleMessageItem($event, item, index)"
+              @longpress="handleToggleMessageItem($event, item, index, true)"
               @click.prevent.right="
                 handleToggleMessageItem($event, item, index)
               "
@@ -131,6 +131,12 @@
           {{ TUITranslateService.t("TUIChat.确认重发该消息？") }}
         </p>
       </Dialog>
+      <ImagePreviewer
+        v-if="showImagePreview"
+        :currentImage="currentImagePreview"
+        :imageList="imageMessageList"
+        @close="onImagePreviewerClose"
+      ></ImagePreviewer>
     </div>
   </div>
 </template>
@@ -142,11 +148,10 @@ import {
   getCurrentInstance,
   defineExpose,
   nextTick,
+  computed,
 } from "../../../adapter-vue";
 
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   IMessageModel,
   TUIStore,
@@ -170,6 +175,7 @@ import MessageVideo from "./message-elements/message-video.vue";
 import MessageTool from "./message-tool/index.vue";
 import MessageRevoked from "./message-tool/message-revoked.vue";
 import Dialog from "../../common/Dialog";
+import ImagePreviewer from "../../common/ImagePreviewer/index";
 
 import { getImgLoad } from "../utils/utils";
 import { CHAT_SCROLL_TYPE } from "../../../constant";
@@ -184,12 +190,22 @@ const currentConversationID = ref("");
 const nextReqMessageID = ref();
 const toggleID = ref("");
 const TYPES = ref(TUIChatEngine.TYPES);
+const isLongpressing = ref(false);
+
+// 图片预览相关
+const showImagePreview = ref(false);
+const currentImagePreview = ref<IMessageModel>();
+const imageMessageList = computed(() =>
+  messageList?.value?.filter((item: IMessageModel) => {
+    return !item.isRevoked && item.type === TYPES.value.MSG_IMAGE;
+  })
+);
 
 // 消息操作气泡调整
 const toggleNowRectInfo = ref();
 const dialogTop = ref(30);
 const listRectInfo = ref();
-const list = ref();
+const listRef = ref();
 
 // 方法传值
 const msgToolRef = ref();
@@ -254,15 +270,34 @@ const handleUploadingImageOrVideo = () => {
   });
 };
 
-// todo：下载和预览
-const handleImagePreview = (message: any) => {};
+// 图片预览
+const handleImagePreview = (message: IMessageModel) => {
+  if (
+    showImagePreview.value ||
+    currentImagePreview.value ||
+    isLongpressing.value
+  ) {
+    return;
+  }
+  showImagePreview.value = true;
+  currentImagePreview.value = message;
+};
+// 关闭图片预览
+const onImagePreviewerClose = () => {
+  showImagePreview.value = false;
+  currentImagePreview.value = null;
+};
 
 // 消息操作
 const handleToggleMessageItem = (
   e: any,
   message: IMessageModel,
-  index: number
+  index: number,
+  isLongpress = false
 ) => {
+  if (isLongpress) {
+    isLongpressing.value = true;
+  }
   toggleID.value = message.ID;
 };
 
@@ -291,6 +326,9 @@ const handleH5LongPress = (
       break;
     case "touchend":
       touchEndHandler();
+      setTimeout(() => {
+        isLongpressing.value = false;
+      }, 200);
       break;
   }
 };

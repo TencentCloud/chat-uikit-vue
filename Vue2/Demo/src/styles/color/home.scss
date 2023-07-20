@@ -133,7 +133,7 @@
       }
   
       &-main {
-        .conversation {
+        .home-conversation {
           border-right: 1px solid #F4F5F9;
   
           .TUI-search {
@@ -141,7 +141,7 @@
           }
         }
   
-        .chat {
+        .home-chat {
           &-default {
             h1 {
               font-family: PingFangSC-Medium;
