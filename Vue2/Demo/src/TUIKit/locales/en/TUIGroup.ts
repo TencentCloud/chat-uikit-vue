@@ -19,7 +19,7 @@ const TUIGroup = {
   "需要验证": "Require approval",
   "禁止加群": "Disallow group joining",
   "人": "",
-  "确认": "confirm",
+  "确认": "Confirm",
   "群头像": "Group profile photo",
   "加群方式": "Group joining mode",
   "转让群组": "Transfer ownership",
