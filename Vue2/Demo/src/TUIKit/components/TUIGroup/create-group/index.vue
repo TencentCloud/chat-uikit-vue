@@ -4,38 +4,39 @@
       <header @click="cancelDialog">
         <h1 v-if="!groupInfo.isEdit">{{ TUITranslateService.t('TUISearch.发起群聊') }}</h1>
         <h1 v-else>{{ TUITranslateService.t(`TUISearch.${groupInfo.groupConfig.title}`) }}</h1>
-        <Icon :file="!isPC ? backIcon : closeIcon"></Icon>
+        <Icon v-if="isPC" :file="closeIcon" :width="'40px'" :height="'40px'"></Icon>
+        <Icon v-if="!isPC" :file="backIcon"></Icon>
       </header>
       <ul class="group-list" v-if="!groupInfo.isEdit">
         <li class="group-list-item">
-          <label>{{ TUITranslateService.t('TUISearch.群头像') }}</label>
+          <label :class="[`group-list-item-label-${ isPC ? 'pc' : 'h5'}`]">{{ TUITranslateService.t('TUISearch.群头像') }}</label>
           <Icon :file="groupInfo.profile.avatar"></Icon>
         </li>
         <ul>
           <li class="group-list-item">
-            <label>{{ TUITranslateService.t('TUISearch.群名称') }}</label>
+            <label :class="[`group-list-item-label-${ isPC ? 'pc' : 'h5'}`]">{{ TUITranslateService.t('TUISearch.群名称') }}</label>
             <input v-if="isPC" type="text" v-model="groupInfo.profile.name" placeholder="请输入群名称">
             <span class="group-h5-list-item-content" v-else @click="edit('name')">
               <p class="content">{{ groupInfo.profile.name }}</p>
-              <Icon :file="rightIcon"></Icon>
+              <Icon :file="rightIcon" :width="'16px'" :height="'16px'"></Icon>
             </span>
           </li>
           <li class="group-list-item">
-            <label>{{ TUITranslateService.t('TUISearch.群ID') }}<text>({{ TUITranslateService.t('TUISearch.选填')
-            }})</text></label>
+            <label :class="[`group-list-item-label-${ isPC ? 'pc' : 'h5'}`]">{{ TUITranslateService.t('TUISearch.群ID') }}({{ TUITranslateService.t('TUISearch.选填')
+            }})</label>
             <input v-if="isPC" type="text" v-model="groupInfo.profile.groupID">
             <span class="group-h5-list-item-content" v-else @click="edit('groupID')">
               <p class="content">{{ groupInfo.profile.groupID }}</p>
-              <Icon :file="rightIcon"></Icon>
+              <Icon :file="rightIcon" :width="'16px'" :height="'16px'"></Icon>
             </span>
           </li>
           <li class="group-list-introduction">
             <div class="group-list-item">
-              <label>{{ TUITranslateService.t('TUISearch.群类型') }}</label>
+              <label :class="[`group-list-item-label-${ isPC ? 'pc' : 'h5'}`]">{{ TUITranslateService.t('TUISearch.群类型') }}</label>
               <ul class="select" v-if="isPC">
                 <li class="select-item" v-for="(item, index) in type" :key="index"
                   :class="[groupInfo.profile.type === item.type && 'selected']" @click="selected(item)">
-                  <main>
+                  <main class="select-item-type">
                     <div class="select-item-header">
                       <aside class="left">
                         <Icon :file="item.icon"></Icon>
@@ -51,7 +52,7 @@
               </ul>
               <span class="group-h5-list-item-content" v-else @click="edit('type')">
                 <p class="content">{{ groupTypeDetail.label }}</p>
-                <Icon :file="rightIcon"></Icon>
+                <Icon :file="rightIcon" :width="'16px'" :height="'16px'"></Icon>
               </span>
             </div>
             <article class="group-h5-list-item-introduction" v-if="!isPC">
@@ -69,7 +70,7 @@
         <ul class="select" v-else>
           <li class="select-item" v-for="(item, index) in type" :key="index"
             :class="[groupInfo.groupConfig.value === item.type && 'selected']" @click="selectedEdit(item)">
-            <main>
+            <main class="select-item-type">
               <div class="select-item-header">
                 <aside class="left">
                   <Icon :file="item.icon"></Icon>
@@ -88,7 +89,7 @@
         <button v-if="!groupInfo.isEdit && isPC" class="btn-default" @click="cancelDialog">{{
           TUITranslateService.t('TUISearch.取消') }}</button>
         <button class="btn-submit" @click="submit(groupInfo.profile)"
-          :disabled="groupInfo.profile.name === '' && !groupInfo.isEdit">{{ TUITranslateService.t('TUISearch.创建')
+          :disabled="groupInfo.profile.name === '' && !groupInfo.isEdit">{{ TUITranslateService.t('TUIGroup.确认')
           }}</button>
       </footer>
     </div>

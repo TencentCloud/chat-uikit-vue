@@ -11,10 +11,13 @@
       display: flex;
       padding: 10px 0;
 
-      label {
-        width: 84px;
+      &-label-h5 {
+        width: 65px;
         height: 20px;
         font-size: 14px;
+      }
+      &-label-pc {
+        width: 84px;
       }
     }
 

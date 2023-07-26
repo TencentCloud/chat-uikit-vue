@@ -10,7 +10,8 @@
     "fix": "eslint --fix --fix-type suggestion --fix-type problem ."
   },
   "dependencies": {
-    "@tencentcloud/call-uikit-vue": "^2.1.0",
+    "@tencentcloud/call-uikit-vue": "2.3.2",
+    "@tencentcloud/chat": "^3.1.1",
     "@tencentcloud/chat-uikit-vue": "^1.3.5",
     "@vueuse/core": "^8.9.4",
     "axios": "^0.26.1",
@@ -18,9 +19,11 @@
     "element-plus": "^2.1.4",
     "qs": "^6.10.3",
     "rtc-ai-denoiser": "^1.1.3",
-    "tim-js-sdk": "2.27.1",
     "tim-profanity-filter-plugin": "^0.9.0",
     "tim-upload-plugin": "^1.0.6",
+    "trtc-js-sdk": "^4.15.12",
+    "tim-js-sdk": "^2.27.5",
+    "tsignaling": "^1.0.6",
     "vue": "^3.0.0",
     "vue-class-component": "^8.0.0-0",
     "vue-router": "^4.0.0-0",

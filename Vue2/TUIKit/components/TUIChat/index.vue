@@ -1,40 +1,67 @@
 <template>
- <div class="chat">
-   <div :class="['TUI-chat', !isPC && 'TUI-chat-h5']">
-    <div v-if="!currentConversationID" :class="['TUI-chat-default', !isPC && 'TUI-chat-h5-default']">
-      <slot></slot>
-    </div>
-    <div v-if="currentConversationID" :class="['TUI-chat', !isPC && 'TUI-chat-h5']">
-      <ChatHeader :class="[
-        'TUI-chat-header',
-        !isPC && 'TUI-chat-H5-header',
-        isUniFrameWork && 'TUI-chat-uniapp-header',
-      ]" @closeChat="closeChat"></ChatHeader>
-      <MessageList :class="['TUI-chat-message-list', !isPC && 'TUI-chat-h5-message-list']" @handleEditor="handleEditor">
-      </MessageList>
-      <MessageInputToolbar v-if="isToolbarShow" :class="[
-        'TUI-chat-message-input-toolbar',
-        !isPC && 'TUI-chat-h5-message-input-toolbar',
-      ]" @insertEmoji="insertEmoji"></MessageInputToolbar>
-      <MessageInput :class="[
-        'TUI-chat-message-input',
-        !isPC && 'TUI-chat-h5-message-input',
-        isUniFrameWork && 'TUI-chat-uni-message-input',
-        isWeChat && 'TUI-chat-wx-message-input',
-      ]" :isMuted="false" :muteText="TUITranslateService.t('TUIChat.您已被管理员禁言')"
-        :placeholder="TUITranslateService.t('请输入消息')" ref="messageInputRef"
-        @handleToolbarListShow="handleToolbarListShow"></MessageInput>
-    </div>
+  <div class="chat">
+    <div :class="['TUI-chat', !isPC && 'TUI-chat-h5']">
+      <div
+        v-if="!currentConversationID"
+        :class="['TUI-chat-default', !isPC && 'TUI-chat-h5-default']"
+      >
+        <slot></slot>
+      </div>
+      <div
+        v-if="currentConversationID"
+        :class="['TUI-chat', !isPC && 'TUI-chat-h5']"
+      >
+        <ChatHeader
+          :class="[
+            'TUI-chat-header',
+            !isPC && 'TUI-chat-H5-header',
+            isUniFrameWork && 'TUI-chat-uniapp-header',
+          ]"
+          @closeChat="closeChat"
+        ></ChatHeader>
+        <MessageList
+          :class="[
+            'TUI-chat-message-list',
+            !isPC && 'TUI-chat-h5-message-list',
+          ]"
+          @handleEditor="handleEditor"
+        >
+        </MessageList>
+        <MessageInputToolbar
+          v-if="isToolbarShow"
+          :class="[
+            'TUI-chat-message-input-toolbar',
+            !isPC && 'TUI-chat-h5-message-input-toolbar',
+          ]"
+          @insertEmoji="insertEmoji"
+        ></MessageInputToolbar>
+        <MessageInput
+          :class="[
+            'TUI-chat-message-input',
+            !isPC && 'TUI-chat-h5-message-input',
+            isUniFrameWork && 'TUI-chat-uni-message-input',
+            isWeChat && 'TUI-chat-wx-message-input',
+          ]"
+          :isMuted="false"
+          :muteText="TUITranslateService.t('TUIChat.您已被管理员禁言')"
+          :placeholder="TUITranslateService.t('请输入消息')"
+          ref="messageInputRef"
+          @handleToolbarListShow="handleToolbarListShow"
+        ></MessageInput>
+      </div>
       <!-- 群组管理 -->
-    <div class="group-profile" v-if="isUniFrameWork && isGroup"  @click="handleGroup">更多</div>
+      <div
+        class="group-profile"
+        v-if="isUniFrameWork && isGroup"
+        @click="handleGroup"
+      >
+        更多
+      </div>
+    </div>
   </div>
-
- </div>
 </template>
 <script lang="ts" setup>
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   TUITranslateService,
   TUIConversationService,
@@ -52,7 +79,7 @@ import MessageInputToolbar from "./message-input-toolbar/index.vue";
 
 const emits = defineEmits(["closeChat"]);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 const isToolbarShow = ref<boolean>(!isUniFrameWork.value);
 const messageInputRef = ref();
@@ -66,9 +93,9 @@ TUIStore.watch(StoreName.CONV, {
     currentConversationID.value = id;
   },
   currentConversation: (conversation: IConversationModel) => {
-  isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
-  groupID.value = conversation?.groupProfile?.groupID;
- }
+    isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
+    groupID.value = conversation?.groupProfile?.groupID;
+  },
 });
 
 onUnmounted(() => {
@@ -118,9 +145,8 @@ const handleEditor = (message: IMessageModel, type: string) => {
 const handleGroup = () => {
   TUIGroupService.switchGroup(groupID.value);
   uni.navigateTo({
-    url: '/TUIKit/components/TUIGroup/manage-group/index',
+    url: "/TUIKit/components/TUIGroup/manage-group/index",
   });
 };
 </script>
-<style scoped lang="scss" src="./style/index.scss">
-</style>
+<style scoped lang="scss" src="./style/index.scss"></style>

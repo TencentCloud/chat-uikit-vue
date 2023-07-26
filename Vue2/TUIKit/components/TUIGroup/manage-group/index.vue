@@ -6,7 +6,7 @@
           <Icon :file="backSVG" v-if="!isPC && !currentTab"></Icon>
         </div>
         <aside class="manage-header-left aside">
-          <div @click="setCurrentTab('')">
+          <div @click="setCurrentTab('')" class="tab-icon">
             <Icon :file="backSVG" v-if="currentTab"></Icon>
           </div>
           <main class="main">
@@ -68,7 +68,7 @@
             <p class="p">
               <span class="span">{{ currentGroup.memberCount || groupMemberList.length
               }}{{ TUITranslateService.t(`TUIGroup.人`) }}</span>
-              <Icon :file="rightIcon"></Icon>
+              <Icon :file="rightIcon" :width="'16px'" :height="'16px'"></Icon>
             </p>
           </header>
           <ol class="ol">
@@ -96,7 +96,7 @@
               }}</label>
               <article class="article">{{ currentGroup.notification }}</article>
             </aside>
-            <Icon :file="rightIcon" class="end"></Icon>
+            <Icon :file="rightIcon" class="end" :width="'16px'" :height="'16px'"></Icon>
           </li>
           <li class="li" v-if="isAdmin && isSetMuteTime" @click.stop="platformOpenTab('admin')">
             <label class="label">{{

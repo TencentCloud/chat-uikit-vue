@@ -1,5 +1,5 @@
 #preloadedImages {
-  background: linear-gradient(135deg, #F1F4F7 0%, #EDF5FF 100%) no-repeat;
+  background: linear-gradient(135deg, #f1f4f7 0%, #edf5ff 100%) no-repeat;
   background-size: cover;
   background-image: url("https://web.sdk.qcloud.com/im/assets/images/background-zip.png");
 }
@@ -138,15 +138,15 @@
         &-item {
           min-height: 72px;
           background-size: cover;
-          border: 1px solid #96C3FF;
+          border: 1px solid #96c3ff;
           border-radius: 4px;
           padding-bottom: 15px;
           display: flex;
-          background: url('../assets/image/h5/adv-more.svg') no-repeat;
+          background: url("../assets/image/h5/adv-more.svg") no-repeat;
           background-size: contain;
 
           &:last-child {
-            background: url('../assets/image/h5/adv-im.svg') no-repeat;
+            background: url("../assets/image/h5/adv-im.svg") no-repeat;
             background-size: contain;
             margin: 0;
           }
@@ -337,7 +337,7 @@
           padding-top: 100px;
           display: flex;
           flex-direction: column;
-          background: url('../assets/image/login-background.png') no-repeat;
+          background: url("../assets/image/login-background.png") no-repeat;
           background-size: cover;
           background-position-x: -17px;
           background-position-y: 173px;
@@ -351,7 +351,7 @@
               width: 2.5rem;
               height: 1.63rem;
               padding-left: 0.98rem;
-              padding-right: 0.98rem
+              padding-right: 0.98rem;
             }
           }
 
@@ -439,7 +439,7 @@
     border-radius: 0 4px 4px 0;
     bottom: 10px;
     z-index: 2;
-    background: #FFFFFF;
+    background: #ffffff;
     box-shadow: 2px 1px 6px 0px rgba(2, 16, 43, 0.15);
   }
 }
@@ -484,7 +484,6 @@
   align-items: center;
 }
 
-
 .show-about span,
 .show-receipt span,
 .show-online-status span {
@@ -502,7 +501,7 @@
   border-radius: 0 4px 4px 0;
   bottom: 10px;
   z-index: 2;
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 2px 1px 6px 0px rgba(2, 16, 43, 0.15);
 }
 
@@ -515,7 +514,7 @@
   border-radius: 0 4px 4px 0;
   bottom: 10px;
   z-index: 2;
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 2px 1px 6px 0px rgba(2, 16, 43, 0.15);
 }
 
@@ -527,7 +526,7 @@
 .show-cut {
   width: calc(100% - 10px);
   border: none;
-  border-bottom: 1px solid #E8E8E9;
+  border-bottom: 1px solid #e8e8e9;
 }
 
 .show-quit {
@@ -599,7 +598,7 @@
             position: absolute;
             width: 2px;
             height: 80%;
-            background: #EEEEEE;
+            background: #eeeeee;
             right: 0;
             top: 0;
             bottom: 0;
@@ -707,7 +706,6 @@
   }
 }
 
-
 // 公共样式
 .flex-justify-between {
   justify-content: space-between;
@@ -739,7 +737,7 @@
   height: 36rem;
   border-radius: 16px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
 
   &-left {
     left: calc(50% - 25rem + 150px);
@@ -752,11 +750,11 @@
     top: 0;
     border-radius: 0;
     box-shadow: none;
-    background-color: #FFFFFF;
+    background-color: #ffffff;
   }
 }
 
-.callkit-drag-container-mini {
+.callkit-drag-container-mini:deep {
   width: 168px;
   height: 56px;
   right: 10px;

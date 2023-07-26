@@ -138,7 +138,10 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
 ```javascript
 <template>
   <div class="home-TUIKit-main">
-    <div :class="env?.isH5 ? 'conversation-h5' : 'conversation'" v-show="!env?.isH5 || currentModel === 'conversation'">
+    <div
+      :class="env?.isH5 ? 'conversation-h5' : 'conversation'"
+      v-show="!env?.isH5 || currentModel === 'conversation'"
+    >
       <TUISearch class="search" />
       <TUIConversation @current="handleCurrentConversation" />
     </div>
@@ -147,45 +150,36 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
         <h1>欢迎使用腾讯云即时通信IM</h1>
       </TUIChat>
     </div>
-    <Drag :show="showCall" class="callkit-drag-container" domClassName="callkit-drag-container">
-      <!-- TUICallKit 组件：通话 UI 组件主体 -->
-      <TUICallKit
-        :allowedMinimized="true"
-        :allowedFullScreen="false"
-        :beforeCalling="beforeCalling"
-        :afterCalling="afterCalling"
-        :onMinimized="onMinimized"
-        :onMessageSentByMe="onMessageSentByMe"
-      />
-    </Drag>
-    <Drag :show="showCallMini" class="callkit-drag-container-mini" domClassName="callkit-drag-container-mini">
-      <!-- TUICallKitMini 组件：通话 UI 悬浮窗组件，提供最小化功能 -->
-      <TUICallKitMini style="position: static" />
-    </Drag>
+    <!-- TUICallKit 组件：通话 UI 组件主体 -->
+    <TUICallKit
+      :class="!showCallMini ? 'callkit-drag-container' : 'callkit-drag-container-mini'"
+      :allowedMinimized="true"
+      :allowedFullScreen="false"
+      :beforeCalling="beforeCalling"
+      :afterCalling="afterCalling"
+      :onMinimized="onMinimized"
+      :onMessageSentByMe="onMessageSentByMe"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs } from 'vue';
-import { TUIEnv } from './TUIKit/TUIPlugin';
-import Drag from './TUIKit/TUIComponents/components/drag';
-import { handleErrorPrompts } from './TUIKit/TUIComponents/container/utils';
+import { defineComponent, reactive, toRefs } from "vue";
+import { TUIEnv } from "./TUIKit/TUIPlugin";
+import { handleErrorPrompts } from "./TUIKit/TUIComponents/container/utils";
 
 export default defineComponent({
-  name: 'App',
-  components: {
-    Drag,
-  },
+  name: "App",
   setup() {
     const data = reactive({
       env: TUIEnv(),
-      currentModel: 'conversation',
+      currentModel: "conversation",
       showCall: false,
       showCallMini: false,
     });
     const TUIServer = (window as any)?.TUIKitTUICore?.TUIServer;
     const handleCurrentConversation = (value: string) => {
-      data.currentModel = value ? 'message' : 'conversation';
+      data.currentModel = value ? "message" : "conversation";
     };
     // beforeCalling：在拨打电话前与收到通话邀请前执行
     const beforeCalling = (type: string, error: any) => {
@@ -201,7 +195,10 @@ export default defineComponent({
       data.showCallMini = false;
     };
     // onMinimized：组件切换最小化状态时执行
-    const onMinimized = (oldMinimizedStatus: boolean, newMinimizedStatus: boolean) => {
+    const onMinimized = (
+      oldMinimizedStatus: boolean,
+      newMinimizedStatus: boolean
+    ) => {
       data.showCall = !newMinimizedStatus;
       data.showCallMini = newMinimizedStatus;
     };
@@ -245,6 +242,7 @@ export default defineComponent({
   position: relative;
 }
 .callkit-drag-container {
+  position: fixed;
   left: calc(50% - 25rem);
   top: calc(50% - 18rem);
   width: 50rem;
@@ -253,6 +251,7 @@ export default defineComponent({
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 .callkit-drag-container-mini {
+  position: fixed;
   width: 168px;
   height: 56px;
   right: 10px;

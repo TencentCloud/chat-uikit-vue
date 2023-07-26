@@ -259,9 +259,10 @@
     &-main {
       flex: 1;
       display: flex;
+      overflow: hidden;
 
-      .conversation,
-      .relation {
+      .home-conversation,
+      .home-relation {
         min-width: 285px;
         flex: 0 0 24%;
         display: flex;
@@ -272,10 +273,9 @@
         }
       }
 
-      .conversation,
-      .relation {
+      .home-relation {
         min-width: 285px;
-        flex: 0 0 24%;
+        flex: 0 0 100%;
         display: flex;
         flex-direction: column;
 
@@ -301,8 +301,12 @@
       }
     }
 
-    .chat {
+    .home-chat {
       flex: 1;
+    }
+    .TUIConversation{
+      flex: 1;
+      overflow: hidden;
     }
   }
 }

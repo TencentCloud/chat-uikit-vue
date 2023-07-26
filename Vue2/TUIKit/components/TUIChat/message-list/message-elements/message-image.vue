@@ -9,7 +9,9 @@
         isH5
           ? {
               maxWidth: data.width ? data.width + 'px' : 'calc(100vw - 180px)',
-              maxHeight: data.height ? data.height + 'px' : 'calc(100vw - 180px)',
+              maxHeight: data.height
+                ? data.height + 'px'
+                : 'calc(100vw - 180px)',
             }
           : {}
       "
@@ -21,7 +23,11 @@
       <header v-if="!isH5">
         <i class="icon icon-close" @click.stop="toggleShow"></i>
       </header>
-      <div class="dialog-box" :class="[isH5 ? 'dialog-box-h5' : '']" @click.self="toggleShow">
+      <div
+        class="dialog-box"
+        :class="[isH5 ? 'dialog-box-h5' : '']"
+        @click.self="toggleShow"
+      >
         <img
           :class="[isWidth ? 'isWidth' : 'isHeight']"
           :src="data.message.payload.imageInfoArray[0].url"
@@ -41,8 +47,16 @@
 </template>
 
 <script lang="ts" setup>
-import {  watchEffect, ref, watch, defineProps, computed, nextTick, defineEmits } from "../../../../adapter-vue";
-import { handleSkeletonSize } from '../../utils/utils';
+import {
+  watchEffect,
+  ref,
+  watch,
+  defineProps,
+  computed,
+  nextTick,
+  defineEmits,
+} from "../../../../adapter-vue";
+import { handleSkeletonSize } from "../../utils/utils";
 import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 const props = defineProps({
   content: {
@@ -56,16 +70,16 @@ const props = defineProps({
   messageItem: {
     type: Object,
     default: () => ({}),
-  }
+  },
 });
 
 const data = ref({
-  progress: 0
+  progress: 0,
 });
 const message = ref();
 const show = ref();
 const skeleton: any = ref();
-const emits = defineEmits(["uploading", "previewImage"]);  
+const emits = defineEmits(["uploading", "previewImage"]);
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const messageStatus = ref(props.messageItem.status);
 
@@ -76,35 +90,37 @@ const isWidth = computed(() => {
 
 watchEffect(() => {
   data.value = props.content;
-  message.value  = props.messageItem;
+  message.value = props.messageItem;
   if (!data.value) return;
   nextTick(() => {
-    if (!data.value.progress && messageStatus.value === 'success') {
+    if (!data.value.progress && messageStatus.value === "success") {
       const { width = 0, height = 0 } = data.value;
       if (width === 0 || height === 0) return;
-      const containerWidth = document.getElementById('app')?.clientWidth || 0;
+      const containerWidth = document.getElementById("app")?.clientWidth || 0;
       const max = !props.isPC ? Math.min(containerWidth - 180, 300) : 300;
       const size = handleSkeletonSize(width, height, max, max);
-      skeleton?.value?.style && (skeleton.value.style.width = `${size.width}px`);
-      skeleton?.value?.style && (skeleton.value.style.height = `${size.height}px`);
+      skeleton?.value?.style &&
+        (skeleton.value.style.width = `${size.width}px`);
+      skeleton?.value?.style &&
+        (skeleton.value.style.height = `${size.height}px`);
     } else {
-      emits('uploading');
+      emits("uploading");
     }
   });
 });
 
 const toggleShow = () => {
   if (!data.value.progress) {
-    // emits('previewImage', (data.value any).message);
+    emits("previewImage", message.value);
   }
 };
 const downloadImage = (message: any) => {
-  const targetImage = document.createElement('a');
+  const targetImage = document.createElement("a");
   const downloadImageName = message.payload.imageInfoArray[0].instanceID;
-  targetImage.setAttribute('download', downloadImageName);
+  targetImage.setAttribute("download", downloadImageName);
   const image = new Image();
   image.src = message.payload.imageInfoArray[0].url;
-  image.setAttribute('crossOrigin', 'Anonymous');
+  image.setAttribute("crossOrigin", "Anonymous");
   image.onload = () => {
     targetImage.href = getImageDataURL(image);
     targetImage.click();
@@ -112,12 +128,14 @@ const downloadImage = (message: any) => {
 };
 
 const getImageDataURL = (image: any) => {
-  const canvas = document.createElement('canvas');
+  const canvas = document.createElement("canvas");
   canvas.width = image.width;
   canvas.height = image.height;
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext("2d");
   ctx?.drawImage(image, 0, 0, image.width, image.height);
-  const extension = image.src.substring(image.src.lastIndexOf('.') + 1).toLowerCase();
+  const extension = image.src
+    .substring(image.src.lastIndexOf(".") + 1)
+    .toLowerCase();
   return canvas.toDataURL(`image/${extension}`, 1);
 };
 

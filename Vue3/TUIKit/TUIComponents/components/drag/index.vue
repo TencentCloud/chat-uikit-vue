@@ -5,7 +5,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, toRefs, onMounted, watch, watchEffect } from 'vue';
+import {
+  defineComponent,
+  reactive,
+  toRefs,
+  onMounted,
+  watch,
+  watchEffect,
+} from "vue";
 export default defineComponent({
   props: {
     show: {
@@ -14,17 +21,17 @@ export default defineComponent({
     },
     domClassName: {
       type: String,
-      default: '',
+      default: "",
     },
   },
   setup(props: any, ctx: any) {
     const data = reactive({
       show: false,
-      domClassName: '',
+      domClassName: "",
       startPosition: {
-        left: '',
-        top: '',
-        cssText: '',
+        left: "",
+        top: "",
+        cssText: "",
       },
     });
 
@@ -35,7 +42,7 @@ export default defineComponent({
 
     onMounted(() => {
       const dragDom = document.getElementsByClassName(
-        props.domClassName ? props.domClassName : 'drag-container'
+        props.domClassName ? props.domClassName : "drag-container"
       )[0] as HTMLElement;
       if (!dragDom) return;
       let isDrag = false;
@@ -62,16 +69,19 @@ export default defineComponent({
             dragDom.style.top = `${e.clientY - Y}px`;
           }
         };
-        document.addEventListener('mousemove', throttle(move, 20), false);
-        document.addEventListener('mouseup', () => {
+        document.addEventListener("mousemove", throttle(move, 20), false);
+        document.addEventListener("mouseup", () => {
           isDrag = false;
-          document.removeEventListener('mousemove', move);
+          document.removeEventListener("mousemove", move);
         });
       };
-      dragDom.addEventListener('mousedown', mouseDown);
+      dragDom.addEventListener("mousedown", mouseDown);
     });
 
-    function throttle(fn: { (e: MouseEvent): void; apply?: any }, timer: number) {
+    function throttle(
+      fn: { (e: MouseEvent): void; apply?: any },
+      timer: number
+    ) {
       let initTime = 0;
       return function (...args: any) {
         const nowTime = +new Date();
@@ -82,6 +92,24 @@ export default defineComponent({
       };
     }
 
+    const positionReset = () => {
+      const dragDom = document.getElementsByClassName(
+        props.domClassName ? props.domClassName : "drag-container"
+      )[0] as HTMLElement;
+      data.startPosition = {
+        left: "",
+        top: "",
+        cssText: "",
+      };
+      dragDom.style.left = data.startPosition?.left;
+      dragDom.style.top = data.startPosition?.top;
+      dragDom.style.cssText = data.startPosition?.cssText;
+    };
+
+    ctx.expose({
+      positionReset,
+    });
+
     return {
       ...toRefs(data),
       throttle,
@@ -90,8 +118,8 @@ export default defineComponent({
 });
 </script>
 <style lang="scss" scoped>
-@import url('../../styles/common.scss');
-@import url('../../styles/icon.scss');
+@import url("../../styles/common.scss");
+@import url("../../styles/icon.scss");
 .drag-container {
   position: fixed;
   z-index: 100;

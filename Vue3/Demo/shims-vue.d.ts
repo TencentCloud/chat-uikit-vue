@@ -5,8 +5,8 @@ declare module '*.vue' {
   export default component
 }
 
-declare module 'tim-js-sdk' {
-  import tim from 'tim-js-sdk'
+declare module '@tencentcloud/chat' {
+  import tim from '@tencentcloud/chat'
   export default tim
 }
 

@@ -2,7 +2,7 @@ const TUIContact = {
   "群聊通知": "Group Chat Notifications",
   "系统通知": "System Notifications",
   "我的群聊": "My Group Chats",
-  "输入群ID，按回车搜索": "Enter a group ID",
+  "输入群ID搜索": "Enter a groupID",
   "群名称": "Group name",
   "群ID": "Group ID",
   "加入群聊": "Join group chat",

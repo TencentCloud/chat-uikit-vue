@@ -10,7 +10,7 @@
           <span>{{ handleRoleName(item) }}</span>
         </aside>
         <div @click="submit(item)">
-          <Icon :file="delIcon" v-if="item.role !== 'Owner' && isShowDelMember"></Icon>
+          <Icon :file="delIcon" v-if="item.role !== 'Owner' && isShowDeleteBtn" :width="'16px'" :height="'16px'"></Icon>
         </div>
       </li>
       <li class="list-item" v-if="memberList.length < totalMember" @click="getMore">
@@ -39,7 +39,7 @@
               <span>{{ handleRoleName(item) }}</span>
             </aside>
             <div @click="submit(item)">
-              <Icon :file="delIcon" v-if="item.role !== 'Owner' && isShowDelMember"></Icon>
+              <Icon :file="delIcon" v-if="item.role !== 'Owner' && isShowDeleteBtn" :width="'16px'" :height="'16px'"></Icon>
             </div>
           </li>
           <li class="list-item" v-if="memberList.length < totalMember" @click="getMore">
@@ -88,13 +88,13 @@ const props = defineProps({
 
 const totalMember = ref(0);
 const memberList = ref([]);
-const isShowDelMember = ref(false);
+const isShowDeleteBtn = ref(false);
 const self = ref([]);
 const isUniFrameWork = ref(typeof uni !== 'undefined');
 
 watchEffect(() => {
   totalMember.value = props.total;
-  isShowDelMember.value = props.isShowDel;
+  isShowDeleteBtn.value = props.isShowDel;
   memberList.value = props.list;
   self.value = props.self;
 });

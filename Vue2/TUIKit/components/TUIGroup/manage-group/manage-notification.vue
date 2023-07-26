@@ -27,7 +27,7 @@
         }}</span>
       </header>
       <div class="notification">
-        <textarea v-if="isEdit" v-model="input" @keyup.enter="updateProfile"></textarea>
+        <textarea v-if="isEdit" v-model="input" @keyup.enter="updateProfile" :class="[isUniFrameWork ? 'uni-height' : '']"></textarea>
         <section v-else>
           <p v-if="!groupProfile.notification">
             {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
@@ -122,12 +122,17 @@ const toggleEdit = async (tabName: string) => {
     border: 1px solid #e8e8e9;
     resize: none;
     font-size: 14px;
+    height: 100%;
+  }
+
+  .uni-height {
+    height: 20vh;
   }
 
   footer {
     display: flex;
     justify-content: flex-end;
-    padding: 10px;
+    padding: 20px 10px;
   }
 }
 

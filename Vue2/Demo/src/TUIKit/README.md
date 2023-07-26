@@ -252,7 +252,7 @@ src/components/TUICallKit
 
 - [chat-uikit-vue Github 仓库](https://github.com/TencentCloud/chat-uikit-vue)
 - [chat-uikit-vue2 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue2/Demo)
-- [chat-uikit-vue2 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue3/Demo)
+- [chat-uikit-vue3 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue3/Demo)
 - [@tencentcloud/chat-uikit-vue2 npm仓库（vue2版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue2)
 - [@tencentcloud/chat-uikit-vue npm仓库（vue3版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
 - [CHAT WEB DEMO 体验地址](https://web.sdk.qcloud.com/im/demo/latest/index.html)
