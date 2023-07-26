@@ -49,7 +49,7 @@ import TIM from '../../../../TUICore/tim';
 import { emojiUrl, emojiMap, emojiName } from '../utils/emojiMap';
 import { JSONToObject } from '../utils/utils';
 import TUIChat from '../index.vue';
-import { Message } from 'tim-js-sdk';
+import { Message } from '@tencentcloud/chat';
 export default defineComponent({
   props: {
     message: {

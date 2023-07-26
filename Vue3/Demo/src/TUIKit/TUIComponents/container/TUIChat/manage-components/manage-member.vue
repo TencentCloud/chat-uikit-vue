@@ -20,7 +20,7 @@
 
 <script lang="ts">
 import { defineComponent, watchEffect, reactive, toRefs } from 'vue';
-import TIM from 'tim-js-sdk';
+import TIM from '@tencentcloud/chat';
 
 const ManageMember = defineComponent({
   components: {},

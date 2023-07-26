@@ -1,5 +1,5 @@
 import { isTypingMessage, JSONToObject } from "../../TUIComponents/container/TUIChat/utils/utils";
-import TIM from "tim-js-sdk/tim-js-friendship";
+import TIM from "@tencentcloud/chat";
 
 class TUINotification {
   public allowNotifications = true;

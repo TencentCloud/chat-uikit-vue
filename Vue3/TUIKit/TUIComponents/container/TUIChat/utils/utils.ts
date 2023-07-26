@@ -198,8 +198,9 @@ export function handleTipMessageShowContext(message: any) {
         options.text = `[${t('message.tip.群提示消息')}]`;
         break;
     }
-  } else if (message?.payload?.data === "group_create") {
-    options.text = message?.payload?.extension;
+  } else if (JSONToObject(message?.payload?.data)?.businessID === "group_create") {
+    const data = JSONToObject(message?.payload?.data);
+    options.text = `"${data?.opUser}" ` + t(data?.content);
   } else {
     options.text = extractCallingInfoFromMessage(message);
   }
@@ -594,7 +595,7 @@ export const isMessageTip = (message: Message) => {
       JSONToObject(message?.payload?.data)?.businessID === constant?.TYPE_CALL_MESSAGE) ||
     (message?.type === TIM?.TYPES?.MSG_CUSTOM &&
       message?.conversationType === TIM?.TYPES?.CONV_GROUP &&
-      message?.payload?.data === "group_create")
+      JSONToObject(message?.payload?.data)?.businessID === "group_create")
   ) {
     return true;
   }

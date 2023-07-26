@@ -23,7 +23,7 @@ chat-uikit-vue Web 端 和 H5 端界面效果如下图所示：
 git clone https://github.com/TencentCloud/chat-uikit-vue.git
 
 # 进入 Demo
-cd chat-uikit-vue/Vue3/Demo
+cd chat-uikit-vue/Demo
 
 # 安装 Demo 依赖
 npm i --legacy-peer-deps
