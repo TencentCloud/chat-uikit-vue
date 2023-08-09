@@ -1,0 +1,15 @@
+.manage-h5 {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  border-radius: 0;
+}
+.manage-h5-uniapp {
+  top: 5%;
+}
+
+.deleted-dialog {
+  padding: 20%;
+}

@@ -6,8 +6,6 @@ chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT W
 <img width="2072" alt="page00" src="https://user-images.githubusercontent.com/57951148/192585375-6260280f-4a67-4b64-a908-efcedee1c253.png">
 <img width="1015" alt="page02" src="https://user-images.githubusercontent.com/57951148/192585298-c79960ed-a6a9-4927-89b9-31c1b3f68740.png">
 
-(“TUIContact 关系链功能”及“音视频通话功能”正在开发中，敬请期待)
-
 ## 发送您的第一条消息
 
 ### 开发环境要求
@@ -87,7 +85,7 @@ TUILogin.login({
   SDKAppID,
   userID,
   // UserSig 是用户登录即时通信 IM 的密码，其本质是对 UserID 等信息加密后得到的密文。
-  // 该方法仅适合本地跑通 Demo 和功能调试，详情请参见 https://cloud.tencent.com/document/product/269/32688  
+  // 该方法仅适合本地跑通 Demo 和功能调试，详情请参见 https://cloud.tencent.com/document/product/269/32688
   userSig: genTestUserSig({
     SDKAppID,
     secretKey,
@@ -99,7 +97,7 @@ TUILogin.login({
   // 此功能为增值服务，请参考：https://cloud.tencent.com/document/product/269/79139
   // 如果您已购买内容审核服务，开启此功能请设置为 true
   useProfanityFilterPlugin: false,
-  framework: 'vue2'
+  framework: "vue2",
 });
 
 Vue.config.productionTip = false;
@@ -139,6 +137,15 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
         <h1>欢迎使用腾讯云即时通信IM</h1>
       </TUIChat>
     </div>
+    <!-- TUICallKit 组件：通话 UI 组件主体 -->
+    <TUICallKit
+      :class="
+        !showCallMini ? 'callkit-drag-container' : 'callkit-drag-container-mini'
+      "
+      :allowedMinimized="true"
+      :allowedFullScreen="false"
+      :onMinimized="() => {showCallMini = true;}"
+    />
   </div>
 </template>
 
@@ -146,6 +153,7 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
 import Vue from "vue";
 import { TUIGlobal, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import { TUISearch, TUIConversation, TUIChat } from "./TUIKit";
+import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
 
 export default Vue.extend({
   name: "App",
@@ -153,12 +161,14 @@ export default Vue.extend({
     TUISearch,
     TUIConversation,
     TUIChat,
+    TUICallKit,
   },
   data() {
     return {
       currentModel: "conversation",
       isH5: TUIGlobal.getPlatform() === "h5",
       currentConversationID: "",
+      showCallMini: false,
     };
   },
   mounted: function () {
@@ -194,6 +204,22 @@ export default Vue.extend({
   height: 100%;
   position: relative;
 }
+.callkit-drag-container {
+  position: fixed;
+  left: calc(50% - 25rem);
+  top: calc(50% - 18rem);
+  width: 50rem;
+  height: 36rem;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.callkit-drag-container-mini {
+  position: fixed;
+  width: 168px;
+  height: 56px;
+  right: 10px;
+  top: 70px;
+}
 </style>
 
 ```
@@ -208,6 +234,10 @@ npm run serve
 #### 步骤 7：发送您的第一条消息
 
 ![send your first message](https://user-images.githubusercontent.com/57951148/192585549-2cc65785-0d6d-4d48-a0ce-0abe0b927bf4.png)
+
+### 步骤 8: 拨打您的第一通电话
+<img width="1015" alt="page05" src="https://user-images.githubusercontent.com/57951148/196082955-e046f0b1-bba2-491d-91b3-f30f2c6f4aae.png">
+
 
 ### 常见问题
 
@@ -253,6 +283,6 @@ src/components/TUICallKit
 - [chat-uikit-vue Github 仓库](https://github.com/TencentCloud/chat-uikit-vue)
 - [chat-uikit-vue2 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue2/Demo)
 - [chat-uikit-vue3 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue3/Demo)
-- [@tencentcloud/chat-uikit-vue2 npm仓库（vue2版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue2)
-- [@tencentcloud/chat-uikit-vue npm仓库（vue3版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
+- [@tencentcloud/chat-uikit-vue2 npm 仓库（vue2 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue2)
+- [@tencentcloud/chat-uikit-vue npm 仓库（vue3 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
 - [CHAT WEB DEMO 体验地址](https://web.sdk.qcloud.com/im/demo/latest/index.html)

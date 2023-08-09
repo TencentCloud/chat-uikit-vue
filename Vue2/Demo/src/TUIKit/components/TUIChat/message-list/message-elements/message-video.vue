@@ -3,18 +3,17 @@
     <div
       class="message-video-box"
       :class="[
-        !data.progress &&
-          messageStatus === 'success' &&
+        (!props.progress || props.progress === 1) &&
           !isPC &&
           'message-video-cover',
       ]"
-      @click="toggleShow"
+      @click="showVideoPreviewer"
       ref="skeleton"
     >
       <img
         class="message-img"
         v-if="
-          ((data.progress || messageStatus !== 'success') && poster) ||
+          (props.progress > 0 && props.progress < 1 && poster) ||
           (!isPC && poster)
         "
         :class="[isWidth ? 'isWidth' : 'isHeight']"
@@ -38,26 +37,18 @@
         :poster="poster"
         ref="video"
       ></video>
-      <!-- 暂不支持进度条, 暂时使用loading代替 -->
-      <div class="progress" v-if="data.progress || messageStatus !== 'success'">
-        <progress
-          v-if="data.progress"
-          :value="data.progress"
-          max="1"
-        ></progress>
-        <div v-else class="loading">
-          <Icon :file="loading" width="50px" height="50px"></Icon>
-        </div>
+      <div class="progress" v-if="props.progress > 0 && props.progress < 1">
+        <progress :value="props.progress" max="1"></progress>
       </div>
     </div>
-    <div class="dialog-video" v-if="show && !isPC" @click.self="toggleShow">
-      <header>
-        <i class="icon icon-close" @click.stop="toggleShow"></i>
-      </header>
+    <div class="dialog-video" v-if="show && !isPC" @click.self="showVideoPreviewer">
+      <div @click.stop="showVideoPreviewer" class="dialog-video-close">
+        <Icon :file="closeSVG"></Icon>
+      </div>
       <div
         class="dialog-video-box"
         :class="[!isPC ? 'dialog-video-h5' : '']"
-        @click.self="toggleShow"
+        @click.self="showVideoPreviewer"
       >
         <video
           :class="[isWidth ? 'isWidth' : 'isHeight']"
@@ -82,7 +73,7 @@ import {
 } from "../../../../adapter-vue";
 import { handleSkeletonSize } from "../../utils/utils";
 import Icon from "../../../common/Icon.vue";
-import loading from "../../../../assets/icon/loading.gif";
+import closeSVG from "../../../../assets/icon/icon-close.svg";
 
 const props = defineProps({
   content: {
@@ -96,6 +87,10 @@ const props = defineProps({
   messageItem: {
     type: Object,
     default: () => ({}),
+  },
+  progress: {
+    type: Number,
+    default: 0,
   },
 });
 
@@ -117,10 +112,12 @@ const isWidth = computed(() => {
 const transparentPosterUrl =
   "https://web.sdk.qcloud.com/im/assets/images/transparent.png";
 
-const toggleShow = () => {
-  if (data.value.progress) {
-    show.value = !show.value;
+const showVideoPreviewer = () => {
+  // 视频上传过程中不支持全屏播放
+  if (data.value.progress > 0 && data.value.progress < 1) {
+    return;
   }
+  show.value = !show.value;
 };
 
 // h5 部分浏览器（safari / wx）video标签 封面为空 在视频未上传完成前的封面展示需要单独进行处理截取
@@ -315,10 +312,10 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
-  header {
+  &-close {
     display: flex;
     justify-content: flex-end;
-    background: rgba(0, 0, 0, 0.49);
+    background: #000000;
     width: 100%;
     box-sizing: border-box;
     padding: 10px 10px;

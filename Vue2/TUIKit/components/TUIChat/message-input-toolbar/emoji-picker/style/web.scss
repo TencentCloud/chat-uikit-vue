@@ -9,6 +9,9 @@
     flex-wrap: wrap;
     overflow-y: auto;
     margin: 2px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
     &-item {
       cursor: pointer;
       padding: 5px;

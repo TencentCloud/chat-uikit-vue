@@ -117,4 +117,3 @@ export function getImgLoad(container: any, className: string, callback: any) {
       console.error("网络异常", e);
     });
 }
-

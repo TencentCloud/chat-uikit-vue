@@ -3,17 +3,31 @@
     <ul class="list">
       <li class="list-item" v-for="(item, index) in memberList" :key="index">
         <aside @click="handleMemberProfileShow(item)">
-          <img class="avatar" :src="item.avatar ||
-            'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-            " onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+          <img
+            class="avatar"
+            :src="
+              item.avatar ||
+              'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+            "
+            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+          />
           <span class="name">{{ item.nick || item.userID }}</span>
           <span>{{ handleRoleName(item) }}</span>
         </aside>
         <div @click="submit(item)">
-          <Icon :file="delIcon" v-if="item.role !== 'Owner' && isShowDeleteBtn" :width="'16px'" :height="'16px'"></Icon>
+          <Icon
+            :file="delIcon"
+            v-if="item.role !== 'Owner' && isShowDeleteBtn"
+            :width="'16px'"
+            :height="'16px'"
+          ></Icon>
         </div>
       </li>
-      <li class="list-item" v-if="memberList.length < totalMember" @click="getMore">
+      <li
+        class="list-item"
+        v-if="memberList.length < totalMember"
+        @click="getMore"
+      >
         {{ TUITranslateService.t(`TUIGroup.查看更多`) }}
       </li>
     </ul>
@@ -24,25 +38,43 @@
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群成员`) }}</h1>
         </aside>
-        <span class="close" @click="toggleEdit('member')">{{
+        <span class="close" @click="close('member')">{{
           TUITranslateService.t(`关闭`)
         }}</span>
       </header>
       <div class="member">
         <ul class="list list-uniapp">
-          <li class="list-item" v-for="(item, index) in memberList" :key="index">
+          <li
+            class="list-item"
+            v-for="(item, index) in memberList"
+            :key="index"
+          >
             <aside @click="handleMemberProfileShow(item)">
-              <img class="avatar" :src="item.avatar ||
-                'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-                " onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+              <img
+                class="avatar"
+                :src="
+                  item.avatar ||
+                  'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                "
+                onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+              />
               <span class="name">{{ item.nick || item.userID }}</span>
               <span>{{ handleRoleName(item) }}</span>
             </aside>
             <div @click="submit(item)">
-              <Icon :file="delIcon" v-if="item.role !== 'Owner' && isShowDeleteBtn" :width="'16px'" :height="'16px'"></Icon>
+              <Icon
+                :file="delIcon"
+                v-if="item.role !== 'Owner' && isShowDeleteBtn"
+                :width="'16px'"
+                :height="'16px'"
+              ></Icon>
             </div>
           </li>
-          <li class="list-item" v-if="memberList.length < totalMember" @click="getMore">
+          <li
+            class="list-item"
+            v-if="memberList.length < totalMember"
+            @click="getMore"
+          >
             {{ TUITranslateService.t(`TUIGroup.查看更多`) }}
           </li>
         </ul>
@@ -50,13 +82,11 @@
     </main>
   </div>
 </template>
-  
+
 <script lang="ts" setup>
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUITranslateService,
-  TUIGlobal
+  TUIGlobal,
 } from "@tencentcloud/chat-uikit-engine";
 import {
   watchEffect,
@@ -65,7 +95,7 @@ import {
   defineEmits,
 } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
-import delIcon from "../../../assets/icon/del-icon.png";
+import delIcon from "../../../assets/icon/del-icon.svg";
 
 const props = defineProps({
   list: {
@@ -90,7 +120,7 @@ const totalMember = ref(0);
 const memberList = ref([]);
 const isShowDeleteBtn = ref(false);
 const self = ref([]);
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 
 watchEffect(() => {
   totalMember.value = props.total;
@@ -99,7 +129,7 @@ watchEffect(() => {
   self.value = props.self;
 });
 
-const emits = defineEmits(["more", "del", "handleMemberProfileShow", "toggleEdit"]);
+const emits = defineEmits(["more", "del", "handleMemberProfileShow", "close"]);
 
 const handleRoleName = (item: any) => {
   let name = "";
@@ -132,11 +162,11 @@ const handleMemberProfileShow = (user: any) => {
   emits("handleMemberProfileShow", user);
 };
 
-const toggleEdit = async (tabName: string) => {
-  emits("toggleEdit", tabName);
+const close = (tabName: string) => {
+  emits("close", tabName);
 };
 </script>
-  
+
 <style lang="scss" scoped>
 @import url("../../../assets/styles/common.scss");
 
@@ -149,7 +179,7 @@ const toggleEdit = async (tabName: string) => {
     flex-direction: column;
     background: #f4f5f9;
     padding-top: 22px;
-    
+
     &-uniapp {
       background: none;
     }
@@ -162,6 +192,7 @@ const toggleEdit = async (tabName: string) => {
       background: #ffffff;
       font-size: 14px;
       overflow: hidden;
+      cursor: pointer;
 
       &:hover {
         background: #f1f2f6;
@@ -253,4 +284,3 @@ const toggleEdit = async (tabName: string) => {
   }
 }
 </style>
-  

@@ -4,7 +4,6 @@ import Server from "./server";
 import TUIComponents, {
   TUIChat,
   TUIConversation,
-  TUIProfile,
   TUIContact,
   TUISearch,
 } from "./components";
@@ -17,7 +16,6 @@ export {
   TUIComponents,
   TUIChat,
   TUIConversation,
-  TUIProfile,
   TUIContact,
   TUISearch,
   genTestUserSig,

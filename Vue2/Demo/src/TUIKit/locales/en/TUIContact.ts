@@ -22,7 +22,10 @@ const TUIContact = {
   "加群": "join",
   "我的好友": "Friend",
   "发送消息": "Send Message",
-  "个性签名": "Signature"
+  "个性签名": "Signature",
+  "等待管理员同意": "Successful application, waiting for the administrator to agree to join the group application",
+  "加群成功": "Join the group successfully",
+  "您已是群成员": "You are already a group member",
 }
 
 export default TUIContact;

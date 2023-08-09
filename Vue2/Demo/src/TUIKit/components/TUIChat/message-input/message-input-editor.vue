@@ -500,7 +500,7 @@ defineExpose({
   &-area {
     flex: 1;
     display: flex;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
   &-mute {
     flex: 1;

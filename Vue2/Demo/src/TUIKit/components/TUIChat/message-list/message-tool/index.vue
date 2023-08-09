@@ -20,7 +20,7 @@
         <span>{{ TUITranslateService.t("TUIChat.打开") }}</span>
       </li>
       <li
-        v-if=" isUniFrameWork && message.type === TYPES.MSG_TEXT"
+        v-if="isUniFrameWork && message.type === TYPES.MSG_TEXT"
         @click="messageCopy(message)"
       >
         <Icon :file="copyIcon" class="file-icon"></Icon>
@@ -50,9 +50,7 @@ import {
   nextTick,
   watchEffect,
 } from "../../../../adapter-vue";
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIStore,
   TUIGlobal,
   IMessageModel,
@@ -76,10 +74,10 @@ const props = defineProps({
   },
 });
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 const isShow = ref(false);
 const showToolList = ref(true);
-const message = ref<IMessageModel>();
+const message = ref<typeof IMessageModel>();
 const TYPES = ref(TUIChatEngine.TYPES);
 
 watchEffect(() => {
@@ -107,20 +105,20 @@ const revokeMessage = (message: any) => {
   // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.ID);
   let promise = messageModel.revokeMessage();
-  promise.catch((error) => {
+  promise.catch((error: any) => {
     // 调用异常时业务侧可以通过 promise.catch 捕获异常进行错误处理
     if ((error.code = 20016)) {
       const message = TUITranslateService.t("TUIChat.已过撤回时限");
       Toast({
         message,
-        type: TOAST_TYPE.ERROR
+        type: TOAST_TYPE.ERROR,
       });
     }
   });
 };
 
 const deleteMessage = (message: any) => {
-    // 获取 messageModel
+  // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.ID);
   messageModel.deleteMessage();
 };

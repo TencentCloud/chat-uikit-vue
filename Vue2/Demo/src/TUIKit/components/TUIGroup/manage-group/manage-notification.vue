@@ -1,6 +1,10 @@
 <template>
   <main v-if="!isUniFrameWork" class="notification">
-    <textarea v-if="isEdit" v-model="input" @keyup.enter="updateProfile"></textarea>
+    <textarea
+      v-if="isEdit"
+      v-model="input"
+      @keyup.enter="updateProfile"
+    ></textarea>
     <section v-else>
       <p v-if="!groupProfile.notification">
         {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
@@ -22,12 +26,17 @@
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群公告`) }}</h1>
         </aside>
-        <span class="close" @click="toggleEdit('notification')">{{
+        <span class="close" @click="close('notification')">{{
           TUITranslateService.t(`关闭`)
         }}</span>
       </header>
       <div class="notification">
-        <textarea v-if="isEdit" v-model="input" @keyup.enter="updateProfile" :class="[isUniFrameWork ? 'uni-height' : '']"></textarea>
+        <textarea
+          v-if="isEdit"
+          v-model="input"
+          @keyup.enter="updateProfile"
+          :class="[isUniFrameWork ? 'uni-height' : '']"
+        ></textarea>
         <section v-else>
           <p v-if="!groupProfile.notification">
             {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
@@ -46,15 +55,20 @@
     </main>
   </div>
 </template>
-  
+
 <script lang="ts" setup>
-import { TUITranslateService, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import {
+  TUITranslateService,
+  TUIGlobal,
+} from "@tencentcloud/chat-uikit-engine";
 import {
   defineProps,
   watchEffect,
   ref,
   defineEmits,
 } from "../../../adapter-vue";
+import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import { nextTick } from "vue";
 
 const props = defineProps({
   data: {
@@ -71,7 +85,7 @@ const groupProfile = ref({});
 const input = ref("");
 const isAuthorNotification = ref(false);
 const isEdit = ref(false);
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 
 watchEffect(() => {
   groupProfile.value = props.data;
@@ -79,23 +93,31 @@ watchEffect(() => {
   isAuthorNotification.value = props.isAuthor;
 });
 
-const emits = defineEmits(["update", "toggleEdit"]);
+const emits = defineEmits(["update", "close"]);
 
 // 更新群资料
 const updateProfile = () => {
+  if (input.value.length > 150) {
+    Toast({
+      message: "群公告字数超出限制，最大长度为150",
+      type: TOAST_TYPE.ERROR,
+    });
+    return;
+  }
   if (input.value && input.value !== groupProfile.value.notification) {
     emits("update", { key: "notification", value: input.value });
-    groupProfile.value.notification = input.value;
-    input.value = "";
+    nextTick(() => {
+      input.value = "";
+    });
   }
   isEdit.value = !isEdit.value;
 };
 
-const toggleEdit = async (tabName: string) => {
-  emits("toggleEdit", tabName);
+const close = (tabName: string) => {
+  emits("close", tabName);
 };
 </script>
-  
+
 <style lang="scss" scoped>
 @import url("../../../assets/styles/common.scss");
 
@@ -210,4 +232,3 @@ const toggleEdit = async (tabName: string) => {
   }
 }
 </style>
-  

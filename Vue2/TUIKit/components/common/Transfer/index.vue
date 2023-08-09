@@ -11,14 +11,14 @@
           <input v-if="isPC && isTransferSearch && !joinGroup" type="text"  :value="searchValue" @keyup.enter="handleInput" 
             :placeholder="TUITranslateService.t('component.请输入userID')" enterkeyhint="search"
             :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>
-           <!-- 非 PC 端触发 blur -->  
-          <input v-if="!isPC && !joinGroup" type="text"  @blur="handleInput" @confirm="handleInput"
+          <!-- 非 PC 端触发 blur -->  
+          <input v-if="!isPC && isTransferSearch && !joinGroup" type="text"  @blur="handleInput" @confirm="handleInput"
             :placeholder="TUITranslateService.t('component.请输入userID')" enterkeyhint="search" :value="searchValue"
             :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>  
-          <input v-if="isPC && joinGroup" type="text" @keyup.enter="handleInput" @confirm="handleInput"
+          <input v-if="isPC && isTransferSearch && joinGroup" type="text" @keyup.enter="handleInput" @confirm="handleInput"
             :placeholder="TUITranslateService.t('component.请输入groupID')" enterkeyhint="search" :value="searchValue"
             :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>
-          <input v-if="!isPC && joinGroup" type="text" @blur="handleInput" :value="searchValue"
+          <input v-if="!isPC && isTransferSearch && joinGroup" type="text" @blur="handleInput" :value="searchValue"
             :placeholder="TUITranslateService.t('component.请输入groupID')" enterkeyhint="search"
             :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>  
         </header>

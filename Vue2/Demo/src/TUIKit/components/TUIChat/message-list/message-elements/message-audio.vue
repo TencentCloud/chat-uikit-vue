@@ -9,7 +9,7 @@
     :file="voice"
     :class="[message.flow === 'out' && 'icon-reserve']"
     ></Icon>
-    <label>{{ data.second }}s</label>
+    <label>{{ data.second }} "</label>
     <audio ref="audio" :src="data.url"></audio>
   </div>
 </template>
@@ -75,7 +75,7 @@ const play = () => {
   max-width: 100%;
   overflow: hidden;
   .icon {
-    margin: 0 4px;
+    margin: 0 7px;
   }
   audio {
     width: 0;
@@ -84,5 +84,8 @@ const play = () => {
 }
 .reserve {
   flex-direction: row-reverse;
+  .icon {
+    transform: rotate(180deg);
+  }
 }
 </style>

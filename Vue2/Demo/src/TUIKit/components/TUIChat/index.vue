@@ -24,6 +24,8 @@
             'TUI-chat-message-list',
             !isPC && 'TUI-chat-h5-message-list',
           ]"
+          :isGroup = isGroup
+          :groupID = groupID
           @handleEditor="handleEditor"
         >
         </MessageList>
@@ -92,7 +94,7 @@ TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     currentConversationID.value = id;
   },
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     groupID.value = conversation?.groupProfile?.groupID;
   },
@@ -123,7 +125,7 @@ const handleToolbarListShow = (show: boolean) => {
     isToolbarShow.value = true;
   }
 };
-const handleEditor = (message: IMessageModel, type: string) => {
+const handleEditor = (message: typeof IMessageModel, type: string) => {
   if (!message || !type) return;
   switch (type) {
     case "reference":

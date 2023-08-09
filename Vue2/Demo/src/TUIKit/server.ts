@@ -1,5 +1,5 @@
 import TUICore, { TUILogin, TUIConstants } from "@tencentcloud/tui-core";
-import 
+import
 TUIChatEngine,
 {
   TUIGlobal,
@@ -8,6 +8,7 @@ TUIChatEngine,
 import { ITUIComponents, ITUIPlugins } from "./interface";
 import TUILocales from "./locales";
 import { isFunction, isObject } from "./utils";
+import CallkitPluginServer from "./plugins/extension-server/callkit";
 export default class TUIChatKit {
   public chat: any;
 
@@ -23,6 +24,7 @@ export default class TUIChatKit {
     this.TUIChatEngine = TUIChatEngine;
     this.TUIGlobal = TUIGlobal;
     this.SDKAppID = 0;
+    this.TUIGlobal.global._isTIMCallKit = true;
     TUICore.registerEvent(
       TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED,
       TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS,
@@ -48,6 +50,10 @@ export default class TUIChatKit {
    * init 初始化
    */
   public init() {
+    // 原生插件 TUICallKit 存在时执行 call server
+    if(TUIGlobal.getPlatform() === "app") {
+      new CallkitPluginServer();
+    }
     // TUITranslateService init
     TUITranslateService.provideLanguages({ ...TUILocales });
     TUITranslateService.useI18n();
@@ -142,9 +148,9 @@ export default class TUIChatKit {
     } else {
       console.warn(
         '[TUIChatKit]: A plugin must either be a function or an object with an "plugin" ' +
-          "function." +
-          this.TUIPlugins[TUIPluginName] +
-          "does not comply with the above rules."
+        "function." +
+        this.TUIPlugins[TUIPluginName] +
+        "does not comply with the above rules."
       );
     }
     return this.TUIChatEngine;

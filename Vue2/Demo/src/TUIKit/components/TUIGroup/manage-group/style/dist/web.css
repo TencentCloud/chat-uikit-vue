@@ -1,0 +1,264 @@
+.manage {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 360px;
+  overflow-y: auto;
+  border-radius: 8px 0 0 8px;
+  position: absolute;
+  right: 0;
+  height: calc(100% - 40px);
+  z-index: 2;
+  top: 40px;
+}
+.manage-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.manage-header-content {
+  flex: 1;
+  text-align: center;
+  font-size: 16px;
+  font-family: PingFangSC-Medium;
+  font-weight: 500;
+  color: #000;
+}
+.manage-header-left {
+  display: flex;
+}
+.manage .main .userInfo {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.manage .main .userInfo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+}
+.manage .main .userInfo-header .p {
+  display: flex;
+  align-items: center;
+}
+.manage .main .userInfo .ol {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+}
+.manage .main .userInfo .ol .dl {
+  position: relative;
+  flex: 0 0 36px;
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+}
+.manage .main .userInfo .ol .dl:last-child {
+  padding-right: 0;
+}
+.manage .main .userInfo .ol .dl .more {
+  padding-top: 10px;
+}
+.manage .main .userInfo .ol .dl .dd {
+  text-align: center;
+  max-width: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manage .main .userInfo .ol .dl .userInfo-mask {
+  position: absolute;
+  z-index: 5;
+  padding: 20px;
+  left: 100%;
+}
+.manage .main .userInfo .ol .dl .userInfo-mask .li {
+  display: flex;
+  align-items: center;
+}
+.manage .main .userInfo .ol .dl .userInfo-mask .li .label {
+  width: 60px;
+}
+.manage .main .userInfo .ol .dl .userInfo-mask .li .span {
+  max-width: 200px;
+  word-break: keep-all;
+}
+.manage .main .content {
+  padding: 0 20px;
+}
+.manage .main .content .li {
+  padding: 14px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+.manage .main .content .li .btn {
+  flex: 1;
+}
+.manage .main .content .li .article {
+  opacity: 0.6;
+  width: 246px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manage .main .content .li .end {
+  align-self: flex-end;
+  margin-bottom: 4px;
+}
+.manage .main .footer {
+  padding: 0 20px;
+}
+.manage .main .footer .li {
+  cursor: pointer;
+  width: 100%;
+  font-size: 14px;
+  padding: 14px 0;
+  text-align: center;
+}
+.manage .main .footer .li:last-child {
+  border: none;
+}
+.manage .admin {
+  padding: 20px 0;
+}
+.manage .admin-content {
+  padding: 20px 20px 12px;
+  display: flex;
+  align-items: center;
+}
+.manage .admin-content .aside {
+  flex: 1;
+  font-size: 14px;
+}
+.manage .admin-content .aside .p {
+  font-size: 12px;
+}
+.manage .admin-list {
+  padding: 0 20px;
+}
+.manage .admin-list .label {
+  display: inline-block;
+  font-size: 14px;
+  padding-bottom: 8px;
+}
+.manage .admin .last {
+  padding-top: 13px;
+  position: relative;
+}
+.manage .admin .last::before {
+  position: absolute;
+  content: "";
+  width: calc(100% - 40px);
+  height: 1px;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+.manage .ol {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  padding-bottom: 20px;
+}
+.manage .ol .dl {
+  position: relative;
+  flex: 0 0 36px;
+  display: flex;
+  flex-direction: column;
+  padding-right: 20px;
+}
+.manage .ol .dl:last-child {
+  padding-right: 0;
+}
+.manage .ol .dl .more {
+  padding-top: 10px;
+}
+.manage .ol .dl .dd {
+  text-align: center;
+  max-width: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.manage .ol .dl .userInfo-mask {
+  position: fixed;
+  z-index: 5;
+  padding: 20px;
+  margin-left: 36px;
+}
+.manage .ol .dl .userInfo-mask .li {
+  display: flex;
+  align-items: center;
+}
+.manage .ol .dl .userInfo-mask .li .label {
+  width: 60px;
+}
+.manage .ol .dl .userInfo-mask .li .span {
+  max-width: 200px;
+  word-break: keep-all;
+}
+
+.input {
+  border-radius: 4px;
+  padding: 4px 16px;
+  font-size: 14px;
+}
+
+.groupID {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.groupID .icon {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn {
+  padding: 4px 28px;
+  font-size: 12px;
+  line-height: 24px;
+  border-radius: 4px;
+}
+
+.slider-box {
+  display: flex;
+  align-items: center;
+  width: 34px;
+  height: 20px;
+  border-radius: 10px;
+}
+.slider-block {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  margin: 0 2px;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.delDialog-title {
+  text-align: center;
+  padding: 20px 0;
+}
