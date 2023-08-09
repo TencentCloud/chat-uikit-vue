@@ -1,7 +1,7 @@
 #preloadedImages {
   background: linear-gradient(135deg, #f1f4f7 0%, #edf5ff 100%) no-repeat;
   background-size: cover;
-  background-image: url('https://web.sdk.qcloud.com/im/assets/images/background-zip.png');
+  background-image: url("https://web.sdk.qcloud.com/im/assets/images/background-zip.png");
 }
 
 .home {
@@ -78,7 +78,7 @@
         font-size: 14px;
 
         &::before {
-          content: '';
+          content: "";
           position: absolute;
           width: 1px;
           height: 20px;
@@ -304,7 +304,7 @@
     .home-chat {
       flex: 1;
     }
-    .TUIConversation{
+    .TUIConversation {
       flex: 1;
       overflow: hidden;
     }
@@ -319,7 +319,7 @@
   padding-top: 100px;
   display: flex;
   flex-direction: column;
-  background: url('../assets/image/login-background.png') no-repeat;
+  background: url("../assets/image/login-background.png") no-repeat;
   background-size: cover;
   background-position-x: -17px;
   background-position-y: 173px;
@@ -402,11 +402,46 @@
     border-radius: 0 4px 4px 0;
     bottom: 10px;
     z-index: 2;
-    background: #FFFFFF;
+    background: #ffffff;
     box-shadow: 2px 1px 6px 0px rgba(2, 16, 43, 0.15);
   }
 }
 
 .setting-more-item:hover {
   background-color: rgba(0, 110, 255, 0.1);
+}
+
+.callkit-drag-container {
+  left: calc(50% - 25rem);
+  top: calc(50% - 18rem);
+  width: 50rem;
+  height: 36rem;
+  border-radius: 16px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  background-color: #ffffff;
+  position: fixed;
+  z-index: 100;
+
+  &-left {
+    left: calc(50% - 25rem + 150px);
+  }
+
+  &-H5 {
+    width: 100vw;
+    height: 100vh;
+    left: 0;
+    top: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background-color: #ffffff;
+  }
+}
+
+.callkit-drag-container-mini {
+  width: 168px;
+  height: 56px;
+  right: 10px;
+  top: 70px;
+  position: fixed;
+  z-index: 100;
 }
