@@ -1,9 +1,14 @@
 <template>
   <div v-if="!isUniFrameWork" class="memeber-profile">
     <div class="memeber-profile-main">
-      <img class="avatar" :src="userInfoManage.avatar ||
-        'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-        " onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+      <img
+        class="avatar"
+        :src="
+          userInfoManage.avatar ||
+          'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+        "
+        onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+      />
       <ul class="list">
         <h2>{{ userInfoManage.nick || userInfoManage.userID }}</h2>
         <li>
@@ -17,7 +22,11 @@
       </ul>
     </div>
     <div class="memeber-profile-footer">
-      <div class="button" @click="enter(userInfoManage.userID, 'C2C')" v-if="showEnter()">
+      <div
+        class="button"
+        @click="enter(userInfoManage.userID, 'C2C')"
+        v-if="showEnter()"
+      >
         {{ TUITranslateService.t("TUIContact.发送消息") }}
       </div>
     </div>
@@ -28,15 +37,20 @@
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群成员`) }}</h1>
         </aside>
-        <span class="close" @click="toggleEdit('profile')">{{
+        <span class="close" @click="close('profile')">{{
           TUITranslateService.t(`关闭`)
         }}</span>
       </header>
       <div class="memeber-profile">
         <div class="memeber-profile-main">
-          <img class="avatar" :src="userInfoManage.avatar ||
+          <img
+            class="avatar"
+            :src="
+              userInfoManage.avatar ||
               'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-              " onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+            "
+            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+          />
           <ul class="list">
             <h1>{{ userInfoManage.nick || userInfoManage.userID }}</h1>
             <li>
@@ -44,13 +58,19 @@
               <span>{{ userInfoManage.userID }}</span>
             </li>
             <li>
-              <label>{{ TUITranslateService.t("TUIContact.个性签名") }}：</label>
+              <label
+                >{{ TUITranslateService.t("TUIContact.个性签名") }}：</label
+              >
               <span>{{ userInfoManage.selfSignature }}</span>
             </li>
           </ul>
         </div>
         <div class="memeber-profile-footer">
-          <div class="button" @click="enter(userInfoManage.userID, 'C2C')" v-if="showEnter()">
+          <div
+            class="button"
+            @click="enter(userInfoManage.userID, 'C2C')"
+            v-if="showEnter()"
+          >
             {{ TUITranslateService.t("TUIContact.发送消息") }}
           </div>
         </div>
@@ -59,9 +79,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
   TUIConversationService,
@@ -86,12 +104,16 @@ const props = defineProps({
 const isFriendShip = ref(false);
 const userInfoManage = ref({});
 const self = ref({});
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 
 watchEffect(() => {
   userInfoManage.value = props.userInfo;
 });
-const emits = defineEmits(["handleSwitchConversation", "toggleEdit", "openConversation"]);
+const emits = defineEmits([
+  "handleSwitchConversation",
+  "close",
+  "openConversation",
+]);
 
 watch(
   () => props.userInfo,
@@ -117,7 +139,7 @@ const enter = async (ID: any, type: string) => {
       TUIConversationService.switchConversation(
         res.data.conversation.conversationID
       );
-      if(isUniFrameWork.value) {
+      if (isUniFrameWork.value) {
         emits("openConversation");
       } else {
         emits("handleSwitchConversation", res.data.conversation.conversationID);
@@ -132,7 +154,7 @@ const checkFriend = async () => {
   // 这里暂时屏蔽
   // const relation = await TUIFriendService.checkFriend(userInfo.value.userID, TUIChatEngine.TYPES.SNS_CHECK_TYPE_BOTH);
   // isFriendShip.value = (relation === TUIChatEngine.TYPES.SNS_TYPE_BOTH_WAY) ? true : false;
-  if(!isUniFrameWork.value) {
+  if (!isUniFrameWork.value) {
     isFriendShip.value = true;
   }
 };
@@ -141,8 +163,8 @@ const showEnter = () => {
   return isFriendShip.value || !TUIGlobal.isOfficial;
 };
 
-const toggleEdit = async (tabName: string) => {
-  emits("toggleEdit", tabName);
+const close = (tabName: string) => {
+  emits("close", tabName);
 };
 </script>
 <style lang="scss" scoped>
@@ -266,4 +288,3 @@ const toggleEdit = async (tabName: string) => {
   }
 }
 </style>
-  

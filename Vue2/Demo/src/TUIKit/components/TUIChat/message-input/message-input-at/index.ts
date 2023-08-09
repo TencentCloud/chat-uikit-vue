@@ -1,7 +1,5 @@
 import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   TUIStore,
   TUIGroupService,
@@ -37,20 +35,22 @@ TUIStore.watch(StoreName.CONV, {
       currentConversationID = id;
       if (currentConversationID?.startsWith("GROUP")) {
         isGroup = true;
-        const groupID = currentConversationID?.substring(5);
-        TUIGroupService.getGroupMemberList({
-          groupID,
-        }).then((res: any) => {
-          memberList = res?.data?.memberList;
-          allMemberList = [all, ...memberList];
-          showMemberList = allMemberList;
-        });
       } else {
         memberList = [];
         allMemberList = [];
         showMemberList = [];
         isGroup = false;
       }
+    }
+  },
+});
+
+TUIStore.watch(StoreName.CUSTOM, {
+  memberList: (list: Array<any>) => {
+    if (Array.isArray(list)) {
+      memberList = list;
+      allMemberList = [all, ...memberList];
+      showMemberList = allMemberList;
     }
   },
 });

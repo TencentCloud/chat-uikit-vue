@@ -4,7 +4,7 @@
       'TUI-conversation-list',
       isPC ? 'TUI-conversation-list-web' : 'TUI-conversation-list-h5',
     ]"
-    ref="list"
+    ref="listRef"
     @mousewheel="scrollChange"
     @scroll="scrollChange"
     @click="closeToggleListItem"
@@ -35,10 +35,14 @@
       >
         <aside class="left">
           <img class="avatar" :src="conversation.getAvatar()" />
-          <div 
-            :class="['online-status', Object.keys(statusList).length > 0 &&
-            statusList[conversation.userProfile.userID].statusType === 1 ? 
-            'online-status-online': 'online-status-offline']"
+          <div
+            :class="[
+              'online-status',
+              Object.keys(statusList).length > 0 && Object.keys(statusList).includes(conversation.userProfile.userID) &&
+              statusList[conversation.userProfile.userID].statusType === 1
+                ? 'online-status-online'
+                : 'online-status-offline',
+            ]"
             v-if="showUserOnlineStatus(conversation)"
           ></div>
           <span
@@ -145,9 +149,7 @@ import {
   nextTick,
   watchEffect,
 } from "../../../adapter-vue";
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   IConversationModel,
   TUIStore,
@@ -180,7 +182,6 @@ const displayOnlineStatus = ref(false); // 默认关闭
 const userStatusList = ref(new Map());
 const statusList = ref({});
 
-
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     currentConversationID.value = id;
@@ -198,21 +199,29 @@ TUIStore.watch(StoreName.USER, {
   displayOnlineStatus: (status: boolean) => {
     displayOnlineStatus.value = status;
   },
-  userStatusList: (list: Map<string, {
-      statusType: number;
-      customStatus: string;
-    }>) => {
-      if (list.size === 0) {
-        return;
+  userStatusList: (
+    list: Map<
+      string,
+      {
+        statusType: number;
+        customStatus: string;
       }
-      statusList.value = Object.fromEntries(list.entries())
-  }
+    >
+  ) => {
+    if (list.size === 0) {
+      return;
+    }
+    statusList.value = Object.fromEntries(list.entries());
+  },
 });
 
 const showUserOnlineStatus = (conversation: IConversationModel) => {
- return  displayOnlineStatus.value && conversation.type === TUIChatEngine.TYPES.CONV_C2C;
+  return (
+    displayOnlineStatus.value &&
+    conversation.type === TUIChatEngine.TYPES.CONV_C2C
+  );
 };
- 
+
 const handleItem = (params: {
   name: any;
   conversation: IConversationModel;
@@ -255,15 +264,16 @@ const handleToggleListItem = (
   if (isLongpress) {
     isLongpressing.value = true;
   }
+  // uniapp to wechat, click event doesn't working, use click.right instead click to switchConversation
+  if (isWeChat.value) {
+    handleSwitchConversation(conversation.conversationID);
+  }
   setToggleNowRectInfo(e.target);
   handleDialogPosition(conversation, index);
   nextTick(() => {
     onClickOutside(dialog.value);
   });
-  // uniapp to wechat, click event doesn't working, use click.right instead click to switchConversation
-  if (isWeChat.value) {
-    handleSwitchConversation(conversation.conversationID);
-  }
+  
 };
 
 const closeToggleListItem = () => {
@@ -346,7 +356,10 @@ const handleDialogPosition = (
       .exec();
   } else {
     // web/h5/uniapp打包h5: 正常使用ref即可
-    if (!listRef?.value?.children || index >= listRef?.value?.children?.length) {
+    if (
+      !listRef?.value?.children ||
+      index >= listRef?.value?.children?.length
+    ) {
       return;
     }
     const dom = listRef?.value?.children[index];

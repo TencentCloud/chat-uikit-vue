@@ -1,82 +1,58 @@
 <template>
   <div class="manage-group">
-    <div class="manage" :class="[!isPC ? 'manage-h5' : '', isUniFrameWork ? 'manage-h5-uniapp' : '']">
+    <div
+      class="manage"
+      :class="[
+        !isPC ? 'manage-h5' : '',
+        isUniFrameWork ? 'manage-h5-uniapp' : '',
+      ]"
+    >
       <header class="manage-header" v-if="!isUniFrameWork">
-        <div @click="showGroupDetails">
-          <Icon :file="backSVG" v-if="!isPC && !currentTab"></Icon>
+        <div @click="back">
+          <Icon :file="backSVG"></Icon>
         </div>
-        <aside class="manage-header-left aside">
-          <div @click="setCurrentTab('')" class="tab-icon">
-            <Icon :file="backSVG" v-if="currentTab"></Icon>
-          </div>
-          <main class="main">
-            <h1>{{ TUITranslateService.t(`TUIGroup.${TabName}`) }}</h1>
-          </main>
-        </aside>
-        <span>
-          <i v-if="isPC" class="icon icon-close" @click="showGroupDetails"></i>
-        </span>
+        <div class="manage-header-content">
+          {{ TUITranslateService.t(`TUIGroup.${TabName}`) }}
+        </div>
       </header>
-      <main class="main" v-if="!currentTab">
+      <main
+        class="main"
+        v-if="!currentTab || (isUniFrameWork && currentTab != 'admin')"
+      >
         <ManageName
           class="space-top"
           :isAuthor="isAuthor"
           :data="currentGroup"
           @update="updateProfile"
         />
-        <ManageMember
-          v-if="isUniFrameWork && showMemberPop"
-          :self="currentGroup.selfInfo"
-          :list="groupMemberList"
-          :total="~~currentGroup.memberCount"
-          :isShowDel="currentSelfRole === 'Owner' && canDelMember"
-          @more="getMember('more')"
-          @del="submit"
-          @handleMemberProfileShow="handleMemberProfileShow"
-          @toggleEdit="toggleEdit"
-      />
-      <MemeberProfile
-         v-if="isUniFrameWork && showProfilePop"
-        :userInfo="currentMember"
-        @toggleEdit="toggleEdit"
-        @openConversation="openConversation"
-      />
-      <ManageNotification
-        v-if="isUniFrameWork && showNotificationPop"
-        :isAuthor="isAuthor"
-        :data="currentGroup"
-        @update="updateProfile"
-        @toggleEdit="toggleEdit"
-      />
-      <ManageAdmin
-        v-if="isUniFrameWork && showAdminPop && isAdmin"
-        :isSetMuteTime="isSetMuteTime"
-        :member="member"
-        :currentGroup="currentGroup"
-        @addAdmin="toggleMask('addAdmin')"
-        @removeAdmin="toggleMask('removeAdmin')"
-        @setAllMuteTime="setAllMuteTime"
-        @addMute="toggleMask('addMute')"
-        @removeMute="toggleMask('removeMute')"
-        @toggleEdit="toggleEdit"
-      />
-      <div class="userInfo space-top">
-          <header class="userInfo-header" @click="platformOpenTab('member')">
+        <div class="userInfo space-top">
+          <header class="userInfo-header" @click="setCurrentTab('member')">
             <label class="label">{{
               TUITranslateService.t(`TUIGroup.群成员`)
             }}</label>
             <p class="p">
-              <span class="span">{{ currentGroup.memberCount || groupMemberList.length
-              }}{{ TUITranslateService.t(`TUIGroup.人`) }}</span>
-              <Icon :file="rightIcon" :width="'16px'" :height="'16px'"></Icon>
+              <span class="span"
+                >{{ currentGroup.memberCount || groupMemberList.length
+                }}{{ TUITranslateService.t(`TUIGroup.人`) }}</span
+              >
+              <Icon :file="rightIcon"></Icon>
             </p>
           </header>
           <ol class="ol">
-            <dl class="dl" v-for="(item, index) in groupMemberList.slice(0, showUserNum)" :key="index">
+            <dl
+              class="dl"
+              v-for="(item, index) in groupMemberList.slice(0, showUserNum)"
+              :key="index"
+            >
               <dt class="dt" @click="handleMemberProfileShow(item)">
-                <img class="avatar" :src="item.avatar ||
-                  'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-                  " onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+                <img
+                  class="avatar"
+                  :src="
+                    item.avatar ||
+                    'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                  "
+                  onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+                />
               </dt>
               <dd class="dd">{{ item.nick || item.userID }}</dd>
             </dl>
@@ -89,16 +65,20 @@
           </ol>
         </div>
         <ul class="content space-top" @click="editLableName = ''">
-          <li class="li" @click.stop="platformOpenTab('notification')">
+          <li class="li" @click="setCurrentTab('notification')">
             <aside class="aside">
               <label class="label">{{
                 TUITranslateService.t(`TUIGroup.群公告`)
               }}</label>
               <article class="article">{{ currentGroup.notification }}</article>
             </aside>
-            <Icon :file="rightIcon" class="end" :width="'16px'" :height="'16px'"></Icon>
+            <Icon :file="rightIcon" class="end"></Icon>
           </li>
-          <li class="li" v-if="isAdmin && isSetMuteTime" @click.stop="platformOpenTab('admin')">
+          <li
+            class="li"
+            v-if="isAdmin && isSetMuteTime"
+            @click="setCurrentTab('admin')"
+          >
             <label class="label">{{
               TUITranslateService.t(`TUIGroup.群管理`)
             }}</label>
@@ -110,16 +90,20 @@
             }}</label>
             <div class="groupID">
               <span class="span">{{ currentGroupID }}</span>
-              <i class="icon icon-msg-copy" @click="handleGroupIDCopy" :title="TUITranslateService.t('TUIChat.复制')"></i>
             </div>
           </li>
           <li class="li">
             <label class="label">{{
               TUITranslateService.t(`TUIGroup.群头像`)
             }}</label>
-            <img class="avatar" :src="currentGroup.avatar ||
+            <img
+              class="avatar"
+              :src="
+                currentGroup.avatar ||
                 'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
-                " onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'" />
+              "
+              onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+            />
           </li>
           <li class="li">
             <label class="label">{{
@@ -141,11 +125,18 @@
           </li>
         </ul>
         <ul class="footer space-top">
-          <li class="li" v-if="currentSelfRole === 'Owner' && groupMemberList.length > 1"
-            @click.stop="toggleMask('changeOwner')">
+          <li
+            class="li"
+            v-if="currentSelfRole === 'Owner' && groupMemberList.length > 1"
+            @click.stop="toggleMask('changeOwner')"
+          >
             {{ TUITranslateService.t(`TUIGroup.转让群组`) }}
           </li>
-          <li class="li" v-if="canIDissmissGroup" @click.stop="dismissGroup(currentGroup)">
+          <li
+            class="li"
+            v-if="canIDissmissGroup"
+            @click.stop="dismissGroup(currentGroup)"
+          >
             {{ TUITranslateService.t(`TUIGroup.解散群聊`) }}
           </li>
           <li class="li" v-else @click.stop="quitGroup(currentGroup)">
@@ -154,7 +145,7 @@
         </ul>
       </main>
       <ManageMember
-        v-else-if="currentTab === 'member'"
+        v-if="currentTab === 'member'"
         :self="currentGroup.selfInfo"
         :list="groupMemberList"
         :total="~~currentGroup.memberCount"
@@ -162,19 +153,22 @@
         @more="getMember('more')"
         @del="submit"
         @handleMemberProfileShow="handleMemberProfileShow"
+        @close="setCurrentTab('')"
       />
-      <MemeberProfile
-        v-else-if="currentTab === 'profile'"
+      <ManageProfile
+        v-if="currentTab === 'profile'"
         :userInfo="currentMember"
+        @close="setCurrentTab('')"
       />
       <ManageNotification
-        v-else-if="currentTab === 'notification'"
+        v-if="currentTab === 'notification'"
         :isAuthor="isAuthor"
         :data="currentGroup"
         @update="updateProfile"
+        @close="setCurrentTab('')"
       />
       <ManageAdmin
-        v-else-if="currentTab === 'admin'"
+        v-if="currentTab === 'admin'"
         v-show="isAdmin"
         :isSetMuteTime="isSetMuteTime"
         :member="member"
@@ -184,6 +178,7 @@
         @setAllMuteTime="setAllMuteTime"
         @addMute="toggleMask('addMute')"
         @removeMute="toggleMask('removeMute')"
+        @close="setCurrentTab('')"
       />
       <MaskLayer :show="mask" @update:show="(e) => (mask = e)">
         <Transfer
@@ -219,9 +214,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   TUITranslateService,
   TUIGroupService,
@@ -232,18 +225,24 @@ TUIChatEngine,
   TUIConversationService,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, computed, defineProps, watchEffect, defineEmits } from "../../../adapter-vue";
+import {
+  ref,
+  computed,
+  defineProps,
+  watchEffect,
+  defineEmits,
+} from "../../../adapter-vue";
 import MaskLayer from "../../common/MaskLayer/index.vue";
 import Dialog from "../../common/Dialog/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
 import ManageName from "./manage-name.vue";
 import ManageNotification from "./manage-notification.vue";
 import ManageMember from "./manage-member.vue";
-import MemeberProfile from "./manage-profile.vue";
+import ManageProfile from "./manage-profile.vue";
 import ManageAdmin from "./manage-admin.vue";
 import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
-import rightIcon from "../../../assets/icon/right.png";
+import rightIcon from "../../../assets/icon/right-icon.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 
 const props = defineProps({
@@ -254,12 +253,12 @@ const props = defineProps({
   groupCurrentTab: {
     type: String,
     default: "",
-  }
+  },
 });
-const emit = defineEmits(["showGroupDetails","switchConversationTab","openConversation"]);
+const emit = defineEmits(["showGroupDetails", "switchConversationTab"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 const currentTab = ref("");
 const editLableName = ref("");
 const transferType = ref("");
@@ -291,16 +290,12 @@ const selectedList = ref([]);
 const delDialogShow = ref(false);
 const groupMemberList = ref([]);
 const deletedUserList = ref([]);
-const currentGroup = ref<IGroupModel>();
+const currentGroup = ref<typeof IGroupModel>();
 const currentSelfRole = ref("");
-const showMemberPop = ref(false);
-const showNotificationPop = ref(false);
-const showAdminPop = ref(false);
-const showProfilePop = ref(false);
 const groupID = ref("");
 
 TUIStore.watch(StoreName.GRP, {
-  currentGroup: (group: IGroupModel) => {
+  currentGroup: (group: typeof IGroupModel) => {
     if (group) {
       currentGroup.value = group;
       currentSelfRole.value = currentGroup.value?.selfInfo?.role;
@@ -334,9 +329,9 @@ TUIStore.watch(StoreName.GRP, {
 });
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
-  groupID.value = conversation?.groupProfile?.groupID;
- }
+  currentConversation: (conversation: typeof IConversationModel) => {
+    groupID.value = conversation?.groupProfile?.groupID;
+  },
 });
 
 watchEffect(() => {
@@ -412,9 +407,17 @@ const updateProfile = async (newGroupProfile: any) => {
     groupID: currentGroup.value.groupID,
     [key]: value,
   };
-  const res = await TUIGroupService.updateGroupProfile(options);
-  currentGroup.value = res.data.group;
-  editLableName.value = "";
+  TUIGroupService.updateGroupProfile(options)
+    .then((res: any) => {
+      currentGroup.value = res.data.group;
+      editLableName.value = "";
+    })
+    .catch((error: any) => {
+      Toast({
+        message: error?.message,
+        type: TOAST_TYPE.ERROR,
+      });
+    });
 };
 
 const setCurrentTab = (tabName: string) => {
@@ -468,6 +471,9 @@ const toggleMask = async (type?: string) => {
       if (currentGroup.value.selfInfo.role === "Owner") {
         transferList.value = [...member.value.admin, ...member.value.member];
       }
+      transferList.value = transferList?.value?.filter((item: any) => {
+        return member?.value?.muteMember?.indexOf(item) < 0;
+      });
       transferTitle.value = "新增禁言用户";
       break;
     case "removeMute":
@@ -493,15 +499,14 @@ const friendList = async () => {
   );
 };
 
-const showGroupDetails = () => {
-  emit('showGroupDetails');
-};
-
 const canIDissmissGroup = computed(() => {
   const userRole = currentGroup?.value?.selfInfo?.role;
   const groupType = currentGroup?.value?.type;
 
-  return (userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER) && (groupType !== TUIChatEngine.TYPES.GRP_WORK);
+  return (
+    userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER &&
+    groupType !== TUIChatEngine.TYPES.GRP_WORK
+  );
 });
 
 const isShowAddMember = computed(() => {
@@ -538,7 +543,7 @@ const getMember = async (type?: string) => {
 
 const handleMemberProfileShow = (user: any) => {
   currentMember.value = user;
-  platformOpenTab("profile")
+  setCurrentTab("profile");
 };
 
 const submit = (userList: any) => {
@@ -561,28 +566,28 @@ const dismissGroup = async (group: any) => {
   await TUIGroupService.dismissGroup(group.groupID);
   Toast({
     message: "群组解散成功！",
-    type: TOAST_TYPE.SUCCESS
+    type: TOAST_TYPE.SUCCESS,
   });
   clearGroupInfo();
 };
 
 const clearGroupInfo = () => {
-if (isUniFrameWork.value) {
-  uni.switchTab({
-        url: "/TUIKit/components/TUIConversation/index",
+  if (isUniFrameWork.value) {
+    uni.switchTab({
+      url: "/TUIKit/components/TUIConversation/index",
     });
     // emit('switchConversationTab');
   } else {
-    emit('showGroupDetails');
+    emit("showGroupDetails");
     // 回到chat default 页
     TUIConversationService.switchConversation();
   }
-}
+};
 
 const setAllMuteTime = (value: boolean) => {
   // 设置全体禁言时间
   updateProfile({ key: "muteAllMembers", value });
-  if(value) {
+  if (value) {
     Toast({
       message: "禁言设置成功",
       type: TOAST_TYPE.SUCCESS,
@@ -622,7 +627,7 @@ const handleSearchMember = async (value: string) => {
         const message = TUITranslateService.t("TUIGroup.该用户不存在");
         Toast({
           message,
-          type: TOAST_TYPE.ERROR
+          type: TOAST_TYPE.ERROR,
         });
       }
       break;
@@ -633,7 +638,7 @@ const handleSearchMember = async (value: string) => {
           const message = TUITranslateService.t("TUIGroup.该用户不在群组内");
           Toast({
             message,
-            type: TOAST_TYPE.ERROR
+            type: TOAST_TYPE.ERROR,
           });
         }
         transferList.value = transferList.value.filter(
@@ -647,7 +652,7 @@ const handleSearchMember = async (value: string) => {
         const message = TUITranslateService.t("TUIGroup.该用户不存在");
         Toast({
           message,
-          type: TOAST_TYPE.ERROR
+          type: TOAST_TYPE.ERROR,
         });
       }
       break;
@@ -748,38 +753,12 @@ const quitGroup = async (group: any) => {
   clearGroupInfo();
 };
 
-// 针对 uniapp 做群成员列表/群公告/群管理相关的配置
-const platformOpenTab = (tabName: string) => {
-  if(isUniFrameWork.value) {
-    toggleEdit(tabName);
-  }else {
-    setCurrentTab(tabName);
-  }
-}
-
-const toggleEdit = (tabName: string) => {
-  switch (tabName) {
-    case "notification":
-      showNotificationPop.value = !showNotificationPop.value;
-      break;
-    case "member":
-      transferType.value = "remove";
-      showMemberPop.value = !showMemberPop.value;
-      break;
-    case "admin":
-      showAdminPop.value = !showAdminPop.value;
-      break;
-    case "profile":
-      showProfilePop.value = !showProfilePop.value;
-      break;
-    default:
-      break;
+const back = () => {
+  if (currentTab.value) {
+    setCurrentTab("");
+  } else {
+    emit("showGroupDetails");
   }
 };
-
-const openConversation = () => {
-  emit("openConversation");
-}
-
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

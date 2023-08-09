@@ -59,7 +59,7 @@ const props = defineProps({
 const emits = defineEmits(["onOpen", "onClose"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const isUniFrameWork = ref(typeof uni !== "undefined");
 const dialogRef = ref();
 
 watch(
@@ -71,13 +71,17 @@ watch(
     switch (newVal) {
       case true:
         emits("onOpen", dialogRef);
-        nextTick(
-          () => props.closeByClickOutside && onClickOutside(dialogRef.value)
-        );
+        if (!isPC) {
+          nextTick(
+            () => props.closeByClickOutside && onClickOutside(dialogRef.value)
+          );
+        }
         break;
       case false:
         emits("onClose", dialogRef);
-        removeClickListener(dialogRef.value);
+        if (!isPC) {
+          removeClickListener(dialogRef.value);
+        }
         break;
     }
   }

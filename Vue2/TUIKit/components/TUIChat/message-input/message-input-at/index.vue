@@ -1,10 +1,7 @@
 <template>
   <BottomPopup :show="showAtList" @onClose="closeAt">
     <div
-      :class="[
-        isPC && 'message-input-at',
-        !isPC && 'message-input-at-h5',
-      ]"
+      :class="[isPC ? 'message-input-at' : 'message-input-at-h5']"
       ref="MessageInputAt"
     >
       <div class="memberList" ref="dialog">
@@ -36,9 +33,7 @@
   </BottomPopup>
 </template>
 <script lang="ts" setup>
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   TUIStore,
   StoreName,
@@ -74,11 +69,15 @@ const all = {
   avatar: "https://web.sdk.qcloud.com/im/assets/images/at.svg",
 };
 
-// todo: 此处后续优化为TUIStore cutomStore中进行存储，避免数据在两个文件中重复监听
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     if (id !== currentConversationID.value) {
       currentConversationID.value = id;
+      memberList.value = [];
+      allMemberList.value = [];
+      showMemberList.value = [];
+      isGroup.value = false;
+      TUIStore.update(StoreName.CUSTOM, "memberList", memberList.value);
       if (currentConversationID?.value?.startsWith("GROUP")) {
         isGroup.value = true;
         const groupID = currentConversationID?.value?.substring(5);
@@ -88,12 +87,8 @@ TUIStore.watch(StoreName.CONV, {
           memberList.value = res?.data?.memberList;
           allMemberList.value = [all, ...memberList.value];
           showMemberList.value = allMemberList.value;
+          TUIStore.update(StoreName.CUSTOM, "memberList", memberList.value);
         });
-      } else {
-        memberList.value = [];
-        allMemberList.value = [];
-        showMemberList.value = [];
-        isGroup.value = false;
       }
     }
   },

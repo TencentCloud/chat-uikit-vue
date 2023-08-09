@@ -102,11 +102,11 @@ interface touchesPosition {
 const props = defineProps({
   imageList: {
     type: Array,
-    default: () => [] as Array<IMessageModel>,
+    default: () => [] as Array<typeof IMessageModel>,
   },
   currentImage: {
     type: Object,
-    default: () => ({} as IMessageModel),
+    default: () => ({} as typeof IMessageModel),
   },
 });
 const isH5 = ref(TUIGlobal.getPlatform() !== "pc");
@@ -309,7 +309,7 @@ const initStyle = () => {
   rotate.value = 0;
 };
 
-const getImageUrl = (message: IMessageModel) => {
+const getImageUrl = (message: typeof IMessageModel) => {
   if (!isH5) {
     return message?.payload?.imageInfoArray[0]?.url;
   } else {
@@ -320,7 +320,7 @@ const getImageUrl = (message: IMessageModel) => {
 const save = () => {
   const imageMessage = props.imageList[
     currentImageIndex.value
-  ] as IMessageModel;
+  ] as typeof IMessageModel;
   const imageSrc = imageMessage?.payload?.imageInfoArray[0]?.url;
   if (!imageSrc) {
     Toast({
@@ -425,7 +425,7 @@ const downloadImgInWeb = (src: string) => {
   };
   const imageMessage = props.imageList[
     currentImageIndex.value
-  ] as IMessageModel;
+  ] as typeof IMessageModel;
   const imageFormat: number = imageMessage?.payload?.imageFormat;
   if (!imageFormatMap.has(imageFormat)) {
     Toast({

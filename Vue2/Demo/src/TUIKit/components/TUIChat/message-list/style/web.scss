@@ -26,13 +26,24 @@
         float: right;
       }
     }
+    .TUIChat-application-tips{
+      text-align: center;
+      width: 100%;
+      background: #fce4d3;
+      padding: 2px;
+      font-size: 12px; 
+    }
+    .application-tips-btn {
+      color: #006eff;
+      padding-left: 10px;
+    }
     .TUI-message-list {
       flex: 1;
       height: 100%;
       overflow-y: auto;
       overflow-x: hidden;
       .message-more {
-        font-size: 0.9rem;
+        font-size: 14px;
         padding: 5px;
         text-align: center;
       }

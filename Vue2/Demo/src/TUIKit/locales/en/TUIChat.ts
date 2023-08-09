@@ -68,6 +68,13 @@ const TUIChat = {
   "开通腾讯实时音视频服务": "Integration Tencent Real-Time Communication",
   "进行体验": "to experience.",
   "您当前购买使用的套餐包暂未开通此功能": "The package you purchased does not support this ability.",
+  "条入群申请": "Item group application",
+  "点击处理": "Click action",
+  "申请加入": "Application for join in",
+  "同意": "Agree",
+  "拒绝": "Reject",
+  "已同意": "Approved",
+  "已拒绝": "Rejected",
 };
 
 export default TUIChat;

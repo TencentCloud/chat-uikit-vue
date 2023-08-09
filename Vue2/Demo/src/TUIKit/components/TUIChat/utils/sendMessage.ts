@@ -26,6 +26,10 @@ export const sendMessages = async (
           // replay or reference message
           // cloudCustomData = handleMessageReplyOrReference(cloudCustomData);
           // @ text message
+          // 禁止发送空消息
+          if(!JSON.parse(JSON.stringify(content?.payload?.text))){
+            break;
+          }
           if (content?.payload?.atUserList) {
             options.payload = {
               text: JSON.parse(JSON.stringify(content?.payload?.text)),

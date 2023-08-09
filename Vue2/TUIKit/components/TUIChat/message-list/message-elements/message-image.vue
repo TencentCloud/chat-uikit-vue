@@ -1,20 +1,10 @@
 <template>
   <div class="message-image" @click.self="toggleShow" ref="skeleton">
     <img
-      class="message-img"
+      :class="['message-img', !props.isPC && 'message-img-h5']"
       :src="data.url"
       :width="data.width"
       :height="data.height"
-      :style="
-        isH5
-          ? {
-              maxWidth: data.width ? data.width + 'px' : 'calc(100vw - 180px)',
-              maxHeight: data.height
-                ? data.height + 'px'
-                : 'calc(100vw - 180px)',
-            }
-          : {}
-      "
     />
     <div class="progress" v-if="data.progress">
       <progress :value="data.progress" max="1"></progress>
@@ -160,6 +150,10 @@ watch(
     max-height: min(calc(100vw - 180px), 300px);
     width: inherit;
     height: inherit;
+    &-h5 {
+      max-width: calc(100vw - 180px);
+      max-height: calc(100vw - 180px);
+    }
   }
   .progress {
     position: absolute;
