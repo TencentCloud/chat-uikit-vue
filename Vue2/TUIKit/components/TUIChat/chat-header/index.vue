@@ -1,7 +1,10 @@
 <template>
   <div :class="['chat-header', !isPC && 'chat-header-h5']">
-    <div v-show="!isPC" :class="['chat-header-back', !isPC && 'chat-header-h5-back']"
-      @click="closeChat(currentConversation.conversationID)">
+    <div
+      v-show="!isPC"
+      :class="['chat-header-back', !isPC && 'chat-header-h5-back']"
+      @click="closeChat(currentConversation.conversationID)"
+    >
       <Icon :file="backSVG"></Icon>
     </div>
     <div :class="['chat-header-content', !isPC && 'chat-header-h5-content']">
@@ -11,7 +14,11 @@
       <div @click="showGroupDetails" v-if="isGroup">
         <Icon :file="settingSVG"></Icon>
       </div>
-      <ManageGroup v-if="showGroupDialog" :groupID="groupID" @showGroupDetails="showGroupDetails"></ManageGroup>
+      <ManageGroup
+        v-if="showGroupDialog"
+        :groupID="groupID"
+        @showGroupDetails="showGroupDetails"
+      ></ManageGroup>
     </div>
   </div>
 </template>
@@ -22,9 +29,9 @@ import {
   StoreName,
   TUITranslateService,
   TUIGroupService,
-  IConversationModel
+  IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits } from "../../../adapter-vue";
+import { ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
 import settingSVG from "../../../assets/icon/setting.svg";
@@ -32,20 +39,20 @@ import ManageGroup from "../../TUIGroup/manage-group/index.vue";
 
 const emits = defineEmits(["closeChat"]);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 const currentConversationName = ref("");
 const typingStatus = ref(false);
 const isGroup = ref(false);
-const groupID = ref('');
-const conversationType = ref('GROUP');
+const groupID = ref("");
+const conversationType = ref("GROUP");
 const showGroupDialog = ref(false);
-const groupCurrentTab = ref('');
+const groupCurrentTab = ref("");
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
     isGroup.value = currentConversation.value?.type === conversationType.value;
-    if(groupID.value !== currentConversation.value?.groupProfile?.groupID) {
+    if (groupID.value !== currentConversation.value?.groupProfile?.groupID) {
       showGroupDialog.value = false;
       // 清空对应群组信息
       TUIGroupService.switchGroup();
@@ -63,7 +70,8 @@ TUIStore.watch(StoreName.CHAT, {
           TUITranslateService.t("TUIChat.对方正在输入");
         break;
       case false:
-        currentConversationName.value = currentConversation?.value?.getShowName();
+        currentConversationName.value =
+          currentConversation?.value?.getShowName();
         break;
     }
   },
@@ -76,14 +84,13 @@ const closeChat = (conversationID: string) => {
 const showGroupDetails = () => {
   showGroupDialog.value = !showGroupDialog.value;
   if (!showGroupDialog.value) {
-    groupCurrentTab.value = '';
+    groupCurrentTab.value = "";
     TUIGroupService.switchGroup();
   }
   if (showGroupDialog.value) {
     TUIGroupService.switchGroup(groupID.value);
   }
 };
-
 </script>
 <style lang="scss" scoped>
 .chat-header {

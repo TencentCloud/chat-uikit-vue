@@ -290,28 +290,30 @@ import TUIChatEngine, {
   TUIFriendService,
   TUIGroupService,
   TUIConversationService,
+  IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, computed, defineEmits } from "../../adapter-vue";
+import { ref, computed } from "../../adapter-vue";
 import Icon from "../common/Icon.vue";
 import rightIcon from "../../assets/icon/right-icon.svg";
 import downIcon from "../../assets/icon/down-icon.svg";
 import backSVG from "../../assets/icon/back.svg";
 import { Toast, TOAST_TYPE } from "../common/Toast/index";
+import { IFriendProfile } from "../../interface";
+import { isUniFrameWork } from "../../utils/is-uni";
 
 const emits = defineEmits(["handleCurrentConversation"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 
-const myGroupList = ref([]);
-const searchGroup = ref({});
+const myGroupList = ref<Array<typeof IGroupModel>>([]);
+const searchGroup = ref<typeof IGroupModel>({});
 const searchID = ref("");
 const listName = ref("");
 const searchStatus = ref(false);
-const myFriendList = ref([]);
-const currentFriend = ref({});
-const currentGroup = ref({}); // 获取当前群组的信息
+const myFriendList = ref<Array<IFriendProfile>>([]);
+const currentFriend = ref<IFriendProfile>({});
+const currentGroup = ref<typeof IGroupModel>({}); // 获取当前群组的信息
 
 const groupType = {
   [TUIChatEngine.TYPES.GRP_WORK]: "Work",
@@ -322,7 +324,7 @@ const groupType = {
 };
 
 TUIStore.watch(StoreName.GRP, {
-  groupList: (groupList: any) => {
+  groupList: (groupList: Array<typeof IGroupModel>) => {
     myGroupList.value = groupList;
   },
 });
@@ -400,7 +402,7 @@ const joinGroup = async (group: any) => {
         case TUIChatEngine.TYPES.JOIN_STATUS_SUCCESS: // 加群成功
           // 切换到对应的 chat 页面
           TUIConversationService.switchConversation(conversationID);
-          if (isUniFrameWork.value) {
+          if (isUniFrameWork) {
             openChatPage();
           } else {
             emits("handleCurrentConversation");
@@ -455,7 +457,7 @@ const enterConversation = (ID: string, type: string) => {
       type: TOAST_TYPE.ERROR,
     });
   });
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     openChatPage();
   } else {
     emits("handleCurrentConversation");
@@ -474,7 +476,7 @@ const quitGroup = async (group: any) => {
 };
 
 const openChatPage = () => {
-  uni.navigateTo({
+  TUIGlobal?.global?.navigateTo({
     url: "/TUIKit/components/TUIChat/index",
   });
 };
@@ -482,7 +484,7 @@ const openChatPage = () => {
 const clearData = () => {
   currentGroup.value = {};
   currentFriend.value = {};
-  listName.value = {};
+  listName.value = "";
 };
 
 const toggleSearch = () => {

@@ -15,8 +15,11 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUIGlobal, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { defineProps, toRefs, defineEmits, ref } from "../../../adapter-vue";
+import {
+  TUIGlobal,
+  TUITranslateService,
+} from "@tencentcloud/chat-uikit-engine";
+import { ref } from "../../../adapter-vue";
 const props = defineProps({
   enableSend: {
     type: Boolean,

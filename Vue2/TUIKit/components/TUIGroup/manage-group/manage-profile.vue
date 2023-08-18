@@ -79,20 +79,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import TUIChatEngine, {
+import {
   TUITranslateService,
   TUIUserService,
   TUIConversationService,
   TUIGlobal,
-  TUIFriendService,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  defineProps,
-  ref,
-  watch,
-  defineEmits,
-  watchEffect,
-} from "../../../adapter-vue";
+import { ref, watch, watchEffect } from "../../../adapter-vue";
+import { IUserProfile } from "../../../interface";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 const props = defineProps({
   userInfo: {
@@ -102,9 +97,7 @@ const props = defineProps({
 });
 
 const isFriendShip = ref(false);
-const userInfoManage = ref({});
-const self = ref({});
-const isUniFrameWork = ref(typeof uni !== "undefined");
+const userInfoManage = ref<IUserProfile>({});
 
 watchEffect(() => {
   userInfoManage.value = props.userInfo;
@@ -139,7 +132,7 @@ const enter = async (ID: any, type: string) => {
       TUIConversationService.switchConversation(
         res.data.conversation.conversationID
       );
-      if (isUniFrameWork.value) {
+      if (isUniFrameWork) {
         emits("openConversation");
       } else {
         emits("handleSwitchConversation", res.data.conversation.conversationID);
@@ -154,7 +147,7 @@ const checkFriend = async () => {
   // 这里暂时屏蔽
   // const relation = await TUIFriendService.checkFriend(userInfo.value.userID, TUIChatEngine.TYPES.SNS_CHECK_TYPE_BOTH);
   // isFriendShip.value = (relation === TUIChatEngine.TYPES.SNS_TYPE_BOTH_WAY) ? true : false;
-  if (!isUniFrameWork.value) {
+  if (!isUniFrameWork) {
     isFriendShip.value = true;
   }
 };

@@ -13,8 +13,8 @@
   "dependencies": {
     "@tencentcloud/call-uikit-vue2": "3.0.1",
     "@types/webpack-env": "^1.18.0",
-    "@tencentcloud/chat-uikit-engine": "^0.0.4",
-    "@tencentcloud/chat-uikit-vue2": "^0.0.3",
+    "@tencentcloud/chat-uikit-engine": "^0.0.5",
+    "@tencentcloud/chat-uikit-vue2": "^0.0.5",
     "@tencentcloud/tui-core": "^0.0.3",
     "axios": "^0.26.1",
     "element-ui": "^2.15.13",

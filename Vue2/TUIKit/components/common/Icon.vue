@@ -7,7 +7,7 @@
 </template>
 <script setup lang="ts">
 import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits, defineProps } from "../../adapter-vue";
+import { ref } from "../../adapter-vue";
 const emits = defineEmits(["handlerImgClick"]);
 const isApp = ref(TUIGlobal.getPlatform() === "app");
 const props = defineProps({

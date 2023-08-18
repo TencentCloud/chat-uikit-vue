@@ -1,7 +1,9 @@
 ## 关于 chat-uikit-vue2
 
 chat-uikit-vue2 是一款 Vue2 版本 Chat UI 组件库，它提供了一些通用的 UI 组件，包含会话、聊天、音视频通话、关系链、资料、群组等功能。基于这些精心设计的 UI 组件，您可以快速构建优雅的、可靠的、可扩展的 Chat 应用。
+
 开发者在使用 chat-uikit-vue2 时只需关注自身业务需求或个性化扩展即可，chat 相关的逻辑操作和数据处理，chat-uikit-vue2 已为您封装好。
+
 chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT WEB DEMO 体验地址 ](https://web.sdk.qcloud.com/im/demo/latest/index.html)进行在线体验。
 <img width="2072" alt="page00" src="https://user-images.githubusercontent.com/57951148/192585375-6260280f-4a67-4b64-a908-efcedee1c253.png">
 <img width="1015" alt="page02" src="https://user-images.githubusercontent.com/57951148/192585298-c79960ed-a6a9-4927-89b9-31c1b3f68740.png">
@@ -11,7 +13,7 @@ chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT W
 ### 开发环境要求
 
 - Vue 2.7+ （chat-uikit-vue2 集成请务必使用 Vue2.7 及以上版本）
-- TypeScript
+- TypeScript (如果您是 js 版本，请下拉至“常见问题 6”进行 typescript 支持相关配置)
 - sass（sass-loader 版本 <= 10.1.1）
 - node（12.13.0 <= node 版本 <= 17.0.0, 推荐使用 Node.js 官方 LTS 版本 16.17.0）
 - npm（版本请与 node 版本匹配）
@@ -53,10 +55,10 @@ npm i vue@2.7.9 vue-template-compiler@2.7.9
 ```shell
 # macOS
 npm i @tencentcloud/chat-uikit-vue2
-mkdir -p ./src/TUIKit && cp -r ./node_modules/@tencentcloud/chat-uikit-vue2/ ./src/TUIKit
+mkdir -p ./src/TUIKit && rsync -av --exclude={'node_modules','package.json','excluded-list.txt'} ./node_modules/@tencentcloud/chat-uikit-vue2/ ./src/TUIKit
 # windows
 npm i @tencentcloud/chat-uikit-vue2
-xcopy .\node_modules\@tencentcloud\chat-uikit-vue2 .\src\TUIKit /i /e
+xcopy .\node_modules\@tencentcloud\chat-uikit-vue2 .\src\TUIKit /i /e /exclude:.\node_modules\@tencentcloud\chat-uikit-vue2\excluded-list.txt
 ```
 
 成功后目录结构如图所示：  
@@ -236,24 +238,15 @@ npm run serve
 ![send your first message](https://user-images.githubusercontent.com/57951148/192585549-2cc65785-0d6d-4d48-a0ce-0abe0b927bf4.png)
 
 ### 步骤 8: 拨打您的第一通电话
+
 <img width="1015" alt="page05" src="https://user-images.githubusercontent.com/57951148/196082955-e046f0b1-bba2-491d-91b3-f30f2c6f4aae.png">
 
+## 常见问题
 
-### 常见问题
+### 1. 如何实现独立集成 TUIChat 组件?
+请参考官网文档 [TUIChat 独立集成方案 (vue2)](https://cloud.tencent.com/document/product/269/96740)
 
-#### 1. 什么是 UserSig？
-
-UserSig 是用户登录即时通信 IM 的密码，其本质是对 UserID 等信息加密后得到的密文。
-
-#### 2. 如何生成 UserSig？
-
-UserSig 签发方式是将 UserSig 的计算代码集成到您的服务端，并提供面向项目的接口，在需要 UserSig 时由您的项目向业务服务器发起请求获取动态 UserSig。更多详情请参见 [服务端生成 UserSig](https://cloud.tencent.com/document/product/269/32688#GeneratingdynamicUserSig)。
-
-> !
->
-> 本文示例代码采用的获取 UserSig 的方案是在客户端代码中配置 SECRETKEY，该方法中 SECRETKEY 很容易被反编译逆向破解，一旦您的密钥泄露，攻击者就可以盗用您的腾讯云流量，因此**该方法仅适合本地跑通功能调试**。 正确的 UserSig 签发方式请参见上文。
-
-#### 3. Component name "XXXX" should always be multi-word
+### 2. Component name "XXXX" should always be multi-word
 
 - IM TUIKit web 所使用的 ESLint 版本为 v6.7.2 ，对于模块名的驼峰式格式并不进行严格校验
 - 如果您出现此问题，您可以在 .eslintrc.js 文件中进行如下配置：
@@ -268,17 +261,69 @@ module.exports = {
 };
 ```
 
-#### 4. ESLint 其他报错？
+### 3. ESLint 其他报错？
 
 - 若 chat-uikit-vue 拷贝到 src 目录汇总与您本地项目代码风格不一致导致报错，可将本组件目录屏蔽，如在项目根目录增加 .eslintignore 文件：
 
 ```javascript
 # .eslintignore
-src/components/TUICallKit
+src/TUIKit
 
 ```
 
-### 相关链接
+### 4. 运行时报错："TypeError: Cannot read properties of undefined (reading "getFriendList")"
+
+若按照上述步骤接入后，运行时出现以下错误，请您**务必删除 TUIKit 目录下的 node_modules 目录**，以保证 TUIKit 的依赖唯一性，避免 TUIKit 多份依赖造成问题。
+
+<img width="400" alt="image" src="https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/f7c85dfe-b4bd-4c73-88d9-3a9f0d7797f2">
+
+### 5. js 工程如何接入 TUIKit 组件?
+
+TUIKit 仅支持 ts 环境运行，您可以通过渐进式配置 typescript 来使您项目中已有的 js 代码 与 TUIKit 中 ts 代码共存。
+请在您 vue-cli 脚手架创建的工程根目录执行：
+
+```shell
+vue add typescript
+```
+
+之后按照如下进行配置项进行选择（为了保证能同时支持原有 js 代码 与 TUIKit 中 ts 代码，请您务必严格按照以下五个选项进行配置）
+<img width="600" alt="image" src="https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/5e2fc00b-ace5-4843-bef6-c0e234225b5d">
+
+### 6. 使用 vue-tsc / type-check 有如下报错之一
+
+error TS1371: This import is never used as a value and must use 'import type' because 'importsNotUsedAsValues' is set to 'error'.
+
+'ITUIPlugins' is a type and must be imported using a type-only import when 'preserveValueImports' and 'isolatedModules' are both enabled.
+
+This import is never used as a value and must use 'import type' because 'importsNotUsedAsValues' is set to 'error'.
+
+
+为了兼容支持 typescript 3 版本，TUIKit 放弃了采用 `import type xxx from xxx` 的形式来导入类型。
+
+如遇以上问题，请您在您项目根目录的 `tsconfig.json` 设置以下规则：
+
+```shell
+// tsconfig.json
+{
+  ...
+  "compilerOptions": {
+    ...
+    "preserveValueImports": false,
+    "importsNotUsedAsValues": "preserve"
+  },
+}
+```
+
+### 7. 运行时报错: Failed to resolve loader: sass-loader
+
+出现以上报错信息，是因为您未安装 `sass` 环境导致，请执行以下命令进行 `sass` 环境安装:
+<img width="400" alt="image" src="https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/1ba994d8-da51-4820-94e7-a7145b34750b">
+```shell
+npm i -D sass sass-loader@10.1.1
+```
+
+
+## 相关链接
 
 - [chat-uikit-vue Github 仓库](https://github.com/TencentCloud/chat-uikit-vue)
 - [chat-uikit-vue2 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue2/Demo)
@@ -286,3 +331,7 @@ src/components/TUICallKit
 - [@tencentcloud/chat-uikit-vue2 npm 仓库（vue2 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue2)
 - [@tencentcloud/chat-uikit-vue npm 仓库（vue3 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
 - [CHAT WEB DEMO 体验地址](https://web.sdk.qcloud.com/im/demo/latest/index.html)
+
+## 技术咨询
+
+[点此进入 IM 社群](https://zhiliao.qq.com/s/c5GY7HIM62CK)，享有专业工程师的支持，解决您的难题

@@ -34,8 +34,8 @@ import {
   IConversationModel,
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits, defineProps } from "../../../../adapter-vue";
-
+import { ref } from "../../../../adapter-vue";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import videoIcon from "../../../../assets/icon/video.png";
 import videoUniIcon from "../../../../assets/icon/video-uni.png";
@@ -55,37 +55,33 @@ const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
 
-const handleIcon = () => {
-  if (isUniFrameWork.value) {
+const handleIcon = (): string => {
+  if (isUniFrameWork) {
     switch (props.videoSourceType) {
       case "album":
         return videoUniIcon;
       case "camera":
         return cameraUniIcon;
+      default:
+        return videoUniIcon;
     }
   } else {
     return videoIcon;
   }
 };
 
-const handleTitle = () => {
-  if (isUniFrameWork.value) {
-    switch (props.videoSourceType) {
-      case "album":
-        return "视频";
-      case "camera":
-        return "录制";
-    }
+const handleTitle = (): string => {
+  if (isUniFrameWork && props.videoSourceType === "camera") {
+    return "录制";
   } else {
     return "视频";
   }
@@ -93,11 +89,11 @@ const handleTitle = () => {
 
 const onIconClick = () => {
   // uniapp环境发送视频
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     if (isWeChat.value) {
       // uniapp-小程序 发送视频，使用前请将 SDK 升级至v2.11.2或更高版本，将 tim-upload-plugin 升级至v1.0.2或更高版本
       // 微信小程序从基础库 2.21.0 开始， wx.chooseVideo 停止维护，请使用 uni.chooseMedia 代替
-      uni?.chooseMedia({
+      TUIGlobal?.global?.chooseMedia({
         mediaType: ["video"], // 视频
         count: 1,
         sourceType: [props.videoSourceType], // album 从相册选视频，camera 使用相机拍摄
@@ -108,7 +104,7 @@ const onIconClick = () => {
       });
     } else {
       // uniapp h5/app 发送图片
-      uni?.chooseVideo({
+      TUIGlobal?.global?.chooseVideo({
         count: 1,
         sourceType: [props.videoSourceType], // 从相册选择或使用相机拍摄
         success: function (res: any) {
@@ -126,7 +122,7 @@ const sendVideoInWeb = (e: any) => {
     return;
   }
   sendVideoMessage(e?.target);
-  e.target.value = '';
+  e.target.value = "";
 };
 
 const sendVideoMessage = (file: any) => {
@@ -141,7 +137,7 @@ const sendVideoMessage = (file: any) => {
     payload: {
       file,
     },
-  } as SendMessageParams;
+  } as typeof SendMessageParams;
   TUIChatService.sendVideoMessage(options);
 };
 </script>

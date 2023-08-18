@@ -38,7 +38,10 @@
           <div
             :class="[
               'online-status',
-              Object.keys(statusList).length > 0 && Object.keys(statusList).includes(conversation.userProfile.userID) &&
+              Object.keys(statusList).length > 0 &&
+              Object.keys(statusList).includes(
+                conversation.userProfile.userID
+              ) &&
               statusList[conversation.userProfile.userID].statusType === 1
                 ? 'online-status-online'
                 : 'online-status-offline',
@@ -140,15 +143,8 @@
   </ul>
 </template>
 <script lang="ts" setup>
-import {
-  ref,
-  defineProps,
-  defineEmits,
-  getCurrentInstance,
-  defineExpose,
-  nextTick,
-  watchEffect,
-} from "../../../adapter-vue";
+import { ref, nextTick } from "../../../adapter-vue";
+import { isUniFrameWork } from "../../../utils/is-uni";
 import TUIChatEngine, {
   TUIGlobal,
   IConversationModel,
@@ -168,9 +164,8 @@ const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isApp = ref(TUIGlobal.getPlatform() === "app");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 const toggleID = ref("");
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 const currentConversationID = ref("");
 const conversationList = ref();
 const listRectInfo = ref();
@@ -180,16 +175,21 @@ const isLongpressing = ref(false);
 // 在线状态
 const displayOnlineStatus = ref(false); // 默认关闭
 const userStatusList = ref(new Map());
-const statusList = ref({});
+const statusList = ref<{
+  [propsName: string]: {
+    statusType: number;
+    customStatus: string;
+  };
+}>({});
 
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     currentConversationID.value = id;
   },
-  conversationList: (list: Array<IConversationModel>) => {
+  conversationList: (list: Array<typeof IConversationModel>) => {
     conversationList.value = list;
   },
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -215,7 +215,7 @@ TUIStore.watch(StoreName.USER, {
   },
 });
 
-const showUserOnlineStatus = (conversation: IConversationModel) => {
+const showUserOnlineStatus = (conversation: typeof IConversationModel) => {
   return (
     displayOnlineStatus.value &&
     conversation.type === TUIChatEngine.TYPES.CONV_C2C
@@ -224,14 +224,14 @@ const showUserOnlineStatus = (conversation: IConversationModel) => {
 
 const handleItem = (params: {
   name: any;
-  conversation: IConversationModel;
+  conversation: typeof IConversationModel;
 }) => {
   const { name, conversation } = params;
   if (!name || !conversation || !conversation.conversationID) {
     return;
   }
   const conversationModel = conversationList.value?.find(
-    (item: IConversationModel) => {
+    (item: typeof IConversationModel) => {
       return item.conversationID === conversation.conversationID;
     }
   );
@@ -257,7 +257,7 @@ const handleItem = (params: {
 
 const handleToggleListItem = (
   e: any,
-  conversation: IConversationModel,
+  conversation: typeof IConversationModel,
   index: number,
   isLongpress = false
 ) => {
@@ -273,7 +273,6 @@ const handleToggleListItem = (
   nextTick(() => {
     onClickOutside(dialog.value);
   });
-  
 };
 
 const closeToggleListItem = () => {
@@ -288,7 +287,7 @@ const scrollChange = () => {
 let timer: number;
 const handleH5LongPress = (
   e: any,
-  conversation: IConversationModel,
+  conversation: typeof IConversationModel,
   index: number,
   type: string
 ) => {
@@ -318,7 +317,7 @@ const handleH5LongPress = (
 
 // handle toggle dialog position in view end
 const handleDialogPosition = (
-  conversation: IConversationModel,
+  conversation: typeof IConversationModel,
   index: number
 ) => {
   dialogTop.value = 30;
@@ -337,7 +336,7 @@ const handleDialogPosition = (
     // 通过uni.createSelectorQuery，拿到当前toggle的元素的宽高距离以及整个 conversationList 宽高距离
     // uni这个api还是异步的，奇慢无比，还要等他拿到再去显示dialog
     let listRect: any, toggleRect: any;
-    const query = (uni as any)?.createSelectorQuery();
+    const query = TUIGlobal?.global?.createSelectorQuery();
     query
       .select(".TUI-conversation-list")
       .boundingClientRect((data: any) => {
@@ -392,7 +391,7 @@ const handleSwitchConversation = (conversationID: string) => {
 // web 支持整个页面维度 on click outside
 // uniapp 支持整个 TUIConversation 组件维度 on click outside
 const onClickOutside = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.addEventListener("mousedown", onClickDocument);
@@ -408,7 +407,7 @@ const onClickDocument = (e: any) => {
 };
 
 const removeClickListener = () => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.removeEventListener("mousedown", onClickDocument);

@@ -40,7 +40,7 @@ import TUIChatEngine, {
   TUIGroupService,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, watch, defineExpose, defineEmits } from "../../../../adapter-vue";
+import { ref, watch } from "../../../../adapter-vue";
 import BottomPopup from "../../../common/BottomPopup/index.vue";
 
 const emits = defineEmits(["onAtListOpen", "insertAt"]);
@@ -84,7 +84,7 @@ TUIStore.watch(StoreName.CONV, {
         TUIGroupService.getGroupMemberList({
           groupID,
         }).then((res: any) => {
-          memberList.value = res?.data?.memberList;
+          memberList.value = res?.data?.memberList as Array<any>;
           allMemberList.value = [all, ...memberList.value];
           showMemberList.value = allMemberList.value;
           TUIStore.update(StoreName.CUSTOM, "memberList", memberList.value);

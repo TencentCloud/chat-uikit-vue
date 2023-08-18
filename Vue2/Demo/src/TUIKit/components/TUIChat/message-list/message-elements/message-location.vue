@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, watch, defineProps } from "../../../../adapter-vue";
+import { watchEffect, ref } from "../../../../adapter-vue";
 const props = defineProps({
   content: {
     type: Object,

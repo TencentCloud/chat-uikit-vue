@@ -59,8 +59,8 @@ import {
   IConversationModel,
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits } from "../../../../adapter-vue";
-
+import { ref } from "../../../../adapter-vue";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 import { emojiList, basicEmojiMap } from "../../utils/emojiList";
 import { IEmojiList, IEmojiListItem } from "../../../../interface";
 import { EMOJI_TYPE } from ".././../../../constant";
@@ -69,9 +69,7 @@ import faceIcon from "../../../../assets/icon/face.png";
 
 const emits = defineEmits(["insertEmoji", "onClose", "sendMessage"]);
 
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
 const list = ref<IEmojiList>(emojiList);
 const currentTabIndex = ref<number>(0);
 const currentTabItem = ref<IEmojiListItem>(list?.value[0]);
@@ -80,7 +78,7 @@ const currentConversation = ref();
 const emojiPickerDialog = ref();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -123,12 +121,12 @@ const sendFaceMessage = (index: number, listItem: IEmojiListItem) => {
       index: listItem.index,
       data: listItem.list[index],
     },
-  } as SendMessageParams;
+  } as typeof SendMessageParams;
   TUIChatService.sendFaceMessage(options);
 };
 
 const sendMessage = () => {
   emits("sendMessage");
-}
+};
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

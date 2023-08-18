@@ -18,8 +18,7 @@ import {
   CSSProperties,
   onMounted,
   ref,
-  watch,
-  defineProps,
+  watch
 } from "../../../adapter-vue";
 import TOAST_TYPE from "./type";
 

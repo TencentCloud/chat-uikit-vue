@@ -1,7 +1,7 @@
 <template>
   <ToolbarItemContainer
-    :iconFile="handleIcon()"
-    :title="handleTitle()"
+    :iconFile="imageToolbarForShow.icon"
+    :title="imageToolbarForShow.title"
     :iconWidth="isUniFrameWork ? '32px' : '21px'"
     :iconHeight="isUniFrameWork ? '25px' : '18px'"
     :needDialog="false"
@@ -31,8 +31,8 @@ import {
   IConversationModel,
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits, defineProps } from "../../../../adapter-vue";
-
+import { ref, computed } from "../../../../adapter-vue";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import imageIcon from "../../../../assets/icon/image.png";
 import imageUniIcon from "../../../../assets/icon/image-uni.png";
@@ -52,50 +52,47 @@ const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<IConversationModel>();
-const isUniFrameWork = ref(typeof uni !== 'undefined');
+const currentConversation = ref<typeof IConversationModel>();
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 
+const IMAGE_TOOLBAR_SHOW_MAP = {
+  web_album: {
+    icon: imageIcon,
+    title: "图片",
+  },
+  uni_album: {
+    icon: imageUniIcon,
+    title: "图片",
+  },
+  uni_camera: {
+    icon: cameraUniIcon,
+    title: "拍照",
+  },
+};
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
 
-const handleIcon = () => {
-  if (isUniFrameWork.value) {
-    switch (props.imageSourceType) {
-      case "album":
-        return imageUniIcon;
-      case "camera":
-        return cameraUniIcon;
-    }
+const imageToolbarForShow = computed((): { icon: string; title: string } => {
+  if (isUniFrameWork) {
+    return props.imageSourceType === "camera"
+      ? IMAGE_TOOLBAR_SHOW_MAP["uni_camera"]
+      : IMAGE_TOOLBAR_SHOW_MAP["uni_album"];
   } else {
-    return imageIcon;
+    return IMAGE_TOOLBAR_SHOW_MAP["web_album"];
   }
-};
-
-const handleTitle = () => {
-  if (isUniFrameWork.value) {
-    switch (props.imageSourceType) {
-      case "album":
-        return "图片";
-      case "camera":
-        return "拍照";
-    }
-  } else {
-    return "图片";
-  }
-};
+});
 
 const onIconClick = () => {
   // uniapp 环境 发送图片
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     if (isWeChat.value) {
       // uniapp-小程序 发送图片，使用前请将 SDK 升级至v2.11.2或更高版本，将 tim-upload-plugin 升级至v1.0.2或更高版本
       // 微信小程序从基础库 2.21.0 开始， wx.chooseImage 停止维护，请使用 uni.chooseMedia 代替
-      uni?.chooseMedia({
+      TUIGlobal?.global?.chooseMedia({
         count: 1,
         mediaType: ["image"], // 图片
         sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
@@ -106,11 +103,11 @@ const onIconClick = () => {
       });
     } else {
       // uniapp h5/app 发送图片
-      uni?.chooseImage({
+      TUIGlobal?.global?.chooseImage({
         count: 1,
         sourceType: [props.imageSourceType], // 从相册选择或使用相机拍摄
         success: function (res: any) {
-          uni?.getImageInfo({
+          TUIGlobal?.global?.getImageInfo({
             src: res.tempFilePaths[0],
             success: function (image: any) {
               sendImageMessage(res, image.width, image.height);
@@ -129,7 +126,7 @@ const sendImageInWeb = (e: any) => {
     return;
   }
   sendImageMessage(e?.target);
-  e.target.value = '';
+  e.target.value = "";
 };
 
 const sendImageMessage = (files: any, width?: string, height?: string) => {
@@ -144,7 +141,7 @@ const sendImageMessage = (files: any, width?: string, height?: string) => {
     payload: {
       file: files,
     },
-  } as SendMessageParams;
+  } as typeof SendMessageParams;
   // todo: 需要处理uniapp文件没有宽高的变形问题，需要linda看看
   TUIChatService.sendImageMessage(options);
 };

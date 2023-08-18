@@ -43,18 +43,18 @@ import {
   SendMessageParams,
   TUIChatService,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits } from "../../../../adapter-vue";
+import { ref } from "../../../../adapter-vue";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import wordsIcon from "../../../../assets/icon/words.svg";
 import { wordsList } from "../../utils/wordsList";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 const container = ref();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -68,7 +68,7 @@ const selectWord = (item: any) => {
     payload: {
       text: item.value,
     },
-  } as SendMessageParams;
+  } as typeof SendMessageParams;
   TUIChatService.sendTextMessage(options);
   // 提交后关闭 dialog
   // close dialog after submit evaluate

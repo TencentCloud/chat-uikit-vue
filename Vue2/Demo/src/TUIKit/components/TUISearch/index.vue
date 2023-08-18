@@ -1,12 +1,12 @@
 <template>
   <div :class="['TUI-search', !isPC && 'TUI-search-H5']" ref="dialog">
     <header @click.stop="toggleOptionalShow" v-if="!isRelation">
-      <i class="plus" @click="isPC && showDialog('isC2C')" ></i>
+      <i class="plus" @click="isPC && showDialog('isC2C')"></i>
       <h1 v-if="!isPC">
         {{ TUITranslateService.t("TUISearch.发起会话") }}
       </h1>
       <ul v-if="optionalShow">
-        <li  @click="showDialog('isC2C')">
+        <li @click="showDialog('isC2C')">
           <Icon :file="C2C" v-if="!isPC"></Icon>
           <h1>
             {{ TUITranslateService.t("TUISearch.发起单聊") }}
@@ -37,7 +37,11 @@
       <Transfer
         :isSearch="needSearch"
         :title="showTitle"
-        :list="createConversationType === CONV_CREATE_TYPE.JOINGROUP ? searchGroupList: searchUserList"
+        :list="
+          createConversationType === CONV_CREATE_TYPE.JOINGROUP
+            ? searchGroupList
+            : searchUserList
+        "
         :isH5="!isPC"
         :isRadio="createConversationType === CONV_CREATE_TYPE.TYPEC2C"
         :joinGroup="createConversationType === CONV_CREATE_TYPE.JOINGROUP"
@@ -56,16 +60,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, defineProps, reactive, defineEmits, nextTick, watchEffect } from "../../adapter-vue";
-import 
-TUIChatEngine,
-{
+import { ref, reactive, nextTick, watchEffect } from "../../adapter-vue";
+import TUIChatEngine, {
   TUIGlobal,
   TUIUserService,
   TUIGroupService,
   TUITranslateService,
   TUIFriendService,
   TUIConversationService,
+  IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
 import { CONV_CREATE_TYPE, DIALOG_CONTENT } from "../../constant";
 import Icon from "../common/Icon.vue";
@@ -75,6 +78,7 @@ import Dialog from "../common/Dialog/index.vue";
 import Transfer from "../common/Transfer/index.vue";
 import CreateGroup from "../TUIGroup/create-group/index.vue";
 import { Toast, TOAST_TYPE } from "../common/Toast/index";
+import { isUniFrameWork } from "../../utils/is-uni";
 
 const props = defineProps({
   isRelation: {
@@ -83,27 +87,26 @@ const props = defineProps({
   },
   isShowSearchDialog: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 });
 
 const emits = defineEmits(["handleSwitchConversation"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
 
 const optionalShow = ref(isPC.value);
 const dialog = ref(null);
 const open = ref(false);
 const showTitle = ref("");
 const searchUserList = ref([]);
-const searchGroupList = ref([]);
+const searchGroupList = ref<Array<typeof IGroupModel>>([]);
 const createConversationType = ref("");
 const currentDialog = ref(DIALOG_CONTENT.USERLIST);
 const needSearch = ref(true);
 const friendList = ref([]);
 const searchUserID = ref("");
-const groupInfo = reactive({
+const groupInfo = ref({
   groupID: "",
   name: "",
   type: "",
@@ -119,10 +122,10 @@ const groupInfo = reactive({
 });
 
 watchEffect(() => {
-  if(isUniFrameWork.value) {
+  if (isUniFrameWork) {
     optionalShow.value = props.isShowSearchDialog;
   }
-})
+});
 
 const toggleOpen = () => {
   open.value = !open.value;
@@ -196,15 +199,16 @@ const searchGroup = async (val: string) => {
       const message = TUITranslateService.t("TUISearch.该群组不存在");
       Toast({
         message,
-        type: TOAST_TYPE.ERROR
+        type: TOAST_TYPE.ERROR,
       });
+      return;
     }
     searchGroupList.value = [imResponse.data.group];
   } catch (err: any) {
     const message = TUITranslateService.t("TUISearch.该群组不存在");
     Toast({
       message,
-      type: TOAST_TYPE.ERROR
+      type: TOAST_TYPE.ERROR,
     });
   }
 };
@@ -218,19 +222,23 @@ const searchUser = async (val: string) => {
       const message = TUITranslateService.t("TUISearch.该用户不存在");
       Toast({
         message,
-        type: TOAST_TYPE.ERROR
+        type: TOAST_TYPE.ERROR,
       });
       searchUserList.value = [...friendList.value];
       return;
     }
     searchUserList.value = imResponse.data;
-    const searchAllResult = friendList.value.filter((item: any) => item.userID === imResponse.data[0].userID);
-    friendList.value = searchAllResult.length ? friendList.value : [...friendList.value, ...searchUserList.value ];
-  } catch (error) {
+    const searchAllResult = friendList.value.filter(
+      (item: any) => item.userID === imResponse.data[0].userID
+    );
+    friendList.value = searchAllResult.length
+      ? friendList.value
+      : [...friendList.value, ...searchUserList.value];
+  } catch (error: any) {
     const message = TUITranslateService.t("TUISearch.该用户不存在");
     Toast({
       message,
-      type: TOAST_TYPE.ERROR
+      type: TOAST_TYPE.ERROR,
     });
     searchUserList.value = [...friendList.value];
     return;
@@ -238,7 +246,9 @@ const searchUser = async (val: string) => {
 };
 // friendList 数据结构中有 profile
 const filterListItem = (list: any) => {
-  return list.map((item: { profile: any; }) => { return item.profile });
+  return list.map((item: { profile: any }) => {
+    return item.profile;
+  });
 };
 const submit = (dataList: any) => {
   if (createConversationType.value === CONV_CREATE_TYPE.TYPEC2C) {
@@ -298,7 +308,7 @@ const joinGroupConversation = async (groupID: string) => {
   emits("handleSwitchConversation", conversationID);
   Toast({
     message: imResponse.data.status,
-    type: TOAST_TYPE.NORMAL
+    type: TOAST_TYPE.NORMAL,
   });
 };
 
@@ -313,21 +323,21 @@ const createGroupConversation = async (params: any) => {
       const conversationID = `GROUP${res.data.group.groupID}`;
       if (params.type === TUIChatEngine.TYPES.GRP_AVCHATROOM) {
         TUIGroupService.joinGroup({
-            groupID: res.data.group.groupID,
-            applyMessage: '',
-          });
+          groupID: res.data.group.groupID,
+          applyMessage: "",
+        });
       }
       TUIConversationService.switchConversation(conversationID);
       emits("handleSwitchConversation", conversationID);
       Toast({
         message: "群组创建成功",
-        type: TOAST_TYPE.SUCCESS
+        type: TOAST_TYPE.SUCCESS,
       });
     })
     .catch((err: any) => {
       Toast({
         message: err.msg,
-        type: TOAST_TYPE.ERROR
+        type: TOAST_TYPE.ERROR,
       });
     });
   toggleOpen();
@@ -338,7 +348,7 @@ const createGroupConversation = async (params: any) => {
 let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.addEventListener("mousedown", onClickDocument);
@@ -362,7 +372,7 @@ const onClickTarget = () => {
 };
 
 const removeClickListener = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.removeEventListener("mousedown", onClickDocument);

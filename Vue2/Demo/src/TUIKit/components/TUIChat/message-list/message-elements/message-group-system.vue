@@ -57,12 +57,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  defineProps,
-  ref,
-  onMounted,
-  onUnmounted,
-} from "../../../../adapter-vue";
+import { ref, onMounted, onUnmounted } from "../../../../adapter-vue";
 import {
   TUIStore,
   TUIGlobal,
@@ -71,8 +66,11 @@ import {
   TUIGroupService,
   TUIUserService,
 } from "@tencentcloud/chat-uikit-engine";
-import Icon from "../../../common/Icon.vue";
-import backIcon from "../../../../assets/icon/back.svg";
+import {
+  IGroupApplicationListItem,
+  IGroupApplicationType,
+  IUserProfile,
+} from "../../../../interface";
 const emits = defineEmits(["toggleApplicationList", "handleGroupApplication"]);
 const props = defineProps({
   groupID: {
@@ -81,44 +79,49 @@ const props = defineProps({
   },
 });
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
-const groupApplicationList = ref([]);
-const groupApplicationCount = ref(0);
+const groupApplicationList = ref<Array<IGroupApplicationListItem>>([]);
+const groupApplicationCount = ref<number>(0);
 // - 申请类型：0 加群申请，2 邀请进群申请
 const getGroupApplicationList = () => {
-  TUIGroupService.getGroupApplicationList().then((res) => {
-    const applicationList = res.data.applicationList.filter(
-      (application) => application.groupID === props.groupID
-    );
-    let userIDList = [];
-    applicationList.forEach((item) => {
-      item.applicationType === 0
-        ? userIDList.push(item.applicant)
-        : userIDList.push(item.userID);
-    });
-    userIDList = Array.from(new Set(userIDList));
-    TUIUserService.getUserProfile({
-      userIDList: userIDList,
-    }).then((res) => {
-      const profileList = res.data || [];
-      profileList.forEach((profile) => {
-        applicationList.forEach((item) => {
-          if (item.applicationType === 0 && profile.userID === item.applicant) {
-            item.avatar = profile.avatar;
-          }
-          if (item.applicationType === 2 && profile.userID === item.userID) {
-            item.nick = profile.nick;
-            item.avatar = profile.avatar;
-          }
-          item.actionStatus = "";
-        });
+  TUIGroupService.getGroupApplicationList().then(
+    (res: { data: { applicationList: Array<IGroupApplicationListItem> } }) => {
+      const applicationList = res.data.applicationList.filter(
+        (application: IGroupApplicationListItem) =>
+          application.groupID === props.groupID
+      );
+      let userIDList: Array<string> = [];
+      applicationList.forEach((item: IGroupApplicationListItem) => {
+        item.applicationType === 0
+          ? item.applicant && userIDList.push(item.applicant)
+          : item.userID && userIDList.push(item.userID);
       });
-      groupApplicationList.value = applicationList;
-    });
-  });
+      userIDList = Array.from(new Set(userIDList));
+      TUIUserService.getUserProfile({
+        userIDList: userIDList,
+      }).then((res: { data: Array<IUserProfile> }) => {
+        const profileList = res.data || [];
+        profileList.forEach((profile: IUserProfile) => {
+          applicationList.forEach((item: IGroupApplicationListItem) => {
+            if (
+              item.applicationType === 0 &&
+              profile.userID === item.applicant
+            ) {
+              item.avatar = profile.avatar || "";
+            }
+            if (item.applicationType === 2 && profile.userID === item.userID) {
+              item.nick = profile.nick || "";
+              item.avatar = profile.avatar || "";
+            }
+            item.actionStatus = "";
+          });
+        });
+        groupApplicationList.value = applicationList;
+      });
+    }
+  );
 };
 
-const onGroupApplicationCount = (count: Number) => {
+const onGroupApplicationCount = (count: number) => {
   groupApplicationCount.value = count;
 };
 
@@ -138,11 +141,11 @@ const toggleApplicationList = () => {
   emits("toggleApplicationList");
 };
 
-const handleApplication = (item: any, type: String) => {
+const handleApplication = (item: IGroupApplicationListItem, type: string) => {
   TUIGroupService.handleGroupApplication({
     handleAction: type,
     application: { ...item },
-  }).then((res) => {
+  }).then(() => {
     item.actionStatus = type;
     // - 申请类型：0 加群申请，2 邀请进群申请
     const userID = item.applicationType === 0 ? item.applicant : item.userID;

@@ -86,16 +86,12 @@
 <script lang="ts" setup>
 import TUIChatEngine, {
   TUITranslateService,
-  TUIGlobal,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  watchEffect,
-  ref,
-  defineProps,
-  defineEmits,
-} from "../../../adapter-vue";
+import { watchEffect, ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import delIcon from "../../../assets/icon/del-icon.svg";
+import { IGroupSelfInfo, IGroupMember } from "../../../interface";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 const props = defineProps({
   list: {
@@ -117,15 +113,14 @@ const props = defineProps({
 });
 
 const totalMember = ref(0);
-const memberList = ref([]);
+const memberList = ref<Array<IGroupMember>>([]);
 const isShowDeleteBtn = ref(false);
-const self = ref([]);
-const isUniFrameWork = ref(typeof uni !== "undefined");
+const self = ref<IGroupSelfInfo>({});
 
 watchEffect(() => {
   totalMember.value = props.total;
   isShowDeleteBtn.value = props.isShowDel;
-  memberList.value = props.list;
+  memberList.value = props.list as Array<IGroupMember>;
   self.value = props.self;
 });
 

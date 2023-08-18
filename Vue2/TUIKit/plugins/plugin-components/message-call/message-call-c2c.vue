@@ -38,7 +38,7 @@ const props = defineProps({
 });
 const TYPES = ref(TUIChatEngine.TYPES);
 const isCallMessage = computed(() => props.signalingInfo != null);
-const callInfo = computed(() => {
+const callInfo = computed(():{type:number;icon:string} => {
   const callType = JSONToObject(props.signalingInfo?.data)?.call_type;
   switch (callType) {
     case 1:
@@ -54,6 +54,10 @@ const callInfo = computed(() => {
     default:
       break;
   }
+  return {
+    type: 0,
+    icon: "",
+  };
 });
 const conversationType = computed(() => props.message?.conversationType);
 const custom = computed(() => props.customContent?.custom);

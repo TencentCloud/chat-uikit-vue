@@ -61,7 +61,7 @@ import TUIChatEngine, {
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { ExtensionInfo, TUIConstants } from "@tencentcloud/tui-core";
-import { ref, defineEmits } from "../../../adapter-vue";
+import { ref } from "../../../adapter-vue";
 // component
 import EmojiPicker from "./emoji-picker/index.vue";
 import ImageUpload from "./image-upload/index.vue";
@@ -72,6 +72,7 @@ import Words from "./words/index.vue";
 import ToolbarItemContainer from "./toolbar-item-container/index.vue";
 import UserSelector from "./user-selector/index.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 const emits = defineEmits(["insertEmoji"]);
 
@@ -79,7 +80,6 @@ const h5Dialog = ref();
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isApp = ref(TUIGlobal.getPlatform() === "app");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 
 const currentConversation = ref<typeof IConversationModel>();
 const isGroup = ref<boolean>(false);
@@ -128,7 +128,7 @@ const onCallExtensionClicked = (
       type: callType,
     });
   } else if (isGroup.value) {
-    if (isUniFrameWork.value) {
+    if (isUniFrameWork) {
       Toast({
         message: "暂不支持群通话",
         type: TOAST_TYPE.ERROR,

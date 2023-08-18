@@ -18,7 +18,10 @@
       v-if="!props.isMuted"
       @sendMessage="sendMessage"
     ></MessageInputButton>
-    <MessageInputAt v-if="props.enableAt" @onAtListOpen="onAtListOpen"></MessageInputAt>
+    <MessageInputAt
+      v-if="props.enableAt"
+      @onAtListOpen="onAtListOpen"
+    ></MessageInputAt>
   </div>
 </template>
 <script setup lang="ts">
@@ -26,18 +29,9 @@ import {
   TUIGlobal,
   TUIStore,
   StoreName,
-  TUIChatService,
-  SendMessageParams,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  defineProps,
-  defineEmits,
-  toRefs,
-  ref,
-  defineExpose,
-  watch,
-} from "../../../adapter-vue";
+import { ref } from "../../../adapter-vue";
 import MessageInputEditor from "./message-input-editor.vue";
 import MessageInputAt from "./message-input-at/index.vue";
 import MessageInputButton from "./message-input-button.vue";
@@ -82,12 +76,12 @@ const props = defineProps({
 const emit = defineEmits(["sendMessage", "resetReplyOrReference", "onTyping"]);
 const replyOrReference = ref();
 const editor = ref();
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -118,7 +112,7 @@ const insertEmoji = (emoji: any) => {
 };
 
 const onAtListOpen = () => {
-  if(isH5.value){
+  if (isH5.value) {
     editor?.value?.blur();
   }
 };

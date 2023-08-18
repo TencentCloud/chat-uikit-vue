@@ -59,16 +59,12 @@
 <script lang="ts" setup>
 import {
   TUITranslateService,
-  TUIGlobal,
+  IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  defineProps,
-  watchEffect,
-  ref,
-  defineEmits,
-} from "../../../adapter-vue";
+import { watchEffect, ref } from "../../../adapter-vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { nextTick } from "vue";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 const props = defineProps({
   data: {
@@ -81,11 +77,10 @@ const props = defineProps({
   },
 });
 
-const groupProfile = ref({});
+const groupProfile = ref<typeof IGroupModel>({});
 const input = ref("");
 const isAuthorNotification = ref(false);
 const isEdit = ref(false);
-const isUniFrameWork = ref(typeof uni !== "undefined");
 
 watchEffect(() => {
   groupProfile.value = props.data;

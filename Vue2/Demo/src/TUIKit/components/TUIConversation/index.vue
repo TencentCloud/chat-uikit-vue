@@ -32,20 +32,12 @@ import TUIChatEngine, {
   TUIStore,
   TUIGlobal,
   StoreName,
-  IConversationModel,
   TUITranslateService,
-  TUIConversationService,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  computed,
-  ref,
-  defineProps,
-  onMounted,
-  nextTick,
-  getCurrentInstance,
-} from "../../adapter-vue";
+import { computed, ref } from "../../adapter-vue";
 import ConversationList from "./conversation-list/index.vue";
 import TUISearch from "../TUISearch/index.vue";
+import { isUniFrameWork } from "../../utils/is-uni";
 
 const props = defineProps({
   displayOnlineStatus: {
@@ -63,7 +55,6 @@ const isShowSearchDialog = ref(false);
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isApp = ref(TUIGlobal.getPlatform() === "app");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 
 TUIStore.watch(StoreName.CONV, {
   totalUnreadCount: (count: number) => {
@@ -79,8 +70,8 @@ const isNetwork = computed(() => {
 });
 
 const handleSwitchConversation = (conversationID: string) => {
-  if (isUniFrameWork.value)
-    uni.navigateTo({
+  if (isUniFrameWork)
+    TUIGlobal?.global?.navigateTo({
       url: "/TUIKit/components/TUIChat/index",
     });
   emits("handleSwitchConversation", conversationID);
@@ -88,7 +79,7 @@ const handleSwitchConversation = (conversationID: string) => {
 
 const getListRectInfo = (e: any) => {
   if (isApp.value || isWeChat.value) {
-    const query = (uni as any)?.createSelectorQuery();
+    const query = TUIGlobal?.global?.createSelectorQuery();
     query
       .select(".list")
       .boundingClientRect((data: any) => {

@@ -24,8 +24,8 @@
             'TUI-chat-message-list',
             !isPC && 'TUI-chat-h5-message-list',
           ]"
-          :isGroup = isGroup
-          :groupID = groupID
+          :isGroup="isGroup"
+          :groupID="groupID"
           @handleEditor="handleEditor"
         >
         </MessageList>
@@ -73,17 +73,17 @@ import TUIChatEngine, {
   IMessageModel,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, onUnmounted, defineEmits } from "../../adapter-vue";
+import { ref, onUnmounted } from "../../adapter-vue";
 import ChatHeader from "./chat-header/index.vue";
 import MessageList from "./message-list/index.vue";
 import MessageInput from "./message-input/index.vue";
 import MessageInputToolbar from "./message-input-toolbar/index.vue";
+import { isUniFrameWork } from "../../utils/is-uni";
 
 const emits = defineEmits(["closeChat"]);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const isToolbarShow = ref<boolean>(!isUniFrameWork.value);
+const isToolbarShow = ref<boolean>(!isUniFrameWork);
 const messageInputRef = ref();
 const currentConversationID = ref();
 // 是否显示群组管理
@@ -119,7 +119,7 @@ const insertEmoji = (emojiObj: object) => {
 };
 
 const handleToolbarListShow = (show: boolean) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     isToolbarShow.value = show;
   } else {
     isToolbarShow.value = true;
@@ -146,7 +146,7 @@ const handleEditor = (message: typeof IMessageModel, type: string) => {
 
 const handleGroup = () => {
   TUIGroupService.switchGroup(groupID.value);
-  uni.navigateTo({
+  TUIGlobal?.global?.navigateTo({
     url: "/TUIKit/components/TUIGroup/manage-group/index",
   });
 };

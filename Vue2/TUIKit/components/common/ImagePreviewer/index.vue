@@ -26,7 +26,7 @@
             :rotate="rotate"
             :src="getImageUrl(item)"
             :messageItem="item"
-            :class="[isUniPlatform ? 'image-item' : '']"
+            :class="[isUniFrameWork ? 'image-item' : '']"
           ></ImageItem>
         </li>
       </ul>
@@ -72,14 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  defineProps,
-  ref,
-  defineEmits,
-  watchEffect,
-  onMounted,
-  onUnmounted,
-} from "../../../adapter-vue";
+import { ref, watchEffect, onMounted, onUnmounted } from "../../../adapter-vue";
 import { IMessageModel, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
 import iconClose from "../../../assets/icon/icon-close.svg";
@@ -91,6 +84,7 @@ import iconRotateRight from "../../../assets/icon/rotate-right.svg";
 import iconDownload from "../../../assets/icon/download.svg";
 import ImageItem from "./image-item.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 interface touchesPosition {
   pageX1?: number;
@@ -110,7 +104,6 @@ const props = defineProps({
   },
 });
 const isH5 = ref(TUIGlobal.getPlatform() !== "pc");
-const isUniPlatform = ref(typeof uni !== "undefined");
 const imageFormatMap = new Map([
   [1, "jpg"],
   [2, "gif"],
@@ -259,10 +252,10 @@ const handleTwoTouches = (e: any) => {
   let touchZoom =
     getDistance(touch1.pageX, touch1.pageY, touch2.pageX, touch2.pageY) /
     getDistance(
-      touchStore.pageX1,
-      touchStore.pageY1,
-      touchStore.pageX2,
-      touchStore.pageY2
+      touchStore.pageX1 as number,
+      touchStore.pageY1 as number,
+      touchStore.pageX2 as number,
+      touchStore.pageY2 as number
     );
   zoom.value = Math.min(Math.max(0.5, zoom.value * touchZoom), 4);
 };
@@ -332,24 +325,24 @@ const save = () => {
   switch (TUIGlobal.getPlatform()) {
     case "wechat":
       //获取用户的当前设置。获取相册权限
-      uni.getSetting({
+      TUIGlobal?.global?.getSetting({
         success: (res: any) => {
           //如果没有相册权限
           if (!res?.authSetting["scope.writePhotosAlbum"]) {
             //提前向用户发起授权请求
-            uni?.authorize({
+            TUIGlobal?.global?.authorize({
               scope: "scope.writePhotosAlbum",
               success() {
                 downloadImgInUni(imageSrc);
               },
               fail() {
-                uni.showModal({
+                TUIGlobal?.global?.showModal({
                   title: "您已拒绝获取相册权限",
                   content: "是否进入权限管理，调整授权？",
                   success: (res: any) => {
                     if (res.confirm) {
                       //调起客户端小程序设置界面，返回用户设置的操作结果。（重新让用户授权）
-                      uni.openSetting({
+                      TUIGlobal?.global?.openSetting({
                         success: (res: any) => {
                           console.log(res.authSetting);
                         },
@@ -388,14 +381,14 @@ const save = () => {
 
 const downloadImgInUni = (src: string) => {
   //下载图片文件
-  uni?.showLoading({
+  TUIGlobal?.global?.showLoading({
     title: "大图提取中",
   });
-  uni?.downloadFile({
+  TUIGlobal?.global?.downloadFile({
     url: src,
     success: function (res: any) {
-      uni?.hideLoading();
-      uni?.saveImageToPhotosAlbum({
+      TUIGlobal?.global?.hideLoading();
+      TUIGlobal?.global?.saveImageToPhotosAlbum({
         filePath: res.tempFilePath,
         success: () => {
           Toast({
@@ -407,7 +400,7 @@ const downloadImgInUni = (src: string) => {
     },
     fail: function (error: any) {
       console.warn("图片下载失败", error);
-      uni?.hideLoading();
+      TUIGlobal?.global?.hideLoading();
       Toast({
         message: "图片下载失败",
         type: TOAST_TYPE.ERROR,
