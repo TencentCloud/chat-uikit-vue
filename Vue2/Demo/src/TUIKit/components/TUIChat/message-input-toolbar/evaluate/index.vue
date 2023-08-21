@@ -98,7 +98,7 @@ import {
   SendMessageParams,
   TUIChatService,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits, computed, defineProps } from "../../../../adapter-vue";
+import { ref } from "../../../../adapter-vue";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import evaluateIcon from "../../../../assets/icon/evaluate.svg";
 import Link from "../../../../utils/documentLink";
@@ -106,6 +106,7 @@ import Icon from "../../../common/Icon.vue";
 import starIcon from "../../../../assets/icon/star.svg";
 import starLightIcon from "../../../../assets/icon/star-light.svg";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 
 const props = defineProps({
   starTotal: {
@@ -117,16 +118,15 @@ const props = defineProps({
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isApp = ref(TUIGlobal.getPlatform() === "app");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
 const container = ref();
 
 const starList = ref<number>(props.starTotal);
 const currentStarIndex = ref<number>(-1);
 const comment = ref("");
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -138,8 +138,6 @@ const onDialogClose = () => {
 const openLink = (link: any) => {
   if (isPC.value || isH5.value) {
     window.open(Link?.customMessage?.url);
-  } else if (isApp.value) {
-    plus?.runtime?.openURL(Link?.customMessage?.url);
   }
 };
 

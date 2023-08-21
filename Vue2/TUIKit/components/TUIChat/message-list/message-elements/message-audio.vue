@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, watch, defineProps } from '../../../../adapter-vue';
+import { watchEffect, ref, watch } from '../../../../adapter-vue';
 import Icon from "../../../common/Icon.vue";
 import voice from "../../../../assets/icon/voice.png";
 const props = defineProps({
@@ -33,13 +33,6 @@ const data = ref();
 const message = ref();
 const show = ref();
 const audio = ref(null);
-watch(
-  () => props.data,
-  () => {
-    data.value = props.data;
-  },
-  { deep: true, immediate: true }
-);
 
 watchEffect(() => {
   message.value = props.messageItem;

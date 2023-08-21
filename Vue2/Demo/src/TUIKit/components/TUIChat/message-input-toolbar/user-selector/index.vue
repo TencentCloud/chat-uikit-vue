@@ -25,13 +25,7 @@ import {
   TUIGroupService,
   TUIUserService,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  defineProps,
-  defineExpose,
-  ref,
-  computed,
-  watch,
-} from "../../../../adapter-vue";
+import { ref, computed, watch } from "../../../../adapter-vue";
 import Dialog from "../../../common/Dialog/index.vue";
 import Transfer from "../../../common/Transfer/index.vue";
 const props = defineProps({

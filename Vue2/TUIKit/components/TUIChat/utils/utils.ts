@@ -1,3 +1,4 @@
+import TUIChatEngine, { IMessageModel } from "@tencentcloud/chat-uikit-engine";
 // Determine whether it is url
 export function isUrl(url: string) {
   return /^(https?:\/\/(([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+\.)+[a-zA-Z]+)(:\d+)?(\/.*)?(\?.*)?(#.*)?$/.test(
@@ -15,7 +16,7 @@ export function isJSON(str: string) {
         return true;
       }
       return false;
-    } catch (error) {
+    } catch (error: any) {
       return false;
     }
   }
@@ -117,3 +118,10 @@ export function getImgLoad(container: any, className: string, callback: any) {
       console.error("网络异常", e);
     });
 }
+
+export const isCreateGroupCustomMessage = (message: typeof IMessageModel) => {
+  return (
+    message.type === TUIChatEngine.TYPES.MSG_CUSTOM &&
+    message?.getMessageContent()?.businessID === "group_create"
+  );
+};

@@ -4,7 +4,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { toRefs, ref, watch, defineProps } from '../../../../adapter-vue';
+import { toRefs, ref, watch } from "../../../../adapter-vue";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 
 const props = defineProps({
@@ -19,12 +19,12 @@ const props = defineProps({
 });
 const { currTime, prevTime } = toRefs(props);
 const timestampShowFlag = ref(false);
-const timestampShowContent = ref('');
+const timestampShowContent = ref("");
 
 const handleItemTime = (currTime: number, prevTime: number) => {
   timestampShowFlag.value = false;
   if (currTime <= 0) {
-    return '';
+    return "";
   } else if (!prevTime || prevTime <= 0) {
     timestampShowFlag.value = true;
     return calculateTimestamp(currTime * 1000);
@@ -36,12 +36,12 @@ const handleItemTime = (currTime: number, prevTime: number) => {
       return calculateTimestamp(currTime * 1000);
     }
   }
-  return '';
+  return "";
 };
 
 const t = () => {
   return TUITranslateService.t();
-}
+};
 
 watch(
   () => [currTime.value, prevTime.value],
@@ -49,7 +49,10 @@ watch(
     if (newVal?.toString() === oldVal?.toString()) {
       return;
     } else {
-      timestampShowContent.value = handleItemTime(currTime.value, prevTime.value);
+      timestampShowContent.value = handleItemTime(
+        currTime.value,
+        prevTime.value
+      );
     }
   },
   {
@@ -61,7 +64,15 @@ watch(
 // calculate timestamp
 function calculateTimestamp(timestamp: number): string {
   const todayZero = new Date().setHours(0, 0, 0, 0);
-  const thisYear = new Date(new Date().getFullYear(), 0, 1, 0, 0, 0, 0).getTime();
+  const thisYear = new Date(
+    new Date().getFullYear(),
+    0,
+    1,
+    0,
+    0,
+    0,
+    0
+  ).getTime();
   const target = new Date(timestamp);
 
   const oneDay = 24 * 60 * 60 * 1000;
@@ -71,7 +82,7 @@ function calculateTimestamp(timestamp: number): string {
   const diff = todayZero - target.getTime();
 
   function formatNum(num: number): string {
-    return num < 10 ? '0' + num : num.toString();
+    return num < 10 ? "0" + num : num.toString();
   }
 
   if (diff <= 0) {
@@ -79,22 +90,36 @@ function calculateTimestamp(timestamp: number): string {
     return `${formatNum(target.getHours())}:${formatNum(target.getMinutes())}`;
   } else if (diff <= oneDay) {
     // yesterday, display yesterday:hour:minute
-    return `${TUITranslateService.t('time.昨天')} ${formatNum(target.getHours())}:${formatNum(target.getMinutes())}`;
-  } else if (diff <= oneWeek - oneDay) {
-    // Within a week, display weekday hour:minute
-    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    const weekday = weekdays[target.getDay()];
-    return `${TUITranslateService.t('time.' + weekday)} ${formatNum(target.getHours())}:${formatNum(target.getMinutes())}`;
-  } else if (target.getTime() >= thisYear) {
-    // Over a week, within this year, display mouth/day hour:minute
-    return `${target.getMonth() + 1}/${target.getDate()} ${formatNum(target.getHours())}:${formatNum(
-      target.getMinutes()
-    )}`;
-  } else {
-    // Not within this year, display year/mouth/day hour:minute
-    return `${target.getFullYear()}/${target.getMonth() + 1}/${target.getDate()} ${formatNum(
+    return `${TUITranslateService.t("time.昨天")} ${formatNum(
       target.getHours()
     )}:${formatNum(target.getMinutes())}`;
+  } else if (diff <= oneWeek - oneDay) {
+    // Within a week, display weekday hour:minute
+    const weekdays = [
+      "星期日",
+      "星期一",
+      "星期二",
+      "星期三",
+      "星期四",
+      "星期五",
+      "星期六",
+    ];
+    const weekday = weekdays[target.getDay()];
+    return `${TUITranslateService.t("time." + weekday)} ${formatNum(
+      target.getHours()
+    )}:${formatNum(target.getMinutes())}`;
+  } else if (target.getTime() >= thisYear) {
+    // Over a week, within this year, display mouth/day hour:minute
+    return `${target.getMonth() + 1}/${target.getDate()} ${formatNum(
+      target.getHours()
+    )}:${formatNum(target.getMinutes())}`;
+  } else {
+    // Not within this year, display year/mouth/day hour:minute
+    return `${target.getFullYear()}/${
+      target.getMonth() + 1
+    }/${target.getDate()} ${formatNum(target.getHours())}:${formatNum(
+      target.getMinutes()
+    )}`;
   }
 }
 </script>

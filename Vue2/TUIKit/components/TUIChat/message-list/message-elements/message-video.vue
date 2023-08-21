@@ -41,7 +41,11 @@
         <progress :value="props.progress" max="1"></progress>
       </div>
     </div>
-    <div class="dialog-video" v-if="show && !isPC" @click.self="showVideoPreviewer">
+    <div
+      class="dialog-video"
+      v-if="show && !isPC"
+      @click.self="showVideoPreviewer"
+    >
       <div @click.stop="showVideoPreviewer" class="dialog-video-close">
         <Icon :file="closeSVG"></Icon>
       </div>
@@ -67,8 +71,6 @@ import {
   computed,
   ref,
   nextTick,
-  defineProps,
-  defineEmits,
   watch,
 } from "../../../../adapter-vue";
 import { handleSkeletonSize } from "../../utils/utils";

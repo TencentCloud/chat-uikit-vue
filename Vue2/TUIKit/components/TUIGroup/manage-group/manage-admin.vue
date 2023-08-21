@@ -102,18 +102,14 @@
 <script lang="ts" setup>
 import {
   TUITranslateService,
-  TUIGlobal,
+  IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  watchEffect,
-  ref,
-  defineProps,
-  defineEmits,
-} from "../../../adapter-vue";
+import { watchEffect, ref } from "../../../adapter-vue";
 import Slider from "../../common/Slider/index.vue";
 import Icon from "../../common/Icon.vue";
 import plusSVG from "../../../assets/icon/plus.svg";
 import minusSVG from "../../../assets/icon/minus.svg";
+import { IGroupMember } from "../../../interface";
 
 const props = defineProps({
   member: {
@@ -131,12 +127,19 @@ const props = defineProps({
 });
 
 const isAdminSetMuteTime = ref(false);
-const memberAdmin = ref({});
-const currentGroupAdmin = ref({});
-const isUniFrameWork = ref(typeof uni !== "undefined");
+const memberAdmin = ref({
+  admin: [] as Array<IGroupMember>,
+  member: [] as Array<IGroupMember>,
+  muteMember: [] as Array<IGroupMember>,
+});
+const currentGroupAdmin = ref<typeof IGroupModel>();
 
 watchEffect(() => {
-  memberAdmin.value = props.member;
+  memberAdmin.value = props.member as {
+    admin: Array<IGroupMember>;
+    member: Array<IGroupMember>;
+    muteMember: Array<IGroupMember>;
+  };
   isAdminSetMuteTime.value = props.isSetMuteTime;
   currentGroupAdmin.value = props.currentGroup;
 });
@@ -172,10 +175,6 @@ const removeMute = () => {
 
 const close = (tabName: string) => {
   emits("close", tabName);
-};
-
-const onManageAdminClose = () => {
-  console.warn(111);
 };
 </script>
 

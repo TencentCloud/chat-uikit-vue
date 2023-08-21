@@ -48,17 +48,13 @@
 import {
   TUIGlobal,
   TUITranslateService,
+  IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  defineProps,
-  watchEffect,
-  ref,
-  defineEmits,
-  nextTick,
-} from "../../../adapter-vue";
+import { watchEffect, ref, nextTick } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import editIcon from "../../../assets/icon/edit.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 const props = defineProps({
   data: {
@@ -71,12 +67,11 @@ const props = defineProps({
   },
 });
 
-const groupProfile = ref({});
+const groupProfile = ref<typeof IGroupModel>({});
 const inputGroupName = ref("");
 const isEdit = ref(false);
 const nameInputRef = ref(null);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 
 watchEffect(() => {
   groupProfile.value = props.data;
@@ -122,7 +117,7 @@ const close = () => {
 let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.addEventListener("mousedown", onClickDocument);

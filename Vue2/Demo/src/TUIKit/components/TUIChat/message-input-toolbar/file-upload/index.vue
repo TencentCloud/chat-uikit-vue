@@ -28,7 +28,8 @@ import {
   IConversationModel,
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits } from "../../../../adapter-vue";
+import { ref } from "../../../../adapter-vue";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import fileIcon from "../../../../assets/icon/files.png";
@@ -37,17 +38,16 @@ const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
-const currentConversation = ref<IConversationModel>();
+const currentConversation = ref<typeof IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
 
 const onIconClick = () => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     // uniapp app 不支持选择文件发送
     return;
   } else {
@@ -67,9 +67,9 @@ const sendFileMessage = (e: any) => {
     payload: {
       file: e?.target,
     },
-  } as SendMessageParams;
+  } as typeof SendMessageParams;
   TUIChatService.sendFileMessage(options);
-  e.target.value = '';
+  e.target.value = "";
 };
 </script>
 <style lang="scss" scoped>

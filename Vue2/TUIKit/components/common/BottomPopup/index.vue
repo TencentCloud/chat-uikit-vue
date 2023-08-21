@@ -25,13 +25,8 @@
 </template>
 <script setup lang="ts">
 import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
-import {
-  ref,
-  defineProps,
-  defineEmits,
-  watch,
-  nextTick,
-} from "../../../adapter-vue";
+import { ref, watch, nextTick } from "../../../adapter-vue";
+import { isUniFrameWork } from "../../../utils/is-uni";
 const props = defineProps({
   // 是否展示 底部弹出对话框
   show: {
@@ -59,7 +54,6 @@ const props = defineProps({
 const emits = defineEmits(["onOpen", "onClose"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 const dialogRef = ref();
 
 watch(
@@ -91,7 +85,7 @@ watch(
 let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.addEventListener("mousedown", onClickDocument);
@@ -114,7 +108,7 @@ const onClickTarget = () => {
 };
 
 const removeClickListener = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.removeEventListener("mousedown", onClickDocument);
@@ -123,7 +117,7 @@ const removeClickListener = (component: any) => {
 };
 
 const onUniClickModal = () => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     emits("onClose", dialogRef);
   }
 };

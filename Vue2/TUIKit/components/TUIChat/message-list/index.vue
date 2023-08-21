@@ -54,7 +54,10 @@
             @click.stop="toggleID = ''"
           >
             <MessageTip
-              v-if="item.type === TYPES.MSG_GRP_TIP"
+              v-if="
+                item.type === TYPES.MSG_GRP_TIP ||
+                isCreateGroupCustomMessage(item)
+              "
               :content="item.getMessageContent()"
             />
             <div
@@ -175,10 +178,6 @@
 <script lang="ts" setup>
 import {
   ref,
-  defineProps,
-  defineEmits,
-  getCurrentInstance,
-  defineExpose,
   nextTick,
   computed,
   onMounted,
@@ -213,9 +212,10 @@ import MessagePlugin from "../../../plugins/plugin-components/message-plugin.vue
 
 import Dialog from "../../common/Dialog";
 import ImagePreviewer from "../../common/ImagePreviewer/index";
-import { getImgLoad } from "../utils/utils";
+import { getImgLoad, isCreateGroupCustomMessage } from "../utils/utils";
 import MessageGroupSystem from "./message-elements/message-group-system.vue";
 import { CHAT_SCROLL_TYPE } from "../../../constant";
+import { IGroupApplicationListItem } from "../../../interface";
 
 const props = defineProps({
   groupID: {
@@ -241,7 +241,7 @@ const TYPES = ref(TUIChatEngine.TYPES);
 const isLongpressing = ref(false);
 const groupApplicationCount = ref(0);
 const showGroupApplication = ref(false);
-const applicationUserIDList = ref([]);
+const applicationUserIDList = ref<Array<string>>([]);
 
 const isSignalingMessage = (message: typeof IMessageModel) => {
   return (
@@ -290,11 +290,13 @@ const onCurrentConversationIDUpdated = (conversationID: string) => {
     const applicationList = res.data.applicationList.filter(
       (application: any) => application.groupID === props.groupID
     );
-    applicationUserIDList.value = applicationList.map((application) => {
-      return application.applicationType === 0
-        ? application.applicant
-        : application.userID;
-    });
+    applicationUserIDList.value = applicationList.map(
+      (application: IGroupApplicationListItem) => {
+        return application.applicationType === 0
+          ? application.applicant
+          : application.userID;
+      }
+    );
     TUIStore.update(
       StoreName.CUSTOM,
       "groupApplicationCount",
@@ -322,7 +324,7 @@ const onGroupSystemNoticeList = (list: Array<typeof IMessageModel>) => {
     }
     if (operationType === 23) {
       const { inviteeList } = systemNotice.payload;
-      inviteeList.forEach((invitee) => {
+      inviteeList.forEach((invitee: string) => {
         if (!applicationUserIDList.value.includes(invitee)) {
           applicationUserIDList.value.push(invitee);
         }
@@ -360,7 +362,7 @@ onMounted(() => {
 
   // 群未决消息数量
   TUIStore.watch(StoreName.CUSTOM, {
-    groupApplicationCount: (count: Number) => {
+    groupApplicationCount: (count: number) => {
       groupApplicationCount.value = count;
     },
   });

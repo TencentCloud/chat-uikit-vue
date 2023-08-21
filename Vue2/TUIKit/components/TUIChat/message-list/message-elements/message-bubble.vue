@@ -31,8 +31,19 @@
         <slot />
       </div>
     </main>
-    <label class="message-label fail" v-if="message.status === 'fail'" @click="resendMessage()">!</label>
-    <Icon :file="loading" class="message-label" :width="'15px'"  :height="'15px'" v-if="message.status === 'unSend'"></Icon>
+    <label
+      class="message-label fail"
+      v-if="message.status === 'fail'"
+      @click="resendMessage()"
+      >!</label
+    >
+    <Icon
+      :file="loading"
+      class="message-label"
+      :width="'15px'"
+      :height="'15px'"
+      v-if="message.status === 'unSend'"
+    ></Icon>
     <label
       class="message-label"
       :class="[!message.isPeerRead && 'unRead']"
@@ -49,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, watch, defineProps, defineEmits } from "../../../../adapter-vue";
+import { watchEffect, ref } from "../../../../adapter-vue";
 import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import loading from "../../../../assets/icon/loading.png";

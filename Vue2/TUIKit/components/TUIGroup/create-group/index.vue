@@ -105,7 +105,7 @@ TUIChatEngine,
   TUITranslateService,
   TUIFriendService
 } from "@tencentcloud/chat-uikit-engine";
-import { computed, reactive, defineEmits, ref } from "../../../adapter-vue";
+import { computed, reactive, ref } from "../../../adapter-vue";
 import documentLink from "../../../utils/documentLink";
 import Icon from "../../common/Icon.vue"
 import backIcon from "../../../assets/icon/back.svg";

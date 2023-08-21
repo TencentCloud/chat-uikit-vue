@@ -19,15 +19,21 @@ import {
   TUIStore,
   StoreName,
   IConversationModel,
-  SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, defineEmits } from "../../../../adapter-vue";
+import { ref } from "../../../../adapter-vue";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import EmojiPickerDialog from "./emoji-picker-dialog.vue";
 
 import faceIcon from "../../../../assets/icon/face.png";
 
-const emits = defineEmits(["insertEmoji", "dialogShowInH5", "dialogCloseInH5","currentComponentID", "toggleComponent", "sendMessage"]);
+const emits = defineEmits([
+  "insertEmoji",
+  "dialogShowInH5",
+  "dialogCloseInH5",
+  "currentComponentID",
+  "toggleComponent",
+  "sendMessage",
+]);
 
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
@@ -35,7 +41,7 @@ const currentConversation = ref();
 const container = ref();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -60,7 +66,7 @@ const insertEmoji = (emojiObj: Object) => {
 };
 const sendMessage = () => {
   emits("sendMessage");
-}
+};
 const onClose = () => {
   container?.value?.toggleDialogDisplay(false);
 };

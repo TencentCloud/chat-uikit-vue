@@ -1,12 +1,15 @@
 <template>
-  <div class="slider-box" :class="[isSliderOpen && 'slider-open']" @click="toggleSlider">
+  <div
+    class="slider-box"
+    :class="[isSliderOpen && 'slider-open']"
+    @click="toggleSlider"
+  >
     <span class="slider-block"></span>
   </div>
 </template>
-  
-<script lang="ts" setup>
-import { ref, watchEffect, defineProps, defineEmits } from "../../../adapter-vue";
 
+<script lang="ts" setup>
+import { ref, watchEffect } from "../../../adapter-vue";
 
 const props = defineProps({
   open: {
@@ -17,7 +20,7 @@ const props = defineProps({
 
 const isSliderOpen = ref(false);
 
-const emits = defineEmits(['change']);
+const emits = defineEmits(["change"]);
 
 watchEffect(() => {
   isSliderOpen.value = props.open;
@@ -25,11 +28,10 @@ watchEffect(() => {
 
 const toggleSlider = () => {
   isSliderOpen.value = !isSliderOpen.value;
-  emits('change', isSliderOpen.value);
+  emits("change", isSliderOpen.value);
 };
-
 </script>
-  
+
 <style lang="scss" scoped>
 @import url("../../../assets/styles/common.scss");
 
@@ -40,11 +42,11 @@ const toggleSlider = () => {
     width: 40px;
     height: 20px;
     border-radius: 10px;
-    background: #E1E1E3;
+    background: #e1e1e3;
   }
 
   &-open {
-    background: #006EFF !important;
+    background: #006eff !important;
     justify-content: flex-end;
   }
 
@@ -54,10 +56,9 @@ const toggleSlider = () => {
     height: 16px;
     border-radius: 8px;
     margin: 0 2px;
-    background: #FFFFFF;
+    background: #ffffff;
     border: 0 solid rgba(0, 0, 0, 0.85);
-    box-shadow: 0 2px 4px 0 #D1D1D1;
+    box-shadow: 0 2px 4px 0 #d1d1d1;
   }
 }
 </style>
-  

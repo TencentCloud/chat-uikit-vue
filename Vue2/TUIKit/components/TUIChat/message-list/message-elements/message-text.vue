@@ -1,14 +1,14 @@
 <template>
-<div>
+  <div>
     <span v-for="(item, index) in data.text" :key="index">
       <span class="text-box" v-if="item.name === 'text'">{{ item.text }}</span>
       <img class="text-img" v-else :src="item.src" />
-  </span>
-</div>
+    </span>
+  </div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps, watchEffect, ref } from "../../../../adapter-vue";
+import { watchEffect, ref } from "../../../../adapter-vue";
 const props = defineProps({
   content: {
     type: Object,

@@ -1,12 +1,12 @@
 <template>
   <div class="message-image" ref="skeleton">
     <!-- todo 统一组件处理-->
-    <img class="message-image" :src="data.url"/>
+    <img class="message-image" :src="data.url" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import {  watchEffect, ref, watch, nextTick, defineProps } from "../../../../adapter-vue";
+import { watchEffect, ref, nextTick } from "../../../../adapter-vue";
 const props = defineProps({
   content: {
     type: Object,
@@ -15,7 +15,7 @@ const props = defineProps({
   isPC: {
     type: Boolean,
     default: false,
-},
+  },
 });
 const data = ref();
 const skeleton: any = ref();
@@ -30,7 +30,7 @@ watchEffect(() => {
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
 .message-image {
-	width: 80px;
-	height: 80px;
+  width: 80px;
+  height: 80px;
 }
 </style>

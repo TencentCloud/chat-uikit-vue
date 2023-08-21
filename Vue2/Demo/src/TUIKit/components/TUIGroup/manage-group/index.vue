@@ -1,3 +1,4 @@
+、
 <template>
   <div class="manage-group">
     <div
@@ -225,13 +226,7 @@ import TUIChatEngine, {
   TUIConversationService,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  ref,
-  computed,
-  defineProps,
-  watchEffect,
-  defineEmits,
-} from "../../../adapter-vue";
+import { ref, computed, watchEffect } from "../../../adapter-vue";
 import MaskLayer from "../../common/MaskLayer/index.vue";
 import Dialog from "../../common/Dialog/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
@@ -244,6 +239,8 @@ import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
 import rightIcon from "../../../assets/icon/right-icon.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import { IGroupMember } from "../../../interface";
+import { isUniFrameWork } from "../../../utils/is-uni";
 
 const props = defineProps({
   groupID: {
@@ -258,16 +255,15 @@ const props = defineProps({
 const emit = defineEmits(["showGroupDetails", "switchConversationTab"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 const currentTab = ref("");
 const editLableName = ref("");
 const transferType = ref("");
 const mask = ref(false);
 const currentGroupID = ref("");
 const userInfo = ref({
-  list: [],
+  list: [] as Array<IGroupMember>,
 });
-const currentMember = ref({});
+const currentMember = ref<IGroupMember>({});
 const typeName = ref({
   [TUIChatEngine.TYPES.GRP_WORK]: "好友工作群",
   [TUIChatEngine.TYPES.GRP_PUBLIC]: "陌生人社交群",
@@ -278,17 +274,17 @@ const typeName = ref({
   [TUIChatEngine.TYPES.JOIN_OPTIONS_DISABLE_APPLY]: "禁止加群",
 });
 const member = ref({
-  admin: [],
-  member: [],
-  muteMember: [],
+  admin: [] as Array<IGroupMember>,
+  member: [] as Array<IGroupMember>,
+  muteMember: [] as Array<IGroupMember>,
 });
-const transferList = ref([]);
+const transferList = ref<Array<IGroupMember>>([]);
 const transferTitle = ref("");
 const isSearch = ref(false);
 const isRadio = ref(false);
 const selectedList = ref([]);
 const delDialogShow = ref(false);
-const groupMemberList = ref([]);
+const groupMemberList = ref<Array<IGroupMember>>([]);
 const deletedUserList = ref([]);
 const currentGroup = ref<typeof IGroupModel>();
 const currentSelfRole = ref("");
@@ -301,7 +297,7 @@ TUIStore.watch(StoreName.GRP, {
       currentSelfRole.value = currentGroup.value?.selfInfo?.role;
     }
   },
-  currentGroupMemberList: (memberList: any) => {
+  currentGroupMemberList: (memberList: Array<IGroupMember>) => {
     groupMemberList.value = memberList;
     member.value = {
       admin: [],
@@ -484,7 +480,7 @@ const toggleMask = async (type?: string) => {
     default:
       break;
   }
-  transferType.value = type;
+  type && (transferType.value = type);
   mask.value = !mask.value;
 };
 
@@ -572,8 +568,8 @@ const dismissGroup = async (group: any) => {
 };
 
 const clearGroupInfo = () => {
-  if (isUniFrameWork.value) {
-    uni.switchTab({
+  if (isUniFrameWork) {
+    TUIGlobal?.global?.switchTab({
       url: "/TUIKit/components/TUIConversation/index",
     });
     // emit('switchConversationTab');
@@ -623,7 +619,7 @@ const handleSearchMember = async (value: string) => {
             return item;
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         const message = TUITranslateService.t("TUIGroup.该用户不存在");
         Toast({
           message,
@@ -648,7 +644,7 @@ const handleSearchMember = async (value: string) => {
           ...transferList.value,
           ...imResponse?.data?.memberList,
         ];
-      } catch (error) {
+      } catch (error: any) {
         const message = TUITranslateService.t("TUIGroup.该用户不存在");
         Toast({
           message,

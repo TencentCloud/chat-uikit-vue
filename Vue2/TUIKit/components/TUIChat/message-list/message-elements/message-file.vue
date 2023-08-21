@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, watch, defineProps } from "../../../../adapter-vue";
+import { watchEffect, ref } from "../../../../adapter-vue";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import files from "../../../../assets/icon/files.png";

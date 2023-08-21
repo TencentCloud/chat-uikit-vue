@@ -1,6 +1,6 @@
 <template>
   <div class="custom">
-    <template v-if="isCustom === CHAT_MSG_CUSTOM_TYPE.SERVICE">
+    <template v-if="isCustom.businessID === CHAT_MSG_CUSTOM_TYPE.SERVICE">
       <div>
         <h1>
           <label>{{ extension.title }}</label>
@@ -31,7 +31,7 @@
         <ul>
           <li
             class="evaluate-list-item"
-            v-for="(item, index) in ~~isCustom.score"
+            v-for="(item, index) in ~~(isCustom.score || 0)"
             :key="index"
           >
             <Icon :file="star" class="file-icon"></Icon>
@@ -65,14 +65,13 @@
 </template>
 
 <script lang="ts" setup>
-import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
-import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
-import { watchEffect, ref, watch, defineProps } from "../../../../adapter-vue";
+import { watchEffect, ref } from "../../../../adapter-vue";
 import { isUrl, JSONToObject } from "../../utils/utils";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import star from "../../../../assets/icon/star-light.svg";
+import { ICustomMessagePayload } from "../../../../interface";
 const props = defineProps({
   content: {
     type: Object,
@@ -86,7 +85,7 @@ const props = defineProps({
 const custom = ref();
 const message = ref();
 const extension = ref();
-const isCustom = ref({
+const isCustom = ref<ICustomMessagePayload>({
   businessID: "",
 });
 
@@ -103,7 +102,6 @@ watchEffect(() => {
 const openLink = (url: any) => {
   window.open(url);
 };
-
 </script>
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";

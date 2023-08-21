@@ -16,9 +16,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import 
-TUIChatEngine,
-{
+import TUIChatEngine, {
   TUIGlobal,
   TUIStore,
   StoreName,
@@ -30,16 +28,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
 import Text from "@tiptap/extension-text";
 import Mention from "@tiptap/extension-mention";
-import {
-  defineProps,
-  defineEmits,
-  toRefs,
-  ref,
-  defineExpose,
-  vueVersion,
-  onMounted,
-  watch,
-} from "../../../adapter-vue";
+import { toRefs, ref, onMounted, watch } from "../../../adapter-vue";
 
 import CustomImage from "./message-input-file";
 import MessageInputAtSuggestion from "./message-input-at/index";
@@ -88,7 +77,7 @@ const editorDom = ref();
 let editor: any;
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+  currentConversation: (conversation: typeof IConversationModel) => {
     isC2C.value = conversation?.type === TUIChatEngine.TYPES.CONV_C2C;
   },
 });

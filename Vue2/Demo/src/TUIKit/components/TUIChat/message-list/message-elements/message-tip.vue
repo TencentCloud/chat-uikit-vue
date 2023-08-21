@@ -1,17 +1,18 @@
 <template>
   <div class="message-tip">
-    <span>{{ content.text }}</span>
+    <span>{{ tipContent }}</span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineProps } from "../../../../adapter-vue";
+import { computed } from "../../../../adapter-vue";
 const props = defineProps({
   content: {
     type: Object,
     default: () => ({}),
   },
 });
+const tipContent = computed(() => props?.content?.text || props?.content?.custom ||  "");
 </script>
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";

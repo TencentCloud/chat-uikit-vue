@@ -9,30 +9,6 @@
     <div class="progress" v-if="data.progress">
       <progress :value="data.progress" max="1"></progress>
     </div>
-    <div class="dialog" v-if="show" @click.self="toggleShow">
-      <header v-if="!isH5">
-        <i class="icon icon-close" @click.stop="toggleShow"></i>
-      </header>
-      <div
-        class="dialog-box"
-        :class="[isH5 ? 'dialog-box-h5' : '']"
-        @click.self="toggleShow"
-      >
-        <img
-          :class="[isWidth ? 'isWidth' : 'isHeight']"
-          :src="data.message.payload.imageInfoArray[0].url"
-          @click.self="toggleShow"
-        />
-        <div v-if="isH5" class="dialog-box-h5-footer">
-          <p @click="toggleShow">
-            <img src="../../../../assets/icon/close-image.png" />
-          </p>
-          <p @click.stop="downloadImage(data.message)">
-            <img src="../../../../assets/icon/downaload-image.png" />
-          </p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -41,13 +17,11 @@ import {
   watchEffect,
   ref,
   watch,
-  defineProps,
   computed,
   nextTick,
-  defineEmits,
 } from "../../../../adapter-vue";
 import { handleSkeletonSize } from "../../utils/utils";
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import { IImageMessageContent } from "../../../../interface";
 const props = defineProps({
   content: {
     type: Object,
@@ -63,20 +37,13 @@ const props = defineProps({
   },
 });
 
-const data = ref({
+const data = ref<IImageMessageContent>({
   progress: 0,
 });
 const message = ref();
-const show = ref();
 const skeleton: any = ref();
 const emits = defineEmits(["uploading", "previewImage"]);
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const messageStatus = ref(props.messageItem.status);
-
-const isWidth = computed(() => {
-  const { width = 0, height = 0 } = props.messageItem.payload.imageInfoArray[0];
-  return width >= height;
-});
 
 watchEffect(() => {
   data.value = props.content;
@@ -103,30 +70,6 @@ const toggleShow = () => {
   if (!data.value.progress) {
     emits("previewImage", message.value);
   }
-};
-const downloadImage = (message: any) => {
-  const targetImage = document.createElement("a");
-  const downloadImageName = message.payload.imageInfoArray[0].instanceID;
-  targetImage.setAttribute("download", downloadImageName);
-  const image = new Image();
-  image.src = message.payload.imageInfoArray[0].url;
-  image.setAttribute("crossOrigin", "Anonymous");
-  image.onload = () => {
-    targetImage.href = getImageDataURL(image);
-    targetImage.click();
-  };
-};
-
-const getImageDataURL = (image: any) => {
-  const canvas = document.createElement("canvas");
-  canvas.width = image.width;
-  canvas.height = image.height;
-  const ctx = canvas.getContext("2d");
-  ctx?.drawImage(image, 0, 0, image.width, image.height);
-  const extension = image.src
-    .substring(image.src.lastIndexOf(".") + 1)
-    .toLowerCase();
-  return canvas.toDataURL(`image/${extension}`, 1);
 };
 
 watch(

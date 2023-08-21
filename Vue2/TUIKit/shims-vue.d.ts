@@ -7,6 +7,8 @@ declare module "*.vue" {
 
 declare module "@tencentcloud/chat-uikit-engine";
 declare module "@tencentcloud/tui-core";
+declare module "@tencentcloud/call-uikit-vue";
+declare module "@tencentcloud/call-uikit-vue2";
 
 declare module "*.svg";
 declare module "*.png";
@@ -20,4 +22,3 @@ declare module "*.json" {
   const content: any;
   export default content;
 }
-

@@ -47,17 +47,10 @@
 </template>
 <script lang="ts" setup>
 import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
-import {
-  defineProps,
-  defineEmits,
-  defineExpose,
-  ref,
-  onMounted,
-  onBeforeUnmount,
-  useSlots,
-} from "../../../../adapter-vue";
+import { ref } from "../../../../adapter-vue";
 import Icon from "../../../common/Icon.vue";
 import BottomPopup from "../../../common/BottomPopup/index.vue";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 
 const props = defineProps({
   iconFile: {
@@ -94,11 +87,10 @@ const showDialog = ref(false);
 const toolbarItemRef = ref();
 const dialogRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== 'undefined');
 
 const toggleToolbarItem = () => {
   emits("onIconClick", dialogRef);
-  if(isPC.value){
+  if (isPC.value) {
     onClickOutside(toolbarItemRef.value);
   }
   if (!props.needDialog) {
@@ -112,7 +104,7 @@ const toggleToolbarItem = () => {
 let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.addEventListener("click", onClickDocument);
@@ -136,7 +128,7 @@ const onClickTarget = () => {
 };
 
 const removeClickListener = (component: any) => {
-  if (isUniFrameWork.value) {
+  if (isUniFrameWork) {
     return;
   }
   document.removeEventListener("click", onClickDocument);

@@ -41,27 +41,19 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  ref,
-  defineProps,
-  defineEmits,
-  getCurrentInstance,
-  defineExpose,
-  nextTick,
-  watchEffect,
-} from "../../../../adapter-vue";
+import { ref, watchEffect } from "../../../../adapter-vue";
 import TUIChatEngine, {
   TUIStore,
   TUIGlobal,
   IMessageModel,
   TUITranslateService,
-  TUIChatService,
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import copyIcon from "../../../../assets/icon/msg-copy.svg";
 import delIcon from "../../../../assets/icon/msg-del.svg";
 import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
 import { Toast, TOAST_TYPE } from "../../../common/Toast/index";
+import { isUniFrameWork } from "../../../../utils/is-uni";
 
 const props = defineProps({
   messageItem: {
@@ -74,7 +66,6 @@ const props = defineProps({
   },
 });
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isUniFrameWork = ref(typeof uni !== "undefined");
 const isShow = ref(false);
 const showToolList = ref(true);
 const message = ref<typeof IMessageModel>();
@@ -124,8 +115,8 @@ const deleteMessage = (message: any) => {
 };
 
 const messageCopy = (message: any) => {
-  if (isUniFrameWork.value) {
-    uni.setClipboardData({
+  if (isUniFrameWork) {
+    TUIGlobal?.global?.setClipboardData({
       data: message?.payload?.text,
     });
   }
