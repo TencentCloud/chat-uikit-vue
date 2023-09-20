@@ -1,0 +1,12 @@
+<svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g opacity="0.80492">
+        <rect x="0.25" y="7.25" width="13.5" height="0.5" rx="0.25" stroke="#232832"
+            style="stroke:#232832;stroke:color(display-p3 0.1360 0.1574 0.1949);stroke-opacity:1;"
+            stroke-width="0.5" />
+        <rect x="6.75" y="14.25" width="13.5" height="0.5" rx="0.25"
+            transform="rotate(-90 6.75 14.25)" stroke="#232832"
+            style="stroke:#232832;stroke:color(display-p3 0.1360 0.1574 0.1949);stroke-opacity:1;"
+            stroke-width="0.5" />
+    </g>
+</svg>
+    
