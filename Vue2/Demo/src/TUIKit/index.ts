@@ -6,6 +6,7 @@ import TUIComponents, {
   TUIConversation,
   TUIContact,
   TUISearch,
+  TUIGroup,
 } from "./components";
 
 const TUIChatKit = new Server();
@@ -18,5 +19,6 @@ export {
   TUIConversation,
   TUIContact,
   TUISearch,
+  TUIGroup,
   genTestUserSig,
 };

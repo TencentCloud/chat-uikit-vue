@@ -1,52 +1,48 @@
 <template>
-  <ul
-    :class="[
-      'TUI-conversation-list',
-      isPC ? 'TUI-conversation-list-web' : 'TUI-conversation-list-h5',
-    ]"
-    ref="listRef"
-    @mousewheel="scrollChange"
-    @scroll="scrollChange"
-    @click="closeToggleListItem"
-  >
-    <li
+  <div class="tui-conversation-list">
+    <ActionsMenu
+      v-if="isShowOverlay"
+      :selectedConversation="currentConversation"
+      :actionsMenuPosition="actionsMenuPosition"
+      :selectedConversationDomRect="currentConversationDomRect"
+      @closeConversationActionMenu="closeConversationActionMenu"
+    />
+    <div
       v-for="(conversation, index) in conversationList"
-      :key="conversation.conversationID"
-      class="TUI-conversation-content"
-      :class="[!isPC && 'TUI-conversation-content-h5']"
+      :id="`convlistitem-${index}`"
+      :key="index"
+      :class="[
+        'TUI-conversation-content',
+        !isPC && 'TUI-conversation-content-h5',
+      ]"
     >
       <div
-        @click="handleSwitchConversation(conversation.conversationID)"
-        @longpress="handleToggleListItem($event, conversation, index, true)"
-        @click.prevent.right="handleToggleListItem($event, conversation, index)"
-        @touchstart="
-          handleH5LongPress($event, conversation, index, 'touchstart')
-        "
-        @touchend="handleH5LongPress($event, conversation, index, 'touchend')"
-        @mouseover="handleH5LongPress($event, conversation, index, 'touchend')"
+        @click="enterConversationChat(conversation.conversationID)"
+        @longpress="showConversationActionMenu($event, conversation, index)"
+        @contextmenu.prevent="showConversationActionMenu($event, conversation, index, true)"
         :class="[
+          isPC && 'isPC',
           'TUI-conversation-item',
           currentConversationID === conversation.conversationID &&
             'TUI-conversation-item-selected',
-          toggleID === conversation.conversationID &&
-            'TUI-conversation-item-toggled',
           conversation.isPinned && 'TUI-conversation-item-pinned',
         ]"
       >
         <aside class="left">
           <img class="avatar" :src="conversation.getAvatar()" />
           <div
+            v-if="userOnlineStatusMap && isShowUserOnlineStatus(conversation)"
             :class="[
               'online-status',
-              Object.keys(statusList).length > 0 &&
-              Object.keys(statusList).includes(
+              Object.keys(userOnlineStatusMap).length > 0 &&
+              Object.keys(userOnlineStatusMap).includes(
                 conversation.userProfile.userID
               ) &&
-              statusList[conversation.userProfile.userID].statusType === 1
+              userOnlineStatusMap[conversation.userProfile.userID]
+                .statusType === 1
                 ? 'online-status-online'
                 : 'online-status-offline',
             ]"
-            v-if="showUserOnlineStatus(conversation)"
           ></div>
           <span
             class="num"
@@ -87,100 +83,49 @@
           </div>
         </div>
       </div>
-      <div
-        :class="['dialog', 'dialog-item']"
-        :style="{ top: `${dialogTop}px` }"
-        ref="dialog"
-        v-if="conversation.conversationID === toggleID"
-      >
-        <p
-          class="conversation-options"
-          @click.stop="
-            handleItem({ name: CONV_OPERATION.DELETE, conversation })
-          "
-        >
-          {{ TUITranslateService.t("TUIConversation.删除会话") }}
-        </p>
-        <p
-          class="conversation-options"
-          v-if="!conversation.isPinned"
-          @click.stop="
-            handleItem({ name: CONV_OPERATION.ISPINNED, conversation })
-          "
-        >
-          {{ TUITranslateService.t("TUIConversation.置顶会话") }}
-        </p>
-        <p
-          class="conversation-options"
-          v-if="conversation.isPinned"
-          @click.stop="
-            handleItem({ name: CONV_OPERATION.DISPINNED, conversation })
-          "
-        >
-          {{ TUITranslateService.t("TUIConversation.取消置顶") }}
-        </p>
-        <p
-          class="conversation-options"
-          v-if="
-            conversation.messageRemindType === '' ||
-            conversation.messageRemindType === 'AcceptAndNotify'
-          "
-          @click.stop="handleItem({ name: CONV_OPERATION.MUTE, conversation })"
-        >
-          {{ TUITranslateService.t("TUIConversation.消息免打扰") }}
-        </p>
-        <p
-          class="conversation-options"
-          v-if="conversation.isMuted"
-          @click.stop="
-            handleItem({ name: CONV_OPERATION.NOTMUTE, conversation })
-          "
-        >
-          {{ TUITranslateService.t("TUIConversation.取消免打扰") }}
-        </p>
-      </div>
-    </li>
-  </ul>
+    </div>
+  </div>
 </template>
+
 <script lang="ts" setup>
-import { ref, nextTick } from "../../../adapter-vue";
-import { isUniFrameWork } from "../../../utils/is-uni";
+interface IUserStatus {
+  statusType: number;
+  customStatus: string;
+}
+
+interface IUserStatusMap {
+  [userID: string]: IUserStatus;
+}
+
+import { ref } from "../../../adapter-vue";
 import TUIChatEngine, {
   TUIGlobal,
-  IConversationModel,
   TUIStore,
   StoreName,
-  TUITranslateService,
   TUIConversationService,
 } from "@tencentcloud/chat-uikit-engine";
-import { CONV_OPERATION } from "../../../constant";
+import { IConversationModel } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
+import ActionsMenu from "../actions-menu/index.vue";
 import muteIcon from "../../../assets/icon/mute.svg";
-const emits = defineEmits(["handleSwitchConversation"]);
+import { isUniFrameWork } from "../../../utils/is-uni";
 
-const listRef = ref();
-const dialog = ref();
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
+const emits = defineEmits(["handleSwitchConversation", "getPassingRef"]);
+const isH5 = TUIGlobal.getPlatform() === "h5";
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isApp = ref(TUIGlobal.getPlatform() === "app");
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const toggleID = ref("");
 const currentConversation = ref<typeof IConversationModel>();
-const currentConversationID = ref("");
-const conversationList = ref();
-const listRectInfo = ref();
-const toggleNowRectInfo = ref();
-const dialogTop = ref(30);
-const isLongpressing = ref(false);
-// 在线状态
-const displayOnlineStatus = ref(false); // 默认关闭
-const userStatusList = ref(new Map());
-const statusList = ref<{
-  [propsName: string]: {
-    statusType: number;
-    customStatus: string;
-  };
-}>({});
+const currentConversationID = ref<string>();
+const currentConversationDomRect = ref<DOMRect>();
+const isShowOverlay = ref<boolean>(false);
+const conversationList = ref<typeof IConversationModel[]>([]);
+const conversationListDomRef = ref<HTMLElement | undefined>();
+const actionsMenuPosition = ref<{top: number, left?: number, conversationHeight?: number}>({
+  top: 0,
+});
+const displayOnlineStatus = ref(false); // 在线状态 默认关闭
+const userOnlineStatusMap = ref<IUserStatusMap>();
+
+let lastestOpenActionsMenuTime: number | null = null;
 
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
@@ -199,220 +144,89 @@ TUIStore.watch(StoreName.USER, {
   displayOnlineStatus: (status: boolean) => {
     displayOnlineStatus.value = status;
   },
-  userStatusList: (
-    list: Map<
-      string,
-      {
-        statusType: number;
-        customStatus: string;
-      }
-    >
-  ) => {
-    if (list.size === 0) {
-      return;
+  userStatusList: (list: Map<string, IUserStatus>) => {
+    if (list.size !== 0) {
+      userOnlineStatusMap.value = [...list.entries()].reduce(
+        (obj, [key, value]) => {
+          obj[key] = value;
+          return obj;
+        },
+        {} as IUserStatusMap
+      );
     }
-    statusList.value = Object.fromEntries(list.entries());
   },
 });
 
-const showUserOnlineStatus = (conversation: typeof IConversationModel) => {
+const isShowUserOnlineStatus = (conversation: typeof IConversationModel): boolean => {
   return (
     displayOnlineStatus.value &&
     conversation.type === TUIChatEngine.TYPES.CONV_C2C
   );
 };
 
-const handleItem = (params: {
-  name: any;
-  conversation: typeof IConversationModel;
-}) => {
-  const { name, conversation } = params;
-  if (!name || !conversation || !conversation.conversationID) {
+const showConversationActionMenu = (
+  event: Event,
+  conversation: typeof IConversationModel,
+  index: number,
+  isContextMenuEvent?: boolean
+) => {
+  if (isContextMenuEvent && isUniFrameWork) {
     return;
   }
-  const conversationModel = conversationList.value?.find(
-    (item: typeof IConversationModel) => {
-      return item.conversationID === conversation.conversationID;
+  currentConversation.value = conversation;
+  lastestOpenActionsMenuTime = Date.now();
+  getActionsMenuPosition(event, index);
+};
+
+const closeConversationActionMenu = () => {
+  // 防止连续触发overlay的tap事件
+  if (
+    lastestOpenActionsMenuTime &&
+    Date.now() - lastestOpenActionsMenuTime > 300
+  ) {
+    currentConversation.value = undefined;
+    isShowOverlay.value = false;
+  }
+};
+
+const getActionsMenuPosition = (event: Event, index: number, conversation?: any) => {
+  if (isUniFrameWork) {
+    if (typeof conversationListDomRef.value === 'undefined') {
+      emits('getPassingRef', conversationListDomRef);
     }
-  );
-  toggleID.value = "";
-  switch (name) {
-    case CONV_OPERATION.DELETE:
-      conversationModel?.deleteConversation();
-      break;
-    case CONV_OPERATION.ISPINNED:
-      conversationModel?.pinConversation();
-      break;
-    case CONV_OPERATION.DISPINNED:
-      conversationModel?.pinConversation();
-      break;
-    case CONV_OPERATION.MUTE:
-      conversationModel?.muteConversation();
-      break;
-    case CONV_OPERATION.NOTMUTE:
-      conversationModel?.muteConversation();
-      break;
-  }
-};
-
-const handleToggleListItem = (
-  e: any,
-  conversation: typeof IConversationModel,
-  index: number,
-  isLongpress = false
-) => {
-  if (isLongpress) {
-    isLongpressing.value = true;
-  }
-  // uniapp to wechat, click event doesn't working, use click.right instead click to switchConversation
-  if (isWeChat.value) {
-    handleSwitchConversation(conversation.conversationID);
-  }
-  setToggleNowRectInfo(e.target);
-  handleDialogPosition(conversation, index);
-  nextTick(() => {
-    onClickOutside(dialog.value);
-  });
-};
-
-const closeToggleListItem = () => {
-  toggleID.value && (toggleID.value = "");
-};
-
-const scrollChange = () => {
-  toggleID.value && (toggleID.value = "");
-};
-
-// h5 long press
-let timer: number;
-const handleH5LongPress = (
-  e: any,
-  conversation: typeof IConversationModel,
-  index: number,
-  type: string
-) => {
-  if (isPC.value) return;
-  function longPressHandler() {
-    clearTimeout(timer);
-    handleToggleListItem(e, conversation, index, true);
-  }
-  function touchStartHandler() {
-    timer = setTimeout(longPressHandler, 500);
-  }
-  function touchEndHandler() {
-    clearTimeout(timer);
-  }
-  switch (type) {
-    case "touchstart":
-      touchStartHandler();
-      break;
-    case "touchend":
-      touchEndHandler();
-      setTimeout(() => {
-        isLongpressing.value = false;
-      }, 200);
-      break;
-  }
-};
-
-// handle toggle dialog position in view end
-const handleDialogPosition = (
-  conversation: typeof IConversationModel,
-  index: number
-) => {
-  dialogTop.value = 30;
-  // 以下是神奇的 uniapp 的大大大大大坑！！！！
-  if (isWeChat.value) {
-    // wechat：无法使用ref获取dom信息，无法使用uni.createSelectorQuery获取非自定义component外的dom信息，无法使用getElement获取dom信息
-    // 所以，wechat部分获取当前整个conversationList 宽高距离 以及获取当前toggle的元素的宽高距离采用的方案为：
-    // 通过点击事件，获取e.target拿到toggle位置信息。在外层自定义组件中，对整个自定义组件通过uni.createSelectorQuery拿到整个conversationList信息
-    if (listRectInfo?.value?.bottom - toggleNowRectInfo?.value?.y <= 100) {
-      dialogTop.value = -70;
-    }
-    toggleID.value = conversation.conversationID;
-  } else if (isApp.value) {
-    // uniapp打包为native：无法使用ref获取dom信息，可以使用uni.createSelectorQuery获取dom信息
-    // 所以，native部分获取当前整个conversationList 宽高距离 以及获取当前 toggle 的元素的宽高距离采用的方案为：
-    // 通过uni.createSelectorQuery，拿到当前toggle的元素的宽高距离以及整个 conversationList 宽高距离
-    // uni这个api还是异步的，奇慢无比，还要等他拿到再去显示dialog
-    let listRect: any, toggleRect: any;
-    const query = TUIGlobal?.global?.createSelectorQuery();
-    query
-      .select(".TUI-conversation-list")
-      .boundingClientRect((data: any) => {
-        listRect = data;
-      })
-      .exec();
-    query
-      .selectAll(".TUI-conversation-content")
-      .boundingClientRect((data: any) => {
-        toggleRect = data[index];
-        if (listRect?.bottom - toggleRect?.top - 30 <= 100) {
-          dialogTop.value = -70;
-        }
-        toggleID.value = conversation.conversationID;
-      })
-      .exec();
+    const query = uni.createSelectorQuery().in(conversationListDomRef.value);
+    query.select(`#convlistitem-${index}`).boundingClientRect(data => {
+      if (data) {
+        actionsMenuPosition.value = {
+          // uni-h5的uni-page-head不被认为是视窗中的成员，因此手动上head的高度
+          top: data.bottom + (isH5 ? 44 : 0),
+          left: event.touches[0].pageX,
+          conversationHeight: data.height,
+        };
+        isShowOverlay.value = true;
+      }
+    }).exec();
   } else {
-    // web/h5/uniapp打包h5: 正常使用ref即可
-    if (
-      !listRef?.value?.children ||
-      index >= listRef?.value?.children?.length
-    ) {
-      return;
+    // 处理Vue原生
+    const rect = event.currentTarget?.getBoundingClientRect();
+    if (rect) {
+      actionsMenuPosition.value = {
+        top: rect.bottom,
+        left: isPC.value ? event.clientX : undefined,
+        conversationHeight: rect.height,
+      };
     }
-    const dom = listRef?.value?.children[index];
-    const domRect = dom.getBoundingClientRect();
-    const listRect = listRef?.value?.getBoundingClientRect();
-    if (listRect?.bottom - domRect?.top - 30 <= 100) {
-      dialogTop.value = isH5.value ? -70 : -50;
-    }
-    toggleID.value = conversation.conversationID;
+    isShowOverlay.value = true;
   }
 };
 
-const setToggleNowRectInfo = (info: object) => {
-  toggleNowRectInfo.value = info;
-};
-
-const setListRectInfo = (info: object) => {
-  listRectInfo.value = info;
-};
-
-const handleSwitchConversation = (conversationID: string) => {
-  if (isLongpressing.value || toggleID.value) {
-    return;
-  }
+const enterConversationChat = (conversationID: string) => {
   emits("handleSwitchConversation", conversationID);
   TUIConversationService.switchConversation(conversationID);
 };
 
-// web: on click outside
-// web 支持整个页面维度 on click outside
-// uniapp 支持整个 TUIConversation 组件维度 on click outside
-const onClickOutside = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.addEventListener("mousedown", onClickDocument);
-};
-
-const onClickDocument = (e: any) => {
-  if (e?.target?.className?.includes("conversation-options")) {
-    return;
-  } else {
-    closeToggleListItem();
-    removeClickListener();
-  }
-};
-
-const removeClickListener = () => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.removeEventListener("mousedown", onClickDocument);
-};
-
-defineExpose({ setListRectInfo });
+// 暴露给父组件，当监听到滑动事件时关闭actionsMenu
+defineExpose({ closeChildren: closeConversationActionMenu });
 </script>
+
 <style lang="scss" scoped src="./style/index.scss"></style>

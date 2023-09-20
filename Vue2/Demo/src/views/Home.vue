@@ -40,7 +40,7 @@
                   src="https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png"
                 />
                 <div class="userInfo-main">
-                  <MyProfile></MyProfile>
+                  <Profile></Profile>
                 </div>
               </aside>
               <ul class="setting-main-list">
@@ -78,27 +78,11 @@
               <i class="icon icon-setting" @click="openShowMore"></i>
               <div class="setting-more" v-if="showMore">
                 <div class="showmore">
-                  <ul class="setting-more-ul">
-                    <li
-                      v-for="item in moreList"
-                      :key="item.key"
-                      class="setting-more-li"
-                    >
-                      <div
-                        class="setting-more-item"
-                        @click="handleSelectClick(item)"
-                        @mouseover="showSelectMore = item.key"
-                      >
-                        <span>{{
-                          TUITranslateService.t(`Home.${item?.name}`)
-                        }}</span>
-                        <i
-                          v-show="item?.moreSelect"
-                          class="icon icon-right-transparent"
-                        ></i>
-                      </div>
-                    </li>
-                  </ul>
+                  <Profile
+                    displayType="setting"
+                    :showSetting="showMore"
+                    @update:showSetting="showMore = false"
+                  ></Profile>
                 </div>
                 <div class="moreMask" @click.self="openShowMore"></div>
               </div>
@@ -106,10 +90,6 @@
           </div>
           <div class="home-TUIKit-main" v-show="currentTab === 'message'">
             <div class="home-conversation">
-              <TUISearch
-                :class="['TUISearch', !isPC && 'TUISearch-h5']"
-                :is-relation="false"
-              />
               <TUIConversation
                 :class="['TUIConversation', !isPC && 'TUIConversation-h5']"
               ></TUIConversation>
@@ -134,62 +114,36 @@
                   </p>
                 </div>
               </TUIChat>
+              <TUIGroup class="group" />
             </div>
+            <TUIContact display-type="selectFriend" />
           </div>
-          <div class="home-TUIKit-main" v-show="currentTab === 'relation'">
-            <div class="home-relation">
-              <TUIContact
-                v-show="currentTab === 'relation'"
-                @handleCurrentConversation="handleCurrentConversation"
-              />
-            </div>
-            <div class="container-default contact-default">
-              <h1>
-                {{ TUITranslateService.t("Home.欢迎使用") }}
-                <img class="logo" src="../assets/image/logo.png" alt="" />
-                {{ TUITranslateService.t("即时通信") }}
-              </h1>
-              <p>
-                {{
-                  TUITranslateService.t(
-                    "Home.我们为您默认提供了一位“示例好友”和一个“示例客服群”您不用额外添加好友和群聊就可完整体验腾讯云 IM 单聊、群聊的所有功能。"
-                  )
-                }}
-                <br />
-                {{ TUITranslateService.t("Home.随时随地") }}
-              </p>
-            </div>
+          <div
+            :class="[currentTab === 'relation' && 'home-TUIKit-main']"
+            v-show="currentTab === 'relation'"
+          >
+            <TUIContact
+              display-type="contactList"
+              @switchConversation="currentTab = 'message'"
+            />
           </div>
         </div>
       </div>
     </main>
     <main class="home-h5-main" v-if="!isPC">
-      <div class="message" v-show="!currentConversationID">
-        <main class="home-h5-content" v-show="currentTab === 'message'">
-          <header class="home-h5-main-header">
-            <TUISearch :is-relation="false" />
-          </header>
-          <div class="home-h5-main-content">
-            <TUIConversation
-              :class="['TUIConversation', !isPC && 'TUIConversation-h5']"
-            ></TUIConversation>
-          </div>
+      <div class="home-h5-main" v-if="!currentConversationID">
+        <main class="home-h5-main" v-if="currentTab === 'message'">
+          <TUIConversation></TUIConversation>
+          <TUIContact display-type="selectFriend"></TUIContact>
         </main>
-        <main class="home-h5-content" v-show="currentTab === 'relation'">
+        <main class="home-h5-main" v-if="currentTab === 'relation'">
           <TUIContact
-            @handleCurrentConversation="handleCurrentConversation"
-          ></TUIContact>
+            display-type="contactList"
+            @switchConversation="currentTab = 'message'"
+          />
         </main>
-        <main
-          class="home-h5-content home-h5-profile"
-          v-show="currentTab === 'profile'"
-        >
-          <MyProfile />
-          <footer class="home-h5-profile-footer">
-            <button class="btn" @click.prevent="exitLogin">
-              {{ TUITranslateService.t("Home.退出登录") }}
-            </button>
-          </footer>
+        <main class="home-h5-main" v-if="currentTab === 'profile'">
+          <Profile display-type="all" />
         </main>
         <footer class="nav">
           <ul class="nav-list">
@@ -218,10 +172,11 @@
       <!-- 聊天入口在这里，注意需要当前的 conversationID 才能打开 chat -->
       <TUIChat
         :class="['TUIChat', !isPC && 'TUIChat-h5']"
-        v-show="currentConversationID"
+        v-else
         @closeChat="closeChat"
       >
       </TUIChat>
+      <TUIGroup class="group-h5" />
     </main>
     <Drag
       :show="showCall"
@@ -253,21 +208,17 @@ import {
   StoreName,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
-import { TUIChat, TUIConversation, TUISearch, TUIContact } from "../TUIKit";
-import { TUILogin } from "@tencentcloud/tui-core";
-import router from "../router/index";
+import { TUIChat, TUIConversation, TUIContact, TUIGroup } from "../TUIKit";
 import { ref } from "../TUIKit/adapter-vue";
 import Header from "../components/Header.vue";
 import Menu from "../components/Menu.vue";
-import MyProfile from "./Profile.vue";
+import Profile from "./Profile.vue";
 import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
 import Drag from "../TUIKit/components/common/Drag";
-import { Toast } from "../TUIKit/components/common/Toast";
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentTab = ref("message");
 const currentConversationID = ref("");
-const showSelectMore = ref("");
 const showMore = ref(false);
 const showCall = ref<boolean>(false);
 const isMinimized = ref<boolean>(false);
@@ -296,13 +247,6 @@ const navList = [
     label: "个人中心",
   },
 ];
-const moreList = ref([
-  {
-    key: "exit",
-    name: "退出登录",
-    moreSelect: false,
-  },
-]);
 
 const selectModel = (modelName: string) => {
   currentTab.value = modelName;
@@ -316,44 +260,23 @@ const openShowMore = () => {
   showMore.value = !showMore.value;
 };
 
-const handleSelectClick = (item: any, status?: any) => {
-  showSelectMore.value = item?.key;
-  switch (showSelectMore.value) {
-    case "exit":
-      exitLogin();
-      break;
-    default:
-      break;
-  }
-  showSelectMore.value = "";
-  showMore.value = false;
-  return;
-};
-
-const exitLogin = () => {
-  TUILogin.logout().then(() => {
-    router.push({ path: "/" });
-  });
-};
-
-const handleCurrentConversation = () => {
-  currentTab.value = "message";
-};
-
 // beforeCalling：在拨打电话前与收到通话邀请前执行
 const beforeCalling = () => {
-  showCall.value = true
-}
+  showCall.value = true;
+};
 // afterCalling：结束通话后执行
 const afterCalling = () => {
-  showCall.value = false
-  isMinimized.value = false
-}
+  showCall.value = false;
+  isMinimized.value = false;
+};
 // onMinimized：组件切换最小化状态时执行
-const onMinimized = (oldMinimizedStatus: boolean, newMinimizedStatus: boolean) => {
-  isMinimized.value = newMinimizedStatus
-  dragRef?.value?.positionReset && dragRef?.value?.positionReset()
-}
+const onMinimized = (
+  oldMinimizedStatus: boolean,
+  newMinimizedStatus: boolean
+) => {
+  isMinimized.value = newMinimizedStatus;
+  dragRef?.value?.positionReset && dragRef?.value?.positionReset();
+};
 </script>
 
 <style scoped lang="scss">

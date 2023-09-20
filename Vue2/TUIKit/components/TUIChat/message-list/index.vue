@@ -50,7 +50,6 @@
           ></MessageTimestamp>
           <div
             class="message-item"
-            v-if="!item.isDeleted"
             @click.stop="toggleID = ''"
           >
             <MessageTip
@@ -63,13 +62,14 @@
             <div
               v-else-if="!item.isRevoked && !isSignalingMessage(item)"
               @longpress="handleToggleMessageItem($event, item, true)"
-              @click.prevent.right="handleToggleMessageItem($event, item)"
+              @click.prevent.right="handleToggleMessageItemForPC($event, item)"
               @touchstart="handleH5LongPress($event, item, 'touchstart')"
               @touchend="handleH5LongPress($event, item, 'touchend')"
               @mouseover="handleH5LongPress($event, item, 'touchend')"
             >
               <MessageBubble
                 :messageItem="item"
+                :content="item.getMessageContent()"
                 @resendMessage="resendMessage(item)"
               >
                 <MessageText
@@ -340,7 +340,7 @@ onMounted(() => {
   // 消息 messageList
   TUIStore.watch(StoreName.CHAT, {
     messageList: (list: Array<typeof IMessageModel>) => {
-      messageList.value = list;
+      messageList.value = list.filter(message => !message.isDeleted);
       // 滚动到底部，仅支持纯文本消息，仅支持 web & h5 版本
       nextTick(() => {
         scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
@@ -437,6 +437,12 @@ const handleToggleMessageItem = (
     isLongpressing.value = true;
   }
   toggleID.value = message.ID;
+};
+
+const handleToggleMessageItemForPC = (e: MouseEvent, message: typeof IMessageModel) => {
+  if (isPC.value) {
+    toggleID.value = message.ID;
+  }
 };
 
 // h5 long press

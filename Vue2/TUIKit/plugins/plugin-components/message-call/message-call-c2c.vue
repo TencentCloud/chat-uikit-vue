@@ -8,7 +8,7 @@
       message.flow === 'out' && 'call-reverse',
     ]"
   >
-    <div :class="['icon', message.flow === 'out' && 'icon-reverse']">
+    <div :class="['icon', message.flow === 'out' && callInfo.type === 2 && 'icon-reverse']">
       <Icon :file="callInfo.icon"></Icon>
     </div>
     <span class="call-content">{{ custom }}</span>
@@ -98,7 +98,7 @@ const callAgain = () => {
   &-reverse {
     flex-direction: row-reverse;
     .icon-reverse {
-      transform: rotateY(180deg);
+      transform: rotate(180deg);
     }
     .call-content {
       padding-right: 5px;

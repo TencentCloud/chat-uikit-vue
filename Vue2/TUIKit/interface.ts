@@ -145,3 +145,51 @@ export interface IUserProfile {
   lastUpdatedTime?: number;
   profileCustomField?: Array<Object>;
 }
+
+export interface IContactListItem {
+  title: string;
+  list: Array<any>;
+  unreadCount?: number;
+}
+
+export interface IContactList {
+  friendApplicationList: IContactListItem;
+  blackList: IContactListItem;
+  groupList: IContactListItem;
+  friendList: IContactListItem;
+}
+
+export interface IContactSearchResult {
+  user: {
+    label: string;
+    list: Array<any>;
+  };
+  group: {
+    label: string;
+    list: Array<any>;
+  };
+}
+
+export interface IBlackListUserItem {
+  userID: string;
+  nick?: string;
+  avatar?: string;
+}
+
+export interface IContactInfoMoreItem {
+  key: string;
+  label: string;
+  data: any;
+  labelPosition?: string; // label 位置："left"/"top"
+  editable?: boolean; // 是否可以编辑
+  editType?: string; // 编辑类型: "input"/"switch"/"textarea"
+  editing?: boolean; // 当前编辑状态: true 为"正在编辑中"，false 为"非编辑状态"
+  editSubmitHandler?: Function; // 编辑提交回调Z
+}
+
+export interface IContactInfoButton {
+  key: string;
+  label: string; // button 内容
+  type: string; // button 类型: "cancel"/"submit"
+  onClick: Function; // 点击 button 回调
+}

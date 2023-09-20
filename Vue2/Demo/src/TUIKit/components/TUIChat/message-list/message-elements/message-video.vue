@@ -26,7 +26,7 @@
         :poster="data.url"
         preload="auto"
         muted
-        ref="video"
+        ref="videoRef"
       ></video>
       <video
         class="message-img video-web"
@@ -35,7 +35,7 @@
         controls
         preload="metadata"
         :poster="poster"
-        ref="video"
+        ref="videoRef"
       ></video>
       <div class="progress" v-if="props.progress > 0 && props.progress < 1">
         <progress :value="props.progress" max="1"></progress>
@@ -104,7 +104,7 @@ const poster = ref("");
 const posterWidth = ref(0);
 const posterHeight = ref(0);
 const skeleton = ref();
-const video = ref();
+const videoRef = ref();
 const messageStatus = ref(props.messageItem.status);
 
 const isWidth = computed(() => {
@@ -188,8 +188,8 @@ watchEffect(async () => {
       skeleton?.value?.style &&
         (skeleton.value.style.height = `${size.height}px`);
       if (props.isPC) {
-        video?.value?.style && (video.value.style.width = `${size.width}px`);
-        video?.value?.style && (video.value.style.height = `${size.height}px`);
+        videoRef?.value?.style && (videoRef.value.style.width = `${size.width}px`);
+        videoRef?.value?.style && (videoRef.value.style.height = `${size.height}px`);
       }
     } else {
       emits("uploading");

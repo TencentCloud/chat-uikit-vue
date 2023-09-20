@@ -9,22 +9,33 @@ let createVNode = (
 let render = (arg1: any, arg2: any) => {
   return;
 };
+
 try {
-  if (/^2\./.test(Vue?.version)) {
-    // Vue 2.x
+  if (
+    (Vue as any)?.default?.version &&
+    (Vue as any)?.default?.version?.startsWith("2.7.")
+  ) {
+    // >= Vue 2.7.0
+    vueVersion = 2.7;
+  } else if (
+    (Vue as any)?.default?.version &&
+    (Vue as any)?.default?.version?.startsWith("2.")
+  ) {
+    // < Vue 2.7.0
     vueVersion = 2;
   } else {
-    // Vue 3.x
+    // >= Vue 3.0.0
     vueVersion = 3;
     createVNode = (Vue as any)?.createVNode;
     render = (Vue as any)?.render;
+    // exportedAPIOrigin = Vue;
   }
 } catch (error: any) {
-  // Vue 3.x
+  // >= Vue 3.0.0
   vueVersion = 3;
   createVNode = (Vue as any)?.createVNode;
   render = (Vue as any)?.render;
 }
-export { vueVersion };
+console.warn(`[adapter-vue]: vue version is ${vueVersion}`);
+export { vueVersion, render, createVNode };
 export * from "vue";
-export { createVNode, render };

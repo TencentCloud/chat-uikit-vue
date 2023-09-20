@@ -128,16 +128,8 @@ const onCallExtensionClicked = (
       type: callType,
     });
   } else if (isGroup.value) {
-    if (isUniFrameWork) {
-      Toast({
-        message: "暂不支持群通话",
-        type: TOAST_TYPE.ERROR,
-      });
-    } else {
-      currentUserSelectorExtension.value = extension;
-      userSelectorRef?.value?.toggleShow &&
-        userSelectorRef?.value?.toggleShow(true);
-    }
+    currentUserSelectorExtension.value = extension;
+    userSelectorRef?.value?.toggleShow &&  userSelectorRef.value.toggleShow(true);
   }
 };
 

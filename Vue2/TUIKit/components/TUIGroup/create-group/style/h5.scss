@@ -12,20 +12,22 @@
     flex-direction: column;
     overflow: hidden;
 
-    header {
+    &-header {
       flex-direction: row-reverse;
       align-items: center;
       justify-content: center;
       position: relative;
       padding: 16px 18px;
 
-      h1 {
-        padding-bottom: 0;
-      }
-
-      .icon {
+      .closeIcon {
         position: absolute;
+        transform: scale(1);
         left: 18px;
+        top: 20px;
+      }
+      
+      &-title {
+        padding-bottom: 0 !important;
       }
     }
 
@@ -36,10 +38,12 @@
       flex-direction: column-reverse;
       justify-content: flex-end;
       margin-top: 12px;
-
       &-item {
         padding: 14px 18px;
         border-bottom: 1px solid #E5E5E5;
+        &-label {
+          font-size: 14px;
+        }
       }
     }
 

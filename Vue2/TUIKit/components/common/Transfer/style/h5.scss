@@ -12,14 +12,13 @@
   &-header {
     position: relative;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
     font-size: 18px;
     padding: 16px 18px;
-
-    .icon {
-      position: absolute;
-      left: 18px;
-      top: 18px;
+    .space, .icon {
+      width: 18px;
+      height: 18px;
     }
   }
 
@@ -31,7 +30,7 @@
     border-radius: 0;
     border: none;
     box-shadow: none;
-    max-height: calc(100% - 54px);
+    max-height: calc(100% - 50px);
     padding: 0;
 
     .avatar {
@@ -45,7 +44,7 @@
       display: flex;
       flex-direction: column;
 
-      header {
+      .transfer-header {
         position: sticky;
         top: 0;
         padding: 0 18px;
@@ -72,9 +71,14 @@
       .transfer-list {
         flex-direction: row;
         width: 0;
+        &-item {
+          &-content {
+            flex: none;
+          }
+        }
       }
 
-      footer {
+      .transfer-right-footer {
         padding: 6px 0;
         display: flex;
         align-items: center;

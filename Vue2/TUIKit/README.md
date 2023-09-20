@@ -12,8 +12,8 @@ chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT W
 
 ### 开发环境要求
 
-- Vue 2.7+ （chat-uikit-vue2 集成请务必使用 Vue2.7 及以上版本）
-- TypeScript (如果您是 js 版本，请下拉至“常见问题 6”进行 typescript 支持相关配置)
+- Vue 2 (如果您是 Vue 2.6 及 以下版本，请下拉至“常见问题 8”进行相关环境配置，Vue 2.7 及 以上版本请忽略)
+- TypeScript (如果您是 js 版本，请下拉至“常见问题 5”进行 typescript 支持相关配置)
 - sass（sass-loader 版本 <= 10.1.1）
 - node（12.13.0 <= node 版本 <= 17.0.0, 推荐使用 Node.js 官方 LTS 版本 16.17.0）
 - npm（版本请与 node 版本匹配）
@@ -30,7 +30,7 @@ TUIKit 支持使用 webpack 或 vite 创建项目工程，配置 Vue2 + TypeScri
 如果您尚未安装 vue-cli ，可以在 terminal 或 cmd 中采用如下方式进行安装：
 
 ```shell
-npm install -g @vue/cli@4.5.0 sass sass-loader@10.1.1
+npm install -g @vue/cli@5.0.8 sass sass-loader@10.1.1
 ```
 
 通过 vue-cli 创建项目，并选择下图中所选配置项。
@@ -41,7 +41,7 @@ vue create chat-example
 
 ![vue-cli-config](https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/b1f22424-0d40-4489-96d4-93af5e92dce2)
 
-创建完成后，切换到项目所在目录, 升级 Vue 及相关工具至 Vue2.7 所需。
+创建完成后，切换到项目所在目录, 并升级 vue 相关配置到 vue2.7
 
 ```shell
 cd chat-example
@@ -131,8 +131,8 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
       :class="isH5 ? 'conversation-h5' : 'conversation'"
       v-show="!isH5 || !currentConversationID"
     >
-      <TUISearch class="search" />
       <TUIConversation class="conversation" />
+      <TUIContact display-type="selectFriend" />
     </div>
     <div class="chat" v-show="!isH5 || currentConversationID">
       <TUIChat>
@@ -146,24 +146,30 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
       "
       :allowedMinimized="true"
       :allowedFullScreen="false"
-      :onMinimized="() => {showCallMini = true;}"
+      :onMinimized="onMinimized"
     />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { TUIGlobal, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
-import { TUISearch, TUIConversation, TUIChat } from "./TUIKit";
+import {
+  TUIGlobal,
+  TUIStore,
+  StoreName,
+} from "@tencentcloud/chat-uikit-engine";
+import { TUIConversation, TUIChat, TUIContact } from "./TUIKit";
+// vue 2.7 及以上
 import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
-
+// vue 2.6 及 以下, 请注释上行，开放下行注释
+// import { TUICallKit } from "@tencentcloud/call-uikit-vue2.6";
 export default Vue.extend({
   name: "App",
   components: {
-    TUISearch,
     TUIConversation,
     TUIChat,
     TUICallKit,
+    TUIContact,
   },
   data() {
     return {
@@ -180,9 +186,13 @@ export default Vue.extend({
       },
     });
   },
+  methods: {
+    onMinimized: function onMinimized(oldStatus: boolean, newStatus: boolean) {
+      this.showCallMini = newStatus;
+    },
+  },
 });
 </script>
-
 <style scoped>
 .home-TUIKit-main {
   display: flex;
@@ -244,6 +254,7 @@ npm run serve
 ## 常见问题
 
 ### 1. 如何实现独立集成 TUIChat 组件?
+
 请参考官网文档 [TUIChat 独立集成方案 (vue2)](https://cloud.tencent.com/document/product/269/96740)
 
 ### 2. Component name "XXXX" should always be multi-word
@@ -297,7 +308,6 @@ error TS1371: This import is never used as a value and must use 'import type' be
 
 This import is never used as a value and must use 'import type' because 'importsNotUsedAsValues' is set to 'error'.
 
-
 为了兼容支持 typescript 3 版本，TUIKit 放弃了采用 `import type xxx from xxx` 的形式来导入类型。
 
 如遇以上问题，请您在您项目根目录的 `tsconfig.json` 设置以下规则：
@@ -317,13 +327,81 @@ This import is never used as a value and must use 'import type' because 'imports
 ### 7. 运行时报错: Failed to resolve loader: sass-loader
 
 出现以上报错信息，是因为您未安装 `sass` 环境导致，请执行以下命令进行 `sass` 环境安装:
+
 <img width="400" alt="image" src="https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/1ba994d8-da51-4820-94e7-a7145b34750b">
+
 ```shell
 npm i -D sass sass-loader@10.1.1
 ```
 
+### 8. vue2.6 及以下如何接入？
+
+(1) 安装支持 `composition-api` 以及 `script setup` 的相关依赖，以及vue2.6相关依赖
+
+```javascript
+npm i @vue/composition-api unplugin-vue2-script-setup vue@2.6.14 vue-template-compiler@2.6.14
+```
+
+(2) `main.ts` 中引入 VueCompositionAPI
+
+```javascript
+import VueCompositionAPI from "@vue/composition-api";
+Vue.use(VueCompositionAPI);
+```
+
+(3) 在 `vue.config.js` 中增加，若没有该文件请新建：
+
+```javascript
+const ScriptSetup = require("unplugin-vue2-script-setup/webpack").default;
+module.exports = {
+  parallel: false, // disable thread-loader, which is not compactible with this plugin
+  configureWebpack: {
+    plugins: [
+      ScriptSetup({
+        /* options */
+      }),
+    ],
+  },
+  chainWebpack(config) {
+    // disable type check and let `vue-tsc` handles it
+    config.plugins.delete("fork-ts-checker");
+  },
+};
+```
+
+(4) 在 `TUIKit/adapter-vue.ts` 文件最后, 替换导出源：
+
+```javascript
+// 初始写法
+export * from "vue";
+// 替换为
+export * from "@vue/composition-api";
+```
+
+(5) 在 App.vue 复制的代码中，替换 TUICallKit 源到 vue2.6 版本：
+
+```javascript
+// vue 2.7 及以上
+// import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
+// vue 2.6 及 以下, 请注释上行，开放下行注释
+import { TUICallKit } from "@tencentcloud/call-uikit-vue2.6";
+```
+
+### 9. 运行报错如下'vue packages version mismatch',如何解决？
+![vue packages version mismatch](https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/4998e8ae-7d7d-4f5f-a849-c77449e6a7e5)
+如果您是 vue2.7 项目，请在您项目根目录执行：
+```javascript
+npm i vue@2.7.9 vue-template-compiler@2.7.9
+```
+
+如果您是 vue2.6 项目，请在您项目根目录执行：
+```javascript
+npm i vue@2.6.14 vue-template-compiler@2.6.14
+```
 
 ## 相关链接
+
+### uikit 相关
 
 - [chat-uikit-vue Github 仓库](https://github.com/TencentCloud/chat-uikit-vue)
 - [chat-uikit-vue2 Demo 源码下载](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue2/Demo)
@@ -331,6 +409,11 @@ npm i -D sass sass-loader@10.1.1
 - [@tencentcloud/chat-uikit-vue2 npm 仓库（vue2 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue2)
 - [@tencentcloud/chat-uikit-vue npm 仓库（vue3 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
 - [CHAT WEB DEMO 体验地址](https://web.sdk.qcloud.com/im/demo/latest/index.html)
+
+### uikit 逻辑层: engine 相关
+
+- [chat-uikit-engine npm 仓库](https://www.npmjs.com/package/@tencentcloud/chat-uikit-engine)
+- [chat-uikit-engine 接口文档](https://web.sdk.qcloud.com/im/doc/chat-engine/index.html)
 
 ## 技术咨询
 

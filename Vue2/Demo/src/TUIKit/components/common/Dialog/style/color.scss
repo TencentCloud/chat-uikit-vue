@@ -1,18 +1,16 @@
 .dialog {
   background: rgba(0, 0, 0, .3);
 
-  header {
-    h1 {
-      font-family: PingFangSC-Medium;
-      font-weight: 500;
-      color: #333333;
-    }
-  }
-
   &-main {
     background: #FFFFFF;
 
-    header {
+    &-header {
+      font-weight: 500;
+      color: #333333;
+    }
+
+    &-title {
+      font-family: PingFangSC-Medium;
       font-weight: 500;
       color: #333333;
     }

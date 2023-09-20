@@ -30,7 +30,7 @@
         >
         </MessageList>
         <MessageInputToolbar
-          v-if="isToolbarShow"
+          v-show="isToolbarShow"
           :class="[
             'TUI-chat-message-input-toolbar',
             !isPC && 'TUI-chat-h5-message-input-toolbar',
@@ -54,10 +54,11 @@
       <!-- 群组管理 -->
       <div
         class="group-profile"
-        v-if="isUniFrameWork && isGroup"
+        v-if="isUniFrameWork && isGroup && groupManageExt"
         @click="handleGroup"
       >
-        更多
+        {{ groupManageExt.text }}
+        <!-- 更多 -->
       </div>
     </div>
   </div>
@@ -67,7 +68,6 @@ import TUIChatEngine, {
   TUIGlobal,
   TUITranslateService,
   TUIConversationService,
-  TUIGroupService,
   TUIStore,
   StoreName,
   IMessageModel,
@@ -78,6 +78,7 @@ import ChatHeader from "./chat-header/index.vue";
 import MessageList from "./message-list/index.vue";
 import MessageInput from "./message-input/index.vue";
 import MessageInputToolbar from "./message-input-toolbar/index.vue";
+import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
 import { isUniFrameWork } from "../../utils/is-uni";
 
 const emits = defineEmits(["closeChat"]);
@@ -89,6 +90,7 @@ const currentConversationID = ref();
 // 是否显示群组管理
 const isGroup = ref(false);
 const groupID = ref("");
+const groupManageExt = ref<typeof ExtensionInfo>(undefined);
 
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
@@ -97,6 +99,11 @@ TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: typeof IConversationModel) => {
     isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     groupID.value = conversation?.groupProfile?.groupID;
+    const extList = TUICore.getExtensionList(
+      TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID,
+      { filterManageGroup: isGroup.value }
+    );
+    groupManageExt.value = extList[0];
   },
 });
 
@@ -118,13 +125,14 @@ const insertEmoji = (emojiObj: object) => {
   messageInputRef?.value?.insertEmoji(emojiObj);
 };
 
-const handleToolbarListShow = (show: boolean) => {
+const handleToolbarListShow = (show?: boolean) => {
   if (isUniFrameWork) {
-    isToolbarShow.value = show;
+    isToolbarShow.value = show ?? !isToolbarShow.value;
   } else {
     isToolbarShow.value = true;
   }
 };
+
 const handleEditor = (message: typeof IMessageModel, type: string) => {
   if (!message || !type) return;
   switch (type) {
@@ -145,10 +153,7 @@ const handleEditor = (message: typeof IMessageModel, type: string) => {
 };
 
 const handleGroup = () => {
-  TUIGroupService.switchGroup(groupID.value);
-  TUIGlobal?.global?.navigateTo({
-    url: "/TUIKit/components/TUIGroup/manage-group/index",
-  });
+  groupManageExt.value.listener.onClicked({ groupID: groupID.value });
 };
 </script>
 <style scoped lang="scss" src="./style/index.scss"></style>

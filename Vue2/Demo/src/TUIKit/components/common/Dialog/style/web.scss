@@ -9,22 +9,20 @@
   justify-content: center;
   align-items: center;
 
-  header {
-    h1 {
-      font-size: 16px;
-      line-height: 30px;
-    }
-  }
-
   &-main {
     min-width: 368px;
     border-radius: 10px;
     padding: 20px 30px;
 
-    header {
+    &-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      font-size: 16px;
+      line-height: 30px;
+    }
+
+    &-title {
       font-size: 16px;
       line-height: 30px;
     }
@@ -33,7 +31,7 @@
       font-size: 14px;
     }
 
-    footer {
+    &-footer {
       display: flex;
       justify-content: flex-end;
     }

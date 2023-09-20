@@ -11,54 +11,43 @@
       {{ currentConversationName }}
     </div>
     <div :class="['chat-header-setting', !isPC && 'chat-header-h5-setting']">
-      <div @click="showGroupDetails" v-if="isGroup">
-        <Icon :file="settingSVG"></Icon>
+      <div
+        v-for="(item, index) in extensions"
+        :key="index"
+        @click.stop="handleExtensions(item)">
+        <Icon :file="item.icon"></Icon>
       </div>
-      <ManageGroup
-        v-if="showGroupDialog"
-        :groupID="groupID"
-        @showGroupDetails="showGroupDetails"
-      ></ManageGroup>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import {
+import TUIChatEngine, {
   TUIGlobal,
   TUIStore,
   StoreName,
   TUITranslateService,
-  TUIGroupService,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
-import settingSVG from "../../../assets/icon/setting.svg";
-import ManageGroup from "../../TUIGroup/manage-group/index.vue";
+import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
 
 const emits = defineEmits(["closeChat"]);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref<typeof IConversationModel>();
 const currentConversationName = ref("");
 const typingStatus = ref(false);
-const isGroup = ref(false);
 const groupID = ref("");
-const conversationType = ref("GROUP");
-const showGroupDialog = ref(false);
-const groupCurrentTab = ref("");
+const extensions = ref<typeof ExtensionInfo>([])
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: typeof IConversationModel) => {
+    const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     currentConversation.value = conversation;
-    isGroup.value = currentConversation.value?.type === conversationType.value;
-    if (groupID.value !== currentConversation.value?.groupProfile?.groupID) {
-      showGroupDialog.value = false;
-      // 清空对应群组信息
-      TUIGroupService.switchGroup();
-    }
     groupID.value = currentConversation.value?.groupProfile?.groupID;
     currentConversationName.value = currentConversation?.value?.getShowName();
+    extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: isGroup });
   },
 });
 TUIStore.watch(StoreName.CHAT, {
@@ -81,16 +70,10 @@ const closeChat = (conversationID: string) => {
   emits("closeChat", conversationID);
 };
 
-const showGroupDetails = () => {
-  showGroupDialog.value = !showGroupDialog.value;
-  if (!showGroupDialog.value) {
-    groupCurrentTab.value = "";
-    TUIGroupService.switchGroup();
-  }
-  if (showGroupDialog.value) {
-    TUIGroupService.switchGroup(groupID.value);
-  }
-};
+const handleExtensions = (item: typeof ExtensionInfo) => {
+  item.listener.onClicked({groupID: groupID.value});
+}
+
 </script>
 <style lang="scss" scoped>
 .chat-header {

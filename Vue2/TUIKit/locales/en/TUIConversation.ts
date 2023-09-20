@@ -1,4 +1,5 @@
 const TUIConversation = {
+  "发起会话": "Start chat",
   "发起单聊": "New one-to-one chat",
   "发起群聊": "New group chat",
   "请输入userID": "Enter a user ID",
