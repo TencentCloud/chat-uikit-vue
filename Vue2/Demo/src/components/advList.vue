@@ -7,7 +7,7 @@
 </template>
   
 <script setup lang="ts">
-import { defineProps } from "@tencentcloud/chat-uikit-vue2/adapter-vue";
+import { defineProps } from "@tencentcloud/chat-uikit-vue/adapter-vue";
 
 const props = defineProps({
     list: {

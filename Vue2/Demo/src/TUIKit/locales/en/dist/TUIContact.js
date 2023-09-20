@@ -4,7 +4,7 @@ var TUIContact = {
     "群聊通知": "Group Chat Notifications",
     "系统通知": "System Notifications",
     "我的群聊": "My Group Chats",
-    "输入群ID搜索": "Enter a groupID",
+    "输入ID": "Enter a groupID/userID",
     "群名称": "Group name",
     "群ID": "Group ID",
     "加入群聊": "Join group chat",
@@ -27,6 +27,9 @@ var TUIContact = {
     "个性签名": "Signature",
     "等待管理员同意": "Successful application, waiting for the administrator to agree to join the group application",
     "加群成功": "Join the group successfully",
-    "您已是群成员": "You are already a group member"
+    "您已是群成员": "You are already a group member",
+    "新的联系人": "New Contact",
+    "黑名单": "Black List",
+    "无搜索结果": "No Result"
 };
 exports["default"] = TUIContact;

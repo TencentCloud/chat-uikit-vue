@@ -3,56 +3,36 @@
     class="transfer"
     :class="[!isPC ? 'transfer-h5' : '', isWeChat ? 'transfer-h5-wechat' : '']"
   >
-    <header class="transfer-h5-header" v-if="!isPC" @click="cancel">
-      <Icon :file="backIcon" :width="'18px'" :height="'18px'"></Icon>
+    <header class="transfer-header transfer-h5-header" v-if="!isPC" @click="cancel">
+      <Icon class="icon" :file="backIcon" :width="'18px'" :height="'18px'"></Icon>
       <span class="title">{{ transferTitle }}</span>
+      <span class="space"></span>
     </header>
     <main class="main">
       <div class="left">
-        <header>
+        <header class="transfer-header">
           <!-- PC 端触发 @keyup.enter -->
           <input
-            v-if="isPC && isTransferSearch && !joinGroup"
+            v-if="isPC && isTransferSearch"
             type="text"
             :value="searchValue"
-            @keyup.enter="handleInput"
+            @keyup.enter="handleInput" 
             :placeholder="TUITranslateService.t('component.请输入userID')"
             enterkeyhint="search"
-            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
-          />
-          <!-- 非 PC 端触发 blur -->
+            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>
+          <!-- 非 PC 端触发 blur -->  
           <input
-            v-if="!isPC && isTransferSearch && !joinGroup"
+            v-if="!isPC && isTransferSearch"
             type="text"
             @blur="handleInput"
             @confirm="handleInput"
             :placeholder="TUITranslateService.t('component.请输入userID')"
             enterkeyhint="search"
             :value="searchValue"
-            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
-          />
-          <input
-            v-if="isPC && isTransferSearch && joinGroup"
-            type="text"
-            @keyup.enter="handleInput"
-            @confirm="handleInput"
-            :placeholder="TUITranslateService.t('component.请输入groupID')"
-            enterkeyhint="search"
-            :value="searchValue"
-            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
-          />
-          <input
-            v-if="!isPC && isTransferSearch && joinGroup"
-            type="text"
-            @blur="handleInput"
-            :value="searchValue"
-            :placeholder="TUITranslateService.t('component.请输入groupID')"
-            enterkeyhint="search"
-            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
-          />
+            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>  
         </header>
-        <main>
-          <ul class="transfer-list" v-if="!joinGroup">
+        <main class="transfer-left-main">
+          <ul class="transfer-list">
             <li
               class="transfer-list-item"
               @click="selectedAll"
@@ -104,66 +84,20 @@
                 <slot name="left" :data="item" />
               </template>
             </li>
-          </ul>
-          <ul class="transfer-list" v-if="joinGroup">
             <li
-              class="transfer-list-item"
-              @click="selectedAll"
-              v-if="optional.length > 1 && !isRadio"
+              class="transfer-list-item more"
+              @click="getMore"
+              v-if="transferTotal > transferList.length"
             >
-              <Icon
-                v-if="transferSelectedList.length === optional.length"
-                :file="selectedIcon"
-                :width="'18px'"
-                :height="'18px'"
-              ></Icon>
-              <i v-else class="icon-unselected"></i>
-              <span class="select-all">{{
-                TUITranslateService.t("component.全选")
-              }}</span>
-            </li>
-            <li
-              class="transfer-list-item"
-              v-for="(item, index) in transferList"
-              :key="item.groupID"
-              @click="selected(item)"
-            >
-              <Icon
-                v-if="transferSelectedList.indexOf(item) > -1"
-                :file="selectedIcon"
-                :class="[item.isDisabled && 'disabled']"
-                :width="'18px'"
-                :height="'18px'"
-              ></Icon>
-              <i
-                v-else
-                :class="[item.isDisabled && 'disabled', 'icon-unselected']"
-              ></i>
-              <template v-if="!isTransferCustomItem">
-                <img
-                  class="avatar"
-                  :src="
-                    item.avatar ||
-                    'https://web.sdk.qcloud.com/im/assets/images/Work.svg'
-                  "
-                  onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-                />
-                <span class="name">{{ item.groupID }}</span>
-                <span v-if="item.isDisabled"
-                  >（{{ TUITranslateService.t("component.已在群中") }}）</span
-                >
-              </template>
-              <template v-else>
-                <slot name="left" :data="item" />
-              </template>
+              {{ TUITranslateService.t("component.查看更多") }}
             </li>
           </ul>
         </main>
       </div>
       <div class="right">
-        <header v-if="isPC">{{ transferTitle }}</header>
-        <ul class="transfer-list" v-if="resultShow && !joinGroup">
-          <p v-if="transferSelectedList.length > 0 && isPC">
+        <header class="transfer-header" v-if="isPC">{{ transferTitle }}</header>
+        <ul class="transfer-list" v-if="resultShow">
+          <p class="transfer-text" v-if="transferSelectedList.length > 0 && isPC">
             {{ TUITranslateService.t("component.已选中")
             }}{{ transferSelectedList.length
             }}{{ TUITranslateService.t("component.人") }}
@@ -173,7 +107,7 @@
             v-for="(item, index) in transferSelectedList"
             :key="index"
           >
-            <aside>
+            <aside class="transfer-list-item-content">
               <template v-if="!isTransferCustomItem">
                 <img
                   class="avatar"
@@ -183,7 +117,7 @@
                   "
                   onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
                 />
-                <span v-if="isPC">{{ item.nick || item.userID }}</span>
+                <span v-if="isPC" class="name">{{ item.nick || item.userID }}</span>
               </template>
               <template v-else>
                 <slot name="right" :data="item" />
@@ -194,38 +128,7 @@
             </span>
           </li>
         </ul>
-        <ul class="transfer-list" v-if="resultShow && joinGroup">
-          <p v-if="transferSelectedList.length > 0 && isPC">
-            {{ TUITranslateService.t("component.已选中")
-            }}{{ transferSelectedList.length }}
-          </p>
-          <li
-            class="transfer-list-item space-between"
-            v-for="(item, index) in transferSelectedList"
-            :key="index"
-          >
-            <aside>
-              <template v-if="!isTransferCustomItem">
-                <img
-                  class="avatar"
-                  :src="
-                    item.avatar ||
-                    'https://web.sdk.qcloud.com/im/assets/images/Work.svg'
-                  "
-                  onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-                />
-                <span v-if="isPC">{{ item.groupID }}</span>
-              </template>
-              <template v-else>
-                <slot name="right" :data="item" />
-              </template>
-            </aside>
-            <span @click="selected(item)" v-if="isPC">
-              <Icon :file="cancelIcon" :width="'18px'" :height="'18px'"></Icon>
-            </span>
-          </li>
-        </ul>
-        <footer>
+        <footer class="transfer-right-footer">
           <button class="btn btn-cancel" @click="cancel">
             {{ TUITranslateService.t("component.取消") }}
           </button>
@@ -291,14 +194,15 @@ const props = defineProps({
     type: Boolean,
     default: true,
   },
-  joinGroup: {
-    type: Boolean,
-    default: false,
+  total: {
+    type: Number,
+    default: 0,
   },
 });
 
 const type = ref("");
 const transferList = ref<Array<ITransferListItem>>([]);
+const transferTotal = ref<Number>(0);
 const transferSelectedList = ref<Array<ITransferListItem>>([]);
 const isTransferSearch = ref(true);
 const isTransferCustomItem = ref(false);
@@ -320,14 +224,15 @@ watchEffect(() => {
   } else {
     transferList.value = props.list as Array<ITransferListItem>;
   }
-  transferSelectedList.value = props.selectedList as Array<ITransferListItem>;
+  transferTotal.value = props.total ? props.total : props.list.length;
+  transferSelectedList.value = (props.selectedList && props.selectedList.length > 0 ? props.selectedList : transferSelectedList.value) as any;
   isTransferSearch.value = props.isSearch;
   isTransferCustomItem.value = props.isCustomItem;
   transferTitle.value = props.title;
   type.value = props.type;
 });
 
-const emit = defineEmits(["search", "submit", "cancel"]);
+const emit = defineEmits(["search", "submit", "cancel", 'getMore']);
 
 // 可选项
 const optional = computed(() =>
@@ -373,6 +278,10 @@ const cancel = () => {
   // 针对小程序做的数据清空
   searchValue.value = "";
 };
+
+const getMore = () => {
+  emit("getMore");
+}
 </script>
 
 <style lang="scss" scoped src="./style/transfer.scss"></style>

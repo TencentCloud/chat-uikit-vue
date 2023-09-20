@@ -32,8 +32,8 @@ export function JSONToObject(str: string) {
 }
 
 export function deepCopy(data: any, hash = new WeakMap()) {
-  if (typeof data !== "object" || data === null) {
-    throw new TypeError("传入参数不是对象");
+  if (typeof data !== "object" || data === null || data === undefined) {
+    return data;
   }
   if (hash.has(data)) {
     return hash.get(data);

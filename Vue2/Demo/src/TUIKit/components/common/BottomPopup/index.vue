@@ -4,11 +4,12 @@
     <div
       :class="[
         'bottom-popup',
+        isUniFrameWork && 'bottom-popup-uni',
         !isPC && 'bottom-popup-h5',
         !isPC && props.modal && 'bottom-popup-modal',
       ]"
       v-if="!isPC"
-      @click="onUniClickModal"
+      @click="onClickModal"
     >
       <div
         v-if="!isPC"
@@ -54,6 +55,7 @@ const props = defineProps({
 const emits = defineEmits(["onOpen", "onClose"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
+const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const dialogRef = ref();
 
 watch(
@@ -116,8 +118,8 @@ const removeClickListener = (component: any) => {
     component?.removeEventListener("mousedown", onClickTarget);
 };
 
-const onUniClickModal = () => {
-  if (isUniFrameWork) {
+const onClickModal = () => {
+  if (isUniFrameWork || isH5.value) {
     emits("onClose", dialogRef);
   }
 };

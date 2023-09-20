@@ -1,62 +1,101 @@
 .TUI-profile {
-  .profile {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  &-basic {
+    width: 200px;
     display: flex;
-    flex-direction: column;
-    &-header {
-      flex: 1;
-      display: flex;
-      .profile-main {
-        padding-top: 0;
-        padding-left: 8px;
-        padding-bottom: 8px;
-        &-item {
-          padding-top: 0;
-          &:first-child {
-            justify-content: space-between;
-          }
-        }
-      }
-    }
+    flex-direction: row;
     &-avatar {
-      .avatar {
-        width: 36px;
-        height: 36px;
-        border-radius: 5px;
-      }
+      width: 30px;
+      height: 30px;
+      border-radius: 5px;
+      margin-right: 10px;
     }
-    &-main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      padding-top: 6px;
-      &-item {
-        display: flex;
-        align-items: center;
-        padding: 6px 0;
-        span {
-          font-size: 14px;
-          padding: 0 4px;
-          flex: 1;
-          width: 0;
-          word-break: keep-all;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-      }
-      &-name {
-        font-size: 14px;
-        flex: 1;
-        width: 0;
-        word-break: keep-all;
-        white-space: nowrap;
+    &-info {
+      font-size: 14px;
+      &-nick {
         overflow: hidden;
         text-overflow: ellipsis;
-        
+        white-space: nowrap;
+      }
+      &-id {
+        display: flex;
+        flex-direction: row;
+        overflow: hidden;
+        &-label {
+          font-weight: 400;
+          color: #999;
+        }
+        &-value {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+  &-setting {
+    &-item {
+      height: 40px;
+      padding-left: 14px;
+      padding-right: 8px;
+      display: flex;
+      line-height: 40px;
+      text-align: center;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      &:hover {
+        background-color: rgba(0, 110, 255, 0.1);
+        .TUI-profile-setting-item-children {
+          display: block;
+        }
       }
       &-label {
         font-size: 14px;
-        word-break: keep-all;
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        justify-content: space-between;
+        flex: 1;
+      }
+      &-children {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        height: fit-content;
+        width: fit-content;
+        min-width: 167px;
+        border-radius: 0 4px 4px 0;
+        bottom: 10px;
+        z-index: 2;
+        background: #fff;
+        box-shadow: 2px 1px 6px 0 rgba(2, 16, 43, 0.15);
+        &-item {
+          height: 40px;
+          padding-left: 14px;
+          padding-right: 8px;
+          display: flex;
+          line-height: 40px;
+          text-align: center;
+          align-items: center;
+          justify-content: space-between;
+          cursor: pointer;
+          &:hover {
+            background-color: rgba(0, 110, 255, 0.1);
+          }
+          &-label {
+            font-size: 14px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            justify-content: space-between;
+            flex: 1;
+            padding-right: 5px;
+          }
+        }
       }
     }
   }

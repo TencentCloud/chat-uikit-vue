@@ -48,14 +48,14 @@
             <Icon
               v-if="index <= currentStarIndex"
               :file="starLightIcon"
-              :width="isPC ? '24px' : '34px'"
-              :height="isPC ? '24px' : '34px'"
+              :width="isPC ? '20px' : '30px'"
+              :height="isPC ? '20px' : '30px'"
             ></Icon>
             <Icon
               v-else
               :file="starIcon"
-              :width="isPC ? '18px' : '28px'"
-              :height="isPC ? '18px' : '28px'"
+              :width="isPC ? '20px' : '30px'"
+              :height="isPC ? '20px' : '30px'"
             ></Icon>
           </li>
         </ul>
@@ -103,8 +103,8 @@ import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import evaluateIcon from "../../../../assets/icon/evaluate.svg";
 import Link from "../../../../utils/documentLink";
 import Icon from "../../../common/Icon.vue";
-import starIcon from "../../../../assets/icon/star.svg";
-import starLightIcon from "../../../../assets/icon/star-light.svg";
+import starIcon from "../../../../assets/icon/star.png";
+import starLightIcon from "../../../../assets/icon/star-light.png";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
 import { isUniFrameWork } from "../../../../utils/is-uni";
 

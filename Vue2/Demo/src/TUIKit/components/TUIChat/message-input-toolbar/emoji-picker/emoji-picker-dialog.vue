@@ -3,7 +3,10 @@
     :class="['emoji-picker', !isPC && 'emoji-picker-h5']"
     ref="emojiPickerDialog"
   >
-    <ul :class="['emoji-picker-list', !isPC && 'emoji-picker-h5-list']">
+    <ul
+      :class="['emoji-picker-list', !isPC && 'emoji-picker-h5-list']"
+      ref="emojiPickerListRef"
+    >
       <li
         class="emoji-picker-list-item"
         v-for="(childrenItem, childrenIndex) in currentEmojiList"
@@ -76,6 +79,7 @@ const currentTabItem = ref<IEmojiListItem>(list?.value[0]);
 const currentEmojiList = ref<Array<string>>(list?.value[0]?.list);
 const currentConversation = ref();
 const emojiPickerDialog = ref();
+const emojiPickerListRef = ref();
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: typeof IConversationModel) => {
@@ -87,6 +91,11 @@ const toggleEmojiTab = (index: number) => {
   currentTabIndex.value = index;
   currentTabItem.value = list?.value[index];
   currentEmojiList.value = list?.value[index]?.list;
+  // 滚动条回滚到顶部
+  // 原生 web & h5
+  if (!isUniFrameWork) {
+    emojiPickerListRef?.value && (emojiPickerListRef.value.scrollTop = 0);
+  }
 };
 
 const select = (item: any, index: number) => {

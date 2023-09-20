@@ -35,3 +35,19 @@ export const CHAT_SCROLL_TYPE = {
   BOTTOM: "bottom",
   TARGET: "target",
 };
+
+export const CONTACT_INFO_LABEL_POSITION = {
+  LEFT: "left",
+  TOP: "top",
+};
+
+export const CONTACT_INFO_MORE_EDIT_TYPE = {
+  INPUT: "input",
+  TEXTAREA: "textarea",
+  SWITCH: "switch",
+};
+
+export const CONTACT_INFO_BUTTON_TYPE = {
+  SUBMIT: "submit",
+  CANCEL: "cancel",
+};

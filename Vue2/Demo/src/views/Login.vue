@@ -85,7 +85,7 @@
           </el-form-item>
           <el-form-item class="login-btn" v-if="isLogin">
             <button class="btn" @click.prevent="exitLogin">
-              {{ TUITranslateService.t("Login.切换其他账号") }}
+              {{ $t("Login.切换其他账号") }}
             </button>
           </el-form-item>
           <footer class="login-form-footer">

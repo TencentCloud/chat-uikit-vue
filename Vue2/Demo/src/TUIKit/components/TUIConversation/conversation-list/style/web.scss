@@ -1,23 +1,16 @@
-.TUI-conversation {
+.tui-conversation-list {
   font-family: PingFangSC-Regular;
   font-weight: 400;
   letter-spacing: 0;
+  flex: 1;
+  overflow: auto;
 }
 .TUI-conversation {
-  &-list {
-    list-style: none;
-    height: 100%;
-    width: 100%;
-    &-web {
-      .TUI-conversation-content {
-        .TUI-conversation-item:hover {
-          background: rgba(0, 110, 255, 0.1);
-        }
-      }
-    }
-  }
   &-content {
     position: relative;
+    .TUI-conversation-item:hover {
+      background: rgba(0, 110, 255, 0.1);
+    }
     .dialog {
       position: absolute;
       z-index: 5;

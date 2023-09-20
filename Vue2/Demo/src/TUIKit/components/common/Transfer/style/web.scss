@@ -10,7 +10,7 @@
     padding: 0 20px;
     flex: 1;
 
-    ul {
+    .transfer-list {
       padding-right: 20px;
     }
   }
@@ -21,11 +21,11 @@
     display: flex;
     flex-direction: column;
 
-    header {
+    .transfer-header {
       padding: 0 20px;
     }
 
-    main {
+    .transfer-left-main {
       flex: 1;
       overflow-y: auto;
       padding: 0 13px;
@@ -36,7 +36,7 @@
     display: flex;
     flex-direction: column;
 
-    footer {
+    .transfer-right-footer {
       align-self: flex-end;
 
       .btn-cancel {
@@ -49,7 +49,7 @@
     }
   }
 
-  header {
+  .transfer-header {
     font-size: 14px;
     line-height: 14px;
     padding-bottom: 20px;
@@ -69,7 +69,7 @@
     display: flex;
     flex-direction: column;
 
-    p {
+    .transfer-text {
       font-size: 10px;
       line-height: 14px;
     }
@@ -80,7 +80,8 @@
       align-items: center;
       font-size: 14px;
       text-align: left;
-      aside {
+      &-content {
+        flex: 1;
         display: flex;
         align-items: center;
       }
@@ -91,6 +92,7 @@
       }
 
       .name {
+        width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -100,7 +102,6 @@
   }
 }
 
-img,
 .avatar {
   width: 36px;
   height: 36px;
@@ -131,5 +132,13 @@ img,
 
 .select-all {
   padding-left: 8px;
+  font-size: 14px;
+}
+
+.more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
   font-size: 14px;
 }
