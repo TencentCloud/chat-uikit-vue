@@ -28,7 +28,7 @@
     <template v-else-if="isCustom.businessID === CHAT_MSG_CUSTOM_TYPE.EVALUATE">
       <div class="evaluate">
         <h1>{{ TUITranslateService.t("message.custom.对本次服务评价") }}</h1>
-        <ul>
+        <ul class="evaluate-list">
           <li
             class="evaluate-list-item"
             v-for="(item, index) in ~~(isCustom.score || 0)"
@@ -70,7 +70,7 @@ import { isUrl, JSONToObject } from "../../utils/utils";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
-import star from "../../../../assets/icon/star-light.svg";
+import star from "../../../../assets/icon/star-light.png";
 import { ICustomMessagePayload } from "../../../../interface";
 const props = defineProps({
   content: {
@@ -123,6 +123,13 @@ a {
     ul {
       display: flex;
       padding-top: 10px;
+    }
+    &-list {
+      display: flex;
+      flex-direction: row;
+      &-item {
+        padding: 0px 2px;
+      }
     }
   }
   .order {

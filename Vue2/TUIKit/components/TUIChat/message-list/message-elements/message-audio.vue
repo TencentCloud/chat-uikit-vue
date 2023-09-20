@@ -10,7 +10,7 @@
     :class="[message.flow === 'out' && 'icon-reserve']"
     ></Icon>
     <label>{{ data.second }} "</label>
-    <audio ref="audio" :src="data.url"></audio>
+    <audio ref="audioRef" :src="data.url"></audio>
   </div>
 </template>
 
@@ -32,7 +32,7 @@ const props = defineProps({
 const data = ref();
 const message = ref();
 const show = ref();
-const audio = ref(null);
+const audioRef = ref(null);
 
 watchEffect(() => {
   message.value = props.messageItem;
@@ -47,7 +47,7 @@ const play = () => {
       audio.load();
     }
   }
-  const audioPlayer: any = audio.value;
+  const audioPlayer: any = audioRef.value;
   if (audioPlayer.paused) {
     audioPlayer.play();
     show.value = true;

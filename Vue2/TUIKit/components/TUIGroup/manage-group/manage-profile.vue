@@ -32,7 +32,7 @@
     </div>
   </div>
   <div v-else class="edit-h5">
-    <main>
+    <main class="main">
       <header class="edit-h5-header">
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群成员`) }}</h1>
@@ -234,8 +234,7 @@ const close = (tabName: string) => {
   display: flex;
   align-items: flex-end;
   z-index: 1;
-
-  main {
+  .main {
     background: #ffffff;
     flex: 1;
     padding: 18px;

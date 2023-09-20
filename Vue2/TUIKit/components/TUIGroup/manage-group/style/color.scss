@@ -5,75 +5,19 @@
   &-header {
     border-bottom: 1px solid #E8E8E9;
 
-    h1 {
+    .manage-header-content {
       font-family: PingFangSC-Medium;
       font-weight: 500;
       color: #000000;
     }
-
-    &-left {
-      main {
-        p {
-          font-weight: 400;
-          color: #999999;
-        }
-      }
-    }
   }
 
   .main {
-    .userInfo {
-      ol {
-        dl {
-          .userInfo-mask {
-            background: #FFFFFF;
-            box-shadow: 0 11px 20px 0 rgba(0, 0, 0, .3);
-          }
-        }
-      }
-    }
-
     .footer {
-      li {
+      .list-item {
         font-weight: 400;
         color: #dc2113;
         border-bottom: 1px solid #E8E8E9;
-      }
-    }
-  }
-
-  .admin {
-    &-content {
-      aside {
-        font-weight: 400;
-        color: #000000;
-        letter-spacing: 0;
-
-        p {
-          opacity: 0.6;
-        }
-      }
-    }
-
-    &-list {
-      label {
-        font-weight: 400;
-        color: #000000;
-      }
-    }
-
-    .last {
-      &::before {
-        background: #E8E8E9;
-      }
-    }
-  }
-
-  ol {
-    dl {
-      .userInfo-mask {
-        background: #ffffff;
-        box-shadow: 0 11px 20px 0 rgba(0, 0, 0, .3);
       }
     }
   }
@@ -118,5 +62,3 @@
     box-shadow: 0 2px 4px 0 #D1D1D1;
   }
 }
-
-.manage-h5 {}

@@ -8,7 +8,8 @@ const components = {
   "请输入groupID": "请输入groupID",
   "确定": "确定",
   "全选": "全选",
-  "已在群聊中": "已在群聊中"
+  "已在群聊中": "已在群聊中",
+  "查看更多": "查看更多"
 }
 
 export default components;

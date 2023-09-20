@@ -1,217 +1,208 @@
-、
 <template>
-  <div class="manage-group">
-    <div
-      class="manage"
-      :class="[
-        !isPC ? 'manage-h5' : '',
-        isUniFrameWork ? 'manage-h5-uniapp' : '',
-      ]"
+  <div class="manage" ref="manageRef">
+    <header class="manage-header" v-if="!isUniFrameWork || currentTab ==='admin'">
+      <div @click="back">
+        <Icon :file="backSVG"></Icon>
+      </div>
+      <div class="manage-header-content">
+        {{ TUITranslateService.t(`TUIGroup.${TabName}`) }}
+      </div>
+    </header>
+    <main
+      class="main"
+      v-if="!currentTab || (isUniFrameWork && currentTab != 'admin')"
     >
-      <header class="manage-header" v-if="!isUniFrameWork">
-        <div @click="back">
-          <Icon :file="backSVG"></Icon>
-        </div>
-        <div class="manage-header-content">
-          {{ TUITranslateService.t(`TUIGroup.${TabName}`) }}
-        </div>
-      </header>
-      <main
-        class="main"
-        v-if="!currentTab || (isUniFrameWork && currentTab != 'admin')"
-      >
-        <ManageName
-          class="space-top"
-          :isAuthor="isAuthor"
-          :data="currentGroup"
-          @update="updateProfile"
-        />
-        <div class="userInfo space-top">
-          <header class="userInfo-header" @click="setCurrentTab('member')">
-            <label class="label">{{
-              TUITranslateService.t(`TUIGroup.群成员`)
-            }}</label>
-            <p class="p">
-              <span class="span"
-                >{{ currentGroup.memberCount || groupMemberList.length
-                }}{{ TUITranslateService.t(`TUIGroup.人`) }}</span
-              >
-              <Icon :file="rightIcon"></Icon>
-            </p>
-          </header>
-          <ol class="ol">
-            <dl
-              class="dl"
-              v-for="(item, index) in groupMemberList.slice(0, showUserNum)"
-              :key="index"
-            >
-              <dt class="dt" @click="handleMemberProfileShow(item)">
-                <img
-                  class="avatar"
-                  :src="
-                    item.avatar ||
-                    'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-                  "
-                  onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-                />
-              </dt>
-              <dd class="dd">{{ item.nick || item.userID }}</dd>
-            </dl>
-            <dl class="dl" v-if="isShowAddMember">
-              <dt class="avatar" @click="toggleMask('add')">+</dt>
-            </dl>
-            <dl v-if="currentSelfRole === 'Owner'">
-              <dt class="avatar" @click="toggleMask('remove')">-</dt>
-            </dl>
-          </ol>
-        </div>
-        <ul class="content space-top" @click="editLableName = ''">
-          <li class="li" @click="setCurrentTab('notification')">
-            <aside class="aside">
-              <label class="label">{{
-                TUITranslateService.t(`TUIGroup.群公告`)
-              }}</label>
-              <article class="article">{{ currentGroup.notification }}</article>
-            </aside>
-            <Icon :file="rightIcon" class="end"></Icon>
-          </li>
-          <li
-            class="li"
-            v-if="isAdmin && isSetMuteTime"
-            @click="setCurrentTab('admin')"
-          >
-            <label class="label">{{
-              TUITranslateService.t(`TUIGroup.群管理`)
-            }}</label>
-            <Icon :file="rightIcon"></Icon>
-          </li>
-          <li class="li">
-            <label class="label">{{
-              TUITranslateService.t(`TUIGroup.群ID`)
-            }}</label>
-            <div class="groupID">
-              <span class="span">{{ currentGroupID }}</span>
-            </div>
-          </li>
-          <li class="li">
-            <label class="label">{{
-              TUITranslateService.t(`TUIGroup.群头像`)
-            }}</label>
-            <img
-              class="avatar"
-              :src="
-                currentGroup.avatar ||
-                'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
-              "
-              onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
-            />
-          </li>
-          <li class="li">
-            <label class="label">{{
-              TUITranslateService.t(`TUIGroup.群类型`)
-            }}</label>
-            <span class="span">{{
-              TUITranslateService.t(`TUIGroup.${typeName[currentGroup.type]}`)
-            }}</span>
-          </li>
-          <li class="li">
-            <label class="label">{{
-              TUITranslateService.t(`TUIGroup.加群方式`)
-            }}</label>
-            <span class="span">{{
-              TUITranslateService.t(
-                `TUIGroup.${typeName[currentGroup.joinOption]}`
-              )
-            }}</span>
-          </li>
-        </ul>
-        <ul class="footer space-top">
-          <li
-            class="li"
-            v-if="currentSelfRole === 'Owner' && groupMemberList.length > 1"
-            @click.stop="toggleMask('changeOwner')"
-          >
-            {{ TUITranslateService.t(`TUIGroup.转让群组`) }}
-          </li>
-          <li
-            class="li"
-            v-if="canIDissmissGroup"
-            @click.stop="dismissGroup(currentGroup)"
-          >
-            {{ TUITranslateService.t(`TUIGroup.解散群聊`) }}
-          </li>
-          <li class="li" v-else @click.stop="quitGroup(currentGroup)">
-            {{ TUITranslateService.t(`TUIGroup.退出群组`) }}
-          </li>
-        </ul>
-      </main>
-      <ManageMember
-        v-if="currentTab === 'member'"
-        :self="currentGroup.selfInfo"
-        :list="groupMemberList"
-        :total="~~currentGroup.memberCount"
-        :isShowDel="currentSelfRole === 'Owner' && canDelMember"
-        @more="getMember('more')"
-        @del="submit"
-        @handleMemberProfileShow="handleMemberProfileShow"
-        @close="setCurrentTab('')"
-      />
-      <ManageProfile
-        v-if="currentTab === 'profile'"
-        :userInfo="currentMember"
-        @close="setCurrentTab('')"
-      />
-      <ManageNotification
-        v-if="currentTab === 'notification'"
+      <ManageName
+        class="space-top"
         :isAuthor="isAuthor"
         :data="currentGroup"
         @update="updateProfile"
-        @close="setCurrentTab('')"
       />
-      <ManageAdmin
-        v-if="currentTab === 'admin'"
-        v-show="isAdmin"
-        :isSetMuteTime="isSetMuteTime"
-        :member="member"
-        :currentGroup="currentGroup"
-        @addAdmin="toggleMask('addAdmin')"
-        @removeAdmin="toggleMask('removeAdmin')"
-        @setAllMuteTime="setAllMuteTime"
-        @addMute="toggleMask('addMute')"
-        @removeMute="toggleMask('removeMute')"
-        @close="setCurrentTab('')"
-      />
-      <MaskLayer :show="mask" @update:show="(e) => (mask = e)">
-        <Transfer
-          :title="TUITranslateService.t(`TUIGroup.${transferTitle}`)"
-          :list="transferList"
-          :isSearch="isSearch"
-          :isRadio="isRadio"
-          :selectedList="selectedList"
-          @submit="submit"
-          @cancel="cancel"
-          @search="handleSearchMember"
-          :isH5="!isPC"
-        />
-      </MaskLayer>
-      <Dialog
-        class="deleted-dialog"
-        :title="TUITranslateService.t(`TUIGroup.删除成员`)"
-        :show="delDialogShow"
+      <div class="userInfo space-top">
+        <header class="userInfo-header" @click="setCurrentTab('member')">
+          <label class="userInfo-header-left">
+            {{ TUITranslateService.t(`TUIGroup.群成员`)}}
+          </label>
+          <div class="userInfo-header-right">
+            <span class="span">
+              {{ currentGroup.memberCount || groupMemberList.length}}
+              {{ TUITranslateService.t(`TUIGroup.人`) }}
+            </span>
+            <Icon :file="rightIcon"></Icon>
+          </div>
+        </header>
+        <ol class="userInfo-list">
+          <dl
+            class="userInfo-list-item"
+            v-for="(item, index) in groupMemberList.slice(0, showUserNum)"
+            :key="index"
+          >
+            <dt class="userInfo-list-item-main" @click="handleMemberProfileShow(item)">
+              <img
+                class="avatar"
+                :src="
+                  item.avatar ||
+                  'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                "
+                onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+              />
+            </dt>
+            <dd class="userInfo-list-item-info">{{ item.nick || item.userID }}</dd>
+          </dl>
+          <dl class="userInfo-list-item" v-if="isShowAddMember">
+            <dt class="avatar" @click="toggleMask('add')">+</dt>
+          </dl>
+          <dl class="userInfo-list-item" v-if="currentSelfRole === 'Owner'">
+            <dt class="avatar" @click="toggleMask('remove')">-</dt>
+          </dl>
+        </ol>
+      </div>
+      <ul class="content list space-top" @click="editLableName = ''">
+        <li class="list-item" @click="setCurrentTab('notification')">
+          <aside class="aside">
+            <label class="label">{{
+              TUITranslateService.t(`TUIGroup.群公告`)
+            }}</label>
+            <article class="article">{{ currentGroup.notification }}</article>
+          </aside>
+          <Icon :file="rightIcon" class="end"></Icon>
+        </li>
+        <li
+          class="list-item"
+          v-if="isAdmin && isSetMuteTime"
+          @click="setCurrentTab('admin')"
+        >
+          <label class="label">{{
+            TUITranslateService.t(`TUIGroup.群管理`)
+          }}</label>
+          <Icon :file="rightIcon"></Icon>
+        </li>
+        <li class="list-item">
+          <label class="label">{{
+            TUITranslateService.t(`TUIGroup.群ID`)
+          }}</label>
+          <div class="groupID">
+            <span class="span">{{ currentGroupID }}</span>
+          </div>
+        </li>
+        <li class="list-item">
+          <label class="label">{{
+            TUITranslateService.t(`TUIGroup.群头像`)
+          }}</label>
+          <img
+            class="avatar"
+            :src="
+              currentGroup.avatar ||
+              'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
+            "
+            onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+          />
+        </li>
+        <li class="list-item">
+          <label class="label">{{
+            TUITranslateService.t(`TUIGroup.群类型`)
+          }}</label>
+          <span class="span">{{
+            TUITranslateService.t(`TUIGroup.${typeName[currentGroup.type]}`)
+          }}</span>
+        </li>
+        <li class="list-item">
+          <label class="label">{{
+            TUITranslateService.t(`TUIGroup.加群方式`)
+          }}</label>
+          <span class="span">{{
+            TUITranslateService.t(
+              `TUIGroup.${typeName[currentGroup.joinOption]}`
+            )
+          }}</span>
+        </li>
+      </ul>
+      <ul class="footer list space-top">
+        <li
+          class="list-item"
+          v-if="currentSelfRole === 'Owner' && groupMemberList.length > 1"
+          @click.stop="toggleMask('changeOwner')"
+        >
+          {{ TUITranslateService.t(`TUIGroup.转让群组`) }}
+        </li>
+        <li
+          class="list-item"
+          v-if="canIDissmissGroup"
+          @click.stop="dismissGroup(currentGroup)"
+        >
+          {{ TUITranslateService.t(`TUIGroup.解散群聊`) }}
+        </li>
+        <li class="list-item" v-else @click.stop="quitGroup(currentGroup)">
+          {{ TUITranslateService.t(`TUIGroup.退出群组`) }}
+        </li>
+      </ul>
+    </main>
+    <ManageMember
+      v-if="currentTab === 'member'"
+      :self="currentGroup.selfInfo"
+      :list="groupMemberList"
+      :total="~~currentGroup.memberCount"
+      :isShowDel="currentSelfRole === 'Owner' && canDelMember"
+      @more="getMember('more')"
+      @del="submit"
+      @handleMemberProfileShow="handleMemberProfileShow"
+      @close="setCurrentTab('')"
+    />
+    <ManageProfile
+      v-if="currentTab === 'profile'"
+      :userInfo="currentMember"
+      @close="setCurrentTab('')"
+    />
+    <ManageNotification
+      v-if="currentTab === 'notification'"
+      :isAuthor="isAuthor"
+      :data="currentGroup"
+      @update="updateProfile"
+      @close="setCurrentTab('')"
+    />
+    <ManageAdmin
+      v-if="currentTab === 'admin'"
+      v-show="isAdmin"
+      :isSetMuteTime="isSetMuteTime"
+      :member="member"
+      :currentGroup="currentGroup"
+      @addAdmin="toggleMask('addAdmin')"
+      @removeAdmin="toggleMask('removeAdmin')"
+      @setAllMuteTime="setAllMuteTime"
+      @addMute="toggleMask('addMute')"
+      @removeMute="toggleMask('removeMute')"
+      @close="setCurrentTab('')"
+    />
+    <MaskLayer :show="mask" @update:show="(e) => (mask = e)">
+      <Transfer
+        :title="TUITranslateService.t(`TUIGroup.${transferTitle}`)"
+        :list="transferList"
+        :isSearch="isSearch"
+        :isRadio="isRadio"
+        :selectedList="selectedList"
+        @submit="submit"
+        @cancel="cancel"
+        @search="handleSearchMember"
         :isH5="!isPC"
-        :center="true"
-        :isHeaderShow="isPC"
-        @submit="handleManage(deletedUserList, 'remove')"
-        @update:show="(e) => (delDialogShow = e)"
-      >
-        <p v-if="deletedUserList.length === 1" class="delDialog-title">
-          {{ TUITranslateService.t(`TUIGroup.确定从群聊中删除该成员？`) }}
-        </p>
-        <p v-if="deletedUserList.length > 1" class="delDialog-title">
-          {{ TUITranslateService.t(`TUIGroup.确定从群聊中删除所选成员？`) }}
-        </p>
-      </Dialog>
-    </div>
+      />
+    </MaskLayer>
+    <Dialog
+      class="deleted-dialog"
+      :title="TUITranslateService.t(`TUIGroup.删除成员`)"
+      :show="delDialogShow"
+      :isH5="!isPC"
+      :center="true"
+      :isHeaderShow="isPC"
+      @submit="handleManage(deletedUserList, 'remove')"
+      @update:show="(e) => (delDialogShow = e)"
+    >
+      <p v-if="deletedUserList.length === 1" class="delDialog-title">
+        {{ TUITranslateService.t(`TUIGroup.确定从群聊中删除该成员？`) }}
+      </p>
+      <p v-if="deletedUserList.length > 1" class="delDialog-title">
+        {{ TUITranslateService.t(`TUIGroup.确定从群聊中删除所选成员？`) }}
+      </p>
+    </Dialog>
   </div>
 </template>
 <script lang="ts" setup>
@@ -225,8 +216,16 @@ import TUIChatEngine, {
   IGroupModel,
   TUIConversationService,
   IConversationModel,
+  IGroupMember,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, computed, watchEffect } from "../../../adapter-vue";
+import {
+  ref,
+  computed,
+  watchEffect,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+} from "../../../adapter-vue";
 import MaskLayer from "../../common/MaskLayer/index.vue";
 import Dialog from "../../common/Dialog/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
@@ -239,8 +238,10 @@ import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
 import rightIcon from "../../../assets/icon/right-icon.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { IGroupMember } from "../../../interface";
 import { isUniFrameWork } from "../../../utils/is-uni";
+import Server from "../server";
+const TUIGroupServer = Server.getInstance();
+const TUIConstants = TUIGroupServer.constants;
 
 const props = defineProps({
   groupID: {
@@ -252,18 +253,18 @@ const props = defineProps({
     default: "",
   },
 });
-const emit = defineEmits(["showGroupDetails", "switchConversationTab"]);
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
+const manageRef = ref<any>(undefined);
 const currentTab = ref("");
 const editLableName = ref("");
 const transferType = ref("");
 const mask = ref(false);
 const currentGroupID = ref("");
 const userInfo = ref({
-  list: [] as Array<IGroupMember>,
+  list: [] as Array<typeof IGroupMember>,
 });
-const currentMember = ref<IGroupMember>({});
+const currentMember = ref<typeof IGroupMember>({});
 const typeName = ref({
   [TUIChatEngine.TYPES.GRP_WORK]: "好友工作群",
   [TUIChatEngine.TYPES.GRP_PUBLIC]: "陌生人社交群",
@@ -274,21 +275,59 @@ const typeName = ref({
   [TUIChatEngine.TYPES.JOIN_OPTIONS_DISABLE_APPLY]: "禁止加群",
 });
 const member = ref({
-  admin: [] as Array<IGroupMember>,
-  member: [] as Array<IGroupMember>,
-  muteMember: [] as Array<IGroupMember>,
+  admin: [] as Array<typeof IGroupMember>,
+  member: [] as Array<typeof IGroupMember>,
+  muteMember: [] as Array<typeof IGroupMember>,
 });
-const transferList = ref<Array<IGroupMember>>([]);
+const transferList = ref<Array<typeof IGroupMember>>([]);
 const transferTitle = ref("");
 const isSearch = ref(false);
 const isRadio = ref(false);
 const selectedList = ref([]);
 const delDialogShow = ref(false);
-const groupMemberList = ref<Array<IGroupMember>>([]);
+const groupMemberList = ref<Array<typeof IGroupMember>>([]);
 const deletedUserList = ref([]);
 const currentGroup = ref<typeof IGroupModel>();
 const currentSelfRole = ref("");
 const groupID = ref("");
+const isClickSelf = ref(false);
+
+const handleClick = (event: any) => {
+  const e = event || window.event;
+  const target = e.target || e.srcElement;
+  if(!(target == manageRef.value) && !manageRef.value.contains(target) && !isClickSelf.value) {    // 目标元素外
+    handleCompleteManage();
+  }
+  isClickSelf.value = false;
+}
+
+const handleTargetClick = () => {
+  isClickSelf.value  = true;
+}
+
+const onClickOutside = () : void => {
+  if (document && !isUniFrameWork) {
+    document.addEventListener('click', handleClick);
+    manageRef.value.addEventListener("click", handleTargetClick);
+  }
+}
+
+const offClickOutside = () : void => {
+  if (document && !isUniFrameWork) {
+    document.removeEventListener('click', handleClick);
+    manageRef.value.removeEventListener("click", handleTargetClick);
+  }
+}
+
+onMounted(() => {
+  nextTick(() => {
+    manageRef.value && onClickOutside();
+  });
+})
+
+onBeforeUnmount(() => {
+  offClickOutside();
+})
 
 TUIStore.watch(StoreName.GRP, {
   currentGroup: (group: typeof IGroupModel) => {
@@ -297,7 +336,7 @@ TUIStore.watch(StoreName.GRP, {
       currentSelfRole.value = currentGroup.value?.selfInfo?.role;
     }
   },
-  currentGroupMemberList: (memberList: Array<IGroupMember>) => {
+  currentGroupMemberList: (memberList: Array<typeof IGroupMember>) => {
     groupMemberList.value = memberList;
     member.value = {
       admin: [],
@@ -331,7 +370,8 @@ TUIStore.watch(StoreName.CONV, {
 });
 
 watchEffect(() => {
-  currentGroupID.value = props.groupID || groupID.value;
+  const params = TUIGroupServer.getOnCallParams(TUIConstants.TUIGroup.SERVICE.METHOD.OPEN_GROUP_MANAGEMENT);
+  currentGroupID.value = params.groupID || groupID.value
   currentTab.value = props.groupCurrentTab;
 });
 
@@ -572,9 +612,8 @@ const clearGroupInfo = () => {
     TUIGlobal?.global?.switchTab({
       url: "/TUIKit/components/TUIConversation/index",
     });
-    // emit('switchConversationTab');
   } else {
-    emit("showGroupDetails");
+    handleCompleteManage();
     // 回到chat default 页
     TUIConversationService.switchConversation();
   }
@@ -753,8 +792,14 @@ const back = () => {
   if (currentTab.value) {
     setCurrentTab("");
   } else {
-    emit("showGroupDetails");
+    handleCompleteManage();
   }
 };
+
+const handleCompleteManage = () => {
+  TUIStore.update(StoreName.GRP, "isShowManageComponent", false);
+  const callback = TUIGroupServer.getOnCallCallback(TUIConstants.TUIGroup.SERVICE.METHOD.OPEN_GROUP_MANAGEMENT);
+  callback && callback();
+}
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

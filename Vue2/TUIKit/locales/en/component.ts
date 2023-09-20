@@ -8,7 +8,8 @@ const component = {
   "请输入groupID": "Enter a groupID",
   "确定": "submit",
   "全选": "All",
-  "已在群聊中": "exists"
+  "已在群聊中": "exists",
+  "查看更多": "More"
 }
 
 export default component;

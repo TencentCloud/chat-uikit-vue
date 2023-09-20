@@ -18,7 +18,7 @@
         class="name"
         v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
       >
-        {{ message.nameCard || message.nick || message.from }}
+        {{ messageShowName }}
       </label>
       <div
         :class="[
@@ -70,12 +70,18 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
+  content: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 const message = ref();
+const messageShowName = ref("");
 const TYPES = ref(TUIChatEngine.TYPES);
 watchEffect(() => {
   message.value = props.messageItem;
+  messageShowName.value = props?.content?.showName;
 });
 
 const resendMessage = () => {

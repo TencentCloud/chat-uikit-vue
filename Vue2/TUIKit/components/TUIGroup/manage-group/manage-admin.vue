@@ -1,100 +1,98 @@
 <template>
-  <div>
-    <div class="admin-main">
-      <div class="admin-manage">
-        <div class="admin-manage-header">
-          {{ TUITranslateService.t(`TUIGroup.群管理员`) }}
-        </div>
-        <ul class="admin-manage-list">
-          <li
-            class="admin-manage-list-item"
-            v-for="(item, index) in memberAdmin.admin"
-            :key="index"
-          >
-            <div class="item-main">
-              <img
-                class="item-main-avatar"
-                :src="
-                  item.avatar ||
-                  'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-                "
-                onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-              />
-            </div>
-            <div class="item-name">{{ item.nick || item.userID }}</div>
-          </li>
-          <li class="admin-manage-list-item">
-            <div class="item-main" @click="addAdmin">
-              <Icon :file="plusSVG" width="16px" height="16px"></Icon>
-            </div>
-          </li>
-          <li class="admin-manage-list-item">
-            <div
-              class="item-main"
-              v-if="memberAdmin.admin.length > 0"
-              @click="removeAdmin"
-            >
-              <Icon :file="minusSVG" width="16px" height="16px"></Icon>
-            </div>
-          </li>
-        </ul>
+  <div class="admin-main">
+    <div class="admin-manage">
+      <div class="admin-manage-header">
+        {{ TUITranslateService.t(`TUIGroup.群管理员`) }}
       </div>
-      <div class="admin-mute-all" v-if="isAdminSetMuteTime">
-        <div>
-          <div class="admin-mute-all-title">
-            {{ TUITranslateService.t(`TUIGroup.全员禁言`) }}
+      <ul class="admin-manage-list">
+        <li
+          class="admin-manage-list-item"
+          v-for="(item, index) in memberAdmin.admin"
+          :key="index"
+        >
+          <div class="item-main">
+            <img
+              class="item-main-avatar"
+              :src="
+                item.avatar ||
+                'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+              "
+              onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+            />
           </div>
-          <div class="admin-mute-all-content">
-            {{
-              TUITranslateService.t(
-                `TUIGroup.全员禁言开启后，只允许群主和管理员发言。`
-              )
-            }}
+          <div class="item-name">{{ item.nick || item.userID }}</div>
+        </li>
+        <li class="admin-manage-list-item">
+          <div class="item-main" @click="addAdmin">
+            <Icon :file="plusSVG" width="16px" height="16px"></Icon>
           </div>
-        </div>
-        <Slider
-          :open="currentGroupAdmin.muteAllMembers"
-          @change="setAllMuteTime"
-        />
-      </div>
-      <div class="admin-mute" v-if="isAdminSetMuteTime">
-        <div class="admin-mute-header">
-          {{ TUITranslateService.t(`TUIGroup.单独禁言人员`) }}
-        </div>
-        <ul class="admin-mute-list">
-          <li
-            class="admin-mute-list-item"
-            v-for="(item, index) in memberAdmin.muteMember"
-            :key="index"
+        </li>
+        <li class="admin-manage-list-item">
+          <div
+            class="item-main"
+            v-if="memberAdmin.admin.length > 0"
+            @click="removeAdmin"
           >
-            <div class="item-main">
-              <img
-                class="item-main-avatar"
-                :src="
-                  item.avatar ||
-                  'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-                "
-                onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-              />
-            </div>
-            <div class="item-name">{{ item.nick || item.userID }}</div>
-          </li>
-          <li class="admin-mute-list-item">
-            <div class="item-main" @click="addMute">
-              <Icon :file="plusSVG" width="16px" height="16px"></Icon>
-            </div>
-          </li>
-          <li class="admin-mute-list-item">
-            <div
-              class="item-main"
-              v-if="memberAdmin.admin.length > 0"
-              @click="removeMute"
-            >
-              <Icon :file="minusSVG" width="16px" height="16px"></Icon>
-            </div>
-          </li>
-        </ul>
+            <Icon :file="minusSVG" width="16px" height="16px"></Icon>
+          </div>
+        </li>
+      </ul>
+    </div>
+    <div class="admin-mute-all" v-if="isAdminSetMuteTime">
+      <div>
+        <div class="admin-mute-all-title">
+          {{ TUITranslateService.t(`TUIGroup.全员禁言`) }}
+        </div>
+        <div class="admin-mute-all-content">
+          {{
+            TUITranslateService.t(
+              `TUIGroup.全员禁言开启后，只允许群主和管理员发言。`
+            )
+          }}
+        </div>
       </div>
+      <Slider
+        :open="currentGroupAdmin.muteAllMembers"
+        @change="setAllMuteTime"
+      />
+    </div>
+    <div class="admin-mute" v-if="isAdminSetMuteTime">
+      <div class="admin-mute-header">
+        {{ TUITranslateService.t(`TUIGroup.单独禁言人员`) }}
+      </div>
+      <ul class="admin-mute-list">
+        <li
+          class="admin-mute-list-item"
+          v-for="(item, index) in memberAdmin.muteMember"
+          :key="index"
+        >
+          <div class="item-main">
+            <img
+              class="item-main-avatar"
+              :src="
+                item.avatar ||
+                'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+              "
+              onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+            />
+          </div>
+          <div class="item-name">{{ item.nick || item.userID }}</div>
+        </li>
+        <li class="admin-mute-list-item">
+          <div class="item-main" @click="addMute">
+            <Icon :file="plusSVG" width="16px" height="16px"></Icon>
+          </div>
+        </li>
+        <li class="admin-mute-list-item">
+          <div
+            class="item-main"
+            v-if="memberAdmin.muteMember.length > 0"
+            @click="removeMute"
+          >
+            <Icon :file="minusSVG" width="16px" height="16px"></Icon>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>

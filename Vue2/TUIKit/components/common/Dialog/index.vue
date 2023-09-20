@@ -3,15 +3,14 @@
     class="dialog"
     :class="[!isPC ? 'dialog-h5' : '', center ? 'center' : '']"
     v-if="showDialog"
-    @click.self="!isWeChat && toggleView"
-  >
+    @click.stop.prevent="toggleView(clickType.OUTSIDE)">
     <main
       class="dialog-main"
-      :class="[!backgroundDailog ? 'dialog-main-back' : '']"
-    >
-      <header v-if="isHeaderShowDialog">
-        <h1>{{ showTitle }}</h1>
-        <i class="icon icon-close" @click="toggleView"></i>
+      :class="[!backgroundDialog ? 'dialog-main-back' : '']"
+      @click.stop.prevent="toggleView(clickType.INSIDE)">
+      <header class="dialog-main-header" v-if="isHeaderShowDialog">
+        <h1 class="dialog-main-title">{{ showTitle }}</h1>
+        <i class="icon icon-close" @click="close"></i>
       </header>
       <div
         class="dialog-main-content"
@@ -19,13 +18,9 @@
       >
         <slot />
       </div>
-      <footer v-if="isFooterShowDialog">
-        <button class="btn btn-cancel" @click="toggleView">
-          {{ TUITranslateService.t("component.取消") }}
-        </button>
-        <button class="btn btn-default" @click="submit">
-          {{ TUITranslateService.t("component.确定") }}
-        </button>
+      <footer class="dialog-main-footer" v-if="isFooterShowDialog">
+        <button class="btn btn-cancel" @click="close">{{ TUITranslateService.t('component.取消') }}</button>
+        <button class="btn btn-default" @click="submit">{{ TUITranslateService.t('component.确定') }}</button>
       </footer>
     </main>
   </div>
@@ -38,6 +33,10 @@ import {
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
 import { isUniFrameWork } from "../../../utils/is-uni";
+const clickType = {
+  OUTSIDE: 'outside',
+  INSIDE: 'inside'
+}
 const props = defineProps({
   show: {
     type: Boolean,
@@ -68,10 +67,9 @@ const props = defineProps({
 const showDialog = ref(false);
 const isHeaderShowDialog = ref(true);
 const isFooterShowDialog = ref(true);
-const backgroundDailog = ref(true);
+const backgroundDialog = ref(true);
 const showTitle = ref("");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
+const isPC = ref(TUIGlobal.getPlatform() === "pc")
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 
 watchEffect(() => {
@@ -79,19 +77,25 @@ watchEffect(() => {
   showTitle.value = props.title;
   isHeaderShowDialog.value = props.isHeaderShow;
   isFooterShowDialog.value = props.isFooterShow;
-  backgroundDailog.value = props.background;
-});
+  backgroundDialog.value = props.background;
+})
 
 const emit = defineEmits(["update:show", "submit"]);
 
-const toggleView = () => {
+const toggleView = (type: string) => {
+  if (type === clickType.OUTSIDE) {
+    close();
+  }
+};
+
+const close = () => {
   showDialog.value = !showDialog.value;
   emit("update:show", showDialog.value);
-};
+}
 
 const submit = () => {
   emit("submit");
-  toggleView();
+  close();
 };
 </script>
 <style lang="scss" scoped src="./style/dialog.scss"></style>
