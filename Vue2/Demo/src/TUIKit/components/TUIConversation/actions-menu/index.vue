@@ -1,8 +1,8 @@
 <template>
-  <div
-    class="overlay"
-    @tap="emits('closeConversationActionMenu')"
-    @click="emits('closeConversationActionMenu')"
+  <Overlay
+    :bgColor="'transparent'"
+    @clickHandler="() => emits('closeConversationActionMenu')"
+    @touchHandler="() => emits('closeConversationActionMenu')"
   >
     <div
       id="conversation-actions-menu"
@@ -16,7 +16,7 @@
     >
       <div
         :class="['actionsMenuItem']"
-        @click.stop="handleItem({ name: CONV_OPERATION.DELETE })"
+        @click.stop="deleteConversation()"
       >
         {{ TUITranslateService.t("TUIConversation.删除会话") }}
       </div>
@@ -49,7 +49,18 @@
         {{ TUITranslateService.t("TUIConversation.取消免打扰") }}
       </div>
     </div>
-  </div>
+    <Dialog
+        :show="isShowDeleteConversationDialog"
+        :center="true"
+        :isHeaderShow="isPC"
+        @submit="handleItem({ name: CONV_OPERATION.DELETE })"
+        @update:show="updateShowDeleteConversationDialog"
+      >
+      <p class="delDialog-title">
+        {{TUITranslateService.t(deleteConversationDialogTitle)}}
+      </p>
+   </Dialog>
+  </Overlay>
 </template>
 
 <script setup lang="ts">
@@ -57,16 +68,18 @@ import {
   ref,
   nextTick,
   onMounted,
+  computed,
   getCurrentInstance
 } from "../../../adapter-vue";
-import {
+import TUIChatEngine, {
   TUIStore,
   TUIGlobal,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
 import { CONV_OPERATION } from "../../../constant";
 import { isUniFrameWork } from "../../../utils/is-uni";
-
+import Overlay from "../../common/Overlay/index.vue";
+import Dialog from "../../common/Dialog/index.vue";
 const emits = defineEmits(["closeConversationActionMenu"]);
 const props = defineProps([
   "actionsMenuPosition",
@@ -78,6 +91,7 @@ const thisInstance = getCurrentInstance()?.proxy || getCurrentInstance();
 const isPC = TUIGlobal.getPlatform() === "pc";
 const actionsMenuDomRef = ref<HTMLElement | null>();
 const isHiddenActionsMenu = ref(true);
+const isShowDeleteConversationDialog  = ref<boolean>(false);
 const currentConversation = TUIStore.getConversationModel(
   props.selectedConversation?.conversationID
 );
@@ -92,6 +106,10 @@ onMounted(() => {
   checkExceedBounds();
 });
 
+const deleteConversationDialogTitle = computed(() => {
+  return props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_C2C ? "TUIConversation.删除后，将清空该聊天的消息记录"
+  : props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_GROUP ? "TUIConversation.删除后，将清空该群聊的消息记录" : ''
+})
 function checkExceedBounds() {
   // 组件初始渲染时，执行并自检边界有没有超出屏幕，在nextTick中处理。
   nextTick(() => {
@@ -157,6 +175,17 @@ const handleItem = (params: { name: string }) => {
       break;
   }
   emits("closeConversationActionMenu");
+};
+
+const deleteConversation = () => {
+  isShowDeleteConversationDialog.value = true;
+};
+
+const updateShowDeleteConversationDialog = (isShow: boolean) => {
+  if (!isShow) {
+    emits("closeConversationActionMenu");
+  }
+  isShowDeleteConversationDialog.value = isShow;
 };
 </script>
 

@@ -3,8 +3,15 @@
     class="transfer"
     :class="[!isPC ? 'transfer-h5' : '', isWeChat ? 'transfer-h5-wechat' : '']"
   >
-    <header class="transfer-header transfer-h5-header" v-if="!isPC" @click="cancel">
-      <Icon class="icon" :file="backIcon" :width="'18px'" :height="'18px'"></Icon>
+    <header class="transfer-header transfer-h5-header" v-if="!isPC">
+      <Icon
+        v-if="!props.isHiddenBackIcon"
+        class="icon"
+        :file="backIcon"
+        :width="'18px'"
+        :height="'18px'"
+        @click="cancel"
+      />
       <span class="title">{{ transferTitle }}</span>
       <span class="space"></span>
     </header>
@@ -198,6 +205,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  isHiddenBackIcon: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const type = ref("");

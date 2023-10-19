@@ -62,6 +62,7 @@ const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversationID = ref("");
 
+
 const all = {
   userID: TUIChatEngine.TYPES.MSG_AT_ALL,
   nick: "所有人",
@@ -81,16 +82,18 @@ TUIStore.watch(StoreName.CONV, {
       if (currentConversationID?.value?.startsWith("GROUP")) {
         isGroup.value = true;
         const groupID = currentConversationID?.value?.substring(5);
-        TUIGroupService.getGroupMemberList({
-          groupID,
-        }).then((res: any) => {
-          memberList.value = res?.data?.memberList as Array<any>;
-          allMemberList.value = [all, ...memberList.value];
-          showMemberList.value = allMemberList.value;
-          TUIStore.update(StoreName.CUSTOM, "memberList", memberList.value);
-        });
+        TUIGroupService.switchGroup(groupID);
       }
     }
+  },
+});
+
+TUIStore.watch(StoreName.GRP, {
+  currentGroupMemberList: (list: Array<any>) => {
+    memberList.value = list;
+    allMemberList.value = [all, ...memberList.value];
+    showMemberList.value = allMemberList.value;
+    TUIStore.update(StoreName.CUSTOM, "memberList", memberList.value);
   },
 });
 

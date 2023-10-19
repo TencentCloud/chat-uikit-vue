@@ -75,6 +75,7 @@ const TUIChat = {
   "拒绝": "Reject",
   "已同意": "Approved",
   "已拒绝": "Rejected",
+  "内容包含敏感词汇": "Content contains sensitive words",
 };
 
 export default TUIChat;

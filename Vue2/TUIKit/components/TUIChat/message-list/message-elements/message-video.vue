@@ -3,17 +3,17 @@
     <div
       class="message-video-box"
       :class="[
-        (!props.progress || props.progress === 1) &&
-          !isPC &&
-          'message-video-cover',
+        (!props.messageItem.progress || props.messageItem.progress === 1)
+        && !isPC
+        && 'message-video-cover',
       ]"
-      @click="showVideoPreviewer"
+      @click="toggleVideoPreviewer"
       ref="skeleton"
     >
       <img
         class="message-img"
         v-if="
-          (props.progress > 0 && props.progress < 1 && poster) ||
+          (props.messageItem.progress > 0 && props.messageItem.progress < 1 && poster) ||
           (!isPC && poster)
         "
         :class="[isWidth ? 'isWidth' : 'isHeight']"
@@ -22,8 +22,8 @@
       <video
         class="message-img video-h5-uploading"
         v-else-if="!isPC"
-        :src="data.url + '#t=0.1'"
-        :poster="data.url"
+        :src="props.content.url + '#t=0.1'"
+        :poster="props.content.url"
         preload="auto"
         muted
         ref="videoRef"
@@ -31,32 +31,28 @@
       <video
         class="message-img video-web"
         v-else
-        :src="data.url"
+        :src="props.content.url"
         controls
         preload="metadata"
         :poster="poster"
         ref="videoRef"
       ></video>
-      <div class="progress" v-if="props.progress > 0 && props.progress < 1">
-        <progress :value="props.progress" max="1"></progress>
-      </div>
     </div>
     <div
       class="dialog-video"
-      v-if="show && !isPC"
-      @click.self="showVideoPreviewer"
+      v-if="isShow && !isPC"
     >
-      <div @click.stop="showVideoPreviewer" class="dialog-video-close">
+      <div @click.stop="toggleVideoPreviewer" class="dialog-video-close">
         <Icon :file="closeSVG"></Icon>
       </div>
       <div
         class="dialog-video-box"
         :class="[!isPC ? 'dialog-video-h5' : '']"
-        @click.self="showVideoPreviewer"
+        @click.self="toggleVideoPreviewer"
       >
         <video
           :class="[isWidth ? 'isWidth' : 'isHeight']"
-          :src="data.url"
+          :src="props.content.url"
           controls
           autoplay
         ></video>
@@ -67,64 +63,92 @@
 
 <script lang="ts" setup>
 import {
-  watchEffect,
-  computed,
   ref,
-  nextTick,
   watch,
+  computed,
+  nextTick,
+  watchEffect,
+  withDefaults,
 } from "../../../../adapter-vue";
+import { TUIGlobal, type IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import { handleSkeletonSize } from "../../utils/utils";
 import Icon from "../../../common/Icon.vue";
 import closeSVG from "../../../../assets/icon/icon-close.svg";
+import type { IVideoMessageContent } from "../../../../interface";
 
-const props = defineProps({
-  content: {
-    type: Object,
-    default: () => ({}),
-  },
-  isPC: {
-    type: Boolean,
-    default: false,
-  },
-  messageItem: {
-    type: Object,
-    default: () => ({}),
-  },
-  progress: {
-    type: Number,
-    default: 0,
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    content: IVideoMessageContent;
+    messageItem: IMessageModel;
+  }>(),
+  {
+    content: () => ({} as IVideoMessageContent),
+    messageItem: () => ({} as IMessageModel),
+  }
+);
 
+const isPC = TUIGlobal.getPlatform() === "pc";
 const emits = defineEmits(["uploading"]);
-const data = ref();
-const message = ref();
-const show = ref(false);
+const isShow = ref(false);
 const poster = ref("");
 const posterWidth = ref(0);
 const posterHeight = ref(0);
 const skeleton = ref();
 const videoRef = ref();
-const messageStatus = ref(props.messageItem.status);
+const transparentPosterUrl = "https://web.sdk.qcloud.com/im/assets/images/transparent.png";
+
+watchEffect(async () => {
+  if (!props.content) return;
+  poster.value = await handlePosterUrl(props.content, props.messageItem);
+  nextTick(async () => {
+    const containerWidth =
+      document.getElementById("messageEle")?.clientWidth || 0;
+    const max = !isPC ? Math.min(containerWidth - 172, 300) : 300;
+    let size;
+    if (props.messageItem.status === "success") {
+      let { snapshotWidth = 0, snapshotHeight = 0, snapshotUrl } = props.content;
+      if (snapshotWidth === 0 || snapshotHeight === 0) return;
+      if (snapshotUrl === transparentPosterUrl) {
+        snapshotWidth = posterWidth.value;
+        snapshotHeight = posterHeight.value;
+      }
+      size = handleSkeletonSize(snapshotWidth, snapshotHeight, max, max);
+      skeleton?.value?.style &&
+        (skeleton.value.style.width = `${size.width}px`);
+      skeleton?.value?.style &&
+        (skeleton.value.style.height = `${size.height}px`);
+      if (isPC) {
+        videoRef?.value?.style && (videoRef.value.style.width = `${size.width}px`);
+        videoRef?.value?.style && (videoRef.value.style.height = `${size.height}px`);
+      }
+    } else {
+      emits("uploading");
+    }
+  });
+});
 
 const isWidth = computed(() => {
-  const { snapshotWidth = 0, snapshotHeight = 0 } = message.value.payload;
+  const { snapshotWidth = 0, snapshotHeight = 0 } = props.messageItem.payload;
   return snapshotWidth >= snapshotHeight;
 });
-const transparentPosterUrl =
-  "https://web.sdk.qcloud.com/im/assets/images/transparent.png";
 
-const showVideoPreviewer = () => {
+watch(() => props.messageItem.status, (newVal: string, oldVal: string) => {
+  if (newVal === "success" && oldVal !== "success") {
+    emits("uploading");
+  }
+});
+
+function toggleVideoPreviewer() {
   // 视频上传过程中不支持全屏播放
-  if (data.value.progress > 0 && data.value.progress < 1) {
+  if (props.messageItem.progress > 0 && props.messageItem.progress < 1) {
     return;
   }
-  show.value = !show.value;
-};
+  isShow.value = !isShow.value;
+}
 
 // h5 部分浏览器（safari / wx）video标签 封面为空 在视频未上传完成前的封面展示需要单独进行处理截取
-const getVideoBase64 = (url: string) => {
-  return new Promise(function (resolve, reject) {
+function getVideoBase64 (url: string) {
+  return new Promise((resolve) => {
     let dataURL = "";
     let video = document.createElement("video");
     video.setAttribute("crossOrigin", "anonymous"); //处理跨域
@@ -147,66 +171,25 @@ const getVideoBase64 = (url: string) => {
       { once: true }
     );
   });
-};
+}
 
-const handlePosterUrl = async (data: any) => {
-  if (!data) return "";
-  if (messageStatus.value !== "success") {
-    return await getVideoBase64(data.url);
+async function handlePosterUrl(messgeContent: IVideoMessageContent, messageItem: IMessageModel) {
+  if (!messageItem) return "";
+  if (messageItem.status !== "success") {
+    return await getVideoBase64(messgeContent.url);
   } else {
     return (
-      (data.snapshotUrl !== transparentPosterUrl && data.snapshotUrl) ||
-      (data?.message?.payload?.snapshotUrl !== transparentPosterUrl &&
-        data?.message?.payload?.snapshotUrl) ||
-      (data?.message?.payload?.thumbUrl !== transparentPosterUrl &&
-        data?.message?.payload?.thumbUrl) ||
-      (await getVideoBase64(data.url))
+      (messgeContent.snapshotUrl !== transparentPosterUrl && messgeContent.snapshotUrl) ||
+      (messageItem?.payload?.snapshotUrl !== transparentPosterUrl &&
+        messageItem?.payload?.snapshotUrl) ||
+      (messageItem.payload?.thumbUrl !== transparentPosterUrl &&
+        messageItem?.payload?.thumbUrl) ||
+      (await getVideoBase64(messgeContent.url))
     );
   }
-};
-
-watchEffect(async () => {
-  data.value = props.content;
-  message.value = props.messageItem;
-  if (!data.value) return;
-  poster.value = await handlePosterUrl(data.value);
-  nextTick(async () => {
-    const containerWidth =
-      document.getElementById("messageEle")?.clientWidth || 0;
-    const max = !props.isPC ? Math.min(containerWidth - 172, 300) : 300;
-    let size;
-    if (messageStatus.value === "success") {
-      let { snapshotWidth = 0, snapshotHeight = 0, snapshotUrl } = data.value;
-      if (snapshotWidth === 0 || snapshotHeight === 0) return;
-      if (snapshotUrl === transparentPosterUrl) {
-        snapshotWidth = posterWidth.value;
-        snapshotHeight = posterHeight.value;
-      }
-      size = handleSkeletonSize(snapshotWidth, snapshotHeight, max, max);
-      skeleton?.value?.style &&
-        (skeleton.value.style.width = `${size.width}px`);
-      skeleton?.value?.style &&
-        (skeleton.value.style.height = `${size.height}px`);
-      if (props.isPC) {
-        videoRef?.value?.style && (videoRef.value.style.width = `${size.width}px`);
-        videoRef?.value?.style && (videoRef.value.style.height = `${size.height}px`);
-      }
-    } else {
-      emits("uploading");
-    }
-  });
-});
-
-watch(
-  () => props.messageItem.status,
-  (newVal: any, oldVal: any) => {
-    messageStatus.value = newVal;
-    if (newVal === "success" && oldVal !== "success") {
-      emits("uploading");
-    }
-  }
-);
+}
 </script>
+
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
 .message-video {
@@ -216,6 +199,7 @@ watch(
   overflow: hidden;
   &-box {
     max-width: min(calc(100vw - 180px), 300px);
+    font-size: 0;
     video {
       max-width: min(calc(100vw - 180px), 300px);
       max-height: min(calc(100vw - 180px), 300px);
@@ -259,48 +243,6 @@ watch(
       width: inherit;
       height: inherit;
       border-radius: 10px;
-    }
-  }
-  .progress {
-    position: absolute;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    padding: 0 20px;
-    border-radius: 10px;
-    left: 0;
-    top: 0;
-    background: rgba(#000000, 0.5);
-    display: flex;
-    align-items: center;
-    flex: 1;
-    progress {
-      color: #006eff;
-      appearance: none;
-      border-radius: 0.25rem;
-      background: rgba(#ffffff, 1);
-      width: 100%;
-      height: 0.5rem;
-      &::-webkit-progress-value {
-        background-color: #006eff;
-        border-radius: 0.25rem;
-      }
-      &::-webkit-progress-bar {
-        border-radius: 0.25rem;
-        background: rgba(#ffffff, 1);
-      }
-      &::-moz-progress-bar {
-        color: #006eff;
-        background: #006eff;
-        border-radius: 0.25rem;
-      }
-    }
-    .loading {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
   }
 }
