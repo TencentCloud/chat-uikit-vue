@@ -76,34 +76,43 @@
                   v-if="item.type === TYPES.MSG_TEXT"
                   :content="item.getMessageContent()"
                 />
-                <MessageImage
+                <ProgressMessage
                   v-if="item.type === TYPES.MSG_IMAGE"
                   :content="item.getMessageContent()"
                   :messageItem="item"
-                  :isPC="isPC"
-                  :progress="item.progress"
-                  @uploading="handleUploadingImageOrVideo"
-                  @previewImage="handleImagePreview"
-                />
-                <MessageVideo
+                >
+                  <MessageImage
+                    :content="item.getMessageContent()"
+                    :messageItem="item"
+                    @uploading="handleUploadingImageOrVideo"
+                    @previewImage="handleImagePreview"
+                  />
+                </ProgressMessage>
+                <ProgressMessage
                   v-if="item.type === TYPES.MSG_VIDEO"
                   :content="item.getMessageContent()"
                   :messageItem="item"
-                  :isPC="isPC"
-                  :progress="item.progress"
-                  @uploading="handleUploadingImageOrVideo"
-                />
+                >
+                  <MessageVideo
+                    :content="item.getMessageContent()"
+                    :messageItem="item"
+                    @uploading="handleUploadingImageOrVideo"
+                  />
+                </ProgressMessage>
                 <MessageAudio
                   v-if="item.type === TYPES.MSG_AUDIO"
                   :content="item.getMessageContent()"
                   :messageItem="item"
                 />
-                <MessageFile
+                <ProgressMessage
                   v-if="item.type === TYPES.MSG_FILE"
-                  :progress="item.progress"
                   :content="item.getMessageContent()"
                   :messageItem="item"
-                />
+                >
+                  <MessageFile
+                    :content="item.getMessageContent()"
+                  />
+                </ProgressMessage>
                 <MessageFace
                   v-if="item.type === TYPES.MSG_FACE"
                   :content="item.getMessageContent()"
@@ -175,6 +184,7 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import {
   ref,
@@ -210,8 +220,9 @@ import MessageTool from "./message-tool/index.vue";
 import MessageRevoked from "./message-tool/message-revoked.vue";
 import MessagePlugin from "../../../plugins/plugin-components/message-plugin.vue";
 
-import Dialog from "../../common/Dialog";
-import ImagePreviewer from "../../common/ImagePreviewer/index";
+import Dialog from "../../common/Dialog/index.vue";
+import ImagePreviewer from "../../common/ImagePreviewer/index.vue";
+import ProgressMessage from "../../common/ProgressMessage/index.vue"
 import { getImgLoad, isCreateGroupCustomMessage } from "../utils/utils";
 import MessageGroupSystem from "./message-elements/message-group-system.vue";
 import { CHAT_SCROLL_TYPE } from "../../../constant";

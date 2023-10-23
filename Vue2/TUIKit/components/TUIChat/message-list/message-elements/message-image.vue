@@ -1,196 +1,97 @@
 <template>
-  <div class="message-image" @click.self="toggleShow" ref="skeleton">
+  <div class="imageContainer" @click.self="toggleShow" ref="skeletonDomRef">
     <img
-      :class="['message-img', !props.isPC && 'message-img-h5']"
-      :src="data.url"
-      :width="data.width"
-      :height="data.height"
+      :class="['messageImage', !isPC && 'messageImage-h5']"
+      :src="props.content.url"
+      :width="props.content.width"
+      :height="props.content.height"
     />
-    <div class="progress" v-if="data.progress">
-      <progress :value="data.progress" max="1"></progress>
-    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import {
-  watchEffect,
   ref,
   watch,
-  computed,
-  nextTick,
+  onMounted,
+  withDefaults,
+  nextTick
 } from "../../../../adapter-vue";
-import { handleSkeletonSize } from "../../utils/utils";
-import { IImageMessageContent } from "../../../../interface";
-const props = defineProps({
-  content: {
-    type: Object,
-    default: () => ({}),
-  },
-  isPC: {
-    type: Boolean,
-    default: false,
-  },
-  messageItem: {
-    type: Object,
-    default: () => ({}),
-  },
-});
+import { TUIGlobal, type IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { handleSkeletonSize } from '../../utils/utils';
+import type { IImageMessageContent } from "../../../../interface";
 
-const data = ref<IImageMessageContent>({
-  progress: 0,
-});
-const message = ref();
-const skeleton: any = ref();
 const emits = defineEmits(["uploading", "previewImage"]);
-const messageStatus = ref(props.messageItem.status);
-
-watchEffect(() => {
-  data.value = props.content;
-  message.value = props.messageItem;
-  if (!data.value) return;
-  nextTick(() => {
-    if (!data.value.progress && messageStatus.value === "success") {
-      const { width = 0, height = 0 } = data.value;
-      if (width === 0 || height === 0) return;
-      const containerWidth = document.getElementById("app")?.clientWidth || 0;
-      const max = !props.isPC ? Math.min(containerWidth - 180, 300) : 300;
-      const size = handleSkeletonSize(width, height, max, max);
-      skeleton?.value?.style &&
-        (skeleton.value.style.width = `${size.width}px`);
-      skeleton?.value?.style &&
-        (skeleton.value.style.height = `${size.height}px`);
-    } else {
-      emits("uploading");
-    }
-  });
-});
-
-const toggleShow = () => {
-  if (!data.value.progress) {
-    emits("previewImage", message.value);
-  }
-};
-
-watch(
-  () => props.messageItem.status,
-  (newVal: any, oldVal: any) => {
-    messageStatus.value = newVal;
-    if (newVal === "success" && oldVal !== "success") {
-      emits("uploading");
-    }
+const props = withDefaults(
+  defineProps<{
+    content: IImageMessageContent,
+    messageItem: IMessageModel,
+  }>(),
+  {
+    content: () => ({}),
+    messageItem: () => ({} as IMessageModel),
   }
 );
+
+const isPC = TUIGlobal.getPlatform() === 'pc';
+const skeletonDomRef = ref();
+
+onMounted(() => {
+  if (props.messageItem?.status === "success") {
+    autoFixSkeletonSize();
+  }
+});
+
+watch(() => props.messageItem?.status, (newVal: string, oldVal: string) => {
+  if (newVal === "success" && newVal !== oldVal) {
+    emits("uploading");
+  }
+});
+
+watch(() => props.content.height, (newVal: number, oldVal: number) => {
+  if (newVal > oldVal) {
+    autoFixSkeletonSize();
+  }
+})
+
+function autoFixSkeletonSize() {
+  const { width = 0, height = 0 } = props.content;
+    if (width === 0 || height === 0) return;
+    const containerWidth = document.getElementById("app")?.clientWidth || 0;
+    const max = !isPC ? Math.min(containerWidth - 180, 300) : 300;
+    const size = handleSkeletonSize(width, height, max, max);
+    skeletonDomRef?.value?.style &&
+      (skeletonDomRef.value.style.width = `${size.width}px`);
+    skeletonDomRef?.value?.style &&
+      (skeletonDomRef.value.style.height = `${size.height}px`);
+    nextTick(() => {
+      emits('uploading');
+    })
+}
+
+function toggleShow() {
+  if (props.messageItem?.status === 'success' || props.messageItem?.progress === 1) {
+    emits("previewImage", props.messageItem);
+  }
+}
 </script>
+
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
-.message-image {
-  position: relative;
+
+.imageContainer {
   overflow: hidden;
-  opacity: 1;
-  .message-img {
+  background-color: #f4f4f4;
+  .messageImage {
     max-width: min(calc(100vw - 180px), 300px);
     max-height: min(calc(100vw - 180px), 300px);
     width: inherit;
     height: inherit;
+
     &-h5 {
       max-width: calc(100vw - 180px);
       max-height: calc(100vw - 180px);
     }
   }
-  .progress {
-    position: absolute;
-    box-sizing: border-box;
-    width: 100%;
-    height: 100%;
-    padding: 0 20px;
-    left: 0;
-    top: 0;
-    background: rgba(#000000, 0.5);
-    display: flex;
-    align-items: center;
-    progress {
-      color: #006eff;
-      appearance: none;
-      border-radius: 0.25rem;
-      background: rgba(#ffffff, 1);
-      width: 100%;
-      height: 0.5rem;
-      &::-webkit-progress-value {
-        background-color: #006eff;
-        border-radius: 0.25rem;
-      }
-      &::-webkit-progress-bar {
-        border-radius: 0.25rem;
-        background: rgba(#ffffff, 1);
-      }
-      &::-moz-progress-bar {
-        color: #006eff;
-        background: #006eff;
-        border-radius: 0.25rem;
-      }
-    }
-  }
-}
-.dialog {
-  position: fixed;
-  z-index: 12;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(#000000, 0.3);
-  top: 0;
-  left: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  header {
-    display: flex;
-    justify-content: flex-end;
-    background: rgba(0, 0, 0, 0.49);
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 10px;
-  }
-  &-box {
-    display: flex;
-    flex: 1;
-    max-height: 100%;
-    padding: 6rem;
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;
-  }
-}
-.dialog-box-h5 {
-  width: 100%;
-  height: 100%;
-  background: #000000;
-  padding: 30px 0;
-  display: flex;
-  flex-direction: column;
-  &-footer {
-    position: fixed;
-    bottom: 10px;
-    display: flex;
-    width: 90vw;
-    justify-content: space-between;
-    p {
-      width: 3.88rem;
-      height: 3.88rem;
-    }
-    img {
-      width: 100%;
-    }
-    i {
-      padding: 20px;
-    }
-  }
-}
-
-.isWidth {
-  width: 100%;
-}
-.isHeight {
-  height: 100%;
 }
 </style>

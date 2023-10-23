@@ -84,13 +84,6 @@ export interface IGroupApplicationUserProfile {
 export type IGroupApplicationListItem = IGroupApplicationType &
   IGroupApplicationUserProfile;
 
-export interface IImageMessageContent {
-  url?: string;
-  width?: number;
-  height?: number;
-  progress?: number;
-}
-
 export interface IFriendType {
   userID?: string;
   remark?: string;
@@ -192,4 +185,19 @@ export interface IContactInfoButton {
   label: string; // button 内容
   type: string; // button 类型: "cancel"/"submit"
   onClick: Function; // 点击 button 回调
+}
+
+export interface IImageMessageContent {
+  showName?: string;
+  url?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface IVideoMessageContent {
+  showName: string; // - 消息发送方名称
+  url: string; // - 视频播放链接
+  snapshotUrl: string; // - 视频封面图链接
+  snapshotWidth: number; // - 视频封面图宽度
+  snapshotHeight: number; // - 视频封面图高度
 }

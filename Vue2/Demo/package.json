@@ -14,7 +14,7 @@
     "@tencentcloud/call-uikit-vue2": "^3.0.6",
     "@types/webpack-env": "^1.18.0",
     "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue2": "latest",
+    "@tencentcloud/chat-uikit-vue2": "workspace:^0.1.1",
     "@tencentcloud/tui-core": "latest",
     "axios": "^0.26.1",
     "element-ui": "^2.15.13",
