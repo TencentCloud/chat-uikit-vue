@@ -26,9 +26,9 @@
       <VideoUpload v-if="isUniFrameWork" videoSourceType="camera"></VideoUpload>
       <Evaluate></Evaluate>
       <Words></Words>
-      <template v-if="extensionList[0]">
+      <template v-if="extensionListShowInStart[0]">
         <ToolbarItemContainer
-          v-for="extension in extensionList"
+          v-for="extension in extensionListShowInStart"
           :iconFile="genExtensionIcon(extension)"
           :title="genExtensionText(extension)"
           :iconWidth="isUniFrameWork ? '25px' : '20px'"
@@ -38,6 +38,17 @@
         />
       </template>
     </div>
+    <div v-if="extensionListShowInEnd[0] && isPC" :class="['message-input-toolbar-list-end']">
+      <ToolbarItemContainer
+        v-for="extension in extensionListShowInEnd"
+        :iconFile="genExtensionIcon(extension)"
+        :title="genExtensionText(extension)"
+        :iconWidth="isUniFrameWork ? '25px' : '20px'"
+        :iconHeight="isUniFrameWork ? '25px' : '20px'"
+        :needDialog="false"
+        @onIconClick="onExtensionClick(extension)"
+      />
+    </div>
     <UserSelector
       ref="userSelectorRef"
       :type="selectorShowType"
@@ -46,11 +57,7 @@
       @submit="onUserSelectorSubmit"
       @cancel="onUserSelectorCancel"
     />
-    <div
-      v-if="isH5"
-      :class="['message-input-toolbar-h5-dialog']"
-      ref="h5Dialog"
-    ></div>
+    <div v-if="isH5" :class="['message-input-toolbar-h5-dialog']" ref="h5Dialog"></div>
   </div>
 </template>
 <script setup lang="ts">
@@ -61,7 +68,7 @@ import TUIChatEngine, {
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { ExtensionInfo, TUIConstants } from "@tencentcloud/tui-core";
-import { ref } from "../../../adapter-vue";
+import { ref, computed } from "../../../adapter-vue";
 // component
 import EmojiPicker from "./emoji-picker/index.vue";
 import ImageUpload from "./image-upload/index.vue";
@@ -103,6 +110,25 @@ const extensionList: Array<typeof ExtensionInfo> = [
   ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID),
 ];
 
+// 按展示位置分类 extensionList （注意：仅 web 端 区分展示位置在 从 start 开始和 从 end 开始，在移动端不生效）
+const extensionListShowInStart = computed(
+  (): Array<typeof ExtensionInfo> =>
+    isPC.value
+      ? extensionList.filter(
+          (extension: typeof ExtensionInfo) => extension?.data?.name !== "search"
+        )
+      : extensionList
+);
+
+const extensionListShowInEnd = computed(
+  (): Array<typeof ExtensionInfo> =>
+    isPC.value
+      ? extensionList.filter(
+          (extension: typeof ExtensionInfo) => extension?.data?.name === "search"
+        )
+      : []
+);
+
 // handle extensions onclick
 const onExtensionClick = (extension: typeof ExtensionInfo) => {
   switch (extension?.data?.name) {
@@ -112,15 +138,15 @@ const onExtensionClick = (extension: typeof ExtensionInfo) => {
     case "videoCall":
       onCallExtensionClicked(extension, 2);
       break;
+    case "search":
+      extension?.listener?.onClicked();
+      break;
     default:
       break;
   }
 };
 
-const onCallExtensionClicked = (
-  extension: typeof ExtensionInfo,
-  callType: number
-) => {
+const onCallExtensionClicked = (extension: typeof ExtensionInfo, callType: number) => {
   selectorShowType.value = extension?.data?.name;
   if (currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_C2C) {
     extension?.listener?.onClicked({
@@ -129,7 +155,7 @@ const onCallExtensionClicked = (
     });
   } else if (isGroup.value) {
     currentUserSelectorExtension.value = extension;
-    userSelectorRef?.value?.toggleShow &&  userSelectorRef.value.toggleShow(true);
+    userSelectorRef?.value?.toggleShow && userSelectorRef.value.toggleShow(true);
   }
 };
 
@@ -175,7 +201,8 @@ const dialogCloseInH5 = (dialogDom: any) => {
   width: 100%;
   max-width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
   &-list {
     list-style: none;
     display: flex;
@@ -204,11 +231,14 @@ const dialogCloseInH5 = (dialogDom: any) => {
 .message-input-toolbar-h5 {
   padding: 0 10px 10px 10px;
   box-sizing: border-box;
+  flex-direction: column;
 }
 
 .message-input-toolbar-uni {
   background-color: #ebf0f6;
+  flex-direction: column;
   &-list {
+    flex: 1;
     display: grid;
     grid-template-columns: repeat(4, 25%);
     grid-template-rows: repeat(2, 100px);

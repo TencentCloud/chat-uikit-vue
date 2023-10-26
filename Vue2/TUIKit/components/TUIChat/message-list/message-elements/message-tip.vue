@@ -12,7 +12,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const tipContent = computed(() => props?.content?.text || props?.content?.custom ||  "");
+const tipContent = computed(() => props?.content?.text || props?.content?.custom || "");
 </script>
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
@@ -27,5 +27,18 @@ const tipContent = computed(() => props?.content?.text || props?.content?.custom
   align-content: center;
   align-items: center;
   text-align: center;
+  &-highlight {
+    animation: highlight 1000ms infinite;
+    @-webkit-keyframes highlight {
+      50% {
+        color: #ff9c19;
+      }
+    }
+    @keyframes highlight {
+      50% {
+        color: #ff9c19;
+      }
+    }
+  }
 }
 </style>

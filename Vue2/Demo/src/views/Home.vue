@@ -90,6 +90,7 @@
           </div>
           <div class="home-TUIKit-main" v-show="currentTab === 'message'">
             <div class="home-conversation">
+              <TUISearch searchType="global"></TUISearch>
               <TUIConversation
                 :class="['TUIConversation', !isPC && 'TUIConversation-h5']"
               ></TUIConversation>
@@ -114,7 +115,8 @@
                   </p>
                 </div>
               </TUIChat>
-              <TUIGroup class="group" />
+              <TUIGroup class="chat-aside" />
+              <TUISearch class="chat-aside" searchType="conversation" />
             </div>
             <TUIContact display-type="selectFriend" />
           </div>
@@ -133,6 +135,7 @@
     <main class="home-h5-main" v-if="!isPC">
       <div class="home-h5-main" v-if="!currentConversationID">
         <main class="home-h5-main" v-if="currentTab === 'message'">
+          <TUISearch searchType="global"></TUISearch>
           <TUIConversation></TUIConversation>
           <TUIContact display-type="selectFriend"></TUIContact>
         </main>
@@ -177,6 +180,7 @@
       >
       </TUIChat>
       <TUIGroup class="group-h5" />
+      <TUISearch searchType="conversation" />
     </main>
     <Drag
       :show="showCall"
@@ -208,7 +212,7 @@ import {
   StoreName,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
-import { TUIChat, TUIConversation, TUIContact, TUIGroup } from "../TUIKit";
+import { TUIChat, TUIConversation, TUIContact, TUIGroup, TUISearch } from "../TUIKit";
 import { ref } from "../TUIKit/adapter-vue";
 import Header from "../components/Header.vue";
 import Menu from "../components/Menu.vue";

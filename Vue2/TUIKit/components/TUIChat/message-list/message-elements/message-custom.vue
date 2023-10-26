@@ -13,12 +13,7 @@
         </h1>
         <ul v-if="extension.item && extension.item.length > 0">
           <li v-for="(item, index) in extension.item" :key="index">
-            <a
-              v-if="isUrl(item.value)"
-              :href="item.value"
-              target="view_window"
-              >{{ item.key }}</a
-            >
+            <a v-if="isUrl(item.value)" :href="item.value" target="view_window">{{ item.key }}</a>
             <p v-else>{{ item.key }}</p>
           </li>
         </ul>
@@ -31,7 +26,7 @@
         <ul class="evaluate-list">
           <li
             class="evaluate-list-item"
-            v-for="(item, index) in ~~(isCustom.score || 0)"
+            v-for="(item, index) in Math.max(isCustom.score, 0)"
             :key="index"
           >
             <Icon :file="star" class="file-icon"></Icon>
@@ -66,7 +61,7 @@
 
 <script lang="ts" setup>
 import { watchEffect, ref } from "../../../../adapter-vue";
-import { isUrl, JSONToObject } from "../../utils/utils";
+import { isUrl, JSONToObject } from "../../../../utils/index";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";

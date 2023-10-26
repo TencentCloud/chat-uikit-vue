@@ -2,7 +2,7 @@
   <main v-if="!isUniFrameWork" class="member">
     <ul class="list">
       <li class="list-item" v-for="(item, index) in memberList" :key="index">
-        <aside @click="handleMemberProfileShow(item)">
+        <aside class="aside" @click="handleMemberProfileShow(item)">
           <img
             class="avatar"
             :src="
@@ -199,7 +199,7 @@ const close = (tabName: string) => {
         overflow: hidden;
 
         .name {
-          padding-left: 8px;
+          margin-left: 8px;
           font-weight: 400;
           font-size: 14px;
           color: #000000;

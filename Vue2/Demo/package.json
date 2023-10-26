@@ -1,20 +1,20 @@
 {
   "name": "sample-web-vue2",
-  "version": "1.0.0",
+  "version": "0.1.2",
   "description": "",
   "keywords": [],
   "author": "",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@tencentcloud/call-uikit-vue2": "^3.0.6",
     "@types/webpack-env": "^1.18.0",
+    "@tencentcloud/call-uikit-vue2": "latest",
     "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue2": "latest",
+    "@tencentcloud/chat-uikit-vue22": "latest",
     "@tencentcloud/tui-core": "latest",
     "axios": "^0.26.1",
     "element-ui": "^2.15.13",
@@ -34,7 +34,8 @@
     "@tiptap/extension-placeholder": "^2.0.0-beta.220",
     "@tiptap/extension-text": "^2.0.0-beta.220",
     "@tiptap/pm": "^2.0.0-beta.220",
-    "@tiptap/suggestion": "^2.0.0-beta.220"
+    "@tiptap/suggestion": "^2.0.0-beta.220",
+    "dayjs": "^1.11.10"
   },
   "devDependencies": {
     "core-js": "^3.8.3",

@@ -3,11 +3,15 @@ import {
   TUIUserService,
   TUIGroupService,
   TUIFriendService,
+  TUIStore,
+  StoreName,
 } from "@tencentcloud/chat-uikit-engine";
+import { isUniFrameWork } from "../../utils";
 
 export default class TUISearchServer {
   constructor() {
     TUICore.registerService(TUIConstants.TUISearch.SERVICE.NAME, this);
+    TUICore.registerExtension(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, this);
   }
 
   public onCall(method: string, params: { [propsName: string]: any }) {
@@ -23,6 +27,29 @@ export default class TUISearchServer {
     }
   }
 
+  public onGetExtension(extensionID: string, params: Object) {
+    if (extensionID === TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID) {
+      if (isUniFrameWork) {
+        // uniapp 暂不支持搜索功能
+        return [];
+      }
+      const searchExtension = {
+        weight: 3000,
+        text: "搜索",
+        icon: "https://web.sdk.qcloud.com/component/TUIKit/assets/message-search.svg",
+        data: {
+          name: "search",
+        },
+        listener: {
+          onClicked: (options: any) => {
+            TUIStore.update(StoreName.CUSTOM, "isShowInConversationSearch", true);
+          },
+        },
+      };
+      return [searchExtension];
+    }
+  }
+
   public async searchFriend(userID: string): Promise<any> {
     return TUIFriendService.getFriendProfile({ userIDList: [userID] });
   }
@@ -35,10 +62,7 @@ export default class TUISearchServer {
     return TUIGroupService.searchGroupByID(groupID);
   }
 
-  public async searchGroupMember(
-    groupID: string,
-    userID: string
-  ): Promise<any> {
+  public async searchGroupMember(groupID: string, userID: string): Promise<any> {
     return TUIGroupService.getGroupMemberProfile({
       groupID,
       userIDList: [userID],

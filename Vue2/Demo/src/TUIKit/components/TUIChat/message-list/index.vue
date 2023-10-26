@@ -20,27 +20,20 @@
         @click="toggleApplicationList()"
       >
         <span
-          >{{ groupApplicationCount
-          }}{{ TUITranslateService.t("TUIChat.条入群申请") }}
-          <span class="application-tips-btn">{{
-            TUITranslateService.t("TUIChat.点击处理")
-          }}</span>
+          >{{ groupApplicationCount }}{{ TUITranslateService.t("TUIChat.条入群申请") }}
+          <span class="application-tips-btn">{{ TUITranslateService.t("TUIChat.点击处理") }}</span>
         </span>
       </div>
       <!-- 消息列表 -->
       <ul class="TUI-message-list" ref="messageListRef" id="messageEle">
-        <p
-          class="message-more"
-          @click="getHistoryMessageList"
-          v-if="!isCompleted"
-        >
+        <p class="message-more" @click="getHistoryMessageList" v-if="!isCompleted">
           {{ TUITranslateService.t("TUIChat.查看更多") }}
         </p>
         <li
           v-for="(item, index) in messageList"
           :key="item.ID"
           :id="item.ID"
-          ref="messageAimID"
+          ref="messageElementListRef"
           class="message-li"
         >
           <!-- 消息时间组件 -->
@@ -48,15 +41,9 @@
             :currTime="item.time"
             :prevTime="index > 0 ? messageList[index - 1].time : 0"
           ></MessageTimestamp>
-          <div
-            class="message-item"
-            @click.stop="toggleID = ''"
-          >
+          <div class="message-item" @click.stop="toggleID = ''">
             <MessageTip
-              v-if="
-                item.type === TYPES.MSG_GRP_TIP ||
-                isCreateGroupCustomMessage(item)
-              "
+              v-if="item.type === TYPES.MSG_GRP_TIP || isCreateGroupCustomMessage(item)"
               :content="item.getMessageContent()"
             />
             <div
@@ -76,34 +63,41 @@
                   v-if="item.type === TYPES.MSG_TEXT"
                   :content="item.getMessageContent()"
                 />
-                <MessageImage
+                <ProgressMessage
                   v-if="item.type === TYPES.MSG_IMAGE"
                   :content="item.getMessageContent()"
                   :messageItem="item"
-                  :isPC="isPC"
-                  :progress="item.progress"
-                  @uploading="handleUploadingImageOrVideo"
-                  @previewImage="handleImagePreview"
-                />
-                <MessageVideo
+                >
+                  <MessageImage
+                    :content="item.getMessageContent()"
+                    :messageItem="item"
+                    @uploading="handleUploadingImageOrVideo"
+                    @previewImage="handleImagePreview"
+                  />
+                </ProgressMessage>
+                <ProgressMessage
                   v-if="item.type === TYPES.MSG_VIDEO"
                   :content="item.getMessageContent()"
                   :messageItem="item"
-                  :isPC="isPC"
-                  :progress="item.progress"
-                  @uploading="handleUploadingImageOrVideo"
-                />
+                >
+                  <MessageVideo
+                    :content="item.getMessageContent()"
+                    :messageItem="item"
+                    @uploading="handleUploadingImageOrVideo"
+                  />
+                </ProgressMessage>
                 <MessageAudio
                   v-if="item.type === TYPES.MSG_AUDIO"
                   :content="item.getMessageContent()"
                   :messageItem="item"
                 />
-                <MessageFile
+                <ProgressMessage
                   v-if="item.type === TYPES.MSG_FILE"
-                  :progress="item.progress"
                   :content="item.getMessageContent()"
                   :messageItem="item"
-                />
+                >
+                  <MessageFile :content="item.getMessageContent()" />
+                </ProgressMessage>
                 <MessageFace
                   v-if="item.type === TYPES.MSG_FACE"
                   :content="item.getMessageContent()"
@@ -143,6 +137,10 @@
             />
           </div>
         </li>
+        <div class="to-bottom-tip" @click="jumpToLatestMessage" v-if="isShowJumpToLatest">
+          <Icon :file="doubleArrowIcon" width="10px" height="10px"></Icon>
+          <div class="to-bottom-tip-text">{{ TUITranslateService.t("TUIChat.回到最新位置") }}</div>
+        </div>
       </ul>
       <Dialog
         class="resend-dialog"
@@ -175,14 +173,9 @@
     </div>
   </div>
 </template>
+
 <script lang="ts" setup>
-import {
-  ref,
-  nextTick,
-  computed,
-  onMounted,
-  onUnmounted,
-} from "../../../adapter-vue";
+import { ref, nextTick, computed, onMounted, onUnmounted } from "../../../adapter-vue";
 
 import TUIChatEngine, {
   TUIGlobal,
@@ -192,6 +185,7 @@ import TUIChatEngine, {
   TUITranslateService,
   TUIChatService,
   TUIGroupService,
+  IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
 
 import Link from "./link";
@@ -210,8 +204,11 @@ import MessageTool from "./message-tool/index.vue";
 import MessageRevoked from "./message-tool/message-revoked.vue";
 import MessagePlugin from "../../../plugins/plugin-components/message-plugin.vue";
 
-import Dialog from "../../common/Dialog";
-import ImagePreviewer from "../../common/ImagePreviewer/index";
+import Dialog from "../../common/Dialog/index.vue";
+import ImagePreviewer from "../../common/ImagePreviewer/index.vue";
+import ProgressMessage from "../../common/ProgressMessage/index.vue";
+import Icon from "../../common/Icon.vue";
+import doubleArrowIcon from "../../../assets/icon/double-arrow.svg";
 import { getImgLoad, isCreateGroupCustomMessage } from "../utils/utils";
 import MessageGroupSystem from "./message-elements/message-group-system.vue";
 import { CHAT_SCROLL_TYPE } from "../../../constant";
@@ -232,9 +229,13 @@ const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const messageListRef = ref();
 const title = ref("TUIChat");
+// 上屏展示 messageList，不包含 isDeleted 为 true 的 message
 const messageList = ref();
+// 所有 messageList 序列，包含 isDeleted 为 true 的 message
+const allMessageList = ref();
 const isCompleted = ref(false);
 const currentConversationID = ref("");
+const currentLastMessageTime = ref<number>(0);
 const nextReqMessageID = ref();
 const toggleID = ref("");
 const TYPES = ref(TUIChatEngine.TYPES);
@@ -242,11 +243,19 @@ const isLongpressing = ref(false);
 const groupApplicationCount = ref(0);
 const showGroupApplication = ref(false);
 const applicationUserIDList = ref<Array<string>>([]);
+const messageJumping = ref<typeof IMessageModel>();
+const messageHighlight = ref<typeof IMessageModel>();
+const messageElementListRef = ref<Array<HTMLElement | null>>();
+const currentHighlightMessage = ref<Array<HTMLElement | null>>();
+const isShowJumpToLatest = computed((): boolean => {
+  return (
+    allMessageList?.value?.length &&
+    allMessageList?.value[allMessageList?.value?.length - 1]?.time < currentLastMessageTime?.value
+  );
+});
 
 const isSignalingMessage = (message: typeof IMessageModel) => {
-  return (
-    message?.type === TYPES.value.MSG_CUSTOM && message?.getSignalingInfo()
-  );
+  return message?.type === TYPES.value.MSG_CUSTOM && message?.getSignalingInfo();
 };
 
 // 图片预览相关
@@ -264,21 +273,38 @@ const resendMessageData = ref();
 const emits = defineEmits(["handleEditor"]);
 
 // web & h5 版本（非 uniapp 平台）, 滚动到目标位置(目前仅支持滚动到指定位置)
-// 建议搭配 nextTick 使用
-const scrollToTargetInWeb = (type: string, targetElement?: HTMLElement) => {
-  switch (type) {
-    case CHAT_SCROLL_TYPE.BOTTOM:
-      nextTick(() => {
-        messageListRef?.value?.lastElementChild?.scrollIntoView &&
-          messageListRef?.value?.lastElementChild?.scrollIntoView(false);
-        getImgLoad(messageListRef?.value, "message-img", async () => {
-          messageListRef?.value?.lastElementChild?.scrollIntoView(false);
+const scrollToTargetInWeb = (type: string, targetMessage?: typeof IMessageModel) => {
+  const scroll = (type: string, targetMessage?: typeof IMessageModel) => {
+    switch (type) {
+      case CHAT_SCROLL_TYPE.BOTTOM:
+        nextTick(() => {
+          messageListRef?.value?.lastElementChild?.scrollIntoView &&
+            messageListRef?.value?.lastElementChild?.scrollIntoView(false);
         });
-      });
-      break;
-    case CHAT_SCROLL_TYPE.TARGET:
-      break;
-  }
+        break;
+      case CHAT_SCROLL_TYPE.TARGET:
+        nextTick(() => {
+          if (targetMessage) {
+            const targetMessageDom = messageElementListRef?.value?.find(
+              (dom: HTMLElement) => dom?.id === targetMessage?.ID
+            );
+            if (targetMessageDom) {
+              targetMessageDom?.scrollIntoView && targetMessageDom?.scrollIntoView(false);
+              highlightTargetMessage(targetMessage, targetMessageDom);
+            }
+          }
+        });
+        break;
+    }
+  };
+  scroll(type, targetMessage);
+  getImgLoad(messageListRef?.value, "message-img", async () => {
+    if (messageHighlight?.value || currentHighlightMessage.value) {
+      scroll(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value || currentHighlightMessage.value);
+    } else {
+      scroll(CHAT_SCROLL_TYPE.BOTTOM);
+    }
+  });
 };
 
 // 监听回调函数
@@ -290,28 +316,22 @@ const onCurrentConversationIDUpdated = (conversationID: string) => {
     const applicationList = res.data.applicationList.filter(
       (application: any) => application.groupID === props.groupID
     );
-    applicationUserIDList.value = applicationList.map(
-      (application: IGroupApplicationListItem) => {
-        return application.applicationType === 0
-          ? application.applicant
-          : application.userID;
-      }
-    );
-    TUIStore.update(
-      StoreName.CUSTOM,
-      "groupApplicationCount",
-      applicationList.length
-    );
+    applicationUserIDList.value = applicationList.map((application: IGroupApplicationListItem) => {
+      return application.applicationType === 0 ? application.applicant : application.userID;
+    });
+    TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationList.length);
   });
 };
+
+const onCurrentConversationUpdated = (conversation: typeof IConversationModel) => {
+  currentLastMessageTime.value = conversation?.lastMessage?.lastTime || 0;
+};
+
 // operationType 操作类型 1: 有用户申请加群   23: 普通群成员邀请用户进群
 const onGroupSystemNoticeList = (list: Array<typeof IMessageModel>) => {
   const systemNoticeList = list.filter((message) => {
     const { operationType } = message.payload;
-    return (
-      (operationType === 1 || operationType === 23) &&
-      message.to === props.groupID
-    );
+    return (operationType === 1 || operationType === 23) && message.to === props.groupID;
   });
 
   systemNoticeList.forEach((systemNotice) => {
@@ -335,24 +355,44 @@ const onGroupSystemNoticeList = (list: Array<typeof IMessageModel>) => {
   TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationCount);
 };
 
+// 当前 需要高亮的消息
+TUIStore.watch(StoreName.CUSTOM, {
+  messageHighlight: (message: typeof IMessageModel) => {
+    messageHighlight.value = message;
+    if (messageHighlight?.value) {
+      scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value);
+    }
+  },
+});
+
 // 事件监听
 onMounted(() => {
   // 消息 messageList
   TUIStore.watch(StoreName.CHAT, {
     messageList: (list: Array<typeof IMessageModel>) => {
-      messageList.value = list.filter(message => !message.isDeleted);
-      // 滚动到底部，仅支持纯文本消息，仅支持 web & h5 版本
-      nextTick(() => {
+      allMessageList.value = list;
+      messageList.value = list.filter((message) => !message.isDeleted);
+      const targetIndex = messageList?.value?.findIndex(
+        (item: typeof IMessageModel) => item?.ID === messageHighlight?.value?.ID
+      );
+      if (messageHighlight?.value || currentHighlightMessage.value) {
+        scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value);
+      } else {
         scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
-      });
+      }
     },
     isCompleted: (flag: boolean) => {
       isCompleted.value = flag;
     },
+    messageSource: (message: typeof IMessageModel) => {
+      messageJumping.value = message;
+    },
   });
+
   // 当前 ConversationID
   TUIStore.watch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,
+    currentConversation: onCurrentConversationUpdated,
   });
 
   // 群未决消息列表
@@ -404,18 +444,16 @@ const openComplaintLink = (type: any) => {
 
 // web & h5 上传过程中能够滚动到底部
 const handleUploadingImageOrVideo = () => {
-  nextTick(() => {
+  if (messageHighlight?.value || currentHighlightMessage.value) {
+    scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value);
+  } else {
     scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
-  });
+  }
 };
 
 // 图片预览
 const handleImagePreview = (message: typeof IMessageModel) => {
-  if (
-    showImagePreview.value ||
-    currentImagePreview.value ||
-    isLongpressing.value
-  ) {
+  if (showImagePreview.value || currentImagePreview.value || isLongpressing.value) {
     return;
   }
   showImagePreview.value = true;
@@ -428,11 +466,7 @@ const onImagePreviewerClose = () => {
 };
 
 // 消息操作
-const handleToggleMessageItem = (
-  e: any,
-  message: typeof IMessageModel,
-  isLongpress = false
-) => {
+const handleToggleMessageItem = (e: any, message: typeof IMessageModel, isLongpress = false) => {
   if (isLongpress) {
     isLongpressing.value = true;
   }
@@ -447,11 +481,7 @@ const handleToggleMessageItemForPC = (e: MouseEvent, message: typeof IMessageMod
 
 // h5 long press
 let timer: number;
-const handleH5LongPress = (
-  e: any,
-  message: typeof IMessageModel,
-  type: string
-) => {
+const handleH5LongPress = (e: any, message: typeof IMessageModel, type: string) => {
   if (!isH5.value) return;
   function longPressHandler() {
     clearTimeout(timer);
@@ -491,6 +521,66 @@ const resendMessageConfirm = () => {
   reSendDialogShow.value = !reSendDialogShow.value;
   const messageModel = resendMessageData.value;
   messageModel.resendMessage();
+};
+
+// 指定消息高亮
+const highlightTargetMessage = (message: typeof IMessageModel, messageDom: HTMLElement) => {
+  // 滚动到指定元素 增加闪烁特效样式
+  // 对于非图片/视频类消息，即有消息气泡padding背景，高亮背景颜色
+  // 对于图片/视频类消息，没有消息气泡padding背景，高亮覆盖层
+  // 对于 tip 展示类型消息，高亮 tip 文字
+  const targetMessageArea = messageDom?.getElementsByClassName("content")[0];
+  const targetMessageTip =
+    messageDom?.getElementsByClassName("message-tip")[0] ||
+    messageDom?.getElementsByClassName("message-plugin-tip")[0];
+  if (!targetMessageArea?.classList && !targetMessageTip?.classList) {
+    return;
+  }
+  if (currentHighlightMessage.value) {
+    const currentHighlightMessageDom = messageElementListRef?.value?.find(
+      (dom: HTMLElement) => dom?.id === currentHighlightMessage.value?.ID
+    );
+    if (!currentHighlightMessageDom) {
+      return;
+    }
+    const currentHighlightMessageRef =
+      currentHighlightMessageDom.getElementsByClassName("content")[0] ||
+      currentHighlightMessageDom.getElementsByClassName("message-tip")[0] ||
+      currentHighlightMessageDom.getElementsByClassName("message-plugin-tip")[0];
+    if (currentHighlightMessageRef?.classList) {
+      currentHighlightMessageRef.classList.remove("content-highlight");
+      currentHighlightMessageRef.classList.remove("content-highlight-noPadding");
+      currentHighlightMessageRef.classList.remove("message-tip-highlight");
+    }
+  }
+  currentHighlightMessage.value = message;
+  if (targetMessageArea?.classList) {
+    targetMessageArea.classList.add("content-highlight");
+    targetMessageArea.classList.contains("content-noPadding") &&
+      targetMessageArea.classList.add("content-highlight-noPadding");
+  }
+  if (targetMessageTip?.classList) {
+    targetMessageTip.classList.add("message-tip-highlight");
+  }
+  setTimeout(() => {
+    if (targetMessageArea?.classList) {
+      targetMessageArea.classList.remove("content-highlight");
+      targetMessageArea.classList.remove("content-highlight-noPadding");
+    }
+    if (targetMessageTip?.classList) {
+      targetMessageTip.classList.remove("message-tip-highlight");
+    }
+    currentHighlightMessage.value = null;
+  }, 3000);
+  // 消息高亮后，清除 messageHighlight
+  TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
+};
+
+// 回到最新消息
+const jumpToLatestMessage = () => {
+  TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
+  currentHighlightMessage.value = null;
+  TUIStore.update(StoreName.CHAT, "messageSource", undefined);
 };
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

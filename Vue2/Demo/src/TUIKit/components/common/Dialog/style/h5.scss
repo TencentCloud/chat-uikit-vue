@@ -18,6 +18,10 @@
         min-height: 0;
         overflow: hidden;
         text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 0;
         &-uniapp {
           padding: 40px 0;
         }

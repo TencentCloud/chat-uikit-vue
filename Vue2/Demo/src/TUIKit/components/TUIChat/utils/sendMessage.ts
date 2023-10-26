@@ -1,4 +1,4 @@
-import { TUIChatService } from "@tencentcloud/chat-uikit-engine";
+import { TUIChatService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { ISendMessageParams } from "../../../interface";
 
@@ -8,13 +8,14 @@ export const sendMessages = async (
   replyOrReference: any
 ) => {
   const replyOrReferenceObject = replyOrReference;
+  // 有 messageJumping 的情况下，发送消息自动清空，回到底部
+  TUIStore.update(StoreName.CHAT, "messageSource", undefined);
+  TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
   await messageList?.forEach(async (content: any) => {
     try {
       let cloudCustomData, res;
       const options: ISendMessageParams = {
-        to:
-          currentConversation?.groupProfile?.groupID ||
-          currentConversation?.userProfile?.userID,
+        to: currentConversation?.groupProfile?.groupID || currentConversation?.userProfile?.userID,
         conversationType: currentConversation?.type,
         payload: {},
       };
@@ -27,7 +28,7 @@ export const sendMessages = async (
           // cloudCustomData = handleMessageReplyOrReference(cloudCustomData);
           // @ text message
           // 禁止发送空消息
-          if(!JSON.parse(JSON.stringify(content?.payload?.text))){
+          if (!JSON.parse(JSON.stringify(content?.payload?.text))) {
             break;
           }
           if (content?.payload?.atUserList) {
@@ -35,14 +36,12 @@ export const sendMessages = async (
               text: JSON.parse(JSON.stringify(content?.payload?.text)),
               atUserList: content?.payload?.atUserList,
             };
-            await TUIChatService?.sendTextAtMessage(options).catch(
-              (err: any) => {
-                Toast({
-                  message: err?.message,
-                  type: TOAST_TYPE.ERROR,
-                });
-              }
-            );
+            await TUIChatService?.sendTextAtMessage(options).catch((err: any) => {
+              Toast({
+                message: err?.message,
+                type: TOAST_TYPE.ERROR,
+              });
+            });
           } else {
             options.payload = {
               text: JSON.parse(JSON.stringify(content?.payload?.text)),

@@ -6,6 +6,8 @@ import TUIChatEngine, {
   TUIUserService,
   TUITranslateService,
   AddFriendParams,
+  TUIStore,
+  StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isUniFrameWork } from "../../../utils/is-uni";
@@ -200,8 +202,6 @@ export const addFriend = (params: typeof AddFriendParams) => {
 // 进入会话 / enter conversation
 // todo：后续抽离为切换会话服务
 export const enterConversation = (item: any) => {
-  // todo: 目前仅处理 web / h5 切换到当前会话 情况
-  // uniapp 版本待处理
   const conversationID = item?.groupID
     ? `GROUP${item?.groupID}`
     : `C2C${item?.userID}`;

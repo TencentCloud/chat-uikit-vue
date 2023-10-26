@@ -44,10 +44,15 @@ const extensions = ref<typeof ExtensionInfo>([])
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: typeof IConversationModel) => {
     const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
+    if (isGroup && currentConversation.value?.conversationID !== conversation?.conversationID) {
+      extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: isGroup });
+    }
+    if (!isGroup) {
+      extensions.value = [];
+    }
     currentConversation.value = conversation;
     groupID.value = currentConversation.value?.groupProfile?.groupID;
     currentConversationName.value = currentConversation?.value?.getShowName();
-    extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: isGroup });
   },
 });
 TUIStore.watch(StoreName.CHAT, {

@@ -3,13 +3,13 @@
     class="message-audio"
     :class="[message.flow === 'out' && 'reserve']"
     @click.stop="play"
-    :style="`width: ${data.second * 10 + 40}px`"
+    :style="`width: ${data.second * 10 + 40}px; min-width: 52px; max-width: calc(100% - 40px);`"
   >
     <Icon
     :file="voice"
     :class="[message.flow === 'out' && 'icon-reserve']"
     ></Icon>
-    <label>{{ data.second }} "</label>
+    <label style="min-width: 22px;`">{{ data.second }} "</label>
     <audio ref="audioRef" :src="data.url"></audio>
   </div>
 </template>

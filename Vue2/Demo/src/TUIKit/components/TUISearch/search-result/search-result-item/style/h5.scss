@@ -1,0 +1,22 @@
+.search-result-list-item-h5 {
+  padding: 10px 0px;
+  border-radius: 0px;
+  .bubble {
+    .bubble-left {
+      .bubble-left-avatar {
+        width: 48px;
+        height: 48px;
+      }
+      .bubble-main {
+        .bubble-main-name {
+          color: #333333;
+          font-family: PingFang SC;
+          font-size: 14px;
+          font-weight: 400;
+          letter-spacing: 0px;
+          text-align: left;
+        }
+      }
+    }
+  }
+}
