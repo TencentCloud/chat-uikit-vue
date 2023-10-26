@@ -84,6 +84,8 @@ import {
   TUIUserService,
   TUIConversationService,
   TUIGlobal,
+  TUIStore,
+  StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, watch, watchEffect } from "../../../adapter-vue";
 import { IUserProfile } from "../../../interface";

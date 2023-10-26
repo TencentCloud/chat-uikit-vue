@@ -4,6 +4,8 @@ const TUIConversation = {
   "发起群聊": "New group chat",
   "请输入userID": "Enter a user ID",
   "删除会话": "Delete conversation",
+  "删除后，将清空该聊天的消息记录": "Once deleted, all chat messages will be cleared.",
+  "删除后，将清空该群聊的消息记录": "Once deleted, group chat history will be cleared.",
   "系统通知": "System notification",
   "置顶会话": "Top conversation",
   "取消置顶": "cancel top conversation",

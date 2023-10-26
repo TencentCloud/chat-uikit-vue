@@ -1,17 +1,9 @@
 <template>
   <SelectFriend v-if="isShowSelectFriend" />
-  <div
-    v-else-if="isShowContactList"
-    :class="['TUI-contact', !isPC && 'TUI-contact-h5']"
-  >
-    <div
-      :class="['TUI-contact-left', !isPC && 'TUI-contact-h5-left']"
-      v-if="isShowContactListInH5"
-    >
+  <div v-else-if="isShowContactList" :class="['TUI-contact', !isPC && 'TUI-contact-h5']">
+    <div :class="['TUI-contact-left', !isPC && 'TUI-contact-h5-left']" v-if="isShowContactListInH5">
       <ContactSearch />
-      <ContactList
-        :class="['TUI-contact-left-list', !isPC && 'TUI-contact-h5-left-list']"
-      />
+      <ContactList :class="['TUI-contact-left-list', !isPC && 'TUI-contact-h5-left-list']" />
     </div>
     <div
       :class="['TUI-contact-right', !isPC && 'TUI-contact-h5-right']"
@@ -22,11 +14,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  TUIStore,
-  StoreName,
-  TUIGlobal,
-} from "@tencentcloud/chat-uikit-engine";
+import { TUIStore, StoreName, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import { ref, watchEffect } from "../../adapter-vue";
 
 import SelectFriend from "./select-friend/index.vue";
@@ -52,6 +40,10 @@ const isShowSelectFriend = ref(false);
 const isShowContactList = ref(true);
 const isShowContactListInH5 = ref(true);
 const isShowContactInfoInH5 = ref(true);
+
+watchEffect(() => {
+  isShowContactList.value = props?.displayType !== "selectFriend";
+});
 
 TUIStore.watch(StoreName.CUSTOM, {
   isShowSelectFriendComponent: (data: any) => {
@@ -79,11 +71,7 @@ TUIStore.watch(StoreName.CUSTOM, {
     if (isPC.value) {
       isShowContactListInH5.value = true;
       isShowContactInfoInH5.value = true;
-    } else if (
-      !data ||
-      typeof data !== "object" ||
-      Object.keys(data)?.length <= 0
-    ) {
+    } else if (!data || typeof data !== "object" || Object.keys(data)?.length <= 0) {
       // 判断 移动端 展示 contactList 还是 contactInfo
       // contactInfo 不存在，展示contactList
       isShowContactListInH5.value = true;
@@ -98,9 +86,10 @@ TUIStore.watch(StoreName.CUSTOM, {
 });
 
 const switchConversation = (data: any) => {
-  isUniFrameWork && TUIGlobal?.global?.navigateTo({
-    url: "/TUIKit/components/TUIChat/index",
-  });
+  isUniFrameWork &&
+    TUIGlobal?.global?.navigateTo({
+      url: "/TUIKit/components/TUIChat/index",
+    });
   emits("switchConversation", data);
 };
 </script>

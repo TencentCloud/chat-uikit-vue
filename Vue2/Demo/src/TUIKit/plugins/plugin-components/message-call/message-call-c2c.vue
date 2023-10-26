@@ -3,10 +3,7 @@
     v-if="isCallMessage && conversationType === TYPES.CONV_C2C"
     class="call"
     @click="callAgain"
-    :class="[
-      'call-' + conversationType,
-      message.flow === 'out' && 'call-reverse',
-    ]"
+    :class="['call-' + conversationType, message.flow === 'out' && 'call-reverse']"
   >
     <div :class="['icon', message.flow === 'out' && callInfo.type === 2 && 'icon-reverse']">
       <Icon :file="callInfo.icon"></Icon>
@@ -18,7 +15,7 @@
 import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
 import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
 import { computed, ref } from "../../../adapter-vue";
-import { JSONToObject } from "../../../components/TUIChat/utils/utils";
+import { JSONToObject } from "../../../utils/index";
 import Icon from "../../../components/common/Icon.vue";
 import callVideoSVG from "../../../assets/icon/call-video.svg";
 import callVoiceSVG from "../../../assets/icon/call-voice.svg";
@@ -38,7 +35,7 @@ const props = defineProps({
 });
 const TYPES = ref(TUIChatEngine.TYPES);
 const isCallMessage = computed(() => props.signalingInfo != null);
-const callInfo = computed(():{type:number;icon:string} => {
+const callInfo = computed((): { type: number; icon: string } => {
   const callType = JSONToObject(props.signalingInfo?.data)?.call_type;
   switch (callType) {
     case 1:
@@ -64,8 +61,7 @@ const custom = computed(() => props.customContent?.custom);
 
 const callAgain = () => {
   if (conversationType.value === TUIChatEngine.TYPES.CONV_C2C) {
-    const userID =
-      props.message?.flow === "out" ? props.message?.to : props.message?.from;
+    const userID = props.message?.flow === "out" ? props.message?.to : props.message?.from;
     TUICore.callService({
       serviceName: TUIConstants.TUICalling.SERVICE.NAME,
       method: TUIConstants.TUICalling.SERVICE.METHOD.START_CALL,

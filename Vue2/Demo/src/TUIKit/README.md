@@ -127,10 +127,8 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
 ```javascript
 <template>
   <div class="home-TUIKit-main">
-    <div
-      :class="isH5 ? 'conversation-h5' : 'conversation'"
-      v-show="!isH5 || !currentConversationID"
-    >
+    <div :class="isH5 ? 'conversation-h5' : 'conversation'" v-show="!isH5 || !currentConversationID">
+      <TUISearch search-type="global" />
       <TUIConversation class="conversation" />
       <TUIContact display-type="selectFriend" />
     </div>
@@ -138,19 +136,15 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
       <TUIChat>
         <h1>欢迎使用腾讯云即时通信IM</h1>
       </TUIChat>
+      <TUIGroup :class="!isH5 && 'chat-aside'" />
+      <TUISearch :class="!isH5 && 'chat-aside'" search-type="conversation" />
     </div>
-    <!-- TUICallKit 组件：通话 UI 组件主体 -->
     <TUICallKit
-      :class="
-        !showCallMini ? 'callkit-drag-container' : 'callkit-drag-container-mini'
-      "
-      :allowedMinimized="true"
-      :allowedFullScreen="false"
-      :onMinimized="onMinimized"
-    />
+      :class="[isH5 ? 'callkit-container-h5' : showCallMini ? 'callkit-container-mini' : 'callkit-container-pc']"
+      :allowedMinimized="true" :allowedFullScreen="false" :onMinimized="onMinimized" />
   </div>
 </template>
-
+  
 <script lang="ts">
 import Vue from "vue";
 import {
@@ -158,18 +152,20 @@ import {
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
-import { TUIConversation, TUIChat, TUIContact } from "./TUIKit";
+import { TUISearch, TUIConversation, TUIChat, TUIContact, TUIGroup } from "./TUIKit";
 // vue 2.7 及以上
 import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
 // vue 2.6 及 以下, 请注释上行，开放下行注释
 // import { TUICallKit } from "@tencentcloud/call-uikit-vue2.6";
+
 export default Vue.extend({
   name: "App",
   components: {
+    TUISearch,
+    TUIGroup,
     TUIConversation,
     TUIChat,
     TUICallKit,
-    TUIContact,
   },
   data() {
     return {
@@ -193,14 +189,13 @@ export default Vue.extend({
   },
 });
 </script>
-<style scoped>
+  
+<style scoped lang="scss">
+@import "./TUIKit/assets/styles/common.scss";
 .home-TUIKit-main {
   display: flex;
   height: 100vh;
   overflow: hidden;
-}
-.search {
-  padding: 12px;
 }
 .conversation {
   min-width: 285px;
@@ -216,24 +211,22 @@ export default Vue.extend({
   height: 100%;
   position: relative;
 }
-.callkit-drag-container {
+.callkit-container-pc {
   position: fixed;
   left: calc(50% - 25rem);
   top: calc(50% - 18rem);
   width: 50rem;
   height: 36rem;
-  border-radius: 16px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
-.callkit-drag-container-mini {
+.callkit-container-h5 {
   position: fixed;
-  width: 168px;
-  height: 56px;
+}
+.callkit-container-mini {
+  position: fixed;
   right: 10px;
   top: 70px;
 }
 </style>
-
 ```
 
 #### 步骤 6：启动项目
