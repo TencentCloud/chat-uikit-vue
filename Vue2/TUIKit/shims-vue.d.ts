@@ -22,3 +22,8 @@ declare module "*.json" {
   const content: any;
   export default content;
 }
+
+declare module "dayjs";
+declare module "dayjs/plugin/localeData.js";
+declare module "dayjs/plugin/isSameOrAfter.js";
+declare module "dayjs/plugin/isSameOrBefore.js";

@@ -3,54 +3,37 @@
     class="dialog-item"
     :class="!isPC ? 'dialog-item-h5' : 'dialog-item-web'"
   >
-    <ul
+    <div
       class="dialog-item-list"
       :class="!isPC ? 'dialog-item-list-h5' : 'dialog-item-list-web'"
     >
-      <li
-        v-if="
-          isPC &&
-          (message.type === TYPES.MSG_FILE ||
-            message.type === TYPES.MSG_VIDEO ||
-            message.type === TYPES.MSG_IMAGE)
-        "
-        @click="openMessage(message)"
-      >
-        <Icon :file="copyIcon"></Icon>
-        <span>{{ TUITranslateService.t("TUIChat.打开") }}</span>
-      </li>
-      <li
-        v-if="isUniFrameWork && message.type === TYPES.MSG_TEXT"
-        @click="messageCopy(message)"
-      >
-        <Icon :file="copyIcon" class="file-icon"></Icon>
-        <span>{{ TUITranslateService.t("TUIChat.复制") }}</span>
-      </li>
-      <li
-        @click="revokeMessage(message)"
-        v-if="message.flow === 'out' && message.status === 'success'"
-      >
-        <Icon :file="revokeIcon" class="file-icon"></Icon>
-        <span>{{ TUITranslateService.t("TUIChat.撤回") }}</span>
-      </li>
-      <li v-if="message.status === 'success'" @click="deleteMessage(message)">
-        <Icon :file="delIcon" class="file-icon"></Icon>
-        <span>{{ TUITranslateService.t("TUIChat.删除") }}</span>
-      </li>
-    </ul>
+      <template v-for="(item, index) in actionItems">
+        <div
+          v-if="item.renderCondition()"
+          class="list-item"
+          @click="getFunction(index)"
+        >
+          <Icon :file="item.iconUrl" width="15px" height="15px"></Icon>
+          <span class="list-item-text">{{ item.text }}</span>
+        </div>
+      </template>
+    </div>
   </div>
 </template>
+
 <script lang="ts" setup>
 import { ref, watchEffect } from "../../../../adapter-vue";
 import TUIChatEngine, {
   TUIStore,
+  StoreName,
   TUIGlobal,
-  IMessageModel,
   TUITranslateService,
+  type IMessageModel,
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import copyIcon from "../../../../assets/icon/msg-copy.svg";
 import delIcon from "../../../../assets/icon/msg-del.svg";
+import forwardIcon from "../../../../assets/icon/msg-forward.svg";
 import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
 import { Toast, TOAST_TYPE } from "../../../common/Toast/index";
 import { isUniFrameWork } from "../../../../utils/is-uni";
@@ -65,36 +48,89 @@ const props = defineProps({
     default: false,
   },
 });
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isShow = ref(false);
-const showToolList = ref(true);
-const message = ref<typeof IMessageModel>();
-const TYPES = ref(TUIChatEngine.TYPES);
+
+const isPC = TUIGlobal.getPlatform() === "pc";
+const TYPES = TUIChatEngine.TYPES;
+const actionItems = [
+  {
+    text: TUITranslateService.t("TUIChat.打开"),
+    iconUrl: copyIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      return isPC && (message.value?.type === TYPES.MSG_FILE ||
+        message.value?.type === TYPES.MSG_VIDEO ||
+        message.value?.type === TYPES.MSG_IMAGE);
+    },
+    clickEvent: openMessage,
+  },
+  {
+    text: TUITranslateService.t("TUIChat.复制"),
+    iconUrl: copyIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      return isUniFrameWork && message.value?.type === TYPES.MSG_TEXT;
+    },
+    clickEvent: copyMessage,
+  },
+  {
+    text: TUITranslateService.t("TUIChat.撤回"),
+    iconUrl: revokeIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      return message.value?.flow === 'out' && message.value?.status === 'success';
+    },
+    clickEvent: revokeMessage,
+  },
+  {
+    text: TUITranslateService.t("TUIChat.删除"),
+    iconUrl: delIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      return message.value?.status === 'success';
+    },
+    clickEvent: deleteMessage,
+  },
+  {
+    text: TUITranslateService.t("TUIChat.转发") || "转发",
+    iconUrl: forwardIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      return message.value?.status === 'success';
+    },
+    clickEvent: forwardSingleMessage,
+  },
+];
+
+const message = ref<IMessageModel>();
 
 watchEffect(() => {
-  message.value = props.messageItem;
-  isShow.value = props.isShowTool;
+  message.value = props.messageItem as IMessageModel;
 });
 
-const openMessage = (item: any) => {
+function getFunction(index: number) {
+  // 兼容 vue2 小程序的写法 不允许动态绑定
+  actionItems[index].clickEvent();
+}
+
+function openMessage() {
   let url = "";
-  switch (item.type) {
+  switch (message.value.type) {
     case TUIChatEngine.TYPES.MSG_FILE:
-      url = item.payload.fileUrl;
+      url = message.value.payload.fileUrl;
       break;
     case TUIChatEngine.TYPES.MSG_VIDEO:
-      url = item.payload.remoteVideoUrl;
+      url = message.value.payload.remoteVideoUrl;
       break;
     case TUIChatEngine.TYPES.MSG_IMAGE:
-      url = item.payload.imageInfoArray[0].url;
+      url = message.value.payload.imageInfoArray[0].url;
       break;
   }
-  window.open(url, "_blank");
-};
+  window?.open(url, "_blank");
+}
 
-const revokeMessage = (message: any) => {
+function revokeMessage() {
   // 获取 messageModel
-  const messageModel = TUIStore.getMessageModel(message.ID);
+  const messageModel = TUIStore.getMessageModel(message.value.ID);
   let promise = messageModel.revokeMessage();
   promise.catch((error: any) => {
     // 调用异常时业务侧可以通过 promise.catch 捕获异常进行错误处理
@@ -106,25 +142,29 @@ const revokeMessage = (message: any) => {
       });
     }
   });
-};
+}
 
-const deleteMessage = (message: any) => {
+function deleteMessage() {
   // 获取 messageModel
-  const messageModel = TUIStore.getMessageModel(message.ID);
+  const messageModel = TUIStore.getMessageModel(message.value.ID);
   messageModel.deleteMessage();
-};
+}
 
-const messageCopy = (message: any) => {
+function copyMessage() {
   if (isUniFrameWork) {
     TUIGlobal?.global?.setClipboardData({
-      data: message?.payload?.text,
+      data: message.value?.payload?.text,
     });
   }
-};
+}
+
+function forwardSingleMessage() {
+  TUIStore.update(StoreName.CUSTOM, 'singleForwardMessageID', message.value.ID);
+}
 </script>
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
-.dialog-item {
+.dialog-item-web {
   background: #ffffff;
   min-width: min-content;
   max-width: 220px;
@@ -138,43 +178,43 @@ const messageCopy = (message: any) => {
   align-items: baseline;
   white-space: nowrap;
   border: 1px solid #e0e0e0;
-  &-web {
-    padding: 12px 0;
-  }
+  padding: 12px 0;
 
-  &-list {
+  .dialog-item-list {
     display: flex;
     align-items: baseline;
     white-space: nowrap;
     justify-content: space-around;
     width: 100%;
-    &-h5 {
-      flex-wrap: nowrap;
-      margin: 10px;
-      li {
-        padding: 0 5px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-size: 8px;
-        color: #4f4f4f;
-      }
-    }
-    &-web {
-      li:first-child {
-        margin-top: 0;
-      }
 
-      li {
-        padding: 4px 12px;
+    .list-item {
+      padding: 4px 12px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      .list-item-text {
+        padding-left: 4px;
         font-size: 12px;
         line-height: 17px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        span {
-          padding-left: 4px;
-        }
+      }
+    }
+  }
+}
+
+.dialog-item-h5 {
+  @extend .dialog-item-web;
+  padding: 0;
+  .dialog-item-list {
+    flex-wrap: nowrap;
+    margin: 10px;
+    .list-item {
+      padding: 0 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #4f4f4f;
+      .list-item-text {
+        padding-left: 0;
       }
     }
   }

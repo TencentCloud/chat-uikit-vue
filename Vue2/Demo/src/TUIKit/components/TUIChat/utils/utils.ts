@@ -1,35 +1,4 @@
 import TUIChatEngine, { IMessageModel } from "@tencentcloud/chat-uikit-engine";
-// Determine whether it is url
-export function isUrl(url: string) {
-  return /^(https?:\/\/(([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+\.)+[a-zA-Z]+)(:\d+)?(\/.*)?(\?.*)?(#.*)?$/.test(
-    url
-  );
-}
-
-// Determine if it is a JSON string
-export function isJSON(str: string) {
-  // eslint-disable-next-line no-useless-escape
-  if (typeof str === "string") {
-    try {
-      const data = JSON.parse(str);
-      if (data) {
-        return true;
-      }
-      return false;
-    } catch (error: any) {
-      return false;
-    }
-  }
-  return false;
-}
-
-// Determine if it is a JSON string
-export function JSONToObject(str: string) {
-  if (!str || !isJSON(str)) {
-    return str;
-  }
-  return JSON.parse(str);
-}
 
 export function deepCopy(data: any, hash = new WeakMap()) {
   if (typeof data !== "object" || data === null || data === undefined) {
@@ -82,9 +51,7 @@ export const handleSkeletonSize = (
   }
   if (
     (width <= maxWidth && height > maxHeight) ||
-    (width > maxWidth &&
-      height > maxHeight &&
-      widthToHeight <= maxWidthToHeight)
+    (width > maxWidth && height > maxHeight && widthToHeight <= maxWidthToHeight)
   ) {
     return { width: width * (maxHeight / height), height: maxHeight };
   }

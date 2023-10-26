@@ -104,4 +104,17 @@ const handleH5LongPress = (
   align-items: center;
   text-align: center;
 }
+.message-tip-highlight{
+  animation: highlight 1000ms infinite;
+  @-webkit-keyframes highlight {
+    50% {
+      color: #ff9c19;
+    }
+  }
+  @keyframes highlight {
+    50% {
+      color: #ff9c19;
+    }
+  }
+}
 </style>

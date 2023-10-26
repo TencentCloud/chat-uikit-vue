@@ -1,0 +1,226 @@
+.search-result-list-item {
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  &-image {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+    overflow: hidden;
+    box-sizing: content-box;
+    border: 1px solid #f1f1f1;
+    padding: 0px;
+    margin: 5px;
+  }
+  &-file {
+    border: none;
+  }
+  .info {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    &-left {
+      &-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 5px;
+      }
+    }
+    &-main {
+      flex: 1;
+      padding: 0 10px;
+      overflow: hidden;
+      &-name,
+      &-content {
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &-name {
+        color: #333333;
+        font-size: 14px;
+        height: 20px;
+      }
+      &-content {
+        color: #999999;
+        font-size: 12px;
+        .highlight {
+          color: #007aff;
+        }
+        .normal {
+          color: #999999;
+        }
+      }
+    }
+    &-right {
+      width: fit-content;
+      &-time {
+        font-weight: 400;
+        font-size: 12px;
+        color: #999999;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+  .bubble {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    &-left {
+      &-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 5px;
+      }
+    }
+    &-main {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      padding: 0 8px;
+      &-name {
+        max-width: 100%;
+        width: fit-content;
+        padding-bottom: 4px;
+        font-weight: 400;
+        font-size: 0.8rem;
+        color: #999999;
+        letter-spacing: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &-content {
+        max-width: 100%;
+        width: fit-content;
+        box-sizing: border-box;
+        padding: 12px;
+        font-weight: 400;
+        font-size: 14px;
+        color: #000000;
+        letter-spacing: 0;
+        word-wrap: break-word;
+        word-break: break-all;
+        overflow: hidden;
+        background: #eff0f1;
+        border-radius: 0px 10px 10px 10px;
+        .highlight {
+          background-color: #007aff33;
+        }
+        .normal {
+          color: #1f2329;
+        }
+      }
+    }
+    &-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      &-time {
+        font-weight: 400;
+        font-size: 12px;
+        color: #999999;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+      &-to {
+        cursor: pointer;
+        font-weight: 400;
+        font-size: 12px;
+        color: #007aff;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+    }
+  }
+  .file {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    &-header {
+      flex: 1;
+      padding: 10px 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      &-avatar {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        margin-right: 3px;
+      }
+      &-name {
+        flex: 1;
+      }
+      &-name,
+      &-time,
+      &-to {
+        color: #666666;
+        font-size: 14px;
+        height: 24px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      &-to {
+        cursor: pointer;
+        font-weight: 400;
+        color: #007aff;
+        letter-spacing: 0;
+        white-space: nowrap;
+        padding-right: 3px;
+      }
+    }
+    &-main-content {
+      padding: 10px;
+      background-color: #f1f1f1;
+    }
+  }
+  .image {
+    width: 100px;
+    height: 100px;
+    max-width: 100px;
+    max-height: 100px;
+    overflow: hidden;
+    box-sizing: content-box;
+    .image-container {
+      width: 100px;
+      height: 100px;
+      max-width: 100px;
+      max-height: 100px;
+      overflow: hidden;
+      position: relative;
+      .image-container-hover {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 40%;
+        background-color: rgba(0, 0, 0, 0.3);
+        .image-container-hover-text {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #ffffff;
+          cursor: pointer;
+          user-select: none;
+        }
+      }
+    }
+  }
+}
+.hover-info {
+  border-radius: 5px;
+  background-color: #f5f5f5;
+}
+.hover-bubble {
+  background-color: #f5f5f5;
+}

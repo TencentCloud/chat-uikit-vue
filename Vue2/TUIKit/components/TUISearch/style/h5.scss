@@ -1,0 +1,23 @@
+.tui-search-h5 {
+  &-full-screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    background: #ffffff;
+  }
+  &-global,
+  &-conversation {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+  &-conversation {
+    overflow: hidden;
+  }
+}

@@ -1,9 +1,4 @@
-import {
-  createVNode,
-  render,
-  VNode,
-  vueVersion,
-} from "../../../adapter-vue";
+import { createVNode, render, VNode, vueVersion } from "../../../adapter-vue";
 import TOAST_TYPE from "./type";
 import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import MessageConstructor from "./index.vue";
@@ -11,6 +6,7 @@ import MessageConstructor from "./index.vue";
 const instances: any = [];
 let seed = 1;
 
+const vueVersionInt = Math.trunc(vueVersion);
 const appendTo: HTMLElement | null = document.body;
 
 const Toast = function (options: any) {
@@ -32,7 +28,7 @@ const Toast = function (options: any) {
   };
   let vm: { component: any; props: any; data: any };
   let container: HTMLDivElement;
-  switch (vueVersion) {
+  switch (vueVersionInt) {
     case 2:
       const Vue = TUIGlobal?.Vue;
       if (!Vue) {
@@ -64,9 +60,9 @@ const Toast = function (options: any) {
       instances.push({ vm });
       appendTo.appendChild(container.firstElementChild!);
       return {
-        close: ()=>{
+        close: () => {
           vm?.component!?.proxy && (vm.component!.proxy.visible = false);
-        }
+        },
       };
   }
 };
@@ -86,9 +82,15 @@ export function close(id: string, userOnClose?: (vm: VNode) => void): void {
   if (len < 1) return;
   for (let i = idx; i < len; i++) {
     const pos =
-      Number.parseInt((instances[i]?.vm?.el!?.style?.top || instances[i]?.vm?.$el!?.style?.top ), 10) - removedHeight - 16;
-      instances[i]?.vm?.component!?.props?.offset && (instances[i].vm.component!.props.offset = pos);
-      instances[i]?.vm?._props?.offset && (instances[i].vm._props.offset = pos)
+      Number.parseInt(
+        instances[i]?.vm?.el!?.style?.top || instances[i]?.vm?.$el!?.style?.top,
+        10
+      ) -
+      removedHeight -
+      16;
+    instances[i]?.vm?.component!?.props?.offset &&
+      (instances[i].vm.component!.props.offset = pos);
+    instances[i]?.vm?._props?.offset && (instances[i].vm._props.offset = pos);
   }
 }
 

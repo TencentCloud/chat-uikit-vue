@@ -13,7 +13,6 @@
     min-width: 368px;
     border-radius: 10px;
     padding: 20px 30px;
-
     &-header {
       display: flex;
       justify-content: space-between;
@@ -29,6 +28,10 @@
 
     &-content {
       font-size: 14px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
     }
 
     &-footer {

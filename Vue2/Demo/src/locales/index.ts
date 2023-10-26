@@ -1,6 +1,6 @@
 import en from './en'
 import zhcn from './zh_cn'
-import TUILocales from '@tencentcloud/chat-uikit-vue2/locales'
+import TUILocales from '../TUIKit/locales/index'
 
 const demoLocales = {
   ...en,

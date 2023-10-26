@@ -34,7 +34,7 @@ SDKAppID 和 secretKey 等信息，可通过 [即时通信 IM 控制台](https:/
 #### 步骤 3：启动项目
 在 Demo 文件夹目录执行：
 ```javascript
-npm run serve
+npm run dev
 ```
 
 ### 相关链接

@@ -1,3 +1,4 @@
+ 
 <template>
   <div
     class="message-bubble"
@@ -24,8 +25,7 @@
         :class="[
           'content',
           `content-${message.flow}`,
-          message.type === TYPES.MSG_IMAGE ? 'content-image' : '',
-          message.type === TYPES.MSG_VIDEO ? 'content-video' : '',
+          isNoPadding ? 'content-noPadding' : ''
         ]"
       >
         <slot />
@@ -39,10 +39,10 @@
     >
     <Icon
       :file="loading"
-      class="message-label"
+      class="message-label loadingCircle"
       :width="'15px'"
       :height="'15px'"
-      v-if="message.status === 'unSend'"
+      v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
     ></Icon>
     <label
       class="message-label"
@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref } from "../../../../adapter-vue";
+import { watchEffect, ref, computed } from "../../../../adapter-vue";
 import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import loading from "../../../../assets/icon/loading.png";
@@ -75,10 +75,22 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-
+const needLoadingIconMessageType = [
+  TUIChatEngine.TYPES.MSG_LOCATION,
+  TUIChatEngine.TYPES.MSG_TEXT,
+  // TUIChatEngine.TYPES.MSG_IMAGE,
+  // TUIChatEngine.TYPES.MSG_SOUND,
+  // TUIChatEngine.TYPES.MSG_AUDIO,
+  // TUIChatEngine.TYPES.MSG_VIDEO,
+  // TUIChatEngine.TYPES.MSG_FILE,
+  TUIChatEngine.TYPES.MSG_CUSTOM,
+  TUIChatEngine.TYPES.MSG_MERGER,
+  TUIChatEngine.TYPES.MSG_FACE,
+];
 const message = ref();
 const messageShowName = ref("");
 const TYPES = ref(TUIChatEngine.TYPES);
+
 watchEffect(() => {
   message.value = props.messageItem;
   messageShowName.value = props?.content?.showName;
@@ -87,7 +99,12 @@ watchEffect(() => {
 const resendMessage = () => {
   emits("resendMessage");
 };
+
+const isNoPadding = computed(() => {
+  return [TYPES.value.MSG_IMAGE, TYPES.value.MSG_VIDEO].includes(props.messageItem.type);
+});
 </script>
+
 <style lang="scss" scoped>
 .reverse {
   flex-direction: row-reverse;
@@ -191,7 +208,7 @@ const resendMessage = () => {
   // position: relative;
   display: flex;
   flex-direction: column;
-  padding: 0 8px;
+  margin: 0 8px;
   .name {
     padding-bottom: 4px;
     font-weight: 400;
@@ -199,7 +216,7 @@ const resendMessage = () => {
     color: #999999;
     letter-spacing: 0;
   }
-  .reference-content {
+  .content-highlight {
     padding: 12px;
     font-weight: 400;
     font-size: 14px;
@@ -207,30 +224,32 @@ const resendMessage = () => {
     letter-spacing: 0;
     word-wrap: break-word;
     word-break: break-all;
-    animation: reference 800ms;
+    position: relative;
+    animation: highlight 1000ms infinite;
+    &-noPadding::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0.3;
+      animation: highlight 1000ms infinite;
+    }
+    @-webkit-keyframes highlight {
+      50% {
+        background-color: #ff9c19;
+      }
+    }
+    @keyframes highlight {
+      50% {
+        background-color: #ff9c19;
+      }
+    }
   }
-  @-webkit-keyframes reference {
-    from {
-      opacity: 1;
-    }
-    50% {
-      background-color: #ff9c19;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes reference {
-    from {
-      opacity: 1;
-    }
-    50% {
-      background-color: #ff9c19;
-    }
-    to {
-      opacity: 1;
-    }
-  }
+
   .content {
     padding: 12px;
     font-weight: 400;
@@ -240,6 +259,9 @@ const resendMessage = () => {
     word-wrap: break-word;
     word-break: break-all;
     width: fit-content;
+    position: relative;
+    overflow: hidden;
+
     &-in {
       background: #fbfbfb;
       border-radius: 0px 10px 10px 10px;
@@ -248,17 +270,12 @@ const resendMessage = () => {
       background: #dceafd;
       border-radius: 10px 0px 10px 10px;
     }
-    &-image {
-      padding: 0px;
-      background: transparent;
-      height: fit-content;
-      border-radius: 10px 0px 10px 10px;
-    }
-    &-video {
+    &-noPadding {
       padding: 0px;
       height: fit-content;
       background: transparent;
       border-radius: 10px;
+      overflow: hidden;
     }
   }
 }
@@ -269,6 +286,22 @@ const resendMessage = () => {
   font-size: 12px;
   color: #b6b8ba;
   word-break: keep-all;
+}
+
+@keyframes circleLoading {
+  0% {
+    transform: rotate(0);
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: rotate(360deg);
+  }
+}
+
+.loadingCircle {
+  opacity: 0;
+  animation: circleLoading 2s linear 1s infinite;
 }
 .fail {
   width: 15px;

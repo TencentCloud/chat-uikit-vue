@@ -1,3 +1,26 @@
-const TUISearch = {};
+const TUISearch = {
+  全部: "All",
+  联系人: "Contacts",
+  群聊: "Groups",
+  聊天记录: "Chat History",
+  文本: "Text",
+  文件: "File",
+  其他: "Other",
+  "图片/视频": "Image/Video",
+  选择时间: "Select time",
+  今天: "Today",
+  近三天: "Nearly three days",
+  近七天: "Nearly seven days",
+  查看更多: "View more ",
+  条相关: " related ",
+  条与: " related to ",
+  相关的: "keywords",
+  进入聊天: "enter",
+  定位到聊天位置: "Navigate to the chat position",
+  搜索会话内容: "Search in conversation",
+  查看更多历史记录: "View more history message",
+  暂无搜索结果: "No Results",
+  结果: "results",
+};
 
 export default TUISearch;
