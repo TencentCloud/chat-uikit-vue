@@ -207,6 +207,8 @@ export default Vue.extend({
   border-right: 1px solid #f4f5f9;
 }
 .chat {
+  display: flex;
+  overflow: hidden;
   flex: 1;
   height: 100%;
   position: relative;

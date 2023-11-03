@@ -32,6 +32,7 @@ const TUIChat = {
   "经度": "Longitude",
   "纬度": "Latitude",
   "自定义消息": "Custom message",
+  "消息": "[message]",
   "图片": "[photo]",
   "语音": "[audio]",
   "视频": "[video]",

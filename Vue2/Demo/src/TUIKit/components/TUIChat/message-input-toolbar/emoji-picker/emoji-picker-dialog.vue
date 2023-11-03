@@ -82,7 +82,7 @@ const emojiPickerDialog = ref();
 const emojiPickerListRef = ref();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -130,7 +130,7 @@ const sendFaceMessage = (index: number, listItem: IEmojiListItem) => {
       index: listItem.index,
       data: listItem.list[index],
     },
-  } as typeof SendMessageParams;
+  } as SendMessageParams;
   TUIChatService.sendFaceMessage(options);
 };
 

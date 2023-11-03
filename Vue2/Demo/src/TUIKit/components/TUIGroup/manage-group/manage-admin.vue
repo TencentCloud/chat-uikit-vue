@@ -130,7 +130,7 @@ const memberAdmin = ref({
   member: [] as Array<IGroupMember>,
   muteMember: [] as Array<IGroupMember>,
 });
-const currentGroupAdmin = ref<typeof IGroupModel>();
+const currentGroupAdmin = ref<IGroupModel>();
 
 watchEffect(() => {
   memberAdmin.value = props.member as {

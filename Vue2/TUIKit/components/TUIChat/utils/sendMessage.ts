@@ -1,26 +1,24 @@
 import { TUIChatService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { ISendMessageParams } from "../../../interface";
+import { ISendMessageParams, ITipTapEditorContent } from "../../../interface";
+import { IConversationModel, SendMessageParams } from "@tencentcloud/chat-uikit-engine";
 
 export const sendMessages = async (
-  messageList: any,
-  currentConversation: any,
-  replyOrReference: any
+  messageList: ITipTapEditorContent[],
+  currentConversation: IConversationModel,
 ) => {
-  const replyOrReferenceObject = replyOrReference;
   // 有 messageJumping 的情况下，发送消息自动清空，回到底部
-  TUIStore.update(StoreName.CHAT, "messageSource", undefined);
-  TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
-  await messageList?.forEach(async (content: any) => {
+  if (TUIStore.getData(StoreName.CHAT, 'messageSource')) {
+    TUIStore.update(StoreName.CHAT, "messageSource", undefined);
+  }
+  await messageList?.forEach(async (content: ITipTapEditorContent) => {
     try {
-      let cloudCustomData, res;
       const options: ISendMessageParams = {
         to: currentConversation?.groupProfile?.groupID || currentConversation?.userProfile?.userID,
         conversationType: currentConversation?.type,
         payload: {},
       };
       // handle message typing
-      options.cloudCustomData = handleMessageWithTyping(cloudCustomData);
       switch (content?.type) {
         case "text":
           // （此功能暂不支持）引用和回复只支持文本消息（对标微信）
@@ -36,17 +34,19 @@ export const sendMessages = async (
               text: JSON.parse(JSON.stringify(content?.payload?.text)),
               atUserList: content?.payload?.atUserList,
             };
-            await TUIChatService?.sendTextAtMessage(options).catch((err: any) => {
-              Toast({
-                message: err?.message,
-                type: TOAST_TYPE.ERROR,
-              });
-            });
+            await TUIChatService?.sendTextAtMessage(options as SendMessageParams).catch(
+              (err: any) => {
+                Toast({
+                  message: err?.message,
+                  type: TOAST_TYPE.ERROR,
+                });
+              }
+            );
           } else {
             options.payload = {
               text: JSON.parse(JSON.stringify(content?.payload?.text)),
             };
-            await TUIChatService?.sendTextMessage(options).catch((err: any) => {
+            await TUIChatService?.sendTextMessage(options as SendMessageParams).catch((err: any) => {
               Toast({
                 message: err?.message,
                 type: TOAST_TYPE.ERROR,
@@ -62,7 +62,7 @@ export const sendMessages = async (
           options.payload = {
             file: content?.payload?.file,
           };
-          await TUIChatService?.sendImageMessage(options).catch((err: any) => {
+          await TUIChatService?.sendImageMessage(options as SendMessageParams).catch((err: any) => {
             Toast({
               message: err?.message,
               type: TOAST_TYPE.ERROR,
@@ -73,7 +73,7 @@ export const sendMessages = async (
           options.payload = {
             file: content?.payload?.file,
           };
-          await TUIChatService?.sendVideoMessage(options).catch((err: any) => {
+          await TUIChatService?.sendVideoMessage(options as SendMessageParams).catch((err: any) => {
             Toast({
               message: err?.message,
               type: TOAST_TYPE.ERROR,
@@ -84,7 +84,7 @@ export const sendMessages = async (
           options.payload = {
             file: content?.payload?.file,
           };
-          await TUIChatService?.sendFileMessage(options).catch((err: any) => {
+          await TUIChatService?.sendFileMessage(options as SendMessageParams).catch((err: any) => {
             Toast({
               message: err.message,
               type: TOAST_TYPE.ERROR,

@@ -12,7 +12,7 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-const tipContent = computed(() => props?.content?.text || props?.content?.custom || "");
+const tipContent = computed(() => props.content?.text || props.content?.custom || "");
 </script>
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";

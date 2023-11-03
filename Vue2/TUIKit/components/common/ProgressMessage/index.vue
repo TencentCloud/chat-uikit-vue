@@ -23,9 +23,9 @@
 
 <script lang="ts" setup>
 import { withDefaults, watch, watchEffect } from "../../../adapter-vue";
-import { type IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import type { IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import { isUniFrameWork } from "../../../utils/is-uni";
-import { type IImageMessageContent } from "../../../interface";
+import type { IImageMessageContent } from "../../../interface";
 
 const props = withDefaults(
   defineProps<{

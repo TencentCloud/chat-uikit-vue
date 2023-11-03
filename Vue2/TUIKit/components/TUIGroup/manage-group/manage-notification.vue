@@ -21,7 +21,7 @@
     </footer>
   </main>
   <div v-else class="edit-h5">
-    <main>
+    <main class="edit-h5-main">
       <header class="edit-h5-header">
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群公告`) }}</h1>
@@ -33,17 +33,17 @@
       <div class="notification">
         <textarea
           v-if="isEdit"
+          :class="[isUniFrameWork ? 'uni-height' : '', 'textarea']"
           v-model="input"
           @keyup.enter="updateProfile"
-          :class="[isUniFrameWork ? 'uni-height' : '']"
         ></textarea>
-        <section v-else>
-          <p v-if="!groupProfile.notification">
+        <section v-else class="row">
+          <p v-if="!groupProfile.notification" class="row-p">
             {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
           </p>
           <article v-else>{{ groupProfile.notification }}</article>
         </section>
-        <footer v-if="isAuthorNotification">
+        <footer v-if="isAuthorNotification" class="footer">
           <button class="btn" v-if="isEdit" @click="updateProfile">
             {{ TUITranslateService.t(`TUIGroup.发布`) }}
           </button>
@@ -77,7 +77,7 @@ const props = defineProps({
   },
 });
 
-const groupProfile = ref<typeof IGroupModel>({});
+const groupProfile = ref<IGroupModel>({});
 const input = ref("");
 const isAuthorNotification = ref(false);
 const isEdit = ref(false);
@@ -122,17 +122,17 @@ const close = (tabName: string) => {
   display: flex;
   flex-direction: column;
 
-  section {
+  .row {
     flex: 1;
     font-size: 14px;
 
-    p {
+    .row-p {
       text-align: center;
       padding-bottom: 20px;
     }
   }
 
-  textarea {
+  .textarea {
     margin-bottom: 20px;
     box-sizing: border-box;
     padding: 10px;
@@ -146,7 +146,7 @@ const close = (tabName: string) => {
     height: 20vh;
   }
 
-  footer {
+  .footer {
     display: flex;
     justify-content: flex-end;
     padding: 20px 10px;
@@ -181,7 +181,7 @@ const close = (tabName: string) => {
   align-items: flex-end;
   z-index: 1;
 
-  main {
+  .edit-h5-main {
     background: #ffffff;
     flex: 1;
     padding: 18px;

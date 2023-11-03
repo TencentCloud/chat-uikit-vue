@@ -86,7 +86,7 @@ export function getImgLoad(container: any, className: string, callback: any) {
     });
 }
 
-export const isCreateGroupCustomMessage = (message: typeof IMessageModel) => {
+export const isCreateGroupCustomMessage = (message: IMessageModel) => {
   return (
     message.type === TUIChatEngine.TYPES.MSG_CUSTOM &&
     message?.getMessageContent()?.businessID === "group_create"

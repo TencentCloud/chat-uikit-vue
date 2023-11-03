@@ -1,326 +1,275 @@
  
 <template>
-  <div
-    class="message-bubble"
-    :class="[message.flow === 'in' ? '' : 'reverse']"
-    ref="htmlRefHook"
-  >
+  <div class="message-bubble">
     <!-- todo 统一组件处理-->
-    <img
-      class="avatar"
-      :src="
-        message.avatar ||
-        'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-      "
-      onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-    />
-    <main class="message-area">
-      <label
-        class="name"
-        v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
-      >
-        {{ messageShowName }}
-      </label>
+    <div class="message-bubble-main-content" :class="[message.flow === 'in' ? '' : 'reverse']">
+      <img
+        class="message-avatar"
+        :src="message.avatar || defaultAvatarUrl"
+        onerror="this.src=defaultAvatarUrl"
+      />
+      <main class="message-body">
+        <div
+          v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
+          class="message-body-nickName"
+        >
+          {{ props.content.showName }}
+        </div>
+        <div
+          :class="[
+            'blink',
+            'message-body-content',
+            message.flow === 'out' ? 'content-out' : 'content-in',
+            isNoPadding ? 'content-noPadding' : '',
+            isNoPadding && isBlink ? 'blink-shadow' : '',
+            !isNoPadding && isBlink ? 'blink-content' : '',
+          ]"
+        >
+          <slot></slot>
+        </div>
+      </main>
+      <!-- 发送失败 -->
       <div
-        :class="[
-          'content',
-          `content-${message.flow}`,
-          isNoPadding ? 'content-noPadding' : ''
-        ]"
+        v-if="message.status === 'fail'"
+        class="message-label fail"
+        @click="resendMessage()"
       >
-        <slot />
+      !
       </div>
-    </main>
-    <label
-      class="message-label fail"
-      v-if="message.status === 'fail'"
-      @click="resendMessage()"
-      >!</label
+      <!-- 加载图标 -->
+      <Icon
+        v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
+        class="message-label loadingCircle"
+        :file="loadingIcon"
+        :width="'15px'"
+        :height="'15px'"
+      ></Icon>
+      <!-- 已读 & 未读 -->
+      <div
+        v-if="
+          message.conversationType === 'C2C' &&
+          message.flow === 'out' &&
+          message.status === 'success'
+        "
+        class="message-label"
+        :class="[!message.isPeerRead && 'unRead']"
+      >
+        <span v-if="!message.isPeerRead">未读</span>
+        <span v-else>已读</span>
+      </div>
+    </div>
+    <!-- 消息附加区域 -->
+    <div
+      class="message-bubble-extra-content"
+      :class="message.flow === 'in' || 'reverse'"
     >
-    <Icon
-      :file="loading"
-      class="message-label loadingCircle"
-      :width="'15px'"
-      :height="'15px'"
-      v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
-    ></Icon>
-    <label
-      class="message-label"
-      :class="[!message.isPeerRead && 'unRead']"
-      v-if="
-        message.conversationType === 'C2C' &&
-        message.flow == 'out' &&
-        message.status === 'success'
-      "
-    >
-      <span v-if="!message.isPeerRead">未读</span>
-      <span v-else>已读</span>
-    </label>
+      <!-- 消息引用 -->
+      <MessageQuote
+        :message="message"
+        @blinkMessage="blinkMessage"
+        @scrollTo="scrollTo"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, computed } from "../../../../adapter-vue";
-import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
+import { computed, toRefs } from "../../../../adapter-vue";
+import TUIChatEngine, {
+  IMessageModel,
+} from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
-import loading from "../../../../assets/icon/loading.png";
-const emits = defineEmits(["resendMessage"]);
-const props = defineProps({
-  messageItem: {
-    type: Object,
-    default: () => ({}),
-  },
-  content: {
-    type: Object,
-    default: () => ({}),
-  },
+import MessageQuote from "./message-quote/index.vue";
+import loadingIcon from "../../../../assets/icon/loading.png";
+
+interface IProps {
+  messageItem: IMessageModel;
+  content?: any;
+  blinkMessageIDList?: string[];
+}
+
+interface IEmits {
+  (e: 'resendMessage'): void;
+  (e: 'blinkMessage', messageID: string): void;
+  // 下面的方法是 uniapp 专属
+  (e: 'scrollTo', scrollHeight: number): void;
+}
+
+const emits = defineEmits<IEmits>();
+
+const props = withDefaults(defineProps<IProps>(), {
+  messageItem: () => ({} as IMessageModel),
+  content: () => ({}),
+  blinkMessageIDList: () => [],
 });
+
+const TYPES = TUIChatEngine.TYPES;
+const defaultAvatarUrl = 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png';
 const needLoadingIconMessageType = [
-  TUIChatEngine.TYPES.MSG_LOCATION,
-  TUIChatEngine.TYPES.MSG_TEXT,
-  // TUIChatEngine.TYPES.MSG_IMAGE,
-  // TUIChatEngine.TYPES.MSG_SOUND,
-  // TUIChatEngine.TYPES.MSG_AUDIO,
-  // TUIChatEngine.TYPES.MSG_VIDEO,
-  // TUIChatEngine.TYPES.MSG_FILE,
-  TUIChatEngine.TYPES.MSG_CUSTOM,
-  TUIChatEngine.TYPES.MSG_MERGER,
-  TUIChatEngine.TYPES.MSG_FACE,
+  TYPES.MSG_LOCATION,
+  TYPES.MSG_TEXT,
+  TYPES.MSG_CUSTOM,
+  TYPES.MSG_MERGER,
+  TYPES.MSG_FACE
 ];
-const message = ref();
-const messageShowName = ref("");
-const TYPES = ref(TUIChatEngine.TYPES);
 
-watchEffect(() => {
-  message.value = props.messageItem;
-  messageShowName.value = props?.content?.showName;
-});
+const {
+  blinkMessageIDList,
+  messageItem: message
+} = toRefs(props);
 
-const resendMessage = () => {
-  emits("resendMessage");
-};
 
 const isNoPadding = computed(() => {
-  return [TYPES.value.MSG_IMAGE, TYPES.value.MSG_VIDEO].includes(props.messageItem.type);
+  return [TYPES.MSG_IMAGE, TYPES.MSG_VIDEO].includes(message.value.type);
 });
+
+const isBlink = computed(() => {
+  if (message.value?.ID) {
+    return blinkMessageIDList?.value?.includes(message.value.ID);
+  }
+  return false;
+});
+
+function resendMessage() {
+  emits("resendMessage");
+}
+
+function blinkMessage(messageID: string) {
+  emits('blinkMessage', messageID);
+}
+
+function scrollTo(scrollHeight: number) {
+  emits('scrollTo', scrollHeight);
+}
 </script>
 
 <style lang="scss" scoped>
 .reverse {
+  display: flex;
   flex-direction: row-reverse;
   justify-content: flex-start;
-}
-.avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 5px;
 }
 .message-bubble {
   width: 100%;
   display: flex;
-  padding-bottom: 5px;
-}
-.line-left {
-  border: 1px solid rgba(0, 110, 255, 0.5);
-}
-.message-reference-area {
-  display: flex;
-  background: #f2f2f2;
-  border-radius: 0.5rem;
-  border-radius: 0.63rem;
-  align-self: start;
-  margin-left: 44px;
-  margin-right: 8px;
-  &-show {
-    width: 100%;
-    display: flex;
-    flex-direction: inherit;
-    justify-content: center;
-    padding: 6px;
-    p {
-      font-family: PingFangSC-Regular;
-      font-weight: 400;
-      font-size: 0.88rem;
-      color: #999999;
-      letter-spacing: 0;
-      word-break: keep-all;
-      padding-right: 5px;
-    }
-    span {
-      height: 1.25rem;
-      font-family: PingFangSC-Regular;
-      font-weight: 400;
-      font-size: 0.88rem;
-      color: #999999;
-      letter-spacing: 0;
-      display: inline-block;
-    }
-  }
-}
-.message-replies {
-  display: flex;
-  align-self: start;
-  margin-left: 44px;
-  margin-right: 8px;
-  padding: 2px;
-  color: #999999;
-  font-size: 10px;
-  i {
-    margin: 4px;
-  }
-  span {
-    line-height: 20px;
-  }
-}
-.message-reference-area-reverse,
-.message-replies-reverse {
-  align-self: end;
-  margin-right: 44px;
-  margin-left: 8px;
-}
-
-.face-box {
-  display: flex;
-  align-items: center;
-}
-.text-img {
-  width: 20px;
-  height: 20px;
-}
-.message-audio {
-  padding-left: 10px;
-  display: flex;
-  align-items: center;
-  position: relative;
-  .icon {
-    margin: 0 4px;
-  }
-  audio {
-    width: 0;
-    height: 0;
-  }
-}
-.reserve {
-  flex-direction: row-reverse;
-}
-.message-area {
-  max-width: calc(100% - 54px);
-  // position: relative;
-  display: flex;
   flex-direction: column;
-  margin: 0 8px;
-  .name {
-    padding-bottom: 4px;
-    font-weight: 400;
-    font-size: 0.8rem;
-    color: #999999;
-    letter-spacing: 0;
-  }
-  .content-highlight {
-    padding: 12px;
-    font-weight: 400;
-    font-size: 14px;
-    color: burlywood;
-    letter-spacing: 0;
-    word-wrap: break-word;
-    word-break: break-all;
-    position: relative;
-    animation: highlight 1000ms infinite;
-    &-noPadding::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      right: 0;
-      right: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      opacity: 0.3;
-      animation: highlight 1000ms infinite;
+  padding-bottom: 5px;
+
+  .message-bubble-main-content {
+    display: flex;
+
+    .message-avatar {
+      display: block;
+      width: 36px;
+      height: 36px;
+      border-radius: 5px;
+      flex: 0 0 auto;
     }
-    @-webkit-keyframes highlight {
-      50% {
-        background-color: #ff9c19;
+
+    .message-body {
+      display: flex;
+      flex: 0 1 auto;
+      flex-direction: column;
+      align-items: flex-start;
+      margin: 0 8px;
+      max-width: calc(100% - 54px);
+
+      .message-body-nickName {
+        margin-bottom: 4px;
+        font-size: 10px;
+        color: #999;
+      }
+
+      .message-body-content {
+        padding: 12px;
+        font-size: 14px;
+        color: #000;
+        letter-spacing: 0;
+        word-wrap: break-word;
+        word-break: break-all;
+        position: relative;
+        overflow: hidden;
+      }
+      .content-in {
+        background: #fbfbfb;
+        border-radius: 0px 10px 10px 10px;
+      }
+
+      .content-out {
+        background: #dceafd;
+        border-radius: 10px 0px 10px 10px;
+      }
+
+      .content-noPadding {
+        padding: 0px;
+        background: transparent;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .blink-shadow {
+        @keyframes shadowBlink {
+          50% {
+            box-shadow: rgba(255, 156, 25, 1) 0px 0px 10px 0px;
+          }
+        }
+        box-shadow: rgba(255, 156, 25, 0) 0px 0px 10px 0px;
+        animation: shadowBlink 1s linear 3;
+      }
+
+      .blink-content {
+        @keyframes referenceBlink {
+          50% {
+            background-color: #ff9c19;
+          }
+        }
+        animation: referenceBlink 1s linear 3;
       }
     }
-    @keyframes highlight {
-      50% {
-        background-color: #ff9c19;
+
+    .message-label {
+      align-self: flex-end;
+      font-family: PingFangSC-Regular;
+      font-size: 12px;
+      color: #b6b8ba;
+      word-break: keep-all;
+      flex: 0 0 auto;
+
+      &.fail {
+        width: 15px;
+        height: 15px;
+        border-radius: 15px;
+        background: red;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      &.loadingCircle {
+        opacity: 0;
+        animation: circleLoading 2s linear 1s infinite;
+      }
+
+      &.unRead {
+        color: #679ce1;
+      }
+
+      @keyframes circleLoading {
+        0% {
+          transform: rotate(0);
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 1;
+          transform: rotate(360deg);
+        }
       }
     }
   }
 
-  .content {
-    padding: 12px;
-    font-weight: 400;
-    font-size: 14px;
-    color: #000000;
-    letter-spacing: 0;
-    word-wrap: break-word;
-    word-break: break-all;
-    width: fit-content;
-    position: relative;
-    overflow: hidden;
-
-    &-in {
-      background: #fbfbfb;
-      border-radius: 0px 10px 10px 10px;
-    }
-    &-out {
-      background: #dceafd;
-      border-radius: 10px 0px 10px 10px;
-    }
-    &-noPadding {
-      padding: 0px;
-      height: fit-content;
-      background: transparent;
-      border-radius: 10px;
-      overflow: hidden;
-    }
+  .message-bubble-extra-content {
+    display: flex;
   }
-}
-.message-label {
-  align-self: flex-end;
-  font-family: PingFangSC-Regular;
-  font-weight: 400;
-  font-size: 12px;
-  color: #b6b8ba;
-  word-break: keep-all;
-}
-
-@keyframes circleLoading {
-  0% {
-    transform: rotate(0);
-    opacity: 1;
-  }
-  100% {
-    opacity: 1;
-    transform: rotate(360deg);
-  }
-}
-
-.loadingCircle {
-  opacity: 0;
-  animation: circleLoading 2s linear 1s infinite;
-}
-.fail {
-  width: 15px;
-  height: 15px;
-  border-radius: 15px;
-  background: red;
-  color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.unRead {
-  color: #679ce1;
-}
-.dropdown-inner {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
 }
 </style>

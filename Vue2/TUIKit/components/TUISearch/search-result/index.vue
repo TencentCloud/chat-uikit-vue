@@ -22,10 +22,8 @@
           <div class="more" v-if="currentSearchTabKey === 'all' || result.cursor" @click="getMoreResult(result)">
             <Icon class="more-icon" :file="searchIcon" width="12px" height="12px"></Icon>
             <div class="more-text">
-              {{
-                TUITranslateService.t("TUISearch.查看更多") +
-                TUITranslateService.t(`TUISearch.${result.label}`)
-              }}
+              <span>{{ TUITranslateService.t("TUISearch.查看更多") }}</span>
+              <span>{{ TUITranslateService.t(`TUISearch.${result.label}`) }}</span>
             </div>
           </div>
         </div>
@@ -40,7 +38,8 @@
         v-if="!isSearchDetailLoading && isResultDetailShow && props.searchType !== 'conversation'">
         <div class="header-content">
           <div class="header-content-count normal">
-            {{ searchConversationMessageTotalCount + TUITranslateService.t("TUISearch.条与") }}
+            <span>{{ searchConversationMessageTotalCount }}</span>
+            <span>{{ TUITranslateService.t("TUISearch.条与") }}</span>
           </div>
           <div class="header-content-keyword">
             <span v-for="(keyword, index) in keywordList" :key="index">
@@ -50,15 +49,17 @@
             </span>
           </div>
           <div class="header-content-type normal">
-            {{
-              TUITranslateService.t("TUISearch.相关的") +
+            <span>{{
+              TUITranslateService.t("TUISearch.相关的")
+            }}</span>
+            <span>{{
               TUITranslateService.t(
                 `TUISearch.${currentSearchTabKey === "allMessage"
                   ? "结果"
                   : searchMessageTypeList[currentSearchTabKey].label
                 }`
               )
-            }}
+            }}</span>
           </div>
         </div>
         <div class="header-enter" @click="enterConversation({ conversationID: currentSearchConversationID })">
@@ -87,7 +88,7 @@
             <div :class="['list-group-date']">
               {{ group.date }}
             </div>
-            <div :class="['list-group-item']" v-for="item in group.list" :key="generateVueRenderKey(item.id)">
+            <div :class="['list-group-item']" v-for="item in group.list" :key="generateVueRenderKey(item.ID)">
               <SearchResultItem :listItem="item" :listItemContent="item.getMessageContent()" :type="currentSearchTabKey"
                 :displayType="generateResultItemDisplayType()" :keywordList="keywordList"
                 @showResultDetail="showResultDetail" @navigateToChatPosition="navigateToChatPosition"></SearchResultItem>
@@ -135,6 +136,16 @@ import {
 import { isUniFrameWork } from "../../../utils/is-uni";
 import { SEARCH_TYPE } from "../type";
 
+interface ISearchConversationResult {
+  totalCount: number;
+  cursor: number;
+  searchResultList: Array<{
+    conversationID: string;
+    messageCount: number;
+    messageList: Array<IMessageModel>;
+  }>
+}
+
 const props = defineProps({
   searchType: {
     type: String,
@@ -150,7 +161,7 @@ const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
 // search params
 const keywordList = ref<Array<string>>([]);
 const messageTypeList = ref<Array<string>>(
-  searchMessageTypeDefault[props.searchType as SEARCH_TYPE]?.value
+  searchMessageTypeDefault[props.searchType as SEARCH_TYPE]?.value as Array<string>
 );
 const timePosition = ref<number>(0);
 const timePeriod = ref<number>(0);
@@ -170,25 +181,17 @@ const searchResult = ref<{
 const searchAllMessageList = ref<Array<ISearchResultListItem>>([]);
 const searchAllMessageTotalCount = ref<number>(0);
 const searchFriendList = ref<Array<IFriendType>>([]);
-const searchGroupList = ref<Array<typeof IGroupModel>>([]);
+const searchGroupList = ref<Array<IGroupModel>>([]);
 
 // search results detail（具体某个会话的搜索结果）
 const currentSearchConversationID = ref<string>("");
-const searchConversationResult = ref<{
-  totalCount: number;
-  cursor: string;
-  searchResultList: Array<{
-    conversationID: string;
-    messageCount: number;
-    messageList: Array<typeof IMessageModel>;
-  }>;
-}>();
-const searchConversationMessageList = ref<Array<ISearchResultListItem>>([]);
+const searchConversationResult = ref<ISearchConversationResult>();
+const searchConversationMessageList = ref<Array<IMessageModel>>([]);
 const searchConversationMessageTotalCount = ref<number>();
 
 // 文件消息/图片视频消息的搜索结果，按时间线分组
 const searchConversationResultGroupByDate = ref<
-  Array<{ date: string; list: Array<ISearchResultListItem> }>
+  Array<{ date: string; list: Array<IMessageModel> }>
 >([]);
 
 // ui display control
@@ -245,7 +248,7 @@ TUIStore.watch(StoreName.CUSTOM, {
   },
 });
 
-const setMessageSearchResultList = (option?: { conversationID?: string; cursor?: string }) => {
+const setMessageSearchResultList = (option?: { conversationID?: string; cursor?: number }) => {
   searchCloudMessages({
     keywordList: keywordList?.value?.length ? keywordList.value : undefined,
     messageTypeList: messageTypeList.value,
@@ -316,14 +319,14 @@ const setMessageSearchResultListDebounce = debounce(setMessageSearchResultList, 
 
 const resetSearchResult = () => {
   searchResult.value = {};
-  searchConversationResult.value = {};
+  searchConversationResult.value = {} as ISearchConversationResult;
   searchConversationMessageList.value = [];
   searchConversationResultGroupByDate.value = [];
 };
 
 watch(
   () => [keywordList.value, currentSearchTabKey.value, timePosition.value, timePeriod.value],
-  (newValue: string[], oldValue: string[]) => {
+  (newValue: any, oldValue: any) => {
     if (newValue === oldValue) {
       return;
     }
@@ -423,8 +426,8 @@ const generateResultItemDisplayType = (): string => {
 
 const groupResultListByDate = (
   messageList: Array<any>
-): Array<{ date: string; list: Array<ISearchResultListItem> }> => {
-  const result: Array<{ date: string; list: Array<ISearchResultListItem> }> = [];
+): Array<{ date: string; list: Array<IMessageModel> }> => {
+  const result: Array<{ date: string; list: Array<IMessageModel> }> = [];
   if (!messageList?.length) {
     return result;
   } else if (messageList?.length === 1) {
@@ -445,7 +448,7 @@ const groupResultListByDate = (
   return result;
 };
 
-const navigateToChatPosition = (message: typeof IMessageModel) => {
+const navigateToChatPosition = (message: IMessageModel) => {
   if (props.searchType === "global") {
     // 全局搜索，关闭 search container
     TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {

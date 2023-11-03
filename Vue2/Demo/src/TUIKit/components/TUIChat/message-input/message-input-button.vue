@@ -4,8 +4,8 @@
       v-if="props.enableSend"
       class="message-input-button-cont"
       data-type="text"
-      @click="sendMessage"
       :disabled="false"
+      @click="sendMessage"
     >
       <p class="message-input-button-hover">
         {{ TUITranslateService.t("TUIChat.按Enter发送，Ctrl+Enter换行") }}

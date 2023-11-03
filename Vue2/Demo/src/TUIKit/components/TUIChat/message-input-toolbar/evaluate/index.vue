@@ -123,10 +123,10 @@ const container = ref();
 const starList = ref<number>(props.starTotal);
 const currentStarIndex = ref<number>(-1);
 const comment = ref("");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });

@@ -67,7 +67,7 @@ const props = defineProps({
   },
 });
 
-const groupProfile = ref<typeof IGroupModel>({});
+const groupProfile = ref<IGroupModel>({});
 const inputGroupName = ref("");
 const isEdit = ref(false);
 const nameInputRef = ref(null);

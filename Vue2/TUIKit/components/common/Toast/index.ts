@@ -3,13 +3,25 @@ import TOAST_TYPE from "./type";
 import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import MessageConstructor from "./index.vue";
 
-const instances: any = [];
+interface IToast {
+  message: string;
+  type: string;
+  offset?: number;
+  duration?: number;
+  onClose?(): void;
+}
+
+interface IToastReturnType {
+  close?(): void;
+}
+
+const instances: any[] = [];
 let seed = 1;
 
 const vueVersionInt = Math.trunc(vueVersion);
 const appendTo: HTMLElement | null = document.body;
 
-const Toast = function (options: any) {
+const Toast = function (options: IToast): IToastReturnType {
   let verticalOffset = options.offset || 20;
   instances.forEach(({ vm }: any) => {
     verticalOffset += (vm?.el?.offsetHeight || vm?.$el?.offsetHeight || 0) + 20;
@@ -32,7 +44,7 @@ const Toast = function (options: any) {
     case 2:
       const Vue = TUIGlobal?.Vue;
       if (!Vue) {
-        return;
+        return {};
       }
       let Constructor = Vue.extend(MessageConstructor);
       let instance = new Constructor({ propsData: props });
@@ -43,7 +55,9 @@ const Toast = function (options: any) {
       instance.visible = true;
       instances.push({ vm: instance });
       return {
-        close: () => (instance.visible = false),
+        close: () => {
+          instance.visible = false;
+        },
       };
     case 3:
       vm = createVNode(MessageConstructor, props);
@@ -65,6 +79,7 @@ const Toast = function (options: any) {
         },
       };
   }
+  return {};
 };
 
 export function close(id: string, userOnClose?: (vm: VNode) => void): void {

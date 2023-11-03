@@ -8,8 +8,6 @@ chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT W
 <img width="2072" alt="page00" src="https://user-images.githubusercontent.com/57951148/192585375-6260280f-4a67-4b64-a908-efcedee1c253.png">
 <img width="1015" alt="page02" src="https://user-images.githubusercontent.com/57951148/192585298-c79960ed-a6a9-4927-89b9-31c1b3f68740.png">
 
-(“TUIContact关系链功能”及“音视频通话功能”暂未开放，敬请期待)
-
 ### 快速跑通 Demo
 #### 步骤 1：下载 Demo 源码并安装相关依赖
 

@@ -1,6 +1,6 @@
 <template>
   <div :class="[n([''])]">
-    <div :class="[n(['input', isDatePanelShow && 'input-active'])]" @click="setDatePanelDisplay(!isDatePanelShow)">
+    <div :class="[n(['input']), isDatePanelShow && n(['input-active'])]" @click="setDatePanelDisplay(!isDatePanelShow)">
       <input :placeholder="startPlaceholderVal" :class="[n(['input-start'])]" type="text" v-model="startFormatDate" readonly
         autocomplete="false" />
       <span>-</span>

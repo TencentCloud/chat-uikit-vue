@@ -25,14 +25,18 @@
         </span>
       </div>
       <!-- 消息列表 -->
-      <ul class="TUI-message-list" ref="messageListRef" id="messageEle">
-        <p class="message-more" @click="getHistoryMessageList" v-if="!isCompleted">
+      <ul class="TUI-message-list" ref="messageListRef" id="messageScrollList">
+        <p
+          class="message-more"
+          @click="getHistoryMessageList"
+          v-if="!isCompleted"
+        >
           {{ TUITranslateService.t("TUIChat.查看更多") }}
         </p>
         <li
           v-for="(item, index) in messageList"
           :key="item.ID"
-          :id="item.ID"
+          :id="'tui-' + item.ID"
           ref="messageElementListRef"
           class="message-li"
         >
@@ -57,7 +61,9 @@
               <MessageBubble
                 :messageItem="item"
                 :content="item.getMessageContent()"
+                :blinkMessageIDList="blinkMessageIDList"
                 @resendMessage="resendMessage(item)"
+                @blinkMessage="blinkMessage"
               >
                 <MessageText
                   v-if="item.type === TYPES.MSG_TEXT"
@@ -117,6 +123,7 @@
             <MessagePlugin
               v-else-if="!item.isRevoked"
               :message="item"
+              :blinkMessageIDList="blinkMessageIDList"
               @resendMessage="resendMessage"
               @handleToggleMessageItem="handleToggleMessageItem"
               @handleH5LongPress="handleH5LongPress"
@@ -203,8 +210,8 @@ import MessageVideo from "./message-elements/message-video.vue";
 import MessageTool from "./message-tool/index.vue";
 import MessageRevoked from "./message-tool/message-revoked.vue";
 import MessagePlugin from "../../../plugins/plugin-components/message-plugin.vue";
-
 import Dialog from "../../common/Dialog/index.vue";
+import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import ImagePreviewer from "../../common/ImagePreviewer/index.vue";
 import ProgressMessage from "../../common/ProgressMessage/index.vue";
 import Icon from "../../common/Icon.vue";
@@ -213,7 +220,9 @@ import { getImgLoad, isCreateGroupCustomMessage } from "../utils/utils";
 import MessageGroupSystem from "./message-elements/message-group-system.vue";
 import { CHAT_SCROLL_TYPE } from "../../../constant";
 import { IGroupApplicationListItem } from "../../../interface";
+import { getBoundingClientRect, getScrollInfo } from "../../../utils/universal-api/domOperation";
 
+const emits = defineEmits(["handleEditor"]);
 const props = defineProps({
   groupID: {
     type: String,
@@ -227,7 +236,7 @@ const props = defineProps({
 
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const messageListRef = ref();
+const messageListRef = ref<HTMLElement>();
 const title = ref("TUIChat");
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
 const messageList = ref();
@@ -243,26 +252,19 @@ const isLongpressing = ref(false);
 const groupApplicationCount = ref(0);
 const showGroupApplication = ref(false);
 const applicationUserIDList = ref<Array<string>>([]);
-const messageJumping = ref<typeof IMessageModel>();
-const messageHighlight = ref<typeof IMessageModel>();
-const messageElementListRef = ref<Array<HTMLElement | null>>();
-const currentHighlightMessage = ref<Array<HTMLElement | null>>();
-const isShowJumpToLatest = computed((): boolean => {
-  return (
-    allMessageList?.value?.length &&
-    allMessageList?.value[allMessageList?.value?.length - 1]?.time < currentLastMessageTime?.value
-  );
-});
+const messageHighlight = ref<IMessageModel>();
+const messageElementListRef = ref<Array<HTMLElement> | null>();
+const blinkMessageIDList = ref<string[]>([]);
 
-const isSignalingMessage = (message: typeof IMessageModel) => {
+const isSignalingMessage = (message: IMessageModel) => {
   return message?.type === TYPES.value.MSG_CUSTOM && message?.getSignalingInfo();
 };
 
 // 图片预览相关
 const showImagePreview = ref(false);
-const currentImagePreview = ref<typeof IMessageModel>();
+const currentImagePreview = ref<IMessageModel>();
 const imageMessageList = computed(() =>
-  messageList?.value?.filter((item: typeof IMessageModel) => {
+  messageList?.value?.filter((item: IMessageModel) => {
     return !item.isRevoked && item.type === TYPES.value.MSG_IMAGE;
   })
 );
@@ -270,122 +272,32 @@ const imageMessageList = computed(() =>
 // 消息重发 Dialog
 const reSendDialogShow = ref(false);
 const resendMessageData = ref();
-const emits = defineEmits(["handleEditor"]);
-
-// web & h5 版本（非 uniapp 平台）, 滚动到目标位置(目前仅支持滚动到指定位置)
-const scrollToTargetInWeb = (type: string, targetMessage?: typeof IMessageModel) => {
-  const scroll = (type: string, targetMessage?: typeof IMessageModel) => {
-    switch (type) {
-      case CHAT_SCROLL_TYPE.BOTTOM:
-        nextTick(() => {
-          messageListRef?.value?.lastElementChild?.scrollIntoView &&
-            messageListRef?.value?.lastElementChild?.scrollIntoView(false);
-        });
-        break;
-      case CHAT_SCROLL_TYPE.TARGET:
-        nextTick(() => {
-          if (targetMessage) {
-            const targetMessageDom = messageElementListRef?.value?.find(
-              (dom: HTMLElement) => dom?.id === targetMessage?.ID
-            );
-            if (targetMessageDom) {
-              targetMessageDom?.scrollIntoView && targetMessageDom?.scrollIntoView(false);
-              highlightTargetMessage(targetMessage, targetMessageDom);
-            }
-          }
-        });
-        break;
-    }
-  };
-  scroll(type, targetMessage);
-  getImgLoad(messageListRef?.value, "message-img", async () => {
-    if (messageHighlight?.value || currentHighlightMessage.value) {
-      scroll(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value || currentHighlightMessage.value);
-    } else {
-      scroll(CHAT_SCROLL_TYPE.BOTTOM);
-    }
-  });
-};
-
-// 监听回调函数
-const onCurrentConversationIDUpdated = (conversationID: string) => {
-  currentConversationID.value = conversationID;
-  messageList.value = [];
-  // 获取加群系统消息列表
-  TUIGroupService.getGroupApplicationList().then((res: any) => {
-    const applicationList = res.data.applicationList.filter(
-      (application: any) => application.groupID === props.groupID
-    );
-    applicationUserIDList.value = applicationList.map((application: IGroupApplicationListItem) => {
-      return application.applicationType === 0 ? application.applicant : application.userID;
-    });
-    TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationList.length);
-  });
-};
-
-const onCurrentConversationUpdated = (conversation: typeof IConversationModel) => {
-  currentLastMessageTime.value = conversation?.lastMessage?.lastTime || 0;
-};
-
-// operationType 操作类型 1: 有用户申请加群   23: 普通群成员邀请用户进群
-const onGroupSystemNoticeList = (list: Array<typeof IMessageModel>) => {
-  const systemNoticeList = list.filter((message) => {
-    const { operationType } = message.payload;
-    return (operationType === 1 || operationType === 23) && message.to === props.groupID;
-  });
-
-  systemNoticeList.forEach((systemNotice) => {
-    const { operationType } = systemNotice.payload;
-    if (operationType === 1) {
-      const { operatorID } = systemNotice.payload;
-      if (!applicationUserIDList.value.includes(operatorID)) {
-        applicationUserIDList.value.push(operatorID);
-      }
-    }
-    if (operationType === 23) {
-      const { inviteeList } = systemNotice.payload;
-      inviteeList.forEach((invitee: string) => {
-        if (!applicationUserIDList.value.includes(invitee)) {
-          applicationUserIDList.value.push(invitee);
-        }
-      });
-    }
-  });
-  const applicationCount = applicationUserIDList.value.length;
-  TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationCount);
-};
-
-// 当前 需要高亮的消息
-TUIStore.watch(StoreName.CUSTOM, {
-  messageHighlight: (message: typeof IMessageModel) => {
-    messageHighlight.value = message;
-    if (messageHighlight?.value) {
-      scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value);
-    }
-  },
-});
 
 // 事件监听
 onMounted(() => {
+  // TODO 消息搜索 监听需要高亮的消息
+  TUIStore.watch(StoreName.CUSTOM, {
+    messageHighlight: (message: IMessageModel) => {
+      messageHighlight.value = message;
+      if (messageHighlight.value && messageList.value?.length > 0) {
+        scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
+      }
+    },
+  });
+
   // 消息 messageList
   TUIStore.watch(StoreName.CHAT, {
-    messageList: (list: Array<typeof IMessageModel>) => {
+    messageList: (list: Array<IMessageModel>) => {
       allMessageList.value = list;
       messageList.value = list.filter((message) => !message.isDeleted);
-      const targetIndex = messageList?.value?.findIndex(
-        (item: typeof IMessageModel) => item?.ID === messageHighlight?.value?.ID
-      );
-      if (messageHighlight?.value || currentHighlightMessage.value) {
-        scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value);
+      if (messageHighlight.value) {
+        scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
       } else {
         scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
       }
     },
     isCompleted: (flag: boolean) => {
       isCompleted.value = flag;
-    },
-    messageSource: (message: typeof IMessageModel) => {
-      messageJumping.value = message;
     },
   });
 
@@ -419,6 +331,96 @@ onUnmounted(() => {
   });
 });
 
+const isShowJumpToLatest = computed((): boolean => {
+  return (
+    allMessageList?.value?.length &&
+    allMessageList?.value[allMessageList?.value?.length - 1]?.time < currentLastMessageTime?.value
+  );
+});
+
+// web & h5 版本（非 uniapp 平台）, 滚动到目标位置(目前仅支持滚动到指定位置)
+const scrollToTargetInWeb = (type: string, targetMessage?: IMessageModel) => {
+  function scroll(type: string, targetMessage?: IMessageModel) {
+    switch (type) {
+      case CHAT_SCROLL_TYPE.BOTTOM:
+        nextTick(() => messageListRef.value?.lastElementChild?.scrollIntoView?.(false));
+        break;
+      case CHAT_SCROLL_TYPE.TARGET:
+        nextTick(async () => {
+          if (targetMessage) {
+            const targetMessageDom = messageElementListRef.value?.find(
+              (dom: HTMLElement) => dom?.id === `tui-${targetMessage.ID}`
+            );
+            if (targetMessageDom) {
+              targetMessageDom?.scrollIntoView?.(false);
+              await blinkMessage(targetMessage.ID);
+              TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
+            } else {
+              // TODO
+            }
+          }
+        });
+        break;
+    }
+  }
+  scroll(type, targetMessage);
+  getImgLoad(messageListRef.value, "message-img", async () => {
+    if (messageHighlight.value) {
+      scroll(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
+    } else {
+      scroll(CHAT_SCROLL_TYPE.BOTTOM);
+    }
+  });
+};
+
+// 监听回调函数
+const onCurrentConversationIDUpdated = (conversationID: string) => {
+  currentConversationID.value = conversationID;
+  messageList.value = [];
+  // 获取加群系统消息列表
+  TUIGroupService.getGroupApplicationList().then((res: any) => {
+    const applicationList = res.data.applicationList.filter(
+      (application: any) => application.groupID === props.groupID
+    );
+    applicationUserIDList.value = applicationList.map((application: IGroupApplicationListItem) => {
+      return application.applicationType === 0 ? application.applicant : application.userID;
+    });
+    TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationList.length);
+  });
+};
+
+const onCurrentConversationUpdated = (conversation: IConversationModel) => {
+  currentLastMessageTime.value = conversation?.lastMessage?.lastTime || 0;
+};
+
+// operationType 操作类型 1: 有用户申请加群   23: 普通群成员邀请用户进群
+const onGroupSystemNoticeList = (list: Array<IMessageModel>) => {
+  const systemNoticeList = list.filter((message) => {
+    const { operationType } = message.payload;
+    return (operationType === 1 || operationType === 23) && message.to === props.groupID;
+  });
+
+  systemNoticeList.forEach((systemNotice) => {
+    const { operationType } = systemNotice.payload;
+    if (operationType === 1) {
+      const { operatorID } = systemNotice.payload;
+      if (!applicationUserIDList.value.includes(operatorID)) {
+        applicationUserIDList.value.push(operatorID);
+      }
+    }
+    if (operationType === 23) {
+      const { inviteeList } = systemNotice.payload;
+      inviteeList.forEach((invitee: string) => {
+        if (!applicationUserIDList.value.includes(invitee)) {
+          applicationUserIDList.value.push(invitee);
+        }
+      });
+    }
+  });
+  const applicationCount = applicationUserIDList.value.length;
+  TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationCount);
+};
+
 const toggleApplicationList = () => {
   showGroupApplication.value = !showGroupApplication.value;
 };
@@ -444,15 +446,15 @@ const openComplaintLink = (type: any) => {
 
 // web & h5 上传过程中能够滚动到底部
 const handleUploadingImageOrVideo = () => {
-  if (messageHighlight?.value || currentHighlightMessage.value) {
-    scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight?.value);
+  if (messageHighlight.value) {
+    scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
   } else {
     scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
   }
 };
 
 // 图片预览
-const handleImagePreview = (message: typeof IMessageModel) => {
+const handleImagePreview = (message: IMessageModel) => {
   if (showImagePreview.value || currentImagePreview.value || isLongpressing.value) {
     return;
   }
@@ -466,14 +468,14 @@ const onImagePreviewerClose = () => {
 };
 
 // 消息操作
-const handleToggleMessageItem = (e: any, message: typeof IMessageModel, isLongpress = false) => {
+const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = false) => {
   if (isLongpress) {
     isLongpressing.value = true;
   }
   toggleID.value = message.ID;
 };
 
-const handleToggleMessageItemForPC = (e: MouseEvent, message: typeof IMessageModel) => {
+const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => {
   if (isPC.value) {
     toggleID.value = message.ID;
   }
@@ -481,7 +483,7 @@ const handleToggleMessageItemForPC = (e: MouseEvent, message: typeof IMessageMod
 
 // h5 long press
 let timer: number;
-const handleH5LongPress = (e: any, message: typeof IMessageModel, type: string) => {
+const handleH5LongPress = (e: any, message: IMessageModel, type: string) => {
   if (!isH5.value) return;
   function longPressHandler() {
     clearTimeout(timer);
@@ -507,12 +509,12 @@ const handleH5LongPress = (e: any, message: typeof IMessageModel, type: string) 
 };
 
 // 消息撤回后，编辑消息
-const handleEdit = (message: typeof IMessageModel) => {
+const handleEdit = (message: IMessageModel) => {
   emits("handleEditor", message, "reedit");
 };
 
 // 重发消息
-const resendMessage = (message: typeof IMessageModel) => {
+const resendMessage = (message: IMessageModel) => {
   reSendDialogShow.value = true;
   resendMessageData.value = message;
 };
@@ -523,64 +525,34 @@ const resendMessageConfirm = () => {
   messageModel.resendMessage();
 };
 
-// 指定消息高亮
-const highlightTargetMessage = (message: typeof IMessageModel, messageDom: HTMLElement) => {
-  // 滚动到指定元素 增加闪烁特效样式
-  // 对于非图片/视频类消息，即有消息气泡padding背景，高亮背景颜色
-  // 对于图片/视频类消息，没有消息气泡padding背景，高亮覆盖层
-  // 对于 tip 展示类型消息，高亮 tip 文字
-  const targetMessageArea = messageDom?.getElementsByClassName("content")[0];
-  const targetMessageTip =
-    messageDom?.getElementsByClassName("message-tip")[0] ||
-    messageDom?.getElementsByClassName("message-plugin-tip")[0];
-  if (!targetMessageArea?.classList && !targetMessageTip?.classList) {
-    return;
-  }
-  if (currentHighlightMessage.value) {
-    const currentHighlightMessageDom = messageElementListRef?.value?.find(
-      (dom: HTMLElement) => dom?.id === currentHighlightMessage.value?.ID
-    );
-    if (!currentHighlightMessageDom) {
-      return;
-    }
-    const currentHighlightMessageRef =
-      currentHighlightMessageDom.getElementsByClassName("content")[0] ||
-      currentHighlightMessageDom.getElementsByClassName("message-tip")[0] ||
-      currentHighlightMessageDom.getElementsByClassName("message-plugin-tip")[0];
-    if (currentHighlightMessageRef?.classList) {
-      currentHighlightMessageRef.classList.remove("content-highlight");
-      currentHighlightMessageRef.classList.remove("content-highlight-noPadding");
-      currentHighlightMessageRef.classList.remove("message-tip-highlight");
-    }
-  }
-  currentHighlightMessage.value = message;
-  if (targetMessageArea?.classList) {
-    targetMessageArea.classList.add("content-highlight");
-    targetMessageArea.classList.contains("content-noPadding") &&
-      targetMessageArea.classList.add("content-highlight-noPadding");
-  }
-  if (targetMessageTip?.classList) {
-    targetMessageTip.classList.add("message-tip-highlight");
-  }
-  setTimeout(() => {
-    if (targetMessageArea?.classList) {
-      targetMessageArea.classList.remove("content-highlight");
-      targetMessageArea.classList.remove("content-highlight-noPadding");
-    }
-    if (targetMessageTip?.classList) {
-      targetMessageTip.classList.remove("message-tip-highlight");
-    }
-    currentHighlightMessage.value = null;
-  }, 3000);
-  // 消息高亮后，清除 messageHighlight
-  TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
-};
-
 // 回到最新消息
 const jumpToLatestMessage = () => {
   TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
-  currentHighlightMessage.value = null;
   TUIStore.update(StoreName.CHAT, "messageSource", undefined);
 };
+
+function blinkMessage(messageID: string): Promise<void> {
+  return new Promise((resolve) => {
+    const index = blinkMessageIDList.value.indexOf(messageID);
+    if (index < 0) {
+      blinkMessageIDList.value.push(messageID);
+      let timer = setTimeout(() => {
+        blinkMessageIDList.value.splice(blinkMessageIDList.value.indexOf(messageID), 1);
+        clearTimeout(timer);
+        resolve();
+      }, 3000);
+    }
+  });
+}
+
+// 滚动到最新消息
+async function scrollToLatestMessage() {
+  const { scrollHeight } = await getScrollInfo('#messageScrollList');
+  const { height } = await getBoundingClientRect('#messageScrollList');
+  const messageListDom = document.querySelector('#messageScrollList');
+  if (messageListDom) {
+    messageListDom.scrollTop = scrollHeight - height;
+  }
+}
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

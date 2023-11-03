@@ -287,7 +287,7 @@ const selectedList = ref([]);
 const delDialogShow = ref(false);
 const groupMemberList = ref<Array<typeof IGroupMember>>([]);
 const deletedUserList = ref([]);
-const currentGroup = ref<typeof IGroupModel>();
+const currentGroup = ref<IGroupModel>();
 const currentSelfRole = ref("");
 const groupID = ref("");
 const isClickSelf = ref(false);
@@ -330,7 +330,7 @@ onBeforeUnmount(() => {
 })
 
 TUIStore.watch(StoreName.GRP, {
-  currentGroup: (group: typeof IGroupModel) => {
+  currentGroup: (group: IGroupModel) => {
     if (group) {
       currentGroup.value = group;
       currentSelfRole.value = currentGroup.value?.selfInfo?.role;
@@ -364,7 +364,7 @@ TUIStore.watch(StoreName.GRP, {
 });
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     groupID.value = conversation?.groupProfile?.groupID;
   },
 });

@@ -20,8 +20,8 @@ import {
   StoreName,
   TUIChatService,
   TUITranslateService,
-  type IConversationModel,
-  type IMessageModel
+  IConversationModel,
+  IMessageModel
 } from "@tencentcloud/chat-uikit-engine";
 import Overlay from "../../common/Overlay/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
@@ -83,7 +83,7 @@ function finishSelected(selectedConvIDWrapperList: Array<{userID: string}>): voi
     .catch((error: {message: string, code: number}) => {
       if (error.code === 80001) {
         Toast({
-          message: TUITranslateService.t('内容包含敏感词汇') || '内容包含敏感词汇',
+          message: TUITranslateService.t('内容包含敏感词汇'),
           type: TOAST_TYPE.ERROR
         });
       } else {

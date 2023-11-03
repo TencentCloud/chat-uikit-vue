@@ -28,15 +28,16 @@ import TUIChatEngine, {
   StoreName,
   TUIGlobal,
   TUITranslateService,
-  type IMessageModel,
+  IMessageModel,
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
-import copyIcon from "../../../../assets/icon/msg-copy.svg";
-import delIcon from "../../../../assets/icon/msg-del.svg";
-import forwardIcon from "../../../../assets/icon/msg-forward.svg";
-import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
-import { Toast, TOAST_TYPE } from "../../../common/Toast/index";
 import { isUniFrameWork } from "../../../../utils/is-uni";
+import { Toast, TOAST_TYPE } from "../../../common/Toast/index";
+import delIcon from "../../../../assets/icon/msg-del.svg";
+import copyIcon from "../../../../assets/icon/msg-copy.svg";
+import quoteIcon from "../../../../assets/icon/msg-quote.svg";
+import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
+import forwardIcon from "../../../../assets/icon/msg-forward.svg";
 
 const props = defineProps({
   messageItem: {
@@ -77,7 +78,7 @@ const actionItems = [
     iconUrl: revokeIcon,
     renderCondition() {
       if (!message.value) return false;
-      return message.value?.flow === 'out' && message.value?.status === 'success';
+      return message.value?.flow === "out" && message.value?.status === "success";
     },
     clickEvent: revokeMessage,
   },
@@ -86,18 +87,28 @@ const actionItems = [
     iconUrl: delIcon,
     renderCondition() {
       if (!message.value) return false;
-      return message.value?.status === 'success';
+      return message.value?.status === "success";
     },
     clickEvent: deleteMessage,
   },
   {
-    text: TUITranslateService.t("TUIChat.转发") || "转发",
+    text: TUITranslateService.t("TUIChat.转发"),
     iconUrl: forwardIcon,
     renderCondition() {
       if (!message.value) return false;
-      return message.value?.status === 'success';
+      return message.value?.status === "success";
     },
     clickEvent: forwardSingleMessage,
+  },
+  {
+    text: TUITranslateService.t("TUIChat.引用"),
+    iconUrl: quoteIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      const _message = TUIStore.getMessageModel(message.value.ID);
+      return message.value?.status === "success" && !_message.getSignalingInfo();
+    },
+    clickEvent: quoteMessage,
   },
 ];
 
@@ -114,7 +125,7 @@ function getFunction(index: number) {
 
 function openMessage() {
   let url = "";
-  switch (message.value.type) {
+  switch (message.value?.type) {
     case TUIChatEngine.TYPES.MSG_FILE:
       url = message.value.payload.fileUrl;
       break;
@@ -129,10 +140,10 @@ function openMessage() {
 }
 
 function revokeMessage() {
+  if (!message.value) return;
   // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.value.ID);
-  let promise = messageModel.revokeMessage();
-  promise.catch((error: any) => {
+  messageModel.revokeMessage().catch((error: any) => {
     // 调用异常时业务侧可以通过 promise.catch 捕获异常进行错误处理
     if ((error.code = 20016)) {
       const message = TUITranslateService.t("TUIChat.已过撤回时限");
@@ -145,6 +156,7 @@ function revokeMessage() {
 }
 
 function deleteMessage() {
+  if (!message.value) return;
   // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.value.ID);
   messageModel.deleteMessage();
@@ -159,24 +171,22 @@ function copyMessage() {
 }
 
 function forwardSingleMessage() {
-  TUIStore.update(StoreName.CUSTOM, 'singleForwardMessageID', message.value.ID);
+  if (!message.value) return;
+  TUIStore.update(StoreName.CUSTOM, "singleForwardMessageID", message.value.ID);
+}
+
+function quoteMessage() {
+  if (!message.value) return;
+  message.value.quoteMessage();
 }
 </script>
+
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
 .dialog-item-web {
   background: #ffffff;
-  min-width: min-content;
-  max-width: 220px;
-  width: 72px;
-  height: fit-content;
-  word-break: keep-all;
-  top: 30px;
   border-radius: 8px;
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  white-space: nowrap;
   border: 1px solid #e0e0e0;
   padding: 12px 0;
 
