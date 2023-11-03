@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, onUnmounted } from "../../../adapter-vue";
+import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from "../../../adapter-vue";
 import { IMessageModel, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
 import iconClose from "../../../assets/icon/icon-close.svg";
@@ -93,16 +93,17 @@ interface touchesPosition {
   pageY2?: number;
 }
 
-const props = defineProps({
-  imageList: {
-    type: Array,
-    default: () => [] as Array<typeof IMessageModel>,
-  },
-  currentImage: {
-    type: Object,
-    default: () => ({} as typeof IMessageModel),
-  },
-});
+const props = withDefaults(
+  defineProps<{
+    imageList: Array<IMessageModel>;
+    currentImage: IMessageModel;
+  }>(),
+  {
+    imageList: () => ([] as Array<IMessageModel>),
+    messageItem: () => ({} as IMessageModel),
+  }
+);
+
 const isH5 = ref(TUIGlobal.getPlatform() !== "pc");
 const imageFormatMap = new Map([
   [1, "jpg"],
@@ -302,7 +303,7 @@ const initStyle = () => {
   rotate.value = 0;
 };
 
-const getImageUrl = (message: typeof IMessageModel) => {
+const getImageUrl = (message: IMessageModel) => {
   if (!isH5) {
     return message?.payload?.imageInfoArray[0]?.url;
   } else {
@@ -313,7 +314,7 @@ const getImageUrl = (message: typeof IMessageModel) => {
 const save = () => {
   const imageMessage = props.imageList[
     currentImageIndex.value
-  ] as typeof IMessageModel;
+  ] as IMessageModel;
   const imageSrc = imageMessage?.payload?.imageInfoArray[0]?.url;
   if (!imageSrc) {
     Toast({
@@ -418,7 +419,7 @@ const downloadImgInWeb = (src: string) => {
   };
   const imageMessage = props.imageList[
     currentImageIndex.value
-  ] as typeof IMessageModel;
+  ] as IMessageModel;
   const imageFormat: number = imageMessage?.payload?.imageFormat;
   if (!imageFormatMap.has(imageFormat)) {
     Toast({

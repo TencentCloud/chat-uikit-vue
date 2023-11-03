@@ -93,7 +93,7 @@
             position: absolute;
             cursor: pointer;
             z-index: 5;
-            top: -50px;
+            transform: translateY(-100%);
           }
           .message-tool-out {
             right: 30px;

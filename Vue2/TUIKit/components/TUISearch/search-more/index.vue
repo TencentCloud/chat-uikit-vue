@@ -34,10 +34,10 @@ const props = defineProps({
   },
 });
 
-const searchMoreRef = ref<HTMLElement | null>(undefined);
+const searchMoreRef = ref<HTMLElement | null>();
 const isListShow = ref<boolean>(false);
 // extensions
-const extensionList: Array<typeof ExtensionInfo> = [
+const extensionList: Array<ExtensionInfo> = [
   ...TUICore.getExtensionList(TUIConstants.TUISearch.EXTENSION.SEARCH_MORE.EXT_ID),
 ];
 
@@ -55,7 +55,7 @@ watch(
   () => isListShow.value,
   () => {
     if (isListShow.value) {
-      onClickOutside(searchMoreRef?.value);
+      onClickOutside(searchMoreRef.value);
       TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
         isSearching: false,
         searchType: props.searchType,

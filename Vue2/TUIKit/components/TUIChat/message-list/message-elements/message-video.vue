@@ -70,7 +70,7 @@ import {
   watchEffect,
   withDefaults,
 } from "../../../../adapter-vue";
-import { TUIGlobal, type IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import { handleSkeletonSize } from "../../utils/utils";
 import Icon from "../../../common/Icon.vue";
 import closeSVG from "../../../../assets/icon/icon-close.svg";
@@ -102,7 +102,7 @@ watchEffect(async () => {
   poster.value = await handlePosterUrl(props.content, props.messageItem);
   nextTick(async () => {
     const containerWidth =
-      document.getElementById("messageEle")?.clientWidth || 0;
+      document.getElementById("messageScrollList")?.clientWidth || 0;
     const max = !isPC ? Math.min(containerWidth - 172, 300) : 300;
     let size;
     if (props.messageItem.status === "success") {

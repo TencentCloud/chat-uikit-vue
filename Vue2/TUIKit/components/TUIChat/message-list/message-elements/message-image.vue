@@ -17,7 +17,7 @@ import {
   withDefaults,
   nextTick
 } from "../../../../adapter-vue";
-import { TUIGlobal, type IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import { handleSkeletonSize } from '../../utils/utils';
 import type { IImageMessageContent } from "../../../../interface";
 

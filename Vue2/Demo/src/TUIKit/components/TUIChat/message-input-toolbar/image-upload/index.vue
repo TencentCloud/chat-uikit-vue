@@ -52,7 +52,7 @@ const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 
 const IMAGE_TOOLBAR_SHOW_MAP = {
@@ -71,7 +71,7 @@ const IMAGE_TOOLBAR_SHOW_MAP = {
 };
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -141,7 +141,7 @@ const sendImageMessage = (files: any, width?: string, height?: string) => {
     payload: {
       file: files,
     },
-  } as typeof SendMessageParams;
+  } as SendMessageParams;
   // todo: 需要处理uniapp文件没有宽高的变形问题，需要linda看看
   TUIChatService.sendImageMessage(options);
 };

@@ -1,14 +1,14 @@
 <template>
   <div
-    :class="['message-input-container', isH5 && 'message-input-container-h5']"
+    :class="['message-input-editor-container', isH5 && 'message-input-editor-container-h5']"
   >
-    <div class="message-input-mute" v-show="isMuted">
+    <div v-if="isMuted" class="message-input-mute">
       {{ muteText }}
     </div>
     <div
-      v-show="!isMuted && enableInput"
+      v-if="!isMuted && enableInput"
       ref="editorDom"
-      class="message-input-area"
+      class="message-input-editor-area"
       @keydown.enter="handleEnter"
       @drop="handleFileDrop"
       @paste="handleFilePaste"
@@ -16,21 +16,21 @@
   </div>
 </template>
 <script setup lang="ts">
+import { toRefs, ref, onMounted, watch } from "../../../adapter-vue";
 import TUIChatEngine, {
   TUIGlobal,
   TUIStore,
   StoreName,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import { Editor } from "@tiptap/core";
+import { Editor, type JSONContent } from "@tiptap/core";
 import Document from "@tiptap/extension-document";
 import Paragraph from "@tiptap/extension-paragraph";
 import Placeholder from "@tiptap/extension-placeholder";
 import Text from "@tiptap/extension-text";
 import Mention from "@tiptap/extension-mention";
-import { toRefs, ref, onMounted, watch } from "../../../adapter-vue";
-
 import CustomImage from "./message-input-file";
+import type { ITipTapEditorContent } from "../../../interface";
 import MessageInputAtSuggestion from "./message-input-at/index";
 
 const props = defineProps({
@@ -74,10 +74,10 @@ const inputBlur = ref(true);
 const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isC2C = ref(false);
 const editorDom = ref();
-let editor: any;
+let editor: Editor;
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     isC2C.value = conversation?.type === TUIChatEngine.TYPES.CONV_C2C;
   },
 });
@@ -316,13 +316,14 @@ const getEditorContent = () => {
   return handleEditorForMessage();
 };
 
-const handleEditorForMessage = () => {
+const handleEditorForMessage = (): Array<ITipTapEditorContent> => {
   const editorJSON = editor?.getJSON();
-  const content: any[] = [];
-  const handleEditorContent = (root: any) => {
+  const content: Array<ITipTapEditorContent> = [];
+  function handleEditorContent(root: JSONContent) {
     if (!root || !root.type) {
       return;
-    } else if (
+    }
+    if (
       root.type !== "text" &&
       root.type !== "custom-image" &&
       root.type !== "mention"
@@ -330,8 +331,8 @@ const handleEditorForMessage = () => {
       if (root.type === "paragraph") {
         handleEditorNode(root);
       }
-      if (root.content && root.content.length) {
-        root.content.forEach((item: any) => {
+      if (root.content?.length) {
+        root.content.forEach((item: JSONContent) => {
           handleEditorContent(item);
         });
       }
@@ -339,8 +340,8 @@ const handleEditorForMessage = () => {
     } else {
       handleEditorNode(root);
     }
-  };
-  const handleEditorNode = (node: any) => {
+  }
+  function handleEditorNode(node: JSONContent) {
     // handle enter
     if (node.type === "paragraph") {
       if (
@@ -354,6 +355,7 @@ const handleEditorForMessage = () => {
       node.type === "text" ||
       (node.type === "custom-image" && node?.attrs?.class === "emoji")
     ) {
+      // 处理 text 和 emoji
       const text = node.type === "text" ? node?.text : node?.attrs?.alt;
       if (
         content.length > 0 &&
@@ -371,6 +373,7 @@ const handleEditorForMessage = () => {
       node.type === "custom-image" &&
       node?.attrs?.class === "normal"
     ) {
+      // 处理富文本图像
       content.push({
         type: "image",
         payload: { file: fileMap?.get(node?.attrs?.src) },
@@ -401,7 +404,7 @@ const handleEditorForMessage = () => {
         content[content.length - 1].payload.atUserList = [node?.attrs?.id];
       }
     }
-  };
+  }
   handleEditorContent(editorJSON);
   if (
     content.length > 0 &&
@@ -476,22 +479,24 @@ defineExpose({
 
 <style scoped lang="scss">
 @import url("../../../assets/styles/common.scss");
-.message-input {
+.message-input-editor {
   &-container {
+    box-sizing: border-box;
+    height: 100%;
     display: flex;
     flex-direction: column;
     flex: 1;
-    height: calc(100% - 13px);
-    width: calc(100% - 20px);
     padding: 3px 10px 10px 10px;
-    overflow: hidden;
   }
   &-area {
+    box-sizing: border-box;
+    height: 100%;
     flex: 1;
     display: flex;
     overflow-y: auto;
   }
   &-mute {
+    box-sizing: border-box;
     flex: 1;
     display: flex;
     color: #999999;
@@ -500,7 +505,8 @@ defineExpose({
     align-items: center;
   }
 }
-.message-input-container-h5 {
+.message-input-editor-container-h5 {
+  box-sizing: border-box;
   flex: 1;
   height: auto;
   background: #f4f5f9;

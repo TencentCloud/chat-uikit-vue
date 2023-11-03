@@ -20,7 +20,7 @@ import { messageTypeAbstractMap } from "./type";
 
 // 消息云端搜索
 export const searchCloudMessages = (
-  params: typeof SearchCloudMessagesParams
+  params: SearchCloudMessagesParams
 ): Promise<Array<ISearchResultListItem>> => {
   return TUIChatService.searchCloudMessages(params)
     .then((imResponse: any) => {
@@ -55,7 +55,7 @@ export const searchFriends = (userIDList: Array<string>): Promise<Array<IFriendT
 };
 
 // 搜索所有已加入群聊
-export const searchGroups = (groupIDList: Array<string>): Promise<Array<typeof IGroupModel>> => {
+export const searchGroups = (groupIDList: Array<string>): Promise<Array<IGroupModel>> => {
   // searchGroupList.value = [];
   const promiseList: Array<Promise<any>> = [];
   groupIDList.forEach((groupID: string) => {

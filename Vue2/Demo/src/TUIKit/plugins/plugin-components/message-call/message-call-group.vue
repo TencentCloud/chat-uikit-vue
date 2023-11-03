@@ -1,30 +1,50 @@
 <template>
   <div
     v-if="isCallMessage && conversationType === TYPES.CONV_GROUP"
+    :class="{ blinkText: isBlink }"
   >
     {{ custom }}
   </div>
 </template>
+
 <script setup lang="ts">
-import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
-import { computed, ref } from "../../../adapter-vue";
-const props = defineProps({
-  message: {
-    type: Object,
-    default: () => ({}),
-  },
-  signalingInfo: {
-    type: Object,
-    default: () => ({}),
-  },
-  customContent: {
-    type: Object,
-    default: () => ({}),
-  },
+import { computed } from "../../../adapter-vue";
+import TUIChatEngine, { IMessageModel } from "@tencentcloud/chat-uikit-engine";
+
+interface IProps {
+  message: IMessageModel;
+  signalingInfo: any;
+  customContent: any;
+  blinkMessageIDList?: string[];
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  message: () => ({}),
+  signalingInfo: () => ({}),
+  customContent: () => ({}),
+  blinkMessageIDList: () => [],
 });
-const TYPES = ref(TUIChatEngine.TYPES);
-const isCallMessage = computed(() => props.signalingInfo != null);
+
+const TYPES = TUIChatEngine.TYPES;
+const isCallMessage = computed(() => !!props.signalingInfo);
 const conversationType = computed(() => props.message?.conversationType);
 const custom = computed(() => props.customContent?.custom);
+
+const isBlink = computed(() => {
+  if (props.message?.ID) {
+    return props.blinkMessageIDList?.includes(props.message.ID);
+  }
+  return false;
+});
 </script>
-<style scoped lang="scss"></style>
+
+<style scoped lang="scss">
+@keyframes blinkText {
+  50% {
+    color: #ff9c19;
+  }
+}
+.blinkText {
+  animation: blinkText 1s linear 3;
+}
+</style>

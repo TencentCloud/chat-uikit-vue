@@ -182,7 +182,7 @@ export const deleteFriend = (userID: string) => {
 };
 
 // 添加好友 / add friend
-export const addFriend = (params: typeof AddFriendParams) => {
+export const addFriend = (params: AddFriendParams) => {
   TUIFriendService.addFriend(params)
     .then((res: any) => {
       Toast({

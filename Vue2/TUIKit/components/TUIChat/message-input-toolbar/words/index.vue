@@ -50,11 +50,11 @@ import { wordsList } from "../../utils/wordsList";
 import { isUniFrameWork } from "../../../../utils/is-uni";
 
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 const container = ref();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -68,7 +68,7 @@ const selectWord = (item: any) => {
     payload: {
       text: item.value,
     },
-  } as typeof SendMessageParams;
+  } as SendMessageParams;
   TUIChatService.sendTextMessage(options);
   // 提交后关闭 dialog
   // close dialog after submit evaluate

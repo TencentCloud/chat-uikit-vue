@@ -88,14 +88,14 @@ const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isApp = ref(TUIGlobal.getPlatform() === "app");
 
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 const isGroup = ref<boolean>(false);
 const selectorShowType = ref<string>("");
 const userSelectorRef = ref();
-const currentUserSelectorExtension = ref<typeof ExtensionInfo>();
+const currentUserSelectorExtension = ref<ExtensionInfo>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
     if (currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_GROUP) {
       isGroup.value = true;
@@ -106,31 +106,31 @@ TUIStore.watch(StoreName.CONV, {
 });
 
 // extensions
-const extensionList: Array<typeof ExtensionInfo> = [
+const extensionList: Array<ExtensionInfo> = [
   ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID),
 ];
 
 // 按展示位置分类 extensionList （注意：仅 web 端 区分展示位置在 从 start 开始和 从 end 开始，在移动端不生效）
 const extensionListShowInStart = computed(
-  (): Array<typeof ExtensionInfo> =>
+  (): Array<ExtensionInfo> =>
     isPC.value
       ? extensionList.filter(
-          (extension: typeof ExtensionInfo) => extension?.data?.name !== "search"
+          (extension: ExtensionInfo) => extension?.data?.name !== "search"
         )
       : extensionList
 );
 
 const extensionListShowInEnd = computed(
-  (): Array<typeof ExtensionInfo> =>
+  (): Array<ExtensionInfo> =>
     isPC.value
       ? extensionList.filter(
-          (extension: typeof ExtensionInfo) => extension?.data?.name === "search"
+          (extension: ExtensionInfo) => extension?.data?.name === "search"
         )
       : []
 );
 
 // handle extensions onclick
-const onExtensionClick = (extension: typeof ExtensionInfo) => {
+const onExtensionClick = (extension: ExtensionInfo) => {
   switch (extension?.data?.name) {
     case "voiceCall":
       onCallExtensionClicked(extension, 1);
@@ -146,7 +146,7 @@ const onExtensionClick = (extension: typeof ExtensionInfo) => {
   }
 };
 
-const onCallExtensionClicked = (extension: typeof ExtensionInfo, callType: number) => {
+const onCallExtensionClicked = (extension: ExtensionInfo, callType: number) => {
   selectorShowType.value = extension?.data?.name;
   if (currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_C2C) {
     extension?.listener?.onClicked({
@@ -197,25 +197,15 @@ const dialogCloseInH5 = (dialogDom: any) => {
 @import "../../../assets/styles/common.scss";
 .message-input-toolbar {
   border-top: 1px solid #f4f5f9;
-  height: fit-content;
   width: 100%;
   max-width: 100%;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   &-list {
-    list-style: none;
     display: flex;
     flex-direction: row;
-    margin: 0;
-    padding: 0;
-    &-item {
-      .icon {
-        margin: 12px 10px 1px;
-        width: 20px;
-        height: 20px;
-      }
-    }
+    align-items: center;
     .extension-list {
       list-style: none;
       display: flex;
@@ -229,7 +219,7 @@ const dialogCloseInH5 = (dialogDom: any) => {
   }
 }
 .message-input-toolbar-h5 {
-  padding: 0 10px 10px 10px;
+  padding: 5px 10px 5px;
   box-sizing: border-box;
   flex-direction: column;
 }

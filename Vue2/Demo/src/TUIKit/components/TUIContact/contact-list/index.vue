@@ -93,7 +93,7 @@ const currentContactInfo = ref<any>({});
 const contactListMap = ref<IContactList>({
   friendApplicationList: {
     title: "新的联系人",
-    list: [] as Array<typeof FriendApplication>,
+    list: [] as Array<FriendApplication>,
     unreadCount: 0,
   },
   blackList: {
@@ -102,11 +102,11 @@ const contactListMap = ref<IContactList>({
   },
   groupList: {
     title: "我的群聊",
-    list: [] as Array<typeof IGroupModel>,
+    list: [] as Array<IGroupModel>,
   },
   friendList: {
     title: "我的好友",
-    list: [] as Array<typeof Friend>,
+    list: [] as Array<Friend>,
   },
 });
 const contactSearchingStatus = ref<boolean>(false);
@@ -155,7 +155,7 @@ const updateCurrentContactInfoFromList = (list: Array<any>, type: string) => {
 };
 
 TUIStore.watch(StoreName.GRP, {
-  groupList: (groupList: Array<typeof IGroupModel>) => {
+  groupList: (groupList: Array<IGroupModel>) => {
     contactListMap.value.groupList.list = groupList;
     updateCurrentContactInfoFromList(
       contactListMap.value.groupList.list,
@@ -175,7 +175,7 @@ TUIStore.watch(StoreName.USER, {
 });
 
 TUIStore.watch(StoreName.FRIEND, {
-  friendList: (friendList: Array<typeof Friend>) => {
+  friendList: (friendList: Array<Friend>) => {
     contactListMap.value.friendList.list = friendList;
     updateCurrentContactInfoFromList(
       contactListMap.value.friendList.list,
@@ -183,7 +183,7 @@ TUIStore.watch(StoreName.FRIEND, {
     );
   },
   friendApplicationList: (
-    friendApplicationList: Array<typeof FriendApplication>
+    friendApplicationList: Array<FriendApplication>
   ) => {
     contactListMap.value.friendApplicationList.list = friendApplicationList;
     updateCurrentContactInfoFromList(

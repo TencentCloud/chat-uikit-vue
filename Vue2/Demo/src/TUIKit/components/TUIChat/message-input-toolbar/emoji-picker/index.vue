@@ -41,7 +41,7 @@ const currentConversation = ref();
 const container = ref();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });

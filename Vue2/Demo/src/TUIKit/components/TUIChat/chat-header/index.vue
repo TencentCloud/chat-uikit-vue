@@ -35,14 +35,14 @@ import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
 
 const emits = defineEmits(["closeChat"]);
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 const currentConversationName = ref("");
 const typingStatus = ref(false);
 const groupID = ref("");
-const extensions = ref<typeof ExtensionInfo>([])
+const extensions = ref<ExtensionInfo>([])
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     if (isGroup && currentConversation.value?.conversationID !== conversation?.conversationID) {
       extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: isGroup });
@@ -75,7 +75,7 @@ const closeChat = (conversationID: string) => {
   emits("closeChat", conversationID);
 };
 
-const handleExtensions = (item: typeof ExtensionInfo) => {
+const handleExtensions = (item: ExtensionInfo) => {
   item.listener.onClicked({groupID: groupID.value});
 }
 

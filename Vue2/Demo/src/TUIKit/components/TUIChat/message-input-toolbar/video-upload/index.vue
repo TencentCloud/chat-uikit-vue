@@ -56,10 +56,10 @@ const emits = defineEmits(["close"]);
 const inputRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -137,7 +137,7 @@ const sendVideoMessage = (file: any) => {
     payload: {
       file,
     },
-  } as typeof SendMessageParams;
+  } as SendMessageParams;
   TUIChatService.sendVideoMessage(options);
 };
 </script>

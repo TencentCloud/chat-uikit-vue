@@ -192,7 +192,7 @@ export interface IContactInfoButton {
 export interface ISearchResultListItem {
   conversationID: string;
   messageCount: number;
-  messageList: Array<typeof IMessageModel>;
+  messageList: Array<IMessageModel>;
 }
 
 export interface IImageMessageContent {
@@ -208,4 +208,13 @@ export interface IVideoMessageContent {
   snapshotUrl: string; // - 视频封面图链接
   snapshotWidth: number; // - 视频封面图宽度
   snapshotHeight: number; // - 视频封面图高度
+}
+
+export interface ITipTapEditorContent {
+  type: 'text' | 'image'| 'video' | 'file';
+  payload: {
+    text?: string;
+    file?: File;
+    atUserList?: string[];
+  };
 }

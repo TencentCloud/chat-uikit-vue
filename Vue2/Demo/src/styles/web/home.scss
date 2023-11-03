@@ -304,6 +304,7 @@
     .home-chat {
       flex: 1;
       position: relative;
+      min-width: 0;
       .group {
         position: absolute;
         top: 30px;

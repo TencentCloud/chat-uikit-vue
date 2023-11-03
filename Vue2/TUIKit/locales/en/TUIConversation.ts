@@ -15,7 +15,10 @@ const TUIConversation = {
   "@所有人": "@All",
   "条": "strip",
   "我": "me",
-  "网络异常，请您检查网络设置": "Network exception, please check the network settings"
+  "网络异常，请您检查网络设置": "Network exception, please check the network settings",
+  "您已被群管理员移出群聊": "You have been removed from the group chat by the group administrator",
+  "该群聊已被解散": "The group chat has been disband",
+  "您已退出该群聊": "You have left the group chat",
 }
 
 export default TUIConversation;

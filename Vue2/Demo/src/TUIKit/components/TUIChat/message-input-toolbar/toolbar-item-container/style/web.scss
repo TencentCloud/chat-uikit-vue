@@ -1,11 +1,7 @@
 .toolbar-item-container {
   position: relative;
-  width: fit-content;
-  height: fit-content;
   &-icon {
-    width: 20px;
-    height: 20px;
-    padding: 12px 10px 1px;
+    padding: 8px;
     cursor: pointer;
   }
   &-dialog {

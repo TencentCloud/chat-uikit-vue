@@ -5,17 +5,13 @@
 .TUI-chat-h5 {
   &-message-list {
     flex: 1;
-    width: 100%;
-    max-width: 100%;
     overflow: hidden;
     display: flex;
   }
   &-message-input {
-    width: calc(100% - 20px);
-    height: fit-content;
-    max-height: 160px;
-    padding: 10px 10px 0 10px;
-    border-top: 1px solid #EEEEEE;
+    height: auto;
+    padding: 10px 10px 0;
+    border-top: 1px solid #eee;
   }
   &-message-input-toolbar {
     order: 1;
@@ -29,7 +25,7 @@
 }
 .group-profile {
   position: absolute;
- top: 14%;
+  top: 14%;
   right: 0;
   width: 50px;
   height: 30px;

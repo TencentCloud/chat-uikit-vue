@@ -29,7 +29,7 @@ const TUIConstants = TUIContactServer.constants;
 const needSearch = ref(false);
 const memberList = ref<Array<typeof IGroupMember>>([]);
 const userList = ref<Array<typeof IGroupMember>>([]);
-const group = ref<typeof IGroupModel>({});
+const group = ref<IGroupModel>({});
 const selectOptions: any = ref({
   groupID: '',
   isRadio: false,
@@ -61,7 +61,7 @@ watchEffect(() => {
 })
 
 TUIStore.watch(StoreName.GRP, {
-  currentGroup: (data: typeof IGroupModel) => {
+  currentGroup: (data: IGroupModel) => {
     group.value = data;
   },
   currentGroupMemberList: (List: Array<typeof IGroupMember>) => {

@@ -1,4 +1,11 @@
 import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
+export interface ISearchMessageTypeList {
+  [propsName: string]: {
+    key: string;
+    label: string;
+    value: Array<string> | string;
+  };
+}
 export const allMessageTypeList = [
   TUIChatEngine.TYPES.MSG_TEXT,
   TUIChatEngine.TYPES.MSG_FILE,
@@ -9,13 +16,7 @@ export const allMessageTypeList = [
   TUIChatEngine.TYPES.MSG_CUSTOM,
   TUIChatEngine.TYPES.MSG_MERGER,
 ];
-export const searchMessageTypeList: {
-  [propsName: string]: {
-    key: string;
-    label: string;
-    value: Array<string> | string;
-  };
-} = {
+export const searchMessageTypeList: ISearchMessageTypeList = {
   // 全维度搜索，包括联系人/群聊/聊天记录, 暂不支持
   // all: {
   //   key: "all",
@@ -80,11 +81,12 @@ export const searchMessageTypeDefault = {
 // 全局搜索类型 key 列表
 export const globalSearchTypeKeys = ["allMessage", "textMessage", "fileMessage", "otherMessage"];
 // 全局搜索类型列表
-export const globalSearchTypeList = Object.fromEntries(
-  Object?.entries(searchMessageTypeList)?.filter(([key, val]) =>
-    globalSearchTypeKeys?.includes(key)
-  )
-);
+export const globalSearchTypeList = Object.keys(searchMessageTypeList)
+  .filter((key: string) => globalSearchTypeKeys?.includes(key))
+  .reduce((obj: ISearchMessageTypeList, key: string) => {
+    obj[key] = searchMessageTypeList[key];
+    return obj;
+  }, {});
 
 // 会话内搜索类型 key 列表
 export const conversationSearchTypeKeys = [
@@ -94,8 +96,9 @@ export const conversationSearchTypeKeys = [
   "otherMessage",
 ];
 // 会话内搜索类型列表
-export const conversationSearchTypeList = Object.fromEntries(
-  Object?.entries(searchMessageTypeList)?.filter(([key, val]) =>
-    conversationSearchTypeKeys?.includes(key)
-  )
-);
+export const conversationSearchTypeList = Object.keys(searchMessageTypeList)
+  .filter((key: string) => conversationSearchTypeKeys?.includes(key))
+  .reduce((obj: ISearchMessageTypeList, key: string) => {
+    obj[key] = searchMessageTypeList[key];
+    return obj;
+  }, {});

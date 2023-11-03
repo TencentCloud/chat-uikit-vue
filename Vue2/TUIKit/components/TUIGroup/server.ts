@@ -63,14 +63,16 @@ export default class TUIGroupServer {
     }
   }
 
-  public onGetExtension(extensionID: string, params: any): Array<typeof ExtensionInfo> {
-    let list: Array<typeof ExtensionInfo> = [];
+  public onGetExtension(extensionID: string, params: any): Array<ExtensionInfo> {
+    let list: Array<ExtensionInfo> = [];
     switch (extensionID) {
       case TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID:
         if (params?.filterManageGroup) {
           list.push({
+            weight: 100,
             icon: settingSVG,
             text: '更多',
+            data: {},
             listener: {
               onClicked: this.groupManage.bind(this),
             }

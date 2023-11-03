@@ -5,6 +5,7 @@
       :message="messageModel"
       :signalingInfo="messageSignalingInfo"
       :customContent="messageCustomContent"
+      :blinkMessageIDList="props.blinkMessageIDList"
     ></MessageCallGroup>
   </div>
   <!-- 以下为以messageBubble形式展示 -->
@@ -19,6 +20,7 @@
   >
     <messageBubble
       :messageItem="messageModel"
+      :blinkMessageIDList="props.blinkMessageIDList"
       @resendMessage="resendMessage(messageModel)"
     >
       <MessageCallC2C
@@ -37,12 +39,17 @@ import { computed } from "../../adapter-vue";
 import messageBubble from "../../components/TUIChat/message-list/message-elements/message-bubble.vue";
 import MessageCallGroup from "./message-call/message-call-group.vue";
 import MessageCallC2C from "./message-call/message-call-c2c.vue";
-const props = defineProps({
-  message: {
-    type: Object,
-    default: () => ({}),
-  },
+
+interface IProps {
+  message: IMessageModel;
+  blinkMessageIDList?: string[];
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  message: () => ({} as IMessageModel),
+  blinkMessageIDList: () => [] as string[],
 });
+
 const emits = defineEmits([
   "resendMessage",
   "handleToggleMessageItem",
@@ -73,19 +80,19 @@ const showStyle = computed(() => {
 });
 
 // 以下为messageTool等外部交互使用，无需特殊处理，勿动
-const resendMessage = (message: typeof IMessageModel) => {
+const resendMessage = (message: IMessageModel) => {
   emits("resendMessage", message);
 };
 const handleToggleMessageItem = (
   e: any,
-  message: typeof IMessageModel,
+  message: IMessageModel,
   isLongpress = false
 ) => {
   emits("handleToggleMessageItem", e, message, isLongpress);
 };
 const handleH5LongPress = (
   e: any,
-  message: typeof IMessageModel,
+  message: IMessageModel,
   type: string
 ) => {
   emits("handleH5LongPress", e, message, type);

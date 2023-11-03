@@ -113,11 +113,11 @@ import { isUniFrameWork } from "../../../utils/is-uni";
 const emits = defineEmits(["handleSwitchConversation", "getPassingRef"]);
 const isH5 = TUIGlobal.getPlatform() === "h5";
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 const currentConversationID = ref<string>();
 const currentConversationDomRect = ref<DOMRect>();
 const isShowOverlay = ref<boolean>(false);
-const conversationList = ref<typeof IConversationModel[]>([]);
+const conversationList = ref<IConversationModel[]>([]);
 const conversationListDomRef = ref<HTMLElement | undefined>();
 const actionsMenuPosition = ref<{top: number, left?: number, conversationHeight?: number}>({
   top: 0,
@@ -131,10 +131,10 @@ TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     currentConversationID.value = id;
   },
-  conversationList: (list: Array<typeof IConversationModel>) => {
+  conversationList: (list: Array<IConversationModel>) => {
     conversationList.value = list;
   },
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -157,7 +157,7 @@ TUIStore.watch(StoreName.USER, {
   },
 });
 
-const isShowUserOnlineStatus = (conversation: typeof IConversationModel): boolean => {
+const isShowUserOnlineStatus = (conversation: IConversationModel): boolean => {
   return (
     displayOnlineStatus.value &&
     conversation.type === TUIChatEngine.TYPES.CONV_C2C
@@ -166,7 +166,7 @@ const isShowUserOnlineStatus = (conversation: typeof IConversationModel): boolea
 
 const showConversationActionMenu = (
   event: Event,
-  conversation: typeof IConversationModel,
+  conversation: IConversationModel,
   index: number,
   isContextMenuEvent?: boolean
 ) => {

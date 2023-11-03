@@ -38,10 +38,10 @@ const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const currentConversation = ref<typeof IConversationModel>();
+const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     currentConversation.value = conversation;
   },
 });
@@ -67,7 +67,7 @@ const sendFileMessage = (e: any) => {
     payload: {
       file: e?.target,
     },
-  } as typeof SendMessageParams;
+  } as SendMessageParams;
   TUIChatService.sendFileMessage(options);
   e.target.value = "";
 };

@@ -36,10 +36,10 @@
             isUniFrameWork && 'TUI-chat-uni-message-input',
             isWeChat && 'TUI-chat-wx-message-input',
           ]"
+          ref="messageInputRef"
           :isMuted="false"
           :muteText="TUITranslateService.t('TUIChat.您已被管理员禁言')"
           :placeholder="TUITranslateService.t('请输入消息')"
-          ref="messageInputRef"
           @handleToolbarListShow="handleToolbarListShow"
         ></MessageInput>
       </div>
@@ -83,13 +83,13 @@ const currentConversationID = ref();
 // 是否显示群组管理
 const isGroup = ref(false);
 const groupID = ref("");
-const groupManageExt = ref<typeof ExtensionInfo>(undefined);
+const groupManageExt = ref<ExtensionInfo>(undefined);
 
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     currentConversationID.value = id;
   },
-  currentConversation: (conversation: typeof IConversationModel) => {
+  currentConversation: (conversation: IConversationModel) => {
     isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     if (isUniFrameWork && isGroup.value && groupID.value !== conversation?.groupProfile?.groupID) {
       const extList = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, {
@@ -130,7 +130,7 @@ const handleToolbarListShow = (show?: boolean) => {
   }
 };
 
-const handleEditor = (message: typeof IMessageModel, type: string) => {
+const handleEditor = (message: IMessageModel, type: string) => {
   if (!message || !type) return;
   switch (type) {
     case "reference":
