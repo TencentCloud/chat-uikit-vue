@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="(typeof quoteMessage !== 'undefined') && props.currentFunction !== 'audio'"
+    v-if="quoteMessage && props.currentFunction !== 'audio'"
     :class="[
       'input-quote-container',
       !isPC && 'input-quote-container-h5',
