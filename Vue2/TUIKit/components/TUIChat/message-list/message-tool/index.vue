@@ -115,7 +115,7 @@ const actionItems = [
 const message = ref<IMessageModel>();
 
 watchEffect(() => {
-  message.value = props.messageItem as IMessageModel;
+  message.value = TUIStore.getMessageModel(props.messageItem.ID);
 });
 
 function getFunction(index: number) {
