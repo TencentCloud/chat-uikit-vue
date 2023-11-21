@@ -12,14 +12,14 @@
 </template>
   
 <script lang="ts" setup>
-import { computed } from "../../../../../adapter-vue";
 import {
   TUIStore,
   StoreName,
   IMessageModel, 
   TUITranslateService
 } from "@tencentcloud/chat-uikit-engine";
-import { isUniFrameWork } from "../../../../../utils/is-uni";
+import { computed } from "../../../../../adapter-vue";
+import { isUniFrameWork } from "../../../../../utils/env";
 import { getBoundingClientRect, getScrollInfo } from "../../../../../utils/universal-api/domOperation";
 import { Toast, TOAST_TYPE } from "../../../../../components/common/Toast/index";
 import type { ICloudCustomData, IQuoteContent } from "./interface.d.ts";
@@ -66,7 +66,7 @@ async function scrollToOriginalMessage() {
       const { scrollTop } = await getScrollInfo('#messageScrollList', 'messageList');
       const finalScrollTop = originalMessageRect.top + scrollTop - scrollViewRect.top - (selfAddValue++ % 2);
       const isNeedScroll = originalMessageRect.top < scrollViewRect.top;
-      if (window && document) {
+      if (!isUniFrameWork && window) {
         const scrollView = document.getElementById('messageScrollList');
         if (isNeedScroll && scrollView) {
           scrollView.scrollTop = finalScrollTop;

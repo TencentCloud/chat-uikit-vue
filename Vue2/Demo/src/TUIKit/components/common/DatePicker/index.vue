@@ -20,7 +20,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import DatePickerPanel from "./date-picker-panel.vue";
 import { ref, computed } from "../../../adapter-vue";
 import { DateCell } from "./date-picker";
@@ -30,6 +30,7 @@ import localeData from "dayjs/plugin/localeData.js";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter.js";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore.js";
 import "dayjs/locale/zh-cn";
+import { isPC } from "../../../utils/env";
 
 dayjs.extend(localeData);
 dayjs.extend(isSameOrAfter);
@@ -56,8 +57,6 @@ const props = defineProps({
     default: "结束时间",
   },
 });
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 const isDatePanelShow = ref<boolean>(false);
 

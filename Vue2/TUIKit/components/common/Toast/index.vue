@@ -12,7 +12,6 @@
   </transition>
 </template>
 <script lang="ts" setup>
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import {
   computed,
   CSSProperties,
@@ -20,6 +19,7 @@ import {
   ref,
   watch
 } from "../../../adapter-vue";
+import { isH5 } from "../../../utils/env";
 import TOAST_TYPE from "./type";
 
 const props = defineProps({
@@ -57,7 +57,6 @@ const props = defineProps({
   },
 });
 const visible = ref(false);
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 let timer: any;
 const onClose = ref();
 

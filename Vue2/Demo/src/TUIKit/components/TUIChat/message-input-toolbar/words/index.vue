@@ -35,7 +35,6 @@
 </template>
 <script setup lang="ts">
 import {
-  TUIGlobal,
   TUITranslateService,
   TUIStore,
   StoreName,
@@ -47,9 +46,8 @@ import { ref } from "../../../../adapter-vue";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import wordsIcon from "../../../../assets/icon/words.svg";
 import { wordsList } from "../../utils/wordsList";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
 
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref<IConversationModel>();
 const container = ref();
 

@@ -179,9 +179,11 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUITranslateService,
-  TUIGlobal,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, computed } from "../../../adapter-vue";
+import { isPC } from "../../../utils/env";
+import { TUIGlobal } from "../../../utils/universal-api/index";
+
 import {
   generateAvatar,
   generateContactInfoName,
@@ -210,8 +212,6 @@ import {
 import { deepCopy } from "../../TUIChat/utils/utils";
 
 const emits = defineEmits(["switchConversation"]);
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 const contactInfoData = ref<any>({});
 const contactInfoBasicList = ref<Array<{ label: string; data: string }>>([]);

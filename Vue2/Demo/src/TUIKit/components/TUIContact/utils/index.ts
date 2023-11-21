@@ -1,16 +1,13 @@
 import TUIChatEngine, {
-  TUIGlobal,
   TUIFriendService,
   TUIConversationService,
   TUIGroupService,
   TUIUserService,
   TUITranslateService,
   AddFriendParams,
-  TUIStore,
-  StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { TUIGlobal } from "../../../utils/universal-api/index";
 
 // 解析 用户头像/群头像
 export const generateAvatar = (item: any): string => {

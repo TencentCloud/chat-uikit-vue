@@ -1,6 +1,6 @@
 import { createVNode, render, VNode, vueVersion } from "../../../adapter-vue";
+import { TUIGlobal } from "../../../utils/universal-api/index";
 import TOAST_TYPE from "./type";
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import MessageConstructor from "./index.vue";
 
 interface IToast {

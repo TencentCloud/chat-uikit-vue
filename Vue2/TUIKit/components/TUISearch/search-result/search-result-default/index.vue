@@ -7,11 +7,12 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
+import { isPC } from "../../../../utils/env";
 import Icon from "../../../common/Icon.vue";
 import SearchDefaultIcon from "../../../../assets/icon/search-default.svg";
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
+
 </script>
 <style scoped lang="scss">
 .search-result-default {

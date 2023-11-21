@@ -14,24 +14,27 @@
 
 <script lang="ts" setup>
 import { withDefaults } from "../../../../adapter-vue";
-import { TUIGlobal, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import files from "../../../../assets/icon/files.png";
-
-const props = withDefaults(defineProps<{
-  content: {
-    name: string,
-    url: string,
-    size: number,
+import type { IFileMessageContent } from "../../../../interface";
+import { isPC } from "../../../../utils/env";
+const props = withDefaults(
+  defineProps<{
+    content: IFileMessageContent;
+    messageItem: IMessageModel;
+  }>(),
+  {
+    content: () => ({} as IFileMessageContent),
+    messageItem: () => ({} as IMessageModel),
   }
-}>(), {
-  content: {}
-});
-
-const isPC = TUIGlobal.getPlatform() === 'pc';
+);
 
 // todo: 区分 web 和 uniapp
 const download = () => {
+  if (props.messageItem.hasRiskContent) {
+    return;
+  }
   const option = {
     mode: "cors",
     headers: new Headers({

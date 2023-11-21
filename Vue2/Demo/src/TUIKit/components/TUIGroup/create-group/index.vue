@@ -64,7 +64,6 @@
 </template>
 <script lang="ts" setup>
 import TUIChatEngine, {
-  TUIGlobal,
   TUITranslateService,
   TUIGroupService,
   TUIStore,
@@ -72,6 +71,7 @@ import TUIChatEngine, {
 } from "@tencentcloud/chat-uikit-engine";
 import { computed, reactive, ref, watchEffect } from "../../../adapter-vue";
 import documentLink from "../../../utils/documentLink";
+import { isPC } from "../../../utils/env";
 import Icon from "../../common/Icon.vue"
 import backIcon from "../../../assets/icon/back.svg";
 import closeIcon from "../../../assets/icon/close.png";
@@ -83,8 +83,6 @@ import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import Server from "../server";
 const TUIGroupServer = Server.getInstance();
 const TUIConstants = TUIGroupServer.constants;
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 const groupInfo = reactive<any>({
   profile: {
@@ -167,7 +165,7 @@ const createGroup = async (options: any) => {
     });
   } catch (err: any) {
     Toast({
-      message: err.msg,
+      message: err.message,
       type: TOAST_TYPE.ERROR
     });
   }

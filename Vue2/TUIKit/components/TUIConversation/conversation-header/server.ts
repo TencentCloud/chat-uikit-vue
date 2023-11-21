@@ -1,8 +1,6 @@
 import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
-import {
-  TUITranslateService,
-  TUIGlobal,
-} from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { isPC } from "../../../utils/env";
 import createGroup from "../../../assets/icon/start-group.svg";
 import C2C from "../../../assets/icon/icon-c2c.svg";
 import { CONV_CREATE_TYPE } from "../../../constant";
@@ -31,7 +29,7 @@ export default class ConversationHeaderServer {
 
   public getMenu(): Array<IMenuItem> {
     const list = this.generateMenuList();
-    if (TUIGlobal.getPlatform() !== "pc" && list.length > 0) {
+    if (!isPC && list.length > 0) {
       return [{
         text: TUITranslateService.t('TUIConversation.发起会话'),
         data: {

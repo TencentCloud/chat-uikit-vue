@@ -16,7 +16,6 @@
 import { onUnmounted, ref } from "../../../adapter-vue";
 import {
   TUIStore,
-  TUIGlobal,
   StoreName,
   TUIChatService,
   TUITranslateService,
@@ -26,9 +25,8 @@ import {
 import Overlay from "../../common/Overlay/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
 import { Toast, TOAST_TYPE } from "../../../components/common/Toast";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../utils/env";
 
-const isPC = TUIGlobal.getPlatform() === "pc";
 const isShowForwardPanel = ref(false);
 const customConversationList = ref();
 

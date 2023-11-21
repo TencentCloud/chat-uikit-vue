@@ -22,19 +22,18 @@
 </template>
 <script lang="ts" setup>
 import TUIChatEngine, {
-  TUIGlobal,
   TUIStore,
   StoreName,
   TUITranslateService,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
+import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
 import { ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
-import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
+import { isPC } from "../../../utils/env";
 
 const emits = defineEmits(["closeChat"]);
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref<IConversationModel>();
 const currentConversationName = ref("");
 const typingStatus = ref(false);

@@ -207,20 +207,19 @@
 
 <script setup lang="ts">
 import {
-  TUIGlobal,
   TUIStore,
   StoreName,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
 import { TUIChat, TUIConversation, TUIContact, TUIGroup, TUISearch } from "../TUIKit";
 import { ref } from "../TUIKit/adapter-vue";
+import { isPC } from "../TUIKit/utils/env";
 import Header from "../components/Header.vue";
 import Menu from "../components/Menu.vue";
 import Profile from "./Profile.vue";
 import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
 import Drag from "../TUIKit/components/common/Drag";
 
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentTab = ref("message");
 const currentConversationID = ref("");
 const showMore = ref(false);

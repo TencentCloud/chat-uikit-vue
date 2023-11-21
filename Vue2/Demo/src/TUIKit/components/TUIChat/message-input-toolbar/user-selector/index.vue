@@ -21,13 +21,14 @@
 </template>
 <script setup lang="ts">
 import {
-  TUIGlobal,
   TUIGroupService,
   TUIUserService,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, computed, watch } from "../../../../adapter-vue";
 import Dialog from "../../../common/Dialog/index.vue";
 import Transfer from "../../../common/Transfer/index.vue";
+import { isPC } from "../../../../utils/env";
+
 const props = defineProps({
   // 类型: voiceCall/groupCall/...
   type: {
@@ -44,7 +45,6 @@ const props = defineProps({
   },
 });
 const emits = defineEmits(["submit", "cancel"]);
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
 const show = ref<boolean>(false);
 const groupID = ref<string>("");
 const memberList = ref<Array<any>>([]);

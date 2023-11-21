@@ -44,7 +44,7 @@
                   item.avatar ||
                   'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                 "
-                onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+                onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
               />
             </dt>
             <dd class="userInfo-list-item-info">{{ item.nick || item.userID }}</dd>
@@ -95,7 +95,7 @@
               currentGroup.avatar ||
               'https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'
             "
-            onerror="this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
+            onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/im/demo/TUIkit/web/img/constomer.svg'"
           />
         </li>
         <li class="list-item">
@@ -207,7 +207,6 @@
 </template>
 <script lang="ts" setup>
 import TUIChatEngine, {
-  TUIGlobal,
   TUITranslateService,
   TUIGroupService,
   TUIFriendService,
@@ -238,8 +237,10 @@ import Icon from "../../common/Icon.vue";
 import backSVG from "../../../assets/icon/back.svg";
 import rightIcon from "../../../assets/icon/right-icon.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../utils/env";
+import { TUIGlobal } from "../../../utils/universal-api/index";
 import Server from "../server";
+
 const TUIGroupServer = Server.getInstance();
 const TUIConstants = TUIGroupServer.constants;
 
@@ -254,7 +255,6 @@ const props = defineProps({
   },
 });
 
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const manageRef = ref<any>(undefined);
 const currentTab = ref("");
 const editLableName = ref("");
@@ -609,7 +609,7 @@ const dismissGroup = async (group: any) => {
 
 const clearGroupInfo = () => {
   if (isUniFrameWork) {
-    TUIGlobal?.global?.switchTab({
+    TUIGlobal?.switchTab({
       url: "/TUIKit/components/TUIConversation/index",
     });
   } else {

@@ -3,6 +3,7 @@
     <textarea
       v-if="isEdit"
       v-model="input"
+      class="textarea"
       @keyup.enter="updateProfile"
     ></textarea>
     <section v-else>
@@ -64,7 +65,7 @@ import {
 import { watchEffect, ref } from "../../../adapter-vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { nextTick } from "vue";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   data: {

@@ -57,7 +57,6 @@
 </template>
 <script lang="ts" setup>
 import TUIChatEngine, {
-  TUIGlobal,
   TUITranslateService,
   TUIConversationService,
   TUIStore,
@@ -65,18 +64,16 @@ import TUIChatEngine, {
   IMessageModel,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
+import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
 import { ref, onUnmounted } from "../../adapter-vue";
 import ChatHeader from "./chat-header/index.vue";
 import MessageList from "./message-list/index.vue";
 import MessageInput from "./message-input/index.vue";
 import Forward from "./forward/index.vue";
 import MessageInputToolbar from "./message-input-toolbar/index.vue";
-import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
-import { isUniFrameWork } from "../../utils/is-uni";
+import { isPC, isWeChat, isUniFrameWork } from "../../utils/env";
 
 const emits = defineEmits(["closeChat"]);
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 const isToolbarShow = ref<boolean>(!isUniFrameWork);
 const messageInputRef = ref();
 const currentConversationID = ref();

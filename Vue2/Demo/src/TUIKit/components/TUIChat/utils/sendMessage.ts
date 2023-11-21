@@ -1,30 +1,42 @@
-import { TUIChatService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import {
+  TUIChatService,
+  TUIStore,
+  StoreName,
+  TUITranslateService,
+  IConversationModel,
+  SendMessageParams,
+} from "@tencentcloud/chat-uikit-engine";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { ISendMessageParams, ITipTapEditorContent } from "../../../interface";
-import { IConversationModel, SendMessageParams } from "@tencentcloud/chat-uikit-engine";
+import { ITipTapEditorContent } from "../../../interface";
+
+export const sendMessageErrorCodeMap: Map<number, string> = new Map([
+  [4004, "图片消息失败,无效的图片格式"],
+  [4005, "文件消息失败,禁止发送违规封禁的文件"],
+  [7004, "文件不存在,请检查文件路径是否正确"],
+  [7005, "文件大小超出了限制,如果上传文件,最大限制是100MB"],
+  [8001, "消息长度超出限制,消息长度不要超过12K"],
+  [80001, "消息或者资料中文本存在敏感内容,发送失败"],
+  [80004, "消息中图片存在敏感内容,发送失败"],
+]);
 
 export const sendMessages = async (
   messageList: ITipTapEditorContent[],
-  currentConversation: IConversationModel,
+  currentConversation: IConversationModel
 ) => {
   // 有 messageJumping 的情况下，发送消息自动清空，回到底部
-  if (TUIStore.getData(StoreName.CHAT, 'messageSource')) {
+  if (TUIStore.getData(StoreName.CHAT, "messageSource")) {
     TUIStore.update(StoreName.CHAT, "messageSource", undefined);
   }
-  await messageList?.forEach(async (content: ITipTapEditorContent) => {
+  messageList?.forEach(async (content: ITipTapEditorContent) => {
     try {
-      const options: ISendMessageParams = {
+      const options = {
         to: currentConversation?.groupProfile?.groupID || currentConversation?.userProfile?.userID,
         conversationType: currentConversation?.type,
         payload: {},
-      };
+      } as SendMessageParams;
       // handle message typing
       switch (content?.type) {
         case "text":
-          // （此功能暂不支持）引用和回复只支持文本消息（对标微信）
-          // replay or reference message
-          // cloudCustomData = handleMessageReplyOrReference(cloudCustomData);
-          // @ text message
           // 禁止发送空消息
           if (!JSON.parse(JSON.stringify(content?.payload?.text))) {
             break;
@@ -34,68 +46,46 @@ export const sendMessages = async (
               text: JSON.parse(JSON.stringify(content?.payload?.text)),
               atUserList: content?.payload?.atUserList,
             };
-            await TUIChatService?.sendTextAtMessage(options as SendMessageParams).catch(
-              (err: any) => {
-                Toast({
-                  message: err?.message,
-                  type: TOAST_TYPE.ERROR,
-                });
-              }
-            );
+            await TUIChatService?.sendTextAtMessage(options);
           } else {
             options.payload = {
               text: JSON.parse(JSON.stringify(content?.payload?.text)),
             };
-            await TUIChatService?.sendTextMessage(options as SendMessageParams).catch((err: any) => {
-              Toast({
-                message: err?.message,
-                type: TOAST_TYPE.ERROR,
-              });
-            });
+            await TUIChatService?.sendTextMessage(options);
           }
-          // 消息回复（此功能暂不支持）
-          // if (replyOrReferenceObject?.show === "reply") {
-          //   await TUIServer.replyMessage(res?.data?.message);
-          // }
           break;
         case "image":
           options.payload = {
             file: content?.payload?.file,
           };
-          await TUIChatService?.sendImageMessage(options as SendMessageParams).catch((err: any) => {
-            Toast({
-              message: err?.message,
-              type: TOAST_TYPE.ERROR,
-            });
-          });
+          await TUIChatService?.sendImageMessage(options);
           break;
         case "video":
           options.payload = {
             file: content?.payload?.file,
           };
-          await TUIChatService?.sendVideoMessage(options as SendMessageParams).catch((err: any) => {
-            Toast({
-              message: err?.message,
-              type: TOAST_TYPE.ERROR,
-            });
-          });
+          await TUIChatService?.sendVideoMessage(options);
           break;
         case "file":
           options.payload = {
             file: content?.payload?.file,
           };
-          await TUIChatService?.sendFileMessage(options as SendMessageParams).catch((err: any) => {
-            Toast({
-              message: err.message,
-              type: TOAST_TYPE.ERROR,
-            });
-          });
+          await TUIChatService?.sendFileMessage(options);
           break;
         default:
           break;
       }
     } catch (error: any) {
-      console.warn("messageInput sendMessage", error);
+      Toast({
+        message: sendMessageErrorCodeMap.get(error?.code)
+          ? TUITranslateService.t(sendMessageErrorCodeMap.get(error.code) as string)
+          : error?.message,
+        type: TOAST_TYPE.ERROR,
+      });
+      // 如果消息发送失败，且该消息为引用消息，清除引用消息信息
+      if (TUIStore.getData(StoreName.CHAT, "quoteMessage")) {
+        TUIStore.update(StoreName.CHAT, "quoteMessage", {});
+      }
     }
   });
 };

@@ -2,11 +2,11 @@ import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
 import {
   TUIStore,
   StoreName,
-  TUIGlobal,
   TUIGroupService,
 } from "@tencentcloud/chat-uikit-engine";
 import settingSVG from "../../assets/icon/setting.svg";
-import { isUniFrameWork } from "../../utils/is-uni";
+import { isUniFrameWork } from "../../utils/env";
+import { TUIGlobal } from "../../utils/universal-api/index";
 
 export default class TUIGroupServer {
   static instance: TUIGroupServer;
@@ -42,21 +42,21 @@ export default class TUIGroupServer {
     switch (method) {
       case TUIConstants.TUIGroup.SERVICE.METHOD.CREATE_GROUP:
         TUIStore.update(StoreName.GRP, "isShowCreateComponent", true);
-        isUniFrameWork && TUIGlobal?.global?.reLaunch({
+        isUniFrameWork && TUIGlobal?.reLaunch({
           url: "/TUIKit/components/TUIGroup/index",
         });
         break;
       case TUIConstants.TUIGroup.SERVICE.METHOD.OPEN_GROUP_MANAGEMENT:
         TUIGroupService.switchGroup(params.groupID);
         TUIStore.update(StoreName.GRP, "isShowManageComponent", true);
-        isUniFrameWork && TUIGlobal?.global?.navigateTo({
+        isUniFrameWork && TUIGlobal?.navigateTo({
           url: "/TUIKit/components/TUIGroup/index",
         });
         break;
       case TUIConstants.TUIGroup.SERVICE.METHOD.SELECT_GROUP_MEMBER:
         TUIGroupService.switchGroup(params.groupID);
         TUIStore.update(StoreName.GRP, "isShowSelectComponent", true);
-        isUniFrameWork && TUIGlobal?.global?.navigateTo({
+        isUniFrameWork && TUIGlobal?.navigateTo({
           url: "/TUIKit/components/TUIGroup/index",
         });
         break;      
@@ -89,7 +89,7 @@ export default class TUIGroupServer {
       method: TUIConstants.TUIGroup.SERVICE.METHOD.OPEN_GROUP_MANAGEMENT,
       params,
       callback: () => {
-        isUniFrameWork && TUIGlobal?.global?.navigateBack();
+        isUniFrameWork && TUIGlobal?.navigateBack();
       }
     })
   }

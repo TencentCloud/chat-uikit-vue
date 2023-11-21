@@ -1,4 +1,4 @@
-import { isUniFrameWork } from '../is-uni';
+import { isUniFrameWork } from '../env';
 
 interface IDomRect {
   id: string;
@@ -110,7 +110,7 @@ export function getBoundingClientRectSync(selector: string | HTMLElement): IDomR
 export function getScrollInfo(selector: string | HTMLElement, instanceName?: registeredPage): Promise<IScrollInfo> {
   if (!selector) return Promise.reject(new Error(`getScrollInfo() get error selector ${typeof selector}.`));
 
-  if (window || document) {
+  if (!isUniFrameWork && window) {
     const dom: HTMLElement | null = typeof selector === 'object' ? selector : document.querySelector(selector);
     if (!dom) return Promise.reject(new Error(`getScrollInfo() can't find ${selector} dom.`));
     return Promise.resolve({
@@ -143,7 +143,7 @@ export function getScrollInfoSync(selector: string | HTMLElement): IScrollInfo {
     throw new Error("getScrollInfoSync() can not use in uni-app.");
   }
 
-  if (window || document) {
+  if (!isUniFrameWork && window) {
     const dom: HTMLElement | null =
       typeof selector === "object"
         ? selector

@@ -46,7 +46,6 @@
 
 <script lang="ts" setup>
 import {
-  TUIGlobal,
   TUITranslateService,
   IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
@@ -54,7 +53,7 @@ import { watchEffect, ref, nextTick } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import editIcon from "../../../assets/icon/edit.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   data: {
@@ -71,7 +70,6 @@ const groupProfile = ref<IGroupModel>({});
 const inputGroupName = ref("");
 const isEdit = ref(false);
 const nameInputRef = ref(null);
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 watchEffect(() => {
   groupProfile.value = props.data;
@@ -103,7 +101,7 @@ const close = () => {
   if (props.isAuthor) {
     isEdit.value = !isEdit.value;
     // 只有 pc 会有这样的情况
-    isPC.value &&
+    isPC &&
       nextTick(() => {
         // 点击 dom 外侧更改群组名称并关闭input
         onClickOutside(nameInputRef.value);

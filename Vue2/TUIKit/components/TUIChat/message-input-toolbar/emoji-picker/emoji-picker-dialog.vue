@@ -55,7 +55,6 @@
 </template>
 <script lang="ts" setup>
 import {
-  TUIGlobal,
   TUIChatService,
   TUIStore,
   StoreName,
@@ -63,16 +62,14 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
-import { isUniFrameWork } from "../../../../utils/is-uni";
 import { emojiList, basicEmojiMap } from "../../utils/emojiList";
 import { IEmojiList, IEmojiListItem } from "../../../../interface";
 import { EMOJI_TYPE } from ".././../../../constant";
 import Icon from "../../../common/Icon.vue";
 import faceIcon from "../../../../assets/icon/face.png";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
 
 const emits = defineEmits(["insertEmoji", "onClose", "sendMessage"]);
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const list = ref<IEmojiList>(emojiList);
 const currentTabIndex = ref<number>(0);
 const currentTabItem = ref<IEmojiListItem>(list?.value[0]);
@@ -117,7 +114,7 @@ const select = (item: any, index: number) => {
     default:
       break;
   }
-  isPC.value && emits("onClose");
+  isPC && emits("onClose");
 };
 
 const sendFaceMessage = (index: number, listItem: IEmojiListItem) => {

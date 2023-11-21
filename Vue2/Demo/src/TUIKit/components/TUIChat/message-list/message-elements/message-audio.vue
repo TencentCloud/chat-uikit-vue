@@ -1,23 +1,26 @@
 <template>
   <div
     class="message-audio"
-    :class="[message.flow === 'out' && 'reserve']"
+    :class="[
+      !isPC && 'message-audio-h5',
+      message.flow === 'out' && 'reserve',
+      message.hasRiskContent && 'disable',
+    ]"
     @click.stop="play"
-    :style="`width: ${data.second * 10 + 40}px; min-width: 52px; max-width: calc(100% - 40px);`"
   >
-    <Icon
-    :file="voice"
-    :class="[message.flow === 'out' && 'icon-reserve']"
-    ></Icon>
-    <label style="min-width: 22px;`">{{ data.second }} "</label>
+    <Icon class="icon" :file="audioIcon"></Icon>
+    <label class="time" :style="{ width: `${data.second * 10 + 20}px` }">
+      {{ data.second || 1 }} "
+    </label>
     <audio ref="audioRef" :src="data.url"></audio>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, watch } from '../../../../adapter-vue';
+import { watchEffect, ref } from "../../../../adapter-vue";
 import Icon from "../../../common/Icon.vue";
-import voice from "../../../../assets/icon/voice.png";
+import audioIcon from "../../../../assets/icon/msg-audio.svg";
+import { isPC } from "../../../../utils/env";
 const props = defineProps({
   content: {
     type: Object,
@@ -40,7 +43,10 @@ watchEffect(() => {
 });
 
 const play = () => {
-  const audios = document.getElementsByTagName('audio');
+  if (message.value.hasRiskContent) {
+    return;
+  }
+  const audios = document.getElementsByTagName("audio");
   for (const audio of audios) {
     if (!audio.paused) {
       audio.pause();
@@ -61,24 +67,41 @@ const play = () => {
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common.scss";
 .message-audio {
+  box-sizing: border-box;
   display: flex;
-  align-items: center;
-  position: relative;
+  flex: 0 0 auto;
   cursor: pointer;
-  max-width: 100%;
   overflow: hidden;
   .icon {
-    margin: 0 7px;
+    margin-right: 7px;
+    margin-left: 0px;
+  }
+  .time {
+    max-width: 300px;
+    text-align: start;
   }
   audio {
     width: 0;
     height: 0;
   }
 }
+.message-audio-h5 {
+  .time {
+    max-width: 200px;
+  }
+}
 .reserve {
   flex-direction: row-reverse;
+  .time {
+    text-align: end;
+  }
   .icon {
+    margin-right: 0px;
+    margin-left: 7px;
     transform: rotate(180deg);
   }
+}
+.disable {
+  cursor: not-allowed;
 }
 </style>

@@ -5,9 +5,8 @@
 </template>
 <script setup lang="ts">
 import Loading from "../../../common/Loading/index.vue";
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
+import { isPC } from "../../../../utils/env";
 </script>
 <style scoped lang="scss">
 .search-result-loading {

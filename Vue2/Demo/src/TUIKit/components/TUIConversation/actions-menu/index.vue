@@ -73,11 +73,11 @@ import {
 } from "../../../adapter-vue";
 import TUIChatEngine, {
   TUIStore,
-  TUIGlobal,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
 import { CONV_OPERATION } from "../../../constant";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../utils/env";
+import { TUIGlobal } from "../../../utils/universal-api/index";
 import Overlay from "../../common/Overlay/index.vue";
 import Dialog from "../../common/Dialog/index.vue";
 const emits = defineEmits(["closeConversationActionMenu"]);
@@ -88,7 +88,6 @@ const props = defineProps([
 ]);
 
 const thisInstance = getCurrentInstance()?.proxy || getCurrentInstance();
-const isPC = TUIGlobal.getPlatform() === "pc";
 const actionsMenuDomRef = ref<HTMLElement | null>();
 const isHiddenActionsMenu = ref(true);
 const isShowDeleteConversationDialog  = ref<boolean>(false);
@@ -120,7 +119,7 @@ function checkExceedBounds() {
         .select(`#conversation-actions-menu`)
         .boundingClientRect((data) => {
           if (data) {
-            if (data.bottom > TUIGlobal?.global?.getWindowInfo?.().windowHeight) {
+            if (data.bottom > TUIGlobal?.getWindowInfo?.().windowHeight) {
               _actionsMenuPosition.value = {
                 ...props.actionsMenuPosition,
                 top:

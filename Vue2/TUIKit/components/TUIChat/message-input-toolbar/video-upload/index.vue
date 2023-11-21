@@ -27,7 +27,6 @@
 </template>
 <script lang="ts" setup>
 import {
-  TUIGlobal,
   TUIChatService,
   TUIStore,
   StoreName,
@@ -35,7 +34,8 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isWeChat, isUniFrameWork } from "../../../../utils/env";
+import { TUIGlobal } from "../../../../utils/universal-api/index";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import videoIcon from "../../../../assets/icon/video.png";
 import videoUniIcon from "../../../../assets/icon/video-uni.png";
@@ -54,8 +54,6 @@ const props = defineProps({
 const emits = defineEmits(["close"]);
 
 const inputRef = ref();
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
@@ -90,10 +88,10 @@ const handleTitle = (): string => {
 const onIconClick = () => {
   // uniapp环境发送视频
   if (isUniFrameWork) {
-    if (isWeChat.value) {
+    if (isWeChat) {
       // uniapp-小程序 发送视频，使用前请将 SDK 升级至v2.11.2或更高版本，将 tim-upload-plugin 升级至v1.0.2或更高版本
       // 微信小程序从基础库 2.21.0 开始， wx.chooseVideo 停止维护，请使用 uni.chooseMedia 代替
-      TUIGlobal?.global?.chooseMedia({
+      TUIGlobal?.chooseMedia({
         mediaType: ["video"], // 视频
         count: 1,
         sourceType: [props.videoSourceType], // album 从相册选视频，camera 使用相机拍摄
@@ -104,7 +102,7 @@ const onIconClick = () => {
       });
     } else {
       // uniapp h5/app 发送图片
-      TUIGlobal?.global?.chooseVideo({
+      TUIGlobal?.chooseVideo({
         count: 1,
         sourceType: [props.videoSourceType], // 从相册选择或使用相机拍摄
         success: function (res: any) {

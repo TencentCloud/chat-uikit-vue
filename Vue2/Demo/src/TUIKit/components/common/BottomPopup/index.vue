@@ -25,9 +25,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import { ref, watch, nextTick } from "../../../adapter-vue";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isH5, isUniFrameWork } from "../../../utils/env";
 const props = defineProps({
   // 是否展示 底部弹出对话框
   show: {
@@ -53,9 +52,6 @@ const props = defineProps({
 });
 
 const emits = defineEmits(["onOpen", "onClose"]);
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const dialogRef = ref();
 
 watch(
@@ -119,7 +115,7 @@ const removeClickListener = (component: any) => {
 };
 
 const onClickModal = () => {
-  if (isUniFrameWork || isH5.value) {
+  if (isUniFrameWork || isH5) {
     emits("onClose", dialogRef);
   }
 };

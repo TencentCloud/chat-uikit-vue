@@ -6,9 +6,7 @@
   
 <script lang="ts" setup>
 import { ref, watchEffect } from "../../../adapter-vue";
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
-
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
+import { isWeChat } from "../../../utils/env";
 
 const props = defineProps({
   show: {

@@ -28,7 +28,6 @@
 
 <script setup lang="ts">
 import {
-  TUIGlobal,
   TUIStore,
   StoreName,
   IConversationModel
@@ -39,6 +38,7 @@ import MessageInputAt from "./message-input-at/index.vue";
 import MessageInputButton from "./message-input-button.vue";
 import MessageInputQuote from "./message-input-quote/index.vue";
 import { sendMessages, sendTyping } from "../utils/sendMessage";
+import { isPC, isH5 } from "../../../utils/env";
 
 const props = defineProps({
   placeholder: {
@@ -74,8 +74,6 @@ const props = defineProps({
 const emit = defineEmits(["sendMessage", "resetReplyOrReference", "onTyping"]);
 const editor = ref<InstanceType<typeof MessageInputEditor>>();
 const currentConversation = ref<IConversationModel>();
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: IConversationModel) => {
@@ -103,7 +101,7 @@ const insertEmoji = (emoji: any) => {
 };
 
 const onAtListOpen = () => {
-  if (isH5.value) {
+  if (isH5) {
     editor.value?.blur();
   }
 };

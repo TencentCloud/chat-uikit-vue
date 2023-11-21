@@ -15,10 +15,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import {
-  TUIGlobal,
-  TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../adapter-vue";
 const props = defineProps({
   enableSend: {
@@ -26,8 +23,8 @@ const props = defineProps({
     default: true,
   },
 });
+import { isPC } from "../../../utils/env";
 const emits = defineEmits(["sendMessage"]);
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 const sendMessage = () => {
   emits("sendMessage");

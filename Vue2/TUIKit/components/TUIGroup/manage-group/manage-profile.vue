@@ -7,7 +7,7 @@
           userInfoManage.avatar ||
           'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
         "
-        onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+        onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
       />
       <ul class="list">
         <h2>{{ userInfoManage.nick || userInfoManage.userID }}</h2>
@@ -49,7 +49,7 @@
               userInfoManage.avatar ||
               'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
             "
-            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+            onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
           />
           <ul class="list">
             <h1>{{ userInfoManage.nick || userInfoManage.userID }}</h1>
@@ -83,13 +83,12 @@ import {
   TUITranslateService,
   TUIUserService,
   TUIConversationService,
-  TUIGlobal,
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, watch, watchEffect } from "../../../adapter-vue";
 import { IUserProfile } from "../../../interface";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   userInfo: {
@@ -155,7 +154,7 @@ const checkFriend = async () => {
 };
 
 const showEnter = () => {
-  return isFriendShip.value || !TUIGlobal.isOfficial;
+  return isFriendShip.value || TUIStore.getData(StoreName.APP, 'isOfficial');
 };
 
 const close = (tabName: string) => {

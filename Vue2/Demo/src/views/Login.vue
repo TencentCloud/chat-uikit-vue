@@ -181,10 +181,7 @@
 <script lang="ts" setup>
 import { ref } from "../TUIKit/adapter-vue";
 import { TUILogin } from "@tencentcloud/tui-core";
-import {
-  TUIGlobal,
-  TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { SDKAppID, secretKey } from "../main";
 import router from "../router/index";
 import { Message } from "element-ui";
@@ -193,13 +190,11 @@ import AdvList from "../components/advList.vue";
 import AdvListItem from "../components/advListItem.vue";
 import { Link, qrList, mobileList } from "../utils/link";
 import { genTestUserSig } from "../TUIKit";
+import { isPC, isH5 } from "../TUIKit/utils/env";
 
 const locale = ref("zh");
 const isLogin = ref(false);
 const showMini = ref(false);
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-
 const ruleFormRef = ref();
 
 const validateUserID = (rule: any, value: any, callback: any) => {

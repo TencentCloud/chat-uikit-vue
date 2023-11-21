@@ -17,7 +17,7 @@
                 item.avatar ||
                 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
               "
-              onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+              onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
             />
           </div>
           <div class="item-name">{{ item.nick || item.userID }}</div>
@@ -73,7 +73,7 @@
                 item.avatar ||
                 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
               "
-              onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+              onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
             />
           </div>
           <div class="item-name">{{ item.nick || item.userID }}</div>
