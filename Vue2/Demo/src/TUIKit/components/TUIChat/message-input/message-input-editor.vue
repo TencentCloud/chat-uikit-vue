@@ -18,7 +18,6 @@
 <script setup lang="ts">
 import { toRefs, ref, onMounted, watch } from "../../../adapter-vue";
 import TUIChatEngine, {
-  TUIGlobal,
   TUIStore,
   StoreName,
   IConversationModel,
@@ -32,6 +31,7 @@ import Mention from "@tiptap/extension-mention";
 import CustomImage from "./message-input-file";
 import type { ITipTapEditorContent } from "../../../interface";
 import MessageInputAtSuggestion from "./message-input-at/index";
+import { isH5 } from "../../../utils/env";
 
 const props = defineProps({
   placeholder: {
@@ -71,7 +71,6 @@ const emits = defineEmits(["sendMessage", "onTyping"]);
 const { placeholder, enableAt, enableDragUpload, enableTyping } = toRefs(props);
 const inputContentEmpty = ref(true);
 const inputBlur = ref(true);
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 const isC2C = ref(false);
 const editorDom = ref();
 let editor: Editor;
@@ -107,7 +106,7 @@ onMounted(() => {
         },
       }),
     ],
-    autofocus: !isH5.value,
+    autofocus: !isH5,
     editable: true,
     injectCSS: false,
 
@@ -122,7 +121,7 @@ onMounted(() => {
       }
     },
     onFocus() {
-      if (isH5.value && document?.getElementById("app")?.style) {
+      if (isH5 && document?.getElementById("app")?.style) {
         // set app height when keyboard popup
         const keyboardHeight = document.body.scrollHeight - window.innerHeight;
         (
@@ -136,7 +135,7 @@ onMounted(() => {
       inputBlur.value = true;
     },
     onBlur() {
-      if (isH5.value && document?.getElementById("app")?.style) {
+      if (isH5 && document?.getElementById("app")?.style) {
         // reset app height to normal
         (document.getElementById("app") as any).style.marginBottom = ``;
         (document.getElementById("app") as any).style.height = `100%`;
@@ -173,7 +172,7 @@ const handleFilePaste = (e: any) => {
 const handleFileDropOrPaste = async (e: any, type: string) => {
   e.preventDefault();
   e.stopPropagation();
-  if (isH5.value) {
+  if (isH5) {
     return;
   }
   if (!enableDragUpload?.value && type === "drop") {
@@ -431,7 +430,7 @@ const addEmoji = (emoji: any) => {
       class: "emoji",
     },
   });
-  if (!isH5.value) {
+  if (!isH5) {
     editor?.commands?.focus();
   }
   editor?.commands?.scrollIntoView();
@@ -446,7 +445,7 @@ const resetEditor = () => {
   fileMap?.clear();
   inputBlur.value = true;
   inputContentEmpty.value = true;
-  if (!isH5.value) {
+  if (!isH5) {
     editor?.commands?.focus();
   }
 };
@@ -574,6 +573,9 @@ defineExpose({
     &-emoji {
       height: 20px;
       width: 20px;
+    }
+    &-image{
+      display: none;
     }
   }
 

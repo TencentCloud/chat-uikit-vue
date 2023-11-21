@@ -1,10 +1,10 @@
 import { SuggestionProps, SuggestionKeyDownProps } from "@tiptap/suggestion";
 import TUIChatEngine, {
-  TUIGlobal,
   TUIStore,
-  TUIGroupService,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
+import { isH5 } from "../../../../utils/env";
+import { TUIGlobal } from "../../../../utils/universal-api/index";
 
 let currentConversationID = "";
 let memberList = [];
@@ -25,8 +25,6 @@ const all = {
   isAll: true,
   avatar: "https://web.sdk.qcloud.com/im/assets/images/at.svg",
 };
-
-const isH5 = TUIGlobal.getPlatform() === "h5";
 
 // todo: 此处后续优化为TUIStore cutomStore中进行存储，避免数据在两个文件中重复监听
 TUIStore.watch(StoreName.CONV, {

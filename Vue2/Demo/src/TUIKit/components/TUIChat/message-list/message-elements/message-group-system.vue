@@ -21,7 +21,7 @@
               item.avatar ||
               'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
             "
-            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+            onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
           />
           <div class="item">
             <p class="item-nick" v-if="item.applicationType === 0">
@@ -60,12 +60,12 @@
 import { ref, onMounted, onUnmounted } from "../../../../adapter-vue";
 import {
   TUIStore,
-  TUIGlobal,
   StoreName,
   TUITranslateService,
   TUIGroupService,
   TUIUserService,
 } from "@tencentcloud/chat-uikit-engine";
+import { isPC } from "../../../../utils/env";
 import {
   IGroupApplicationListItem,
   IGroupApplicationType,
@@ -78,7 +78,6 @@ const props = defineProps({
     default: "",
   },
 });
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const groupApplicationList = ref<Array<IGroupApplicationListItem>>([]);
 const groupApplicationCount = ref<number>(0);
 // - 申请类型：0 加群申请，2 邀请进群申请

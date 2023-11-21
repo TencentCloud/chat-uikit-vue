@@ -28,11 +28,8 @@
 
 <script lang="ts" setup>
 import { ref, watchEffect } from "../../../adapter-vue";
-import {
-  TUIGlobal,
-  TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { isPC, isH5, isUniFrameWork } from "../../../utils/env";
 const clickType = {
   OUTSIDE: 'outside',
   INSIDE: 'inside'
@@ -69,8 +66,6 @@ const isHeaderShowDialog = ref(true);
 const isFooterShowDialog = ref(true);
 const backgroundDialog = ref(true);
 const showTitle = ref("");
-const isPC = ref(TUIGlobal.getPlatform() === "pc")
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
 
 watchEffect(() => {
   showDialog.value = props.show;

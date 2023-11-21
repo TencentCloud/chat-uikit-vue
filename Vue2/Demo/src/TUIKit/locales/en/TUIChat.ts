@@ -77,6 +77,18 @@ const TUIChat = {
   "已同意": "Approved",
   "已拒绝": "Rejected",
   "内容包含敏感词汇": "Content contains sensitive words",
+  "图片消息失败,无效的图片格式": "Image message failed, invalid image format.",
+  "文件消息失败,禁止发送违规封禁的文件": "File message failed, sending prohibited and banned files is not allowed.",
+  "文件不存在,请检查文件路径是否正确": "The file does not exist, please check if the file path is correct.",
+  "文件大小超出了限制,如果上传文件,最大限制是100MB": "The file size exceeds the limit; if uploading a file, the maximum limit is 100MB.",
+  "消息长度超出限制,消息长度不要超过12K": "Message length exceeds the limit; please keep the message length under 12K.",
+  "消息或者资料中文本存在敏感内容,发送失败": "Sensitive content found in the message or information text, sending failed.",
+  "消息中图片存在敏感内容,发送失败": " Sensitive content is found in the picture in the message, sending failed.",
+  "涉及敏感内容": "Sensitive content",
+  "发送失败": "send failed",
+  "引用失败": "quote failed",
+  "无法查看": "unable to view",
+  "无法收听": "unable to listen",
 };
 
 export default TUIChat;

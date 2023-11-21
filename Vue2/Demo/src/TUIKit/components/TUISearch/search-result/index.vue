@@ -114,7 +114,6 @@ import {
   StoreName,
   IGroupModel,
   IMessageModel,
-  TUIGlobal,
 } from "@tencentcloud/chat-uikit-engine";
 import SearchResultItem from "./search-result-item/index.vue";
 import SearchResultDefault from "./search-result-default/index.vue";
@@ -133,7 +132,7 @@ import {
   generateSearchResultYMD,
   debounce,
 } from "../utils";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../utils/env";
 import { SEARCH_TYPE } from "../type";
 
 interface ISearchConversationResult {
@@ -155,8 +154,6 @@ const props = defineProps({
     },
   },
 });
-
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
 
 // search params
 const keywordList = ref<Array<string>>([]);
@@ -417,7 +414,7 @@ const generateResultItemDisplayType = (): string => {
     return "file";
   } else if (props.searchType === "conversation" && currentSearchTabKey.value === "imageMessage") {
     return "image";
-  } else if (isPC.value) {
+  } else if (isPC) {
     return "bubble";
   } else {
     return "info";

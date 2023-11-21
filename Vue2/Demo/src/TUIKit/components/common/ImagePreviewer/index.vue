@@ -1,5 +1,5 @@
 <template>
-  <div class="image-previewer" :class="[isH5 && 'image-previewer-h5']">
+  <div class="image-previewer" :class="[isMobile && 'image-previewer-h5']">
     <div
       class="image-wrapper"
       ref="image"
@@ -31,34 +31,34 @@
         </li>
       </ul>
     </div>
-    <div class="icon icon-close" @click="close" v-show="!isH5">
+    <div class="icon icon-close" @click="close" v-show="isPC">
       <Icon :file="iconClose" width="16px" height="16px"></Icon>
     </div>
     <div
       class="image-button image-button-left"
-      v-if="!isH5 && currentImageIndex > 0"
+      v-if="isPC && currentImageIndex > 0"
       @click="goPrev"
     >
       <Icon :file="iconArrowLeft"></Icon>
     </div>
     <div
       class="image-button image-button-right"
-      v-if="!isH5 && currentImageIndex < imageList.length - 1"
+      v-if="isPC && currentImageIndex < imageList.length - 1"
       @click="goNext"
     >
       <Icon :file="iconArrowLeft"></Icon>
     </div>
-    <div :class="['actions-bar', isH5 && 'actions-bar-h5']">
-      <div v-if="!isH5" class="icon-zoom-in" @click="zoomIn">
+    <div :class="['actions-bar', isMobile && 'actions-bar-h5']">
+      <div v-if="isPC" class="icon-zoom-in" @click="zoomIn">
         <Icon :file="iconZoomIn" width="27px" height="27px"></Icon>
       </div>
-      <div v-if="!isH5" class="icon-zoom-out" @click="zoomOut">
+      <div v-if="isPC" class="icon-zoom-out" @click="zoomOut">
         <Icon :file="iconZoomOut" width="27px" height="27px"></Icon>
       </div>
-      <div v-if="!isH5" class="icon-refresh-left" @click="rotateLeft">
+      <div v-if="isPC" class="icon-refresh-left" @click="rotateLeft">
         <Icon :file="iconRotateLeft" width="27px" height="27px"></Icon>
       </div>
-      <div v-if="!isH5" class="icon-refresh-right" @click="rotateRight">
+      <div v-if="isPC" class="icon-refresh-right" @click="rotateRight">
         <Icon :file="iconRotateRight" width="27px" height="27px"></Icon>
       </div>
       <span class="image-counter">
@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from "../../../adapter-vue";
-import { IMessageModel, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import { IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
 import iconClose from "../../../assets/icon/icon-close.svg";
 import iconArrowLeft from "../../../assets/icon/icon-arrow-left.svg";
@@ -84,7 +84,8 @@ import iconRotateRight from "../../../assets/icon/rotate-right.svg";
 import iconDownload from "../../../assets/icon/download.svg";
 import ImageItem from "./image-item.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isMobile, isUniFrameWork } from "../../../utils/env";
+import { TUIGlobal, getPlatform } from "../../../utils/universal-api/index";
 
 interface touchesPosition {
   pageX1?: number;
@@ -104,7 +105,6 @@ const props = withDefaults(
   }
 );
 
-const isH5 = ref(TUIGlobal.getPlatform() !== "pc");
 const imageFormatMap = new Map([
   [1, "jpg"],
   [2, "gif"],
@@ -304,7 +304,7 @@ const initStyle = () => {
 };
 
 const getImageUrl = (message: IMessageModel) => {
-  if (!isH5) {
+  if (isPC) {
     return message?.payload?.imageInfoArray[0]?.url;
   } else {
     return message?.payload?.imageInfoArray[2]?.url;
@@ -323,27 +323,27 @@ const save = () => {
     });
     return;
   }
-  switch (TUIGlobal.getPlatform()) {
+  switch (getPlatform()) {
     case "wechat":
-      //获取用户的当前设置。获取相册权限
-      TUIGlobal?.global?.getSetting({
+      //获取用户的当前设置，获取相册权限
+      TUIGlobal.getSetting({
         success: (res: any) => {
           //如果没有相册权限
           if (!res?.authSetting["scope.writePhotosAlbum"]) {
             //提前向用户发起授权请求
-            TUIGlobal?.global?.authorize({
+            TUIGlobal.authorize({
               scope: "scope.writePhotosAlbum",
               success() {
                 downloadImgInUni(imageSrc);
               },
               fail() {
-                TUIGlobal?.global?.showModal({
+                TUIGlobal.showModal({
                   title: "您已拒绝获取相册权限",
                   content: "是否进入权限管理，调整授权？",
                   success: (res: any) => {
                     if (res.confirm) {
                       //调起客户端小程序设置界面，返回用户设置的操作结果。（重新让用户授权）
-                      TUIGlobal?.global?.openSetting({
+                      TUIGlobal.openSetting({
                         success: (res: any) => {
                           console.log(res.authSetting);
                         },
@@ -382,14 +382,14 @@ const save = () => {
 
 const downloadImgInUni = (src: string) => {
   //下载图片文件
-  TUIGlobal?.global?.showLoading({
+  TUIGlobal.showLoading({
     title: "大图提取中",
   });
-  TUIGlobal?.global?.downloadFile({
+  TUIGlobal.downloadFile({
     url: src,
     success: function (res: any) {
-      TUIGlobal?.global?.hideLoading();
-      TUIGlobal?.global?.saveImageToPhotosAlbum({
+      TUIGlobal.hideLoading();
+      TUIGlobal.saveImageToPhotosAlbum({
         filePath: res.tempFilePath,
         success: () => {
           Toast({
@@ -401,7 +401,7 @@ const downloadImgInUni = (src: string) => {
     },
     fail: function (error: any) {
       console.warn("图片下载失败", error);
-      TUIGlobal?.global?.hideLoading();
+      TUIGlobal.hideLoading();
       Toast({
         message: "图片下载失败",
         type: TOAST_TYPE.ERROR,
@@ -503,6 +503,11 @@ onUnmounted(() => {
     pointer-events: auto;
   }
   .image-button {
+    display: flex;
+    flex-direction: column;
+    min-width: auto;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     cursor: pointer;
     width: 40px;
@@ -525,6 +530,11 @@ onUnmounted(() => {
       right: 0;
       margin: auto;
       line-height: 40px;
+      display: flex;
+      flex-direction: column;
+      min-width: auto;
+      justify-content: center;
+      align-items: center;
     }
   }
   .icon-close {
@@ -535,6 +545,7 @@ onUnmounted(() => {
     right: 3%;
     padding: 10px;
     background: rgba(255, 255, 255, 0.8);
+    display: flex;
     &::before,
     &::after {
       background-color: #444444;
@@ -575,6 +586,7 @@ onUnmounted(() => {
   .icon-refresh-right {
     cursor: pointer;
     user-select: none;
+    padding: 5px;
   }
 }
 .save {

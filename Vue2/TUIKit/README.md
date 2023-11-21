@@ -12,10 +12,10 @@ chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT W
 
 ### 开发环境要求
 
-- Vue 2 (如果您是 Vue 2.6 及 以下版本，请下拉至“常见问题 8”进行相关环境配置，Vue 2.7 及 以上版本请忽略)
+- Vue 2 (如果您是 Vue 2.6.x 及 以下版本，请下拉至“常见问题 8”进行相关环境配置，Vue 2.7 及 以上版本请忽略)
 - TypeScript (如果您是 js 版本，请下拉至“常见问题 5”进行 typescript 支持相关配置)
 - sass（sass-loader 版本 <= 10.1.1）
-- node（12.13.0 <= node 版本 <= 17.0.0, 推荐使用 Node.js 官方 LTS 版本 16.17.0）
+- node（14.0.0 <= node 版本 <= 20.9.0, 推荐使用 Node.js 官方 LTS 版本 16.17.0）
 - npm（版本请与 node 版本匹配）
 
 ### TUIKit 源码集成
@@ -148,11 +148,11 @@ userID 信息，可通过 [即时通信 IM 控制台](https://console.cloud.tenc
 <script lang="ts">
 import Vue from "vue";
 import {
-  TUIGlobal,
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { TUISearch, TUIConversation, TUIChat, TUIContact, TUIGroup } from "./TUIKit";
+import { isH5 } from './TUIKit/utils/env'
 // vue 2.7 及以上
 import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
 // vue 2.6 及 以下, 请注释上行，开放下行注释
@@ -170,7 +170,6 @@ export default Vue.extend({
   data() {
     return {
       currentModel: "conversation",
-      isH5: TUIGlobal.getPlatform() === "h5",
       currentConversationID: "",
       showCallMini: false,
     };
@@ -293,7 +292,10 @@ vue add typescript
 ```
 
 之后按照如下进行配置项进行选择（为了保证能同时支持原有 js 代码 与 TUIKit 中 ts 代码，请您务必严格按照以下五个选项进行配置）
+
 <img width="600" alt="image" src="https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/5e2fc00b-ace5-4843-bef6-c0e234225b5d">
+
+**完成以上步骤后，请重新运行项目！**
 
 ### 6. 使用 vue-tsc / type-check 有如下报错之一
 
@@ -329,7 +331,7 @@ This import is never used as a value and must use 'import type' because 'imports
 npm i -D sass sass-loader@10.1.1
 ```
 
-### 8. vue2.6 及以下如何接入？
+### 8. vue2.6.x 及以下如何接入？
 
 (1) 安装支持 `composition-api` 以及 `script setup` 的相关依赖，以及vue2.6相关依赖
 
@@ -381,6 +383,7 @@ export * from "@vue/composition-api";
 // vue 2.6 及 以下, 请注释上行，开放下行注释
 import { TUICallKit } from "@tencentcloud/call-uikit-vue2.6";
 ```
+**完成以上步骤后，请重新运行项目！**
 
 ### 9. 运行报错如下'vue packages version mismatch',如何解决？
 ![vue packages version mismatch](https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/4998e8ae-7d7d-4f5f-a849-c77449e6a7e5)
@@ -392,6 +395,30 @@ npm i vue@2.7.9 vue-template-compiler@2.7.9
 如果您是 vue2.6 项目，请在您项目根目录执行：
 ```javascript
 npm i vue@2.6.14 vue-template-compiler@2.6.14
+```
+
+### 10. 如何关闭 dev 模式下，webpack 全屏 overlay error 报错信息提示？
+可以在您项目根目录的 `vue.config.js` 中进行关闭：
+
+webpack v4 :
+```javascript
+module.exports = defineConfig({
+  ...
+  devServer: {
+    client: {
+      overlay: false,
+    },
+  },
+});
+```
+webpack v3 :
+```javascript
+module.exports = {
+  ...
+  devServer: {
+    overlay: false,
+  },
+};
 ```
 
 ## 相关链接

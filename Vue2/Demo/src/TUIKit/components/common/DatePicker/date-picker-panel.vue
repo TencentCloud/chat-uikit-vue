@@ -51,7 +51,6 @@
 </template>
 
 <script lang="ts" setup>
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import dayjs, { Dayjs, ManipulateType } from "dayjs";
 import { computed, ref, onMounted } from "../../../adapter-vue";
 import { DateCell } from "./date-picker";
@@ -61,6 +60,7 @@ import leftArrowIcon from "../../../assets/icon/left-arrow.svg";
 import rightArrowIcon from "../../../assets/icon/right-arrow.svg";
 import dLeftArrowIcon from "../../../assets/icon/d-left-arrow.svg";
 import dRightArrowIcon from "../../../assets/icon/d-right-arrow.svg";
+import { isPC } from "../../../utils/env";
 
 const props = defineProps({
   type: {
@@ -92,9 +92,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["pick", "change"]);
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-
 const n = (className: string) => {
   return className
     ? [

@@ -10,27 +10,25 @@
             )
           }}
         </span>
-        <a @click="openComplaintLink(Link.complaint)">{{
-          TUITranslateService.t("TUIChat.点此投诉")
-        }}</a>
+        <a @click="openComplaintLink(Link.complaint)">
+          {{ TUITranslateService.t("TUIChat.点此投诉") }}
+        </a>
       </div>
       <div
-        class="TUIChat-application-tips"
         v-if="isGroup && groupApplicationCount > 0"
+        class="TUIChat-application-tips"
         @click="toggleApplicationList()"
       >
-        <span
-          >{{ groupApplicationCount }}{{ TUITranslateService.t("TUIChat.条入群申请") }}
-          <span class="application-tips-btn">{{ TUITranslateService.t("TUIChat.点击处理") }}</span>
+        <span>
+          {{ groupApplicationCount }}{{ TUITranslateService.t("TUIChat.条入群申请") }}
+          <span class="application-tips-btn">
+            {{ TUITranslateService.t("TUIChat.点击处理") }}
+          </span>
         </span>
       </div>
       <!-- 消息列表 -->
       <ul class="TUI-message-list" ref="messageListRef" id="messageScrollList">
-        <p
-          class="message-more"
-          @click="getHistoryMessageList"
-          v-if="!isCompleted"
-        >
+        <p v-if="!isCompleted" class="message-more" @click="getHistoryMessageList">
           {{ TUITranslateService.t("TUIChat.查看更多") }}
         </p>
         <li
@@ -44,11 +42,14 @@
           <MessageTimestamp
             :currTime="item.time"
             :prevTime="index > 0 ? messageList[index - 1].time : 0"
-          ></MessageTimestamp>
+          >
+          </MessageTimestamp>
           <div class="message-item" @click.stop="toggleID = ''">
             <MessageTip
               v-if="item.type === TYPES.MSG_GRP_TIP || isCreateGroupCustomMessage(item)"
               :content="item.getMessageContent()"
+              :blinkMessageIDList="blinkMessageIDList"
+              @blinkMessage="blinkMessage"
             />
             <div
               v-else-if="!item.isRevoked && !isSignalingMessage(item)"
@@ -77,7 +78,6 @@
                   <MessageImage
                     :content="item.getMessageContent()"
                     :messageItem="item"
-                    @uploading="handleUploadingImageOrVideo"
                     @previewImage="handleImagePreview"
                   />
                 </ProgressMessage>
@@ -86,11 +86,7 @@
                   :content="item.getMessageContent()"
                   :messageItem="item"
                 >
-                  <MessageVideo
-                    :content="item.getMessageContent()"
-                    :messageItem="item"
-                    @uploading="handleUploadingImageOrVideo"
-                  />
+                  <MessageVideo :content="item.getMessageContent()" :messageItem="item" />
                 </ProgressMessage>
                 <MessageAudio
                   v-if="item.type === TYPES.MSG_AUDIO"
@@ -102,7 +98,7 @@
                   :content="item.getMessageContent()"
                   :messageItem="item"
                 >
-                  <MessageFile :content="item.getMessageContent()" />
+                  <MessageFile :content="item.getMessageContent()" :messageItem="item" />
                 </ProgressMessage>
                 <MessageFace
                   v-if="item.type === TYPES.MSG_FACE"
@@ -135,23 +131,23 @@
               @messageEdit="handleEdit(item)"
             />
             <MessageTool
+              v-if="item.ID === toggleID"
               :class="[
                 'message-tool',
                 item.flow === 'out' ? 'message-tool-out' : 'message-tool-in',
               ]"
               :messageItem="item"
-              v-if="item.ID === toggleID"
             />
           </div>
         </li>
-        <div class="to-bottom-tip" @click="jumpToLatestMessage" v-if="isShowJumpToLatest">
+        <div v-if="isShowJumpToLatest" class="to-bottom-tip" @click="jumpToLatestMessage">
           <Icon :file="doubleArrowIcon" width="10px" height="10px"></Icon>
           <div class="to-bottom-tip-text">{{ TUITranslateService.t("TUIChat.回到最新位置") }}</div>
         </div>
       </ul>
       <Dialog
-        class="resend-dialog"
         v-if="reSendDialogShow"
+        class="resend-dialog"
         :show="reSendDialogShow"
         :isH5="!isPC"
         :center="true"
@@ -183,9 +179,7 @@
 
 <script lang="ts" setup>
 import { ref, nextTick, computed, onMounted, onUnmounted } from "../../../adapter-vue";
-
 import TUIChatEngine, {
-  TUIGlobal,
   IMessageModel,
   TUIStore,
   StoreName,
@@ -210,17 +204,25 @@ import MessageVideo from "./message-elements/message-video.vue";
 import MessageTool from "./message-tool/index.vue";
 import MessageRevoked from "./message-tool/message-revoked.vue";
 import MessagePlugin from "../../../plugins/plugin-components/message-plugin.vue";
+import MessageGroupSystem from "./message-elements/message-group-system.vue";
 import Dialog from "../../common/Dialog/index.vue";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import ImagePreviewer from "../../common/ImagePreviewer/index.vue";
 import ProgressMessage from "../../common/ProgressMessage/index.vue";
 import Icon from "../../common/Icon.vue";
 import doubleArrowIcon from "../../../assets/icon/double-arrow.svg";
-import { getImgLoad, isCreateGroupCustomMessage } from "../utils/utils";
-import MessageGroupSystem from "./message-elements/message-group-system.vue";
-import { CHAT_SCROLL_TYPE } from "../../../constant";
+import { isCreateGroupCustomMessage } from "../utils/utils";
 import { IGroupApplicationListItem } from "../../../interface";
 import { getBoundingClientRect, getScrollInfo } from "../../../utils/universal-api/domOperation";
+import { isPC, isH5 } from "../../../utils/env";
+
+interface ScrollConfig {
+  scrollToMessage?: IMessageModel;
+  scrollToBottom?: boolean;
+  scrollToOffset?: {
+    top?: number;
+    bottom?: number;
+  };
+}
 
 const emits = defineEmits(["handleEditor"]);
 const props = defineProps({
@@ -233,17 +235,14 @@ const props = defineProps({
     default: false,
   },
 });
-
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const messageListRef = ref<HTMLElement>();
-const title = ref("TUIChat");
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
-const messageList = ref();
+const messageList = ref<Array<IMessageModel>>();
 // 所有 messageList 序列，包含 isDeleted 为 true 的 message
-const allMessageList = ref();
+const allMessageList = ref<Array<IMessageModel>>();
 const isCompleted = ref(false);
 const currentConversationID = ref("");
+const currentLastMessage = ref<IMessageModel>();
 const currentLastMessageTime = ref<number>(0);
 const nextReqMessageID = ref();
 const toggleID = ref("");
@@ -252,9 +251,10 @@ const isLongpressing = ref(false);
 const groupApplicationCount = ref(0);
 const showGroupApplication = ref(false);
 const applicationUserIDList = ref<Array<string>>([]);
-const messageHighlight = ref<IMessageModel>();
+const messageTarget = ref<IMessageModel>();
 const messageElementListRef = ref<Array<HTMLElement> | null>();
 const blinkMessageIDList = ref<string[]>([]);
+const beforeHistoryGetScrollHeight = ref<number>(0);
 
 const isSignalingMessage = (message: IMessageModel) => {
   return message?.type === TYPES.value.MSG_CUSTOM && message?.getSignalingInfo();
@@ -265,7 +265,7 @@ const showImagePreview = ref(false);
 const currentImagePreview = ref<IMessageModel>();
 const imageMessageList = computed(() =>
   messageList?.value?.filter((item: IMessageModel) => {
-    return !item.isRevoked && item.type === TYPES.value.MSG_IMAGE;
+    return !item.isRevoked && !item.hasRiskContent && item.type === TYPES.value.MSG_IMAGE;
   })
 );
 
@@ -275,30 +275,11 @@ const resendMessageData = ref();
 
 // 事件监听
 onMounted(() => {
-  // TODO 消息搜索 监听需要高亮的消息
-  TUIStore.watch(StoreName.CUSTOM, {
-    messageHighlight: (message: IMessageModel) => {
-      messageHighlight.value = message;
-      if (messageHighlight.value && messageList.value?.length > 0) {
-        scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
-      }
-    },
-  });
-
   // 消息 messageList
   TUIStore.watch(StoreName.CHAT, {
-    messageList: (list: Array<IMessageModel>) => {
-      allMessageList.value = list;
-      messageList.value = list.filter((message) => !message.isDeleted);
-      if (messageHighlight.value) {
-        scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
-      } else {
-        scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
-      }
-    },
-    isCompleted: (flag: boolean) => {
-      isCompleted.value = flag;
-    },
+    messageList: onMessageListUpdated,
+    messageSource: onMessageSourceUpdated,
+    isCompleted: isCompletedUpdated,
   });
 
   // 当前 ConversationID
@@ -314,64 +295,126 @@ onMounted(() => {
 
   // 群未决消息数量
   TUIStore.watch(StoreName.CUSTOM, {
-    groupApplicationCount: (count: number) => {
-      groupApplicationCount.value = count;
-    },
+    groupApplicationCount: groupApplicationCountUpdated,
   });
 });
 
 // 取消监听
 onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CHAT, {
+    messageList: onMessageListUpdated,
+    messageSource: onMessageSourceUpdated,
+    isCompleted: isCompletedUpdated,
+  });
   TUIStore.unwatch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,
+    currentConversation: onCurrentConversationUpdated,
   });
-  // 群未决消息
   TUIStore.unwatch(StoreName.GRP, {
     groupSystemNoticeList: onGroupSystemNoticeList,
+  });
+  TUIStore.unwatch(StoreName.CUSTOM, {
+    groupApplicationCount: groupApplicationCountUpdated,
   });
 });
 
 const isShowJumpToLatest = computed((): boolean => {
+  const lastSuccessMessageIndex = allMessageList.value?.findLastIndex(
+    (message: IMessageModel) => message.status === "success"
+  );
   return (
-    allMessageList?.value?.length &&
-    allMessageList?.value[allMessageList?.value?.length - 1]?.time < currentLastMessageTime?.value
+    lastSuccessMessageIndex &&
+    allMessageList?.value[lastSuccessMessageIndex]?.time < currentLastMessageTime?.value
   );
 });
 
-// web & h5 版本（非 uniapp 平台）, 滚动到目标位置(目前仅支持滚动到指定位置)
-const scrollToTargetInWeb = (type: string, targetMessage?: IMessageModel) => {
-  function scroll(type: string, targetMessage?: IMessageModel) {
-    switch (type) {
-      case CHAT_SCROLL_TYPE.BOTTOM:
-        nextTick(() => messageListRef.value?.lastElementChild?.scrollIntoView?.(false));
-        break;
-      case CHAT_SCROLL_TYPE.TARGET:
-        nextTick(async () => {
-          if (targetMessage) {
-            const targetMessageDom = messageElementListRef.value?.find(
-              (dom: HTMLElement) => dom?.id === `tui-${targetMessage.ID}`
-            );
-            if (targetMessageDom) {
-              targetMessageDom?.scrollIntoView?.(false);
-              await blinkMessage(targetMessage.ID);
-              TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
-            } else {
-              // TODO
-            }
-          }
-        });
-        break;
+async function onMessageListUpdated(list: Array<IMessageModel>) {
+  const oldLastMessage = currentLastMessage.value;
+  allMessageList.value = list;
+  messageList.value = list.filter((message) => !message.isDeleted);
+  if (!messageList.value?.length) {
+    currentLastMessage.value = {};
+    return;
+  }
+  const newLastMessage = messageList.value?.[messageList.value?.length - 1];
+  if (messageTarget.value) {
+    if (
+      messageList.value?.findIndex(
+        (message: IMessageModel) => message?.ID === messageTarget.value?.ID
+      ) >= 0
+    ) {
+      const tempMessage = messageTarget.value;
+      messageTarget.value = undefined;
+      await scrollToPosition({ scrollToMessage: tempMessage });
+      await blinkMessage(tempMessage?.ID);
+    }
+  } else if (beforeHistoryGetScrollHeight.value) {
+    await scrollToPosition({ scrollToOffset: { bottom: beforeHistoryGetScrollHeight.value } });
+    beforeHistoryGetScrollHeight.value = 0;
+  } else if (
+    newLastMessage?.ID &&
+    JSON.stringify(oldLastMessage) !== JSON.stringify(newLastMessage)
+  ) {
+    await scrollToPosition({ scrollToBottom: true });
+  }
+  currentLastMessage.value = Object.assign({}, newLastMessage);
+}
+
+async function scrollToPosition(config: ScrollConfig = {}): Promise<void> {
+  return new Promise((resolve, reject) => {
+    requestAnimationFrame(() => {
+      if (!messageListRef.value) {
+        reject();
+      }
+      const container = messageListRef.value;
+      if (config.scrollToBottom) {
+        container!.scrollTop = container!.scrollHeight;
+      } else if (config.scrollToMessage) {
+        const targetMessageDom = messageElementListRef.value?.find(
+          (dom: HTMLElement) => dom?.id === `tui-${config.scrollToMessage?.ID}`
+        );
+        if (targetMessageDom?.scrollIntoView) {
+          targetMessageDom.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }
+      } else if (config.scrollToOffset) {
+        if (config.scrollToOffset?.top) {
+          container!.scrollTop = config.scrollToOffset.top;
+        } else if (config.scrollToOffset?.bottom) {
+          container!.scrollTop = container!.scrollHeight - config.scrollToOffset.bottom;
+        }
+      }
+      resolve();
+    });
+  });
+}
+
+async function onMessageSourceUpdated(message: IMessageModel) {
+  // messageSource change 有两种情况
+  // 1. messageSource change -> 未命中缓存 -> messageList change,
+  // 2. messageSource change -> 命中缓存 -> messageList not change
+  // 只有第二种情况需要在此处监听时增加 scrollToTarget
+  messageTarget.value = message;
+  if (messageTarget.value) {
+    if (
+      messageList.value?.findIndex(
+        (message: IMessageModel) => message?.ID === messageTarget.value?.ID
+      ) >= 0
+    ) {
+      const tempMessage = messageTarget.value;
+      messageTarget.value = undefined;
+      await scrollToPosition({ scrollToMessage: tempMessage });
+      await blinkMessage(tempMessage?.ID);
     }
   }
-  scroll(type, targetMessage);
-  getImgLoad(messageListRef.value, "message-img", async () => {
-    if (messageHighlight.value) {
-      scroll(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
-    } else {
-      scroll(CHAT_SCROLL_TYPE.BOTTOM);
-    }
-  });
-};
+}
+
+function isCompletedUpdated(flag: boolean) {
+  isCompleted.value = flag;
+}
+
+function groupApplicationCountUpdated(count: number) {
+  groupApplicationCount.value = count;
+}
 
 // 监听回调函数
 const onCurrentConversationIDUpdated = (conversationID: string) => {
@@ -438,19 +481,12 @@ const getHistoryMessageList = () => {
     const { nextReqMessageID: ID } = res.data;
     nextReqMessageID.value = ID;
   });
+  // 获取历史消息后，保持滚动条在原来位置
+  beforeHistoryGetScrollHeight.value = messageListRef.value?.scrollHeight;
 };
 
 const openComplaintLink = (type: any) => {
   window.open(type.url);
-};
-
-// web & h5 上传过程中能够滚动到底部
-const handleUploadingImageOrVideo = () => {
-  if (messageHighlight.value) {
-    scrollToTargetInWeb(CHAT_SCROLL_TYPE.TARGET, messageHighlight.value);
-  } else {
-    scrollToTargetInWeb(CHAT_SCROLL_TYPE.BOTTOM);
-  }
 };
 
 // 图片预览
@@ -476,7 +512,7 @@ const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = f
 };
 
 const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => {
-  if (isPC.value) {
+  if (isPC) {
     toggleID.value = message.ID;
   }
 };
@@ -484,7 +520,7 @@ const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => 
 // h5 long press
 let timer: number;
 const handleH5LongPress = (e: any, message: IMessageModel, type: string) => {
-  if (!isH5.value) return;
+  if (!isH5) return;
   function longPressHandler() {
     clearTimeout(timer);
     handleToggleMessageItem(e, message);
@@ -527,8 +563,8 @@ const resendMessageConfirm = () => {
 
 // 回到最新消息
 const jumpToLatestMessage = () => {
-  TUIStore.update(StoreName.CUSTOM, "messageHighlight", undefined);
   TUIStore.update(StoreName.CHAT, "messageSource", undefined);
+  blinkMessageIDList.value = [];
 };
 
 function blinkMessage(messageID: string): Promise<void> {
@@ -547,9 +583,9 @@ function blinkMessage(messageID: string): Promise<void> {
 
 // 滚动到最新消息
 async function scrollToLatestMessage() {
-  const { scrollHeight } = await getScrollInfo('#messageScrollList');
-  const { height } = await getBoundingClientRect('#messageScrollList');
-  const messageListDom = document.querySelector('#messageScrollList');
+  const { scrollHeight } = await getScrollInfo("#messageScrollList");
+  const { height } = await getBoundingClientRect("#messageScrollList");
+  const messageListDom = document.querySelector("#messageScrollList");
   if (messageListDom) {
     messageListDom.scrollTop = scrollHeight - height;
   }

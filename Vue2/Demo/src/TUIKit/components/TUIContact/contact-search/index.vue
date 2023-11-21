@@ -60,16 +60,16 @@ import {
   TUITranslateService,
   TUIStore,
   StoreName,
-  TUIGlobal,
 } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
+import { isPC } from "../../../utils/env";
+import { TUIGlobal } from "../../../utils/universal-api/index";
 import Icon from "../../common/Icon.vue";
 import addSVG from "../../../assets/icon/add.svg";
 import backSVG from "../../../assets/icon/back.svg";
 import { ref, watch } from "../../../adapter-vue";
 import { IContactSearchResult } from "../../../interface";
 
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const searchingPlaceholder = TUITranslateService.t('TUIContact.输入ID');
 const isSearching = ref<boolean>(false);
 const searchValue = ref<string>("");

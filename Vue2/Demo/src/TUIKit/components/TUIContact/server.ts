@@ -1,10 +1,7 @@
 import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
-import {
-  TUIStore,
-  StoreName,
-  TUIGlobal,
-} from "@tencentcloud/chat-uikit-engine";
-import { isUniFrameWork } from "../../utils/is-uni";
+import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { isUniFrameWork } from "../../utils/env";
+import { TUIGlobal } from "../../utils/universal-api/index";
 
 export default class TUIContactServer {
   static instance: TUIContactServer;
@@ -38,7 +35,7 @@ export default class TUIContactServer {
     this.onCallCallbackMap.set(method, callback);
     if (method === TUIConstants.TUIContact.SERVICE.METHOD.SELECT_FRIEND) {
       TUIStore.update(StoreName.CUSTOM, "isShowSelectFriendComponent", true);
-      isUniFrameWork && TUIGlobal?.global?.reLaunch({
+      isUniFrameWork && TUIGlobal?.reLaunch({
         url: "/TUIKit/components/TUIContact/index",
       });
     }

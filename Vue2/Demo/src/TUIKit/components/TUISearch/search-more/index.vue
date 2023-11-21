@@ -17,12 +17,12 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ref, watch, onMounted } from "../../../adapter-vue";
 import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { ExtensionInfo, TUIConstants } from "@tencentcloud/tui-core";
-import { ref, watch } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import searchMoreSVG from "../../../assets/icon/search-more.svg";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   searchType: {
@@ -36,20 +36,29 @@ const props = defineProps({
 
 const searchMoreRef = ref<HTMLElement | null>();
 const isListShow = ref<boolean>(false);
-// extensions
-const extensionList: Array<ExtensionInfo> = [
-  ...TUICore.getExtensionList(TUIConstants.TUISearch.EXTENSION.SEARCH_MORE.EXT_ID),
-];
-
 const toggleMore = () => {
   isListShow.value = !isListShow.value;
 };
+const extensionList = ref<Array<ExtensionInfo>>([]);
 
 const handleMenu = (item: any) => {
-  const { listener = { onClicked: () => {} } } = item;
+  const { listener = { onClicked: () => { } } } = item;
   listener.onClicked(item);
   toggleMore();
 };
+
+onMounted(() => {
+  // extensions
+  extensionList.value = [
+    ...TUICore.getExtensionList(TUIConstants.TUISearch.EXTENSION.SEARCH_MORE.EXT_ID),
+  ];
+  // hide conversation header
+  TUICore.callService({
+    serviceName: TUIConstants.TUIConversation.SERVICE.NAME,
+    method: TUIConstants.TUIConversation.SERVICE.METHOD.HIDE_CONVERSATION_HEADER,
+    params: {},
+  })
+})
 
 watch(
   () => isListShow.value,

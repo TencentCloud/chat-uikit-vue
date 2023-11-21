@@ -6,7 +6,7 @@ import {
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
-import { isUniFrameWork } from "../../utils";
+import { isUniFrameWork } from "../../utils/env";
 
 export default class TUISearchServer {
   constructor() {

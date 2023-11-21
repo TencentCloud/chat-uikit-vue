@@ -70,11 +70,12 @@ import {
   watchEffect,
   withDefaults,
 } from "../../../../adapter-vue";
-import { TUIGlobal, IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import { handleSkeletonSize } from "../../utils/utils";
 import Icon from "../../../common/Icon.vue";
 import closeSVG from "../../../../assets/icon/icon-close.svg";
 import type { IVideoMessageContent } from "../../../../interface";
+import { isPC } from "../../../../utils/env";
 
 const props = withDefaults(
   defineProps<{
@@ -87,7 +88,6 @@ const props = withDefaults(
   }
 );
 
-const isPC = TUIGlobal.getPlatform() === "pc";
 const emits = defineEmits(["uploading"]);
 const isShow = ref(false);
 const poster = ref("");

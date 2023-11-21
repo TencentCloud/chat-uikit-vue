@@ -46,11 +46,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
 import Icon from "../../../common/Icon.vue";
 import BottomPopup from "../../../common/BottomPopup/index.vue";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
 
 const props = defineProps({
   iconFile: {
@@ -86,11 +85,10 @@ const emits = defineEmits(["onIconClick", "onDialogClose", "onDialogShow"]);
 const showDialog = ref(false);
 const toolbarItemRef = ref();
 const dialogRef = ref();
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 const toggleToolbarItem = () => {
   emits("onIconClick", dialogRef);
-  if (isPC.value) {
+  if (isPC) {
     onClickOutside(toolbarItemRef.value);
   }
   if (!props.needDialog) {

@@ -168,7 +168,6 @@
 </template>
 <script lang="ts" setup>
 import TUIChatEngine, {
-  TUIGlobal,
   TUITranslateService,
   TUIUserService,
   TUIStore,
@@ -189,6 +188,7 @@ import Icon from "../TUIKit/components/common/Icon.vue";
 import rightArrowIcon from "../TUIKit/assets/icon/right-icon.svg";
 import selectedIcon from "../TUIKit/assets/icon/selected.svg";
 import { IUserProfile } from "../TUIKit/interface";
+import { isPC } from "../TUIKit/utils/env";
 import router from "../router/index";
 
 const props = defineProps({
@@ -202,10 +202,8 @@ const props = defineProps({
   },
 });
 const emits = defineEmits(["update:showSetting"]);
-
 const settingDomRef = ref();
 const userProfile = ref<IUserProfile>({});
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const settingList = ref<{
   [propsName: string]: {
     value: string;
@@ -238,7 +236,7 @@ const settingList = ref<{
     childrenShowType: "bottomPopup",
     showChildren: false,
     onClick: (item: any) => {
-      if (!isPC.value) {
+      if (!isPC) {
         item.showChildren = true;
       }
     },
@@ -340,7 +338,7 @@ const removeClickListener = (component: any) => {
 watch(
   () => props.showSetting,
   (newVal: boolean, oldVal: boolean) => {
-    if (isPC.value && newVal && !oldVal) {
+    if (isPC && newVal && !oldVal) {
       nextTick(() => {
         onClickOutside(settingDomRef.value);
       });

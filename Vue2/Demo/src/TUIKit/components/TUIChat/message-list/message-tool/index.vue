@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="!isAllActionItemInvalid && !messageItem.hasRiskContent"
     class="dialog-item"
     :class="!isPC ? 'dialog-item-h5' : 'dialog-item-web'"
   >
@@ -22,16 +23,16 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect } from "../../../../adapter-vue";
 import TUIChatEngine, {
   TUIStore,
   StoreName,
-  TUIGlobal,
   TUITranslateService,
   IMessageModel,
 } from "@tencentcloud/chat-uikit-engine";
+import { ref, watchEffect, computed } from "../../../../adapter-vue";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
+import { TUIGlobal } from "../../../../utils/universal-api/index";
 import Icon from "../../../common/Icon.vue";
-import { isUniFrameWork } from "../../../../utils/is-uni";
 import { Toast, TOAST_TYPE } from "../../../common/Toast/index";
 import delIcon from "../../../../assets/icon/msg-del.svg";
 import copyIcon from "../../../../assets/icon/msg-copy.svg";
@@ -50,7 +51,6 @@ const props = defineProps({
   },
 });
 
-const isPC = TUIGlobal.getPlatform() === "pc";
 const TYPES = TUIChatEngine.TYPES;
 const actionItems = [
   {
@@ -118,6 +118,15 @@ watchEffect(() => {
   message.value = TUIStore.getMessageModel(props.messageItem.ID);
 });
 
+const isAllActionItemInvalid = computed(() => {
+  for (let i = 0; i < actionItems.length; ++i) {
+    if (actionItems[i].renderCondition()) {
+      return false;
+    }
+  }
+  return true;
+});
+
 function getFunction(index: number) {
   // 兼容 vue2 小程序的写法 不允许动态绑定
   actionItems[index].clickEvent();
@@ -164,7 +173,7 @@ function deleteMessage() {
 
 function copyMessage() {
   if (isUniFrameWork) {
-    TUIGlobal?.global?.setClipboardData({
+    TUIGlobal?.setClipboardData({
       data: message.value?.payload?.text,
     });
   }

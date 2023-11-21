@@ -24,7 +24,6 @@
 </template>
 <script lang="ts" setup>
 import {
-  TUIGlobal,
   TUIChatService,
   TUIStore,
   StoreName,
@@ -32,7 +31,8 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, computed } from "../../../../adapter-vue";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isWeChat, isUniFrameWork } from "../../../../utils/env";
+import { TUIGlobal } from "../../../../utils/universal-api/index";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import imageIcon from "../../../../assets/icon/image.png";
 import imageUniIcon from "../../../../assets/icon/image-uni.png";
@@ -51,10 +51,7 @@ const props = defineProps({
 const emits = defineEmits(["close"]);
 
 const inputRef = ref();
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref<IConversationModel>();
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
-
 const IMAGE_TOOLBAR_SHOW_MAP = {
   web_album: {
     icon: imageIcon,
@@ -89,10 +86,10 @@ const imageToolbarForShow = computed((): { icon: string; title: string } => {
 const onIconClick = () => {
   // uniapp 环境 发送图片
   if (isUniFrameWork) {
-    if (isWeChat.value) {
+    if (isWeChat) {
       // uniapp-小程序 发送图片，使用前请将 SDK 升级至v2.11.2或更高版本，将 tim-upload-plugin 升级至v1.0.2或更高版本
       // 微信小程序从基础库 2.21.0 开始， wx.chooseImage 停止维护，请使用 uni.chooseMedia 代替
-      TUIGlobal?.global?.chooseMedia({
+      TUIGlobal?.chooseMedia({
         count: 1,
         mediaType: ["image"], // 图片
         sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
@@ -103,11 +100,11 @@ const onIconClick = () => {
       });
     } else {
       // uniapp h5/app 发送图片
-      TUIGlobal?.global?.chooseImage({
+      TUIGlobal?.chooseImage({
         count: 1,
         sourceType: [props.imageSourceType], // 从相册选择或使用相机拍摄
         success: function (res: any) {
-          TUIGlobal?.global?.getImageInfo({
+          TUIGlobal?.getImageInfo({
             src: res.tempFilePaths[0],
             success: function (image: any) {
               sendImageMessage(res, image.width, image.height);

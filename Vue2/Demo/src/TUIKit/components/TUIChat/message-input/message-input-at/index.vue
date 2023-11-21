@@ -34,13 +34,14 @@
 </template>
 <script lang="ts" setup>
 import TUIChatEngine, {
-  TUIGlobal,
   TUIStore,
   StoreName,
   TUIGroupService,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, watch } from "../../../../adapter-vue";
+import { isPC, isH5 } from "../../../../utils/env";
+import { TUIGlobal } from "../../../../utils/universal-api/index";
 import BottomPopup from "../../../common/BottomPopup/index.vue";
 
 const emits = defineEmits(["onAtListOpen", "insertAt"]);
@@ -58,8 +59,6 @@ const position = ref({
   top: 0,
 });
 const selectedIndex = ref(0);
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversationID = ref("");
 
 
@@ -129,7 +128,7 @@ defineExpose({
 watch(
   () => [position.value, MessageInputAt?.value],
   () => {
-    if (isH5.value || !MessageInputAt?.value || !MessageInputAt?.value?.style) {
+    if (isH5 || !MessageInputAt?.value || !MessageInputAt?.value?.style) {
       return;
     }
     MessageInputAt.value.style.left = position.value.left + "px";

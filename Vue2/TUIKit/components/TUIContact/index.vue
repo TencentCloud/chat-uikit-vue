@@ -14,14 +14,15 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TUIStore, StoreName, TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import { ref, watchEffect } from "../../adapter-vue";
+import { isPC, isUniFrameWork } from "../../utils/env";
+import { TUIGlobal } from "../../utils/universal-api/index";
 
 import SelectFriend from "./select-friend/index.vue";
 import ContactSearch from "./contact-search/index.vue";
 import ContactList from "./contact-list/index.vue";
 import ContactInfo from "./contact-info/index.vue";
-import { isUniFrameWork } from "../../utils/is-uni";
 
 const emits = defineEmits(["switchConversation"]);
 
@@ -35,7 +36,6 @@ const props = defineProps({
 });
 
 const displayTypeRef = ref<string>(props.displayType || "contactList");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const isShowSelectFriend = ref(false);
 const isShowContactList = ref(true);
 const isShowContactListInH5 = ref(true);
@@ -57,18 +57,18 @@ TUIStore.watch(StoreName.CUSTOM, {
       isShowSelectFriend.value = true;
       if (isUniFrameWork) {
         displayTypeRef.value = "selectFriend";
-        TUIGlobal?.global?.hideTabBar();
+        TUIGlobal?.hideTabBar();
       }
     } else {
       isShowSelectFriend.value = false;
       if (isUniFrameWork) {
         displayTypeRef.value = props.displayType;
-        TUIGlobal?.global?.showTabBar();
+        TUIGlobal?.showTabBar();
       }
     }
   },
   currentContactInfo: (data: any) => {
-    if (isPC.value) {
+    if (isPC) {
       isShowContactListInH5.value = true;
       isShowContactInfoInH5.value = true;
     } else if (!data || typeof data !== "object" || Object.keys(data)?.length <= 0) {
@@ -87,7 +87,7 @@ TUIStore.watch(StoreName.CUSTOM, {
 
 const switchConversation = (data: any) => {
   isUniFrameWork &&
-    TUIGlobal?.global?.navigateTo({
+    TUIGlobal?.navigateTo({
       url: "/TUIKit/components/TUIChat/index",
     });
   emits("switchConversation", data);

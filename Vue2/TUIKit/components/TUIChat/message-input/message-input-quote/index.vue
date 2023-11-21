@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="quoteMessage && props.currentFunction !== 'audio'"
+    v-if="Boolean(quoteMessage) && props.currentFunction !== 'audio'"
     :class="[
       'input-quote-container',
       !isPC && 'input-quote-container-h5',
@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { ref, computed } from "../../../../adapter-vue";
 import TUIChatEngine, {
-  TUIGlobal,
   TUIStore,
   StoreName,
   TUITranslateService,
@@ -27,17 +26,16 @@ import TUIChatEngine, {
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import closeIcon from "../../../../assets/icon/icon-close.svg";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
 
 const props = defineProps(["currentFunction"]);
 
-const isPC = TUIGlobal.getPlatform() === "pc";
 const TYPES = TUIChatEngine.TYPES;
 const quoteMessage = ref<IMessageModel>();
 
 TUIStore.watch(StoreName.CHAT, {
   quoteMessage: (options?: { message: IMessageModel, type: string }) => {
-    if (typeof options?.message !== "undefined" && options?.type === "quote") {
+    if (options?.message && options?.type === "quote") {
       quoteMessage.value = options.message;
     } else {
       quoteMessage.value = undefined;
@@ -78,7 +76,7 @@ const quoteContentText = computed(() => {
 });
 
 function cancelQuote() {
-  TUIStore.update(StoreName.CHAT, "quoteMessage", { message: undefined });
+  TUIStore.update(StoreName.CHAT, "quoteMessage", { message: undefined, type: "quote" });
 }
 </script>
   

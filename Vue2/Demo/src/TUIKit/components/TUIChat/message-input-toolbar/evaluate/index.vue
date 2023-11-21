@@ -90,7 +90,6 @@
 </template>
 <script setup lang="ts">
 import {
-  TUIGlobal,
   TUITranslateService,
   TUIStore,
   StoreName,
@@ -106,7 +105,7 @@ import Icon from "../../../common/Icon.vue";
 import starIcon from "../../../../assets/icon/star.png";
 import starLightIcon from "../../../../assets/icon/star-light.png";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isH5, isApp, isUniFrameWork } from "../../../../utils/env";
 
 const props = defineProps({
   starTotal: {
@@ -115,9 +114,6 @@ const props = defineProps({
   },
 });
 
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
-const isApp = ref(TUIGlobal.getPlatform() === "app");
 const container = ref();
 
 const starList = ref<number>(props.starTotal);
@@ -136,7 +132,7 @@ const onDialogClose = () => {
 };
 
 const openLink = (link: any) => {
-  if (isPC.value || isH5.value) {
+  if (isPC || isH5) {
     window.open(Link?.customMessage?.url);
   }
 };

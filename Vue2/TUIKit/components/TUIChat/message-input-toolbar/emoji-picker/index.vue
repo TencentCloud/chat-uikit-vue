@@ -15,12 +15,12 @@
 </template>
 <script lang="ts" setup>
 import {
-  TUIGlobal,
   TUIStore,
   StoreName,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
+import { isPC, isH5 } from "../../../../utils/env";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import EmojiPickerDialog from "./emoji-picker-dialog.vue";
 
@@ -34,9 +34,6 @@ const emits = defineEmits([
   "toggleComponent",
   "sendMessage",
 ]);
-
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref();
 const container = ref();
 
@@ -47,7 +44,7 @@ TUIStore.watch(StoreName.CONV, {
 });
 
 const onIconClick = (dialogRef: any) => {
-  if (!isH5.value) {
+  if (!isH5) {
     emits("toggleComponent");
     return;
   }
@@ -55,7 +52,7 @@ const onIconClick = (dialogRef: any) => {
 };
 
 const onDialogClose = (dialogRef: any) => {
-  if (!isH5.value) {
+  if (!isH5) {
     return;
   }
   emits("dialogCloseInH5", dialogRef.value);

@@ -9,9 +9,9 @@
 </template>
 <script setup lang="ts">
 import { ref } from "../../adapter-vue";
-import { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import { isApp } from "../../utils/env";
+
 const emits = defineEmits(["click"]);
-const isApp = ref(TUIGlobal.getPlatform() === "app");
 const props = defineProps({
   file: {
     type: String,

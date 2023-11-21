@@ -22,9 +22,9 @@
 </template>
 
 <script lang="ts" setup>
-import { withDefaults, watch, watchEffect } from "../../../adapter-vue";
 import type { IMessageModel } from "@tencentcloud/chat-uikit-engine";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { withDefaults, watch, watchEffect } from "../../../adapter-vue";
+import { isUniFrameWork } from "../../../utils/env";
 import type { IImageMessageContent } from "../../../interface";
 
 const props = withDefaults(

@@ -1,6 +1,6 @@
 <template>
   <div class="tui-conversation" @click="handleClickConv">
-    <ConversationHeader ref="headerRef" v-if="isShowConversationHeader" />
+    <ConversationHeader v-if="isShowConversationHeader"  ref="headerRef" />
     <ConversationNetwork />
     <ConversationList @handleSwitchConversation="handleSwitchConversation" />
   </div>

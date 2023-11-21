@@ -9,7 +9,7 @@
     <div v-if="displayType === 'info' || displayType === 'bubble'" :class="[displayType]">
       <div :class="displayType + '-left'">
         <img :class="displayType + '-left-avatar'" :src="avatarForShow"
-          onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+          onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
       </div>
       <div :class="[displayType + '-main']">
         <div :class="[displayType + '-main-name']">
@@ -41,7 +41,7 @@
     <div v-else-if="displayType === 'file'" :class="[displayType]">
       <div :class="[displayType + '-header']">
         <img :class="displayType + '-header-avatar'" :src="avatarForShow"
-          onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+          onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
         <div :class="[displayType + '-header-name']">
           {{ nameForShow }}
         </div>
@@ -70,8 +70,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import TUIChatEngine, { TUIGlobal, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine, { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ref, watchEffect } from "../../../../adapter-vue";
+import { isPC } from "../../../../utils/env";
 import {
   generateSearchResultShowName,
   generateSearchResultAvatar,
@@ -120,7 +121,6 @@ const props = defineProps({
 
 const emits = defineEmits(["showResultDetail", "navigateToChatPosition"]);
 const TYPES = ref(TUIChatEngine.TYPES);
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
 
 const avatarForShow = ref<string>();
 const nameForShow = ref<string>();

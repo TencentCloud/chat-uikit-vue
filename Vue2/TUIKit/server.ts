@@ -1,13 +1,10 @@
 import TUICore, { TUILogin, TUIConstants } from "@tencentcloud/tui-core";
-import
-TUIChatEngine,
-{
-  TUIGlobal,
-  TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine, { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ITUIComponents, ITUIPlugins } from "./interface";
 import TUILocales from "./locales";
 import { isFunction, isObject } from "./utils";
+import { isApp } from "./utils/env";
+import { TUIGlobal } from "./utils/universal-api/index";
 import CallkitPluginServer from "./plugins/extension-server/callkit";
 export default class TUIChatKit {
   public chat: any;
@@ -24,7 +21,7 @@ export default class TUIChatKit {
     this.TUIChatEngine = TUIChatEngine;
     this.TUIGlobal = TUIGlobal;
     this.SDKAppID = 0;
-    this.TUIGlobal.global._isTIMCallKit = true;
+    this.TUIGlobal._isTIMCallKit = true;
     TUICore.registerEvent(
       TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED,
       TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS,
@@ -51,16 +48,16 @@ export default class TUIChatKit {
    */
   public init() {
     // 原生插件 TUICallKit 存在时执行 call server
-    if(TUIGlobal.getPlatform() === "app") {
+    if(isApp) {
       new CallkitPluginServer();
     }
     // TUITranslateService init
     TUITranslateService.provideLanguages({ ...TUILocales });
     TUITranslateService.useI18n();
     // TUIComponents global install
-    TUIGlobal.global.TUIComponents = this.TUIComponents;
+    TUIGlobal.TUIComponents = this.TUIComponents;
     // TUIPlugins global install
-    TUIGlobal.global.TUIPlugins = this.TUIPlugins;
+    TUIGlobal.TUIPlugins = this.TUIPlugins;
     console.warn("[TUIChatKit]: init success.");
   }
 

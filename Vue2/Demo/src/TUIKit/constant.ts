@@ -31,11 +31,6 @@ export const EMOJI_TYPE = {
   CUSTOM: "CUSTOM",
 };
 
-export const CHAT_SCROLL_TYPE = {
-  BOTTOM: "bottom",
-  TARGET: "target",
-};
-
 export const CONTACT_INFO_LABEL_POSITION = {
   LEFT: "left",
   TOP: "top",

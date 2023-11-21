@@ -21,7 +21,6 @@
 </template>
 <script lang="ts" setup>
 import {
-  TUIGlobal,
   TUIChatService,
   TUIStore,
   StoreName,
@@ -29,7 +28,7 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
-import { isUniFrameWork } from "../../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
 
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import fileIcon from "../../../../assets/icon/files.png";
@@ -37,7 +36,6 @@ import fileIcon from "../../../../assets/icon/files.png";
 const emits = defineEmits(["close"]);
 
 const inputRef = ref();
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {

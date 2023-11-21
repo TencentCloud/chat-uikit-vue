@@ -80,7 +80,7 @@
                     item.avatar ||
                     'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                   "
-                  onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+                  onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
                 />
                 <span class="name">{{ item.nick || item.userID }}</span>
                 <span v-if="item.isDisabled"
@@ -122,7 +122,7 @@
                     item.avatar ||
                     'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                   "
-                  onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+                  onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
                 />
                 <span v-if="isPC" class="name">{{ item.nick || item.userID }}</span>
               </template>
@@ -157,16 +157,13 @@
 
 <script lang="ts" setup>
 import { ref, watchEffect, computed } from "../../../adapter-vue";
-import {
-  TUIGlobal,
-  TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ITransferListItem } from "../../../interface";
 import Icon from "../Icon.vue";
 import selectedIcon from "../../../assets/icon/selected.svg";
 import backIcon from "../../../assets/icon/back.svg";
 import cancelIcon from "../../../assets/icon/cancel.svg";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isWeChat, isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   list: {
@@ -219,8 +216,6 @@ const isTransferSearch = ref(true);
 const isTransferCustomItem = ref(false);
 const transferTitle = ref("");
 const searchValue = ref("");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isWeChat = ref(TUIGlobal.getPlatform() === "wechat");
 
 watchEffect(() => {
   if (props.isCustomItem) {

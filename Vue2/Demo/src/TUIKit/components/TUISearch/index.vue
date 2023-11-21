@@ -43,38 +43,33 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TUIGlobal, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { ref, onMounted, computed, withDefaults } from "../../adapter-vue";
+import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import SearchInput from "./search-input/index.vue";
 import SearchContainer from "./search-container/index.vue";
 import SearchResult from "./search-result/index.vue";
 import SearchMore from "./search-more/index.vue";
-import { searchMessageTypeList, searchMessageTypeDefault } from "./search-type-list";
-import { searchMessageTimeList, searchMessageTimeDefault } from "./search-time-list";
-import { ref, onMounted, computed } from "../../adapter-vue";
-import { isUniFrameWork } from "../../utils/is-uni";
+import { searchMessageTypeDefault } from "./search-type-list";
+import { searchMessageTimeDefault } from "./search-time-list";
+import { isPC, isUniFrameWork } from "../../utils/env";
 import { SEARCH_TYPE } from "./type";
 
-const props = defineProps({
-  searchType: {
-    type: String,
-    default: "global", // "global":全局搜索, "conversation":会话内搜索
-    validator(value: string) {
-      return ["global", "conversation"].includes(value);
-    },
-  },
-});
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
+const props = withDefaults(defineProps<{
+  searchType?: SEARCH_TYPE
+}>(), {
+  searchType: () => isUniFrameWork ? "conversation" : "global"
+})
 const globalSearchRef = ref<HTMLElement | null>();
 // 当前会话
 const currentConversationID = ref<string>("");
 // 控制搜索状态
 const searchingStatus = ref<boolean>(false);
 // 是否展示指定会话内搜索: 与 TUIChat 交互，由 TUIChat MessageInputToolBar 中 "查看历史消息ICON" 控制
-const isShowInConversationSearch = ref<boolean>(false);
+const isShowInConversationSearch = ref<boolean>(isUniFrameWork ? true : false);
 // 是否全屏搜索 - 移动端正在搜索时全屏搜索
 const isFullScreen = computed(
   () =>
-    !isPC.value &&
+    !isPC &&
     ((props.searchType === "global" && searchingStatus.value) ||
       (props.searchType === "conversation" && isShowInConversationSearch.value))
 );
@@ -96,10 +91,11 @@ const initSearchValue = (searchType: SEARCH_TYPE) => {
 
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (conversationID: string) => {
-    if (currentConversationID.value !== conversationID) {
-      // 切换会话，关闭搜索
+    if (!isUniFrameWork && currentConversationID.value !== conversationID) {
+      // pc端 单页面 切换会话，关闭搜索
       closeInConversationSearch();
     }
+    currentConversationID.value = conversationID;
   },
 });
 
@@ -114,8 +110,8 @@ TUIStore.watch(StoreName.CUSTOM, {
     }
   },
   isShowInConversationSearch: (value: boolean) => {
-    isShowInConversationSearch.value = value;
-    initSearchValue(props.searchType as SEARCH_TYPE);
+    isShowInConversationSearch.value = value ? true : false;
+    isShowInConversationSearch.value && initSearchValue(props.searchType);
   },
 });
 
@@ -126,16 +122,16 @@ onMounted(() => {
   });
 });
 
-const closeInConversationSearch = () => {
+function closeInConversationSearch() {
   TUIStore.update(StoreName.CUSTOM, "isShowInConversationSearch", false);
-};
+}
 
 // 全局搜索dialog-点击外侧关闭
 // click outside
 let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
-  if (isUniFrameWork || !isPC.value) {
+  if (isUniFrameWork || !isPC) {
     return;
   }
   document.addEventListener("click", onClickDocument);
@@ -143,7 +139,7 @@ const onClickOutside = (component: any) => {
 };
 
 const removeClickListener = (component: any) => {
-  if (isUniFrameWork || !isPC.value) {
+  if (isUniFrameWork || !isPC) {
     return;
   }
   document.removeEventListener("click", onClickDocument);

@@ -83,8 +83,7 @@ export interface IGroupApplicationUserProfile {
   [propName: string]: any;
 }
 
-export type IGroupApplicationListItem = IGroupApplicationType &
-  IGroupApplicationUserProfile;
+export type IGroupApplicationListItem = IGroupApplicationType & IGroupApplicationUserProfile;
 
 export interface IFriendType {
   userID?: string;
@@ -210,8 +209,14 @@ export interface IVideoMessageContent {
   snapshotHeight: number; // - 视频封面图高度
 }
 
+export interface IFileMessageContent {
+  name: string;
+  url: string;
+  size: number;
+}
+
 export interface ITipTapEditorContent {
-  type: 'text' | 'image'| 'video' | 'file';
+  type: "text" | "image" | "video" | "file";
   payload: {
     text?: string;
     file?: File;

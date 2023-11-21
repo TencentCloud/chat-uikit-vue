@@ -1,4 +1,4 @@
-import TUIChatEngine, { TUIGlobal } from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
 import { genTestUserSig } from "./debug";
 import Server from "./server";
 import TUIComponents, {

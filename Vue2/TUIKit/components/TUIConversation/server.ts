@@ -2,12 +2,12 @@ import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
 import {
   TUITranslateService,
   TUIConversationService,
-  TUIGlobal,
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { CONV_CREATE_TYPE } from "../../constant";
-import { isUniFrameWork } from "../../utils/is-uni";
+import { isUniFrameWork } from "../../utils/env";
+import { TUIGlobal } from "../../utils/universal-api/index";
 import createGroupIcon from "../../assets/icon/start-group.svg";
 import createC2CIcon from "../../assets/icon/icon-c2c.svg";
 
@@ -46,6 +46,9 @@ export default class TUIConversationServer {
       case TUIConstants.TUIConversation.SERVICE.METHOD.CREATE_CONVERSATION:
         this.createConversation(params);
         break;
+      case TUIConstants.TUIConversation.SERVICE.METHOD.HIDE_CONVERSATION_HEADER:
+        this.hideConversationHeader();
+        break;
     }
   }
 
@@ -75,9 +78,6 @@ export default class TUIConversationServer {
           },
         },
       ];
-      // 如果 TUIConversation 向 TUISearch 注册的 发起单聊/发起群聊 扩展被使用
-      // 则 TUIConversation 中不再展示 TUIConversation 中承担相关功能的 ConversationHeader
-      TUIStore.update(StoreName.CUSTOM, "isShowConversationHeader", false);
       return list;
     }
   }
@@ -133,11 +133,11 @@ export default class TUIConversationServer {
 
   private async routerForward(conversationID: string | null): Promise<void> {
     if (isUniFrameWork) {
-      await TUIGlobal?.global?.reLaunch({
+      await TUIGlobal?.reLaunch({
         url: "/TUIKit/components/TUIConversation/index",
       });
       if (conversationID) {
-        TUIGlobal?.global?.navigateTo({
+        TUIGlobal?.navigateTo({
           url: "/TUIKit/components/TUIChat/index",
         });
       }
@@ -153,4 +153,8 @@ export default class TUIConversationServer {
         console.warn("打开会话失败", err.code, err.msg);
       });
   }
+
+  private hideConversationHeader = () => {
+    TUIStore.update(StoreName.CUSTOM, "isShowConversationHeader", false);
+  };
 }

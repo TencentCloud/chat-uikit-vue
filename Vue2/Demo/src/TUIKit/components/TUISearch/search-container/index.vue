@@ -87,7 +87,6 @@
 </template>
 <script setup lang="ts">
 import {
-  TUIGlobal,
   TUITranslateService,
   TUIStore,
   StoreName,
@@ -105,7 +104,7 @@ import DatePicker from "../../common/DatePicker/index.vue";
 import downArrowIcon from "../../../assets/icon/down-icon.svg";
 import closeIcon from "../../../assets/icon/input-close.svg";
 import closeDarkIcon from "../../../assets/icon/close-dark.svg";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isUniFrameWork } from "../../../utils/env";
 import { SEARCH_TYPE } from "../type";
 
 const props = defineProps({
@@ -124,8 +123,6 @@ const props = defineProps({
 
 const emits = defineEmits(["searchConfigChange", "closeInConversationSearch"]);
 
-const isPC = ref<boolean>(TUIGlobal.getPlatform() === "pc");
-
 const searchTypeList = computed(() =>
   props?.searchType === "conversation" ? conversationSearchTypeList : globalSearchTypeList
 );
@@ -139,7 +136,7 @@ const isTimeTabsShow = computed(() => {
   );
 });
 const datePickerRangeDisplayType = computed((): string =>
-  isPC.value && props.searchType === "global" && !isUniFrameWork ? "two" : "one"
+  isPC && props.searchType === "global" && !isUniFrameWork ? "two" : "one"
 );
 const isDatePickerShow = ref<boolean>(false);
 

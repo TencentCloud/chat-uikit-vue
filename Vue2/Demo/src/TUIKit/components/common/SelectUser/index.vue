@@ -22,11 +22,8 @@
   </Dialog>
 </template>
 <script lang="ts" setup>
-import 
-{
-  TUIGlobal,
-} from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../adapter-vue";
+import { isPC } from "../../../utils/env";
 import Dialog from "../Dialog/index.vue";
 import Transfer from "../Transfer/index.vue";
 
@@ -54,8 +51,6 @@ const props = defineProps({
     default: 0,
   }
 })
-
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 
 const reset = () => {
   emits('complete', []);

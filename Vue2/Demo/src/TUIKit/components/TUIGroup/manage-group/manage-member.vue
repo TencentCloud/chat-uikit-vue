@@ -9,7 +9,7 @@
               item.avatar ||
               'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
             "
-            onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+            onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
           />
           <span class="name">{{ item.nick || item.userID }}</span>
           <span>{{ handleRoleName(item) }}</span>
@@ -56,7 +56,7 @@
                   item.avatar ||
                   'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                 "
-                onerror="this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+                onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
               />
               <span class="name">{{ item.nick || item.userID }}</span>
               <span>{{ handleRoleName(item) }}</span>
@@ -91,7 +91,7 @@ import { watchEffect, ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import delIcon from "../../../assets/icon/del-icon.svg";
 import { IGroupSelfInfo, IGroupMember } from "../../../interface";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   list: {

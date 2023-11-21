@@ -61,15 +61,13 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref, computed } from "../../../adapter-vue";
 import TUIChatEngine, {
-  TUIGlobal,
   IConversationModel,
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { ExtensionInfo, TUIConstants } from "@tencentcloud/tui-core";
-import { ref, computed } from "../../../adapter-vue";
-// component
 import EmojiPicker from "./emoji-picker/index.vue";
 import ImageUpload from "./image-upload/index.vue";
 import FileUpload from "./file-upload/index.vue";
@@ -79,15 +77,10 @@ import Words from "./words/index.vue";
 import ToolbarItemContainer from "./toolbar-item-container/index.vue";
 import UserSelector from "./user-selector/index.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isH5, isApp, isUniFrameWork } from "../../../utils/env";
 
 const emits = defineEmits(["insertEmoji"]);
-
 const h5Dialog = ref();
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isApp = ref(TUIGlobal.getPlatform() === "app");
-
 const currentConversation = ref<IConversationModel>();
 const isGroup = ref<boolean>(false);
 const selectorShowType = ref<string>("");
@@ -113,20 +106,12 @@ const extensionList: Array<ExtensionInfo> = [
 // 按展示位置分类 extensionList （注意：仅 web 端 区分展示位置在 从 start 开始和 从 end 开始，在移动端不生效）
 const extensionListShowInStart = computed(
   (): Array<ExtensionInfo> =>
-    isPC.value
-      ? extensionList.filter(
-          (extension: ExtensionInfo) => extension?.data?.name !== "search"
-        )
-      : extensionList
+    isPC ? extensionList.filter((extension: ExtensionInfo) => extension?.data?.name !== "search") : extensionList
 );
 
 const extensionListShowInEnd = computed(
   (): Array<ExtensionInfo> =>
-    isPC.value
-      ? extensionList.filter(
-          (extension: ExtensionInfo) => extension?.data?.name === "search"
-        )
-      : []
+    isPC ? [extensionList.find((extension: ExtensionInfo) => extension?.data?.name === "search")] : []
 );
 
 // handle extensions onclick
@@ -180,14 +165,14 @@ const insertEmoji = (emojiObj: object) => {
 };
 
 const dialogShowInH5 = (dialogDom: any) => {
-  if (!isH5.value) {
+  if (!isH5) {
     return;
   }
   h5Dialog?.value?.appendChild && h5Dialog?.value?.appendChild(dialogDom);
 };
 
 const dialogCloseInH5 = (dialogDom: any) => {
-  if (!isH5.value) {
+  if (!isH5) {
     return;
   }
   h5Dialog?.value?.removeChild && h5Dialog?.value?.removeChild(dialogDom);

@@ -99,7 +99,6 @@ interface IUserStatusMap {
 
 import { ref } from "../../../adapter-vue";
 import TUIChatEngine, {
-  TUIGlobal,
   TUIStore,
   StoreName,
   TUIConversationService,
@@ -108,11 +107,9 @@ import { IConversationModel } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
 import ActionsMenu from "../actions-menu/index.vue";
 import muteIcon from "../../../assets/icon/mute.svg";
-import { isUniFrameWork } from "../../../utils/is-uni";
+import { isPC, isH5, isUniFrameWork } from "../../../utils/env";
 
 const emits = defineEmits(["handleSwitchConversation", "getPassingRef"]);
-const isH5 = TUIGlobal.getPlatform() === "h5";
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
 const currentConversation = ref<IConversationModel>();
 const currentConversationID = ref<string>();
 const currentConversationDomRect = ref<DOMRect>();
@@ -212,7 +209,7 @@ const getActionsMenuPosition = (event: Event, index: number, conversation?: any)
     if (rect) {
       actionsMenuPosition.value = {
         top: rect.bottom,
-        left: isPC.value ? event.clientX : undefined,
+        left: isPC ? event.clientX : undefined,
         conversationHeight: rect.height,
       };
     }
