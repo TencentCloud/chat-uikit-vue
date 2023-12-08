@@ -24,8 +24,9 @@
           @handleEditor="handleEditor"
         >
         </MessageList>
+        <!-- 兼容 uni 打包支付宝小程序 v-show 无效问题 -->
         <MessageInputToolbar
-          v-show="isToolbarShow"
+          v-if="isToolbarShow"
           :class="['TUI-chat-message-input-toolbar', !isPC && 'TUI-chat-h5-message-input-toolbar']"
           @insertEmoji="insertEmoji"
         ></MessageInputToolbar>
@@ -72,6 +73,7 @@ import MessageInput from "./message-input/index.vue";
 import Forward from "./forward/index.vue";
 import MessageInputToolbar from "./message-input-toolbar/index.vue";
 import { isPC, isWeChat, isUniFrameWork } from "../../utils/env";
+import TUIChatConfig from "./config";
 
 const emits = defineEmits(["closeChat"]);
 const isToolbarShow = ref<boolean>(!isUniFrameWork);
@@ -83,14 +85,23 @@ const groupID = ref("");
 const groupManageExt = ref<ExtensionInfo>(undefined);
 
 TUIStore.watch(StoreName.CONV, {
-  currentConversationID: (id: string) => {
-    currentConversationID.value = id;
-  },
   currentConversation: (conversation: IConversationModel) => {
+    if (currentConversationID.value === conversation?.conversationID) {
+      return;
+    }
+    // TUIChat 每次切换会话，需要初始化 chatType;
+    TUIChatConfig.setChatType(conversation?.type);
+    // 由 TUICustomerServicePlugin 插件判断如果当前会话是客服会话，则设置 chatType 并激活会话。
+    TUICore.callService({
+      serviceName: TUIConstants.TUICustomerServicePlugin.SERVICE.NAME,
+      method: TUIConstants.TUICustomerServicePlugin.SERVICE.METHOD.ACTIVE_CONVERSATION,
+      params: { conversationID: conversation?.conversationID },
+    });
+    currentConversationID.value = conversation?.conversationID;
     isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     if (isUniFrameWork && isGroup.value && groupID.value !== conversation?.groupProfile?.groupID) {
       const extList = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, {
-        filterManageGroup: isGroup.value,
+        filterManageGroup: !isGroup.value,
       });
       groupManageExt.value = extList[0];
     }
@@ -121,7 +132,7 @@ const insertEmoji = (emojiObj: object) => {
 
 const handleToolbarListShow = (show?: boolean) => {
   if (isUniFrameWork) {
-    isToolbarShow.value = show ?? !isToolbarShow.value;
+    isToolbarShow.value = (show === undefined) ? !isToolbarShow.value : show;
   } else {
     isToolbarShow.value = true;
   }

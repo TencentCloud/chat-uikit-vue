@@ -46,6 +46,7 @@ import { ref } from "../../../../adapter-vue";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import wordsIcon from "../../../../assets/icon/words.svg";
 import { wordsList } from "../../utils/wordsList";
+import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 import { isPC, isUniFrameWork } from "../../../../utils/env";
 
 const currentConversation = ref<IConversationModel>();
@@ -66,6 +67,7 @@ const selectWord = (item: any) => {
     payload: {
       text: item.value,
     },
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   TUIChatService.sendTextMessage(options);
   // 提交后关闭 dialog

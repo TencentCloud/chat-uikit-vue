@@ -37,6 +37,7 @@ import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import imageIcon from "../../../../assets/icon/image.png";
 import imageUniIcon from "../../../../assets/icon/image-uni.png";
 import cameraUniIcon from "../../../../assets/icon/camera-uni.png";
+import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 
 const props = defineProps({
   // 图片源, 仅uniapp版本有效, web版本仅支持从相册中选择图片
@@ -86,8 +87,8 @@ const imageToolbarForShow = computed((): { icon: string; title: string } => {
 const onIconClick = () => {
   // uniapp 环境 发送图片
   if (isUniFrameWork) {
-    if (isWeChat) {
-      // uniapp-小程序 发送图片，使用前请将 SDK 升级至v2.11.2或更高版本，将 tim-upload-plugin 升级至v1.0.2或更高版本
+    // 增加 TUIGlobal.chooseMedia 条件限制，防御 uni 打包其他平台小程序时由于打包问题导致 isWeChat 为 true 出现运行时报错
+    if (isWeChat && TUIGlobal?.chooseMedia) {
       // 微信小程序从基础库 2.21.0 开始， wx.chooseImage 停止维护，请使用 uni.chooseMedia 代替
       TUIGlobal?.chooseMedia({
         count: 1,
@@ -138,6 +139,7 @@ const sendImageMessage = (files: any, width?: string, height?: string) => {
     payload: {
       file: files,
     },
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   // todo: 需要处理uniapp文件没有宽高的变形问题，需要linda看看
   TUIChatService.sendImageMessage(options);

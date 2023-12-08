@@ -1,4 +1,4 @@
-import TUIChatEngine, { IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine, { TUIStore, StoreName, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 
 export function deepCopy(data: any, hash = new WeakMap()) {
   if (typeof data !== "object" || data === null || data === undefined) {
@@ -26,17 +26,6 @@ export function deepCopy(data: any, hash = new WeakMap()) {
   });
   return newData;
 }
-
-export const throttle = (fn: any): (() => void) => {
-  let isRunning = false;
-  return (...args) => {
-    if (isRunning) return;
-    setTimeout(() => {
-      fn.apply(this, args);
-      isRunning = false;
-    }, 100);
-  };
-};
 
 export const handleSkeletonSize = (
   width: number,
@@ -92,3 +81,19 @@ export const isCreateGroupCustomMessage = (message: IMessageModel) => {
     message?.getMessageContent()?.businessID === "group_create"
   );
 };
+
+export function isEnabledMessageReadReceiptGlobal() {
+  /**
+   * displayMessageReadReceipt 用户级别控制展示消息阅读状态
+   * 关闭后 你收发的消息均不带消息阅读状态
+   * 你将无法看到对方是否已读 同时对方也无法看到他发送的消息你是否已读
+   * 
+   * enabledMessageReadReceipt app级别是否开启已读回执
+   */
+  return TUIStore.getData(StoreName.USER, "displayMessageReadReceipt") &&
+  TUIStore.getData(StoreName.APP, "enabledMessageReadReceipt");
+}
+
+export function shallowCopyMessage(message: IMessageModel) {
+  return Object.assign({}, message);
+}

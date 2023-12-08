@@ -67,7 +67,7 @@ export default class TUIGroupServer {
     let list: Array<ExtensionInfo> = [];
     switch (extensionID) {
       case TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID:
-        if (params?.filterManageGroup) {
+        if (!params?.filterManageGroup) {
           list.push({
             weight: 100,
             icon: settingSVG,

@@ -1,6 +1,6 @@
 {
   "name": "@tencentcloud/chat-uikit-vue2",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "repository": "https://github.com/TencentCloud/chat-uikit-vue",
   "description": "TUIKit 是基于 IM SDK 实现的一套 UI 组件，其包含会话、聊天、群组、个人资料等功能，基于 TUIKit 组件您可以像搭积木一样快速搭建起自己的业务逻辑。",
   "scripts": {},
@@ -22,6 +22,7 @@
     "@tencentcloud/call-uikit-vue": "latest",
     "@tencentcloud/call-uikit-vue2": "latest",
     "@tencentcloud/call-uikit-vue2.6": "latest",
+    "@tencentcloud/tui-customer-service-plugin": "latest",
     "vue-clipboard3": "2.0.0",
     "@tiptap/core": "^2.0.0-beta.220",
     "@tiptap/extension-document": "^2.0.0-beta.220",
@@ -32,7 +33,9 @@
     "@tiptap/extension-text": "^2.0.0-beta.220",
     "@tiptap/pm": "^2.0.0-beta.220",
     "@tiptap/suggestion": "^2.0.0-beta.220",
-    "dayjs": "^1.11.10"
+    "dayjs": "^1.11.10",
+    "@types/lodash": "^4.14.202",
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
     "@tiptap/core": "^2.0.0-beta.220",

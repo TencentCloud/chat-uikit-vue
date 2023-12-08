@@ -40,6 +40,7 @@ import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import videoIcon from "../../../../assets/icon/video.png";
 import videoUniIcon from "../../../../assets/icon/video-uni.png";
 import cameraUniIcon from "../../../../assets/icon/camera-uni.png";
+import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 
 const props = defineProps({
   // 视频源, 仅uniapp版本有效, web版本仅支持从文件中选择视频
@@ -88,8 +89,8 @@ const handleTitle = (): string => {
 const onIconClick = () => {
   // uniapp环境发送视频
   if (isUniFrameWork) {
-    if (isWeChat) {
-      // uniapp-小程序 发送视频，使用前请将 SDK 升级至v2.11.2或更高版本，将 tim-upload-plugin 升级至v1.0.2或更高版本
+    // 增加 TUIGlobal.chooseMedia 条件限制，防御 uni 打包其他平台小程序时由于打包问题导致 isWeChat 为 true 出现运行时报错
+    if (isWeChat && TUIGlobal?.chooseMedia) {
       // 微信小程序从基础库 2.21.0 开始， wx.chooseVideo 停止维护，请使用 uni.chooseMedia 代替
       TUIGlobal?.chooseMedia({
         mediaType: ["video"], // 视频
@@ -135,6 +136,7 @@ const sendVideoMessage = (file: any) => {
     payload: {
       file,
     },
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   TUIChatService.sendVideoMessage(options);
 };

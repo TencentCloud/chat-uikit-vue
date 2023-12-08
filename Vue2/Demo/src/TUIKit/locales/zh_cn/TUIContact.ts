@@ -31,6 +31,7 @@ const TUIContact = {
   "新的联系人": "新的联系人",
   "黑名单": "黑名单",
   "无搜索结果": "无搜索结果",
+  "客服号": "客服号",
 }
 
 export default TUIContact;

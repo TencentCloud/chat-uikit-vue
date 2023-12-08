@@ -2,10 +2,9 @@
   <div class="message-bubble">
     <!-- todo 统一组件处理-->
     <div class="message-bubble-main-content" :class="[message.flow === 'in' ? '' : 'reverse']">
-      <img
-        class="message-avatar"
-        :src="message.avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-        onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+      <Avatar
+        useSkeletonAnimation
+        :url="message.avatar"
       />
       <main class="message-body">
         <div
@@ -59,18 +58,11 @@
         :height="'15px'"
       ></Icon>
       <!-- 已读 & 未读 -->
-      <div
-        v-if="
-          message.conversationType === 'C2C' &&
-          message.flow === 'out' &&
-          message.status === 'success'
-        "
-        class="message-label"
-        :class="[!message.isPeerRead && 'unRead']"
-      >
-        <span v-if="!message.isPeerRead">未读</span>
-        <span v-else>已读</span>
-      </div>
+      <ReadStatus
+        class="align-self-bottom"
+        :message="shallowCopyMessage(message)"
+        @openReadUserPanel="openReadUserPanel"
+      />
     </div>
     <!-- 消息附加区域 -->
     <div class="message-bubble-extra-content" :class="message.flow === 'in' || 'reverse'">
@@ -88,8 +80,11 @@ import TUIChatEngine, {
   IMessageModel,
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
+import ReadStatus from "./read-status/index.vue";
 import MessageQuote from "./message-quote/index.vue";
+import Avatar from "../../../common/Avatar/index.vue";
 import loadingIcon from "../../../../assets/icon/loading.png";
+import { shallowCopyMessage } from "../../utils/utils";
 
 interface IProps {
   messageItem: IMessageModel;
@@ -98,8 +93,9 @@ interface IProps {
 }
 
 interface IEmits {
-  (e: "resendMessage"): void;
-  (e: "blinkMessage", messageID: string): void;
+  (e: 'resendMessage'): void;
+  (e: 'blinkMessage', messageID: string): void;
+  (e: 'setReadReciptPanelVisible', visible: boolean, message?: IMessageModel): void;
   // 下面的方法是 uniapp 专属
   (e: "scrollTo", scrollHeight: number): void;
 }
@@ -107,7 +103,7 @@ interface IEmits {
 const emits = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  messageItem: () => ({} as IMessageModel),
+  messageItem: () => ({}) as IMessageModel,
   content: () => ({}),
   blinkMessageIDList: () => [],
 });
@@ -162,6 +158,10 @@ function blinkMessage(messageID: string) {
 function scrollTo(scrollHeight: number) {
   emits("scrollTo", scrollHeight);
 }
+
+function openReadUserPanel() {
+  emits("setReadReciptPanelVisible", true, message.value);
+}
 </script>
 
 <style lang="scss" scoped>
@@ -173,9 +173,10 @@ function scrollTo(scrollHeight: number) {
 
 .message-bubble {
   width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  padding-bottom: 5px;
+  padding: 0 20px 25px;
 
   .message-bubble-main-content {
     display: flex;
@@ -315,10 +316,6 @@ function scrollTo(scrollHeight: number) {
         animation: circleLoading 2s linear 1s infinite;
       }
 
-      &.unRead {
-        color: #679ce1;
-      }
-
       @keyframes circleLoading {
         0% {
           transform: rotate(0);
@@ -330,6 +327,10 @@ function scrollTo(scrollHeight: number) {
           transform: rotate(360deg);
         }
       }
+    }
+
+    .align-self-bottom {
+      align-self: flex-end;
     }
   }
 

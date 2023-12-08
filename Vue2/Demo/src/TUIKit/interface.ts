@@ -151,6 +151,7 @@ export interface IContactList {
   blackList: IContactListItem;
   groupList: IContactListItem;
   friendList: IContactListItem;
+  [key:string]: IContactListItem;
 }
 
 export interface IContactSearchResult {

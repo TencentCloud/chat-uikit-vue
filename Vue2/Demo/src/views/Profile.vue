@@ -174,14 +174,7 @@ import TUIChatEngine, {
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { TUILogin } from "@tencentcloud/tui-core";
-import {
-  ref,
-  watch,
-  nextTick,
-  defineProps,
-  defineEmits,
-  onMounted,
-} from "../TUIKit/adapter-vue";
+import { ref, watch, nextTick, onMounted } from "../TUIKit/adapter-vue";
 import { Toast, TOAST_TYPE } from "../TUIKit/components/common/Toast/index";
 import BottomPopup from "../TUIKit/components/common/BottomPopup/index.vue";
 import Icon from "../TUIKit/components/common/Icon.vue";
@@ -191,6 +184,7 @@ import { IUserProfile } from "../TUIKit/interface";
 import { isPC } from "../TUIKit/utils/env";
 import router from "../router/index";
 
+// eslint-disable-next-line
 const props = defineProps({
   displayType: {
     type: String,
@@ -201,6 +195,7 @@ const props = defineProps({
     default: false,
   },
 });
+// eslint-disable-next-line
 const emits = defineEmits(["update:showSetting"]);
 const settingDomRef = ref();
 const userProfile = ref<IUserProfile>({});
@@ -264,6 +259,34 @@ const settingList = ref<{
       },
     },
   },
+  displayMessageReadReceipt: {
+    value: "displayMessageReadReceipt",
+    label: "启用已读回执",
+    selectedChild: "userLevelReadReceiptOpen",
+    childrenShowType: "bottomPopup",
+    showChildren: false,
+    onClick(item: any) {
+      if (!isPC) {
+        item.showChildren = true;
+      }
+    },
+    children: {
+      userLevelReadReceiptOpen: {
+        value: "userLevelReadReceiptOpen",
+        label: "是",
+        onClick() {
+          switchEnabelUserLevelReadRecript(true);
+        }
+      },
+      userLevelReadReceiptClose: {
+        value: "userLevelReadReceiptClose",
+        label: "否",
+        onClick() {
+          switchEnabelUserLevelReadRecript(false);
+        }
+      }
+    }
+  },
   exit: {
     value: "exit",
     label: "退出登录",
@@ -299,12 +322,16 @@ const updateMyProfile = (props: object) => {
 };
 
 TUIStore.watch(StoreName.USER, {
-  userProfile: (userProfileData: IUserProfile) => {
+  userProfile(userProfileData: IUserProfile) {
     userProfile.value = userProfileData;
     if (userProfile?.value?.allowType) {
       settingList.value.allowType.selectedChild = userProfile?.value?.allowType;
     }
   },
+  displayMessageReadReceipt(isDisplay: boolean) {
+    settingList.value.displayMessageReadReceipt.selectedChild
+      = isDisplay ? "userLevelReadReceiptOpen" : "userLevelReadReceiptClose";
+  }
 });
 
 // pc端
@@ -356,6 +383,10 @@ onMounted(() => {
     userProfile.value = res.data;
   });
 });
+
+function switchEnabelUserLevelReadRecript(status: boolean) {
+  TUIStore.update(StoreName.USER, "displayMessageReadReceipt", status);
+}
 </script>
 
 <style lang="scss" scoped src="../styles/profile/index.scss"></style>

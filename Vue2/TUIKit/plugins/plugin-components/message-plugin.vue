@@ -1,34 +1,48 @@
 <template>
-  <!-- 以下为以messageTip形式展示 -->
-  <div v-if="showStyle === 'tip'" class="message-plugin-tip">
-    <MessageCallGroup
-      :message="messageModel"
-      :signalingInfo="messageSignalingInfo"
-      :customContent="messageCustomContent"
-      :blinkMessageIDList="props.blinkMessageIDList"
-    ></MessageCallGroup>
-  </div>
-  <!-- 以下为以messageBubble形式展示 -->
-  <div
-    v-else-if="showStyle === 'bubble'"
-    class="message-plugin-bubble-content"
-    @longpress="handleToggleMessageItem($event, messageModel, true)"
-    @click.prevent.right="handleToggleMessageItem($event, messageModel)"
-    @touchstart="handleH5LongPress($event, messageModel, 'touchstart')"
-    @touchend="handleH5LongPress($event, messageModel, 'touchend')"
-    @mouseover="handleH5LongPress($event, messageModel, 'touchend')"
-  >
-    <messageBubble
-      :messageItem="messageModel"
-      :blinkMessageIDList="props.blinkMessageIDList"
-      @resendMessage="resendMessage(messageModel)"
-    >
-      <MessageCallC2C
-        :message="messageModel"
-        :signalingInfo="messageSignalingInfo"
-        :customContent="messageCustomContent"
-      ></MessageCallC2C>
-    </messageBubble>
+  <div class="message-plugin">
+    <template v-if="isCustomerServicePluginMessage(messageModel)">
+      <messageBubble
+        v-if="!isMessageInvisible(messageModel)"
+        :messageItem="messageModel"
+        :blinkMessageIDList="props.blinkMessageIDList"
+        @resendMessage="resendMessage(messageModel)"
+      >
+        <TUICustomerServicePlugin :message="messageModel" />
+      </messageBubble>
+    </template>
+    <template v-else>
+      <!-- 以下为以messageTip形式展示 -->
+      <div v-if="showStyle === 'tip'" class="message-plugin-tip">
+        <MessageCallGroup
+          :message="messageModel"
+          :signalingInfo="messageSignalingInfo"
+          :customContent="messageCustomContent"
+          :blinkMessageIDList="props.blinkMessageIDList"
+        ></MessageCallGroup>
+      </div>
+      <!-- 以下为以messageBubble形式展示 -->
+      <div
+        v-else-if="showStyle === 'bubble'"
+        class="message-plugin-bubble-content"
+        @longpress="handleToggleMessageItem($event, messageModel, true)"
+        @click.prevent.right="handleToggleMessageItem($event, messageModel)"
+        @touchstart="handleH5LongPress($event, messageModel, 'touchstart')"
+        @touchend="handleH5LongPress($event, messageModel, 'touchend')"
+        @mouseover="handleH5LongPress($event, messageModel, 'touchend')"
+      >
+        <messageBubble
+          :messageItem="messageModel"
+          :blinkMessageIDList="props.blinkMessageIDList"
+          @resendMessage="resendMessage(messageModel)"
+        >
+          <MessageCallC2C
+            :message="messageModel"
+            :signalingInfo="messageSignalingInfo"
+            :customContent="messageCustomContent"
+          ></MessageCallC2C>
+        </messageBubble>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -39,6 +53,8 @@ import { computed } from "../../adapter-vue";
 import messageBubble from "../../components/TUIChat/message-list/message-elements/message-bubble.vue";
 import MessageCallGroup from "./message-call/message-call-group.vue";
 import MessageCallC2C from "./message-call/message-call-c2c.vue";
+import TUICustomerServicePlugin from "@tencentcloud/tui-customer-service-plugin/index.vue";
+import { isCustomerServicePluginMessage, isMessageInvisible } from "@tencentcloud/tui-customer-service-plugin";
 
 interface IProps {
   message: IMessageModel;

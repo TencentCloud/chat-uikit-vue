@@ -44,7 +44,7 @@ TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: IConversationModel) => {
     const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
     if (isGroup && currentConversation.value?.conversationID !== conversation?.conversationID) {
-      extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: isGroup });
+      extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: !isGroup });
     }
     if (!isGroup) {
       extensions.value = [];

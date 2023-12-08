@@ -455,13 +455,11 @@ const navigateToChatPosition = (message: IMessageModel) => {
     // 切换会话
     TUIConversationService.switchConversation(message?.conversationID).then(() => {
       TUIStore.update(StoreName.CHAT, "messageSource", message);
-      TUIStore.update(StoreName.CUSTOM, "messageHighlight", message);
     });
   } else if (props.searchType === "conversation") {
     // 会话内搜索，关闭 search container
     TUIStore.update(StoreName.CUSTOM, "isShowInConversationSearch", false);
     TUIStore.update(StoreName.CHAT, "messageSource", message);
-    TUIStore.update(StoreName.CUSTOM, "messageHighlight", message);
   }
 };
 

@@ -7,6 +7,7 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import { isEnabledMessageReadReceiptGlobal } from "../utils/utils";
 import { ITipTapEditorContent } from "../../../interface";
 
 export const sendMessageErrorCodeMap: Map<number, string> = new Map([
@@ -19,6 +20,11 @@ export const sendMessageErrorCodeMap: Map<number, string> = new Map([
   [80004, "消息中图片存在敏感内容,发送失败"],
 ]);
 
+/**
+ * 该函数仅处理 Text TextAt Image Video File 五种消息类型
+ * @param messageList
+ * @param currentConversation
+ */
 export const sendMessages = async (
   messageList: ITipTapEditorContent[],
   currentConversation: IConversationModel
@@ -29,27 +35,29 @@ export const sendMessages = async (
   }
   messageList?.forEach(async (content: ITipTapEditorContent) => {
     try {
-      const options = {
+      const textMessageContent = JSON.parse(JSON.stringify(content?.payload?.text));
+      const options: SendMessageParams = {
         to: currentConversation?.groupProfile?.groupID || currentConversation?.userProfile?.userID,
-        conversationType: currentConversation?.type,
+        conversationType: currentConversation?.type as any,
         payload: {},
-      } as SendMessageParams;
+        needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+      };
       // handle message typing
       switch (content?.type) {
         case "text":
           // 禁止发送空消息
-          if (!JSON.parse(JSON.stringify(content?.payload?.text))) {
+          if (!textMessageContent) {
             break;
           }
           if (content?.payload?.atUserList) {
             options.payload = {
-              text: JSON.parse(JSON.stringify(content?.payload?.text)),
+              text: textMessageContent,
               atUserList: content?.payload?.atUserList,
             };
             await TUIChatService?.sendTextAtMessage(options);
           } else {
             options.payload = {
-              text: JSON.parse(JSON.stringify(content?.payload?.text)),
+              text: textMessageContent,
             };
             await TUIChatService?.sendTextMessage(options);
           }
