@@ -61,24 +61,24 @@
 
 <script lang="ts" setup>
 import { watchEffect, ref } from "../../../../adapter-vue";
+import { TUITranslateService, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import { isUrl, JSONToObject } from "../../../../utils/index";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { ICustomMessagePayload } from "../../../../interface";
 import Icon from "../../../common/Icon.vue";
 import star from "../../../../assets/icon/star-light.png";
-import { ICustomMessagePayload } from "../../../../interface";
-const props = defineProps({
-  content: {
-    type: Object,
-    default: () => ({}),
-  },
-  messageItem: {
-    type: Object,
-    default: () => ({}),
-  },
-});
+interface Props {
+  messageItem: IMessageModel;
+  content: any;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  messageItem: undefined,
+  content: undefined,
+})
+
 const custom = ref();
-const message = ref();
+const message = ref<IMessageModel>();
 const extension = ref();
 const isCustom = ref<ICustomMessagePayload>({
   businessID: "",

@@ -103,7 +103,6 @@ import TUIChatEngine, {
   StoreName,
   TUIConversationService,
 } from "@tencentcloud/chat-uikit-engine";
-import { IConversationModel } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
 import ActionsMenu from "../actions-menu/index.vue";
 import muteIcon from "../../../assets/icon/mute.svg";

@@ -106,6 +106,7 @@ import starIcon from "../../../../assets/icon/star.png";
 import starLightIcon from "../../../../assets/icon/star-light.png";
 import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
 import { isPC, isH5, isApp, isUniFrameWork } from "../../../../utils/env";
+import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 
 const props = defineProps({
   starTotal: {
@@ -173,6 +174,7 @@ const submitEvaluate = () => {
       description: "对本次的服务评价",
       extension: "对本次的服务评价",
     },
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   };
   TUIChatService.sendCustomMessage(options);
   // 提交后关闭 dialog

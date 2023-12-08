@@ -28,7 +28,8 @@ const TUIContact = {
   "您已是群成员": "You are already a group member",
   "新的联系人": "New Contact",
   "黑名单": "Black List",
-  "无搜索结果": "No Result"
+  "无搜索结果": "No Result",
+  "客服号": "Customer",
 }
 
 export default TUIContact;

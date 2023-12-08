@@ -68,6 +68,7 @@ import { EMOJI_TYPE } from ".././../../../constant";
 import Icon from "../../../common/Icon.vue";
 import faceIcon from "../../../../assets/icon/face.png";
 import { isPC, isUniFrameWork } from "../../../../utils/env";
+import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 
 const emits = defineEmits(["insertEmoji", "onClose", "sendMessage"]);
 const list = ref<IEmojiList>(emojiList);
@@ -127,6 +128,7 @@ const sendFaceMessage = (index: number, listItem: IEmojiListItem) => {
       index: listItem.index,
       data: listItem.list[index],
     },
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   TUIChatService.sendFaceMessage(options);
 };

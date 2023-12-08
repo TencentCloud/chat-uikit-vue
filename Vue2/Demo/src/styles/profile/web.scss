@@ -56,17 +56,14 @@
         font-size: 14px;
         display: flex;
         flex-direction: row;
-        justify-content: center;
         justify-content: space-between;
+        align-items: center;
         flex: 1;
       }
       &-children {
         display: none;
         position: absolute;
         left: 100%;
-        top: 0;
-        height: fit-content;
-        width: fit-content;
         min-width: 167px;
         border-radius: 0 4px 4px 0;
         bottom: 10px;

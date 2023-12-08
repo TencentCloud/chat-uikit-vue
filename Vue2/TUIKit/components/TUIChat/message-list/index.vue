@@ -52,7 +52,7 @@
               @blinkMessage="blinkMessage"
             />
             <div
-              v-else-if="!item.isRevoked && !isSignalingMessage(item)"
+              v-else-if="!item.isRevoked && !isPluginMessage(item)"
               @longpress="handleToggleMessageItem($event, item, true)"
               @click.prevent.right="handleToggleMessageItemForPC($event, item)"
               @touchstart="handleH5LongPress($event, item, 'touchstart')"
@@ -65,6 +65,7 @@
                 :blinkMessageIDList="blinkMessageIDList"
                 @resendMessage="resendMessage(item)"
                 @blinkMessage="blinkMessage"
+                @setReadReciptPanelVisible="setReadReciptPanelVisible"
               >
                 <MessageText
                   v-if="item.type === TYPES.MSG_TEXT"
@@ -117,7 +118,7 @@
               </MessageBubble>
             </div>
             <MessagePlugin
-              v-else-if="!item.isRevoked"
+              v-else-if="!item.isRevoked && isPluginMessage(item)"
               :message="item"
               :blinkMessageIDList="blinkMessageIDList"
               @resendMessage="resendMessage"
@@ -140,11 +141,12 @@
             />
           </div>
         </li>
-        <div v-if="isShowJumpToLatest" class="to-bottom-tip" @click="jumpToLatestMessage">
-          <Icon :file="doubleArrowIcon" width="10px" height="10px"></Icon>
-          <div class="to-bottom-tip-text">{{ TUITranslateService.t("TUIChat.回到最新位置") }}</div>
-        </div>
       </ul>
+      <!-- 滚动按钮 -->
+      <ScrollButton
+        ref="scrollButtonInstanceRef"
+        @scrollToLatestMessage="scrollToLatestMessage"
+      />
       <Dialog
         v-if="reSendDialogShow"
         class="resend-dialog"
@@ -173,6 +175,12 @@
         @toggleApplicationList="toggleApplicationList"
         @handleGroupApplication="handleGroupApplication"
       ></MessageGroupSystem>
+      <!-- 已读回执用户列表面板 -->
+      <ReadReciptPanel
+        v-if="isShowReadUserStatusPanel"
+        :message="Object.assign({}, readStatusMessage)"
+        @setReadReciptPanelVisible="setReadReciptPanelVisible"
+      />
     </div>
   </div>
 </template>
@@ -188,7 +196,7 @@ import TUIChatEngine, {
   TUIGroupService,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-
+import { throttle } from "lodash";
 import Link from "./link";
 import MessageText from "./message-elements/message-text.vue";
 import MessageImage from "./message-elements/message-image.vue";
@@ -204,16 +212,18 @@ import MessageVideo from "./message-elements/message-video.vue";
 import MessageTool from "./message-tool/index.vue";
 import MessageRevoked from "./message-tool/message-revoked.vue";
 import MessagePlugin from "../../../plugins/plugin-components/message-plugin.vue";
+import ScrollButton from "./scroll-button/index.vue";
+import ReadReciptPanel from "./read-receipt-panel/index.vue";
+import { isPluginMessage } from "../../../plugins/plugin-components/index";
 import MessageGroupSystem from "./message-elements/message-group-system.vue";
 import Dialog from "../../common/Dialog/index.vue";
 import ImagePreviewer from "../../common/ImagePreviewer/index.vue";
 import ProgressMessage from "../../common/ProgressMessage/index.vue";
-import Icon from "../../common/Icon.vue";
-import doubleArrowIcon from "../../../assets/icon/double-arrow.svg";
 import { isCreateGroupCustomMessage } from "../utils/utils";
 import { IGroupApplicationListItem } from "../../../interface";
 import { getBoundingClientRect, getScrollInfo } from "../../../utils/universal-api/domOperation";
 import { isPC, isH5 } from "../../../utils/env";
+import { isEnabledMessageReadReceiptGlobal } from "../utils/utils";
 
 interface ScrollConfig {
   scrollToMessage?: IMessageModel;
@@ -235,6 +245,7 @@ const props = defineProps({
     default: false,
   },
 });
+let observer: IntersectionObserver | null = null;
 const messageListRef = ref<HTMLElement>();
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
 const messageList = ref<Array<IMessageModel>>();
@@ -254,11 +265,10 @@ const applicationUserIDList = ref<Array<string>>([]);
 const messageTarget = ref<IMessageModel>();
 const messageElementListRef = ref<Array<HTMLElement> | null>();
 const blinkMessageIDList = ref<string[]>([]);
+const scrollButtonInstanceRef = ref<InstanceType<typeof ScrollButton>>();
+const isShowReadUserStatusPanel = ref<boolean>(false);
+const readStatusMessage = ref<IMessageModel>();
 const beforeHistoryGetScrollHeight = ref<number>(0);
-
-const isSignalingMessage = (message: IMessageModel) => {
-  return message?.type === TYPES.value.MSG_CUSTOM && message?.getSignalingInfo();
-};
 
 // 图片预览相关
 const showImagePreview = ref(false);
@@ -285,7 +295,6 @@ onMounted(() => {
   // 当前 ConversationID
   TUIStore.watch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,
-    currentConversation: onCurrentConversationUpdated,
   });
 
   // 群未决消息列表
@@ -299,6 +308,11 @@ onMounted(() => {
   });
 });
 
+// 绑定监听滚动事件 展示scroll-button
+onMounted(() => {
+  messageListRef.value?.addEventListener("scroll", handelScrollListScroll);
+});
+
 // 取消监听
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CHAT, {
@@ -306,29 +320,21 @@ onUnmounted(() => {
     messageSource: onMessageSourceUpdated,
     isCompleted: isCompletedUpdated,
   });
+
   TUIStore.unwatch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,
     currentConversation: onCurrentConversationUpdated,
   });
+
   TUIStore.unwatch(StoreName.GRP, {
     groupSystemNoticeList: onGroupSystemNoticeList,
   });
-  TUIStore.unwatch(StoreName.CUSTOM, {
-    groupApplicationCount: groupApplicationCountUpdated,
-  });
-});
 
-const isShowJumpToLatest = computed((): boolean => {
-  const lastSuccessMessageIndex = allMessageList.value?.findLastIndex(
-    (message: IMessageModel) => message.status === "success"
-  );
-  return (
-    lastSuccessMessageIndex &&
-    allMessageList?.value[lastSuccessMessageIndex]?.time < currentLastMessageTime?.value
-  );
+  messageListRef.value?.removeEventListener("scroll", handelScrollListScroll);
 });
 
 async function onMessageListUpdated(list: Array<IMessageModel>) {
+  observer?.disconnect();
   const oldLastMessage = currentLastMessage.value;
   allMessageList.value = list;
   messageList.value = list.filter((message) => !message.isDeleted);
@@ -358,6 +364,9 @@ async function onMessageListUpdated(list: Array<IMessageModel>) {
     await scrollToPosition({ scrollToBottom: true });
   }
   currentLastMessage.value = Object.assign({}, newLastMessage);
+  if (isEnabledMessageReadReceiptGlobal()) {
+    nextTick(() => bindIntersectionObserver());
+  }
 }
 
 async function scrollToPosition(config: ScrollConfig = {}): Promise<void> {
@@ -561,12 +570,6 @@ const resendMessageConfirm = () => {
   messageModel.resendMessage();
 };
 
-// 回到最新消息
-const jumpToLatestMessage = () => {
-  TUIStore.update(StoreName.CHAT, "messageSource", undefined);
-  blinkMessageIDList.value = [];
-};
-
 function blinkMessage(messageID: string): Promise<void> {
   return new Promise((resolve) => {
     const index = blinkMessageIDList.value.indexOf(messageID);
@@ -583,12 +586,77 @@ function blinkMessage(messageID: string): Promise<void> {
 
 // 滚动到最新消息
 async function scrollToLatestMessage() {
-  const { scrollHeight } = await getScrollInfo("#messageScrollList");
-  const { height } = await getBoundingClientRect("#messageScrollList");
-  const messageListDom = document.querySelector("#messageScrollList");
-  if (messageListDom) {
-    messageListDom.scrollTop = scrollHeight - height;
+  const { scrollHeight } = await getScrollInfo('#messageScrollList');
+  const { height } = await getBoundingClientRect('#messageScrollList');
+  if (messageListRef.value) {
+    messageListRef.value.scrollTop = scrollHeight - height;
   }
+}
+
+const handelScrollListScroll = throttle(function(e: Event) {
+  scrollButtonInstanceRef.value?.judgeScrollOverOneScreen(e);
+}, 150, {leading: true});
+
+function bindIntersectionObserver() {
+  // TODO 如果不是旗舰 or 没有scrollListDom return false
+  if (messageList.value.length === 0) {
+    return;
+  }
+  const mappingFromIDToMessage: Record<string, {
+    msgDom: HTMLElement,
+    msgModel: IMessageModel | undefined
+  }> = {};
+
+  observer?.disconnect();
+  observer = new IntersectionObserver((entries, _) => {
+    entries.forEach((entry) => {
+      const { isIntersecting, target } = entry;
+      if (isIntersecting) {
+        const {msgDom, msgModel} = mappingFromIDToMessage[target.id];
+        if (msgModel && !msgModel.readReceiptInfo?.isPeerRead) {
+          TUIChatService.sendMessageReadReceipt([msgModel]);
+          observer?.unobserve(msgDom);
+        }
+      }
+    });
+  }, {
+    root: messageListRef.value,
+    threshold: 0.7
+  });
+
+  const arrayOfMessageLi = messageListRef.value?.querySelectorAll('.message-li');
+  if (arrayOfMessageLi) {
+    for (let i = 0; i < arrayOfMessageLi?.length; ++i) {
+      const messageElement = arrayOfMessageLi[i] as HTMLElement;
+      const matchingMessage = messageList.value.find((message: IMessageModel) => {
+        return messageElement.id.slice(4) === message.ID;
+      });
+      if (
+        matchingMessage
+        && matchingMessage.needReadReceipt
+        && matchingMessage.flow === 'in'
+      ) {
+        mappingFromIDToMessage[messageElement.id] = {
+          msgDom: messageElement,
+          msgModel: matchingMessage,
+        };
+        observer?.observe(messageElement);
+      }
+    }
+  }
+}
+
+const isSignalingMessage = (message: IMessageModel) => {
+  return message?.type === TYPES.value.MSG_CUSTOM && message?.getSignalingInfo();
+};
+
+function setReadReciptPanelVisible(visible: boolean, message?: IMessageModel) {
+  if (!visible) {
+    readStatusMessage.value = undefined;
+  } else {
+    readStatusMessage.value = message;
+  }
+  isShowReadUserStatusPanel.value = visible;
 }
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

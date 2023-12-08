@@ -8,10 +8,12 @@
     @click="click"
     @tap="tap"
   >
-    <slot></slot>
+    <div @click.stop="innerContentClick">
+      <slot></slot>
+    </div>
   </div>
 </template>
-  
+
 <script setup lang="ts">
 export interface IOverlayProps {
   zIndex?: number;
@@ -22,17 +24,19 @@ import { withDefaults } from '../../../adapter-vue';
 
 const emits = defineEmits(['clickHandler', 'touchHandler'])
 
-const props = withDefaults(
-  defineProps<IOverlayProps>(),
-  {
-    zIndex: 9999,
-    bgColor: 'rgba(0, 0, 0, 0.6)'
-  }
-);
+const props = withDefaults(defineProps<IOverlayProps>(), {
+  zIndex: 9999,
+  bgColor: 'rgba(0, 0, 0, 0.6)'
+});
+
+function innerContentClick(e: Event) {
+  e.stopPropagation();
+}
 
 function click() {
   emits('clickHandler');
 }
+
 function tap() {
   emits('touchHandler');
 }
@@ -45,7 +49,7 @@ function tap() {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0, 0, 0, 0%);
   z-index: 9999;
   display: flex;
   align-items: center;

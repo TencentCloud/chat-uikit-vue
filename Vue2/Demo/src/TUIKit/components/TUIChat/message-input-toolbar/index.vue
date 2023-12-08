@@ -78,6 +78,7 @@ import ToolbarItemContainer from "./toolbar-item-container/index.vue";
 import UserSelector from "./user-selector/index.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isPC, isH5, isApp, isUniFrameWork } from "../../../utils/env";
+import TUIChatConfig from "../config";
 
 const emits = defineEmits(["insertEmoji"]);
 const h5Dialog = ref();
@@ -86,6 +87,25 @@ const isGroup = ref<boolean>(false);
 const selectorShowType = ref<string>("");
 const userSelectorRef = ref();
 const currentUserSelectorExtension = ref<ExtensionInfo>();
+const currentExtensionList = ref<ExtensionInfo>([]);
+
+const getExtensionList = (conversationID:string) => {
+  if (!conversationID) {
+    return currentExtensionList.value = extensionList;
+  }
+  const chatType = TUIChatConfig.getChatType();
+  const options:any = {
+    chatType,
+  }
+  // 向下兼容，callkit 没有chatType 判断时，使用 filterVoice、filterVideo 过滤
+  if (chatType === "customerService") {
+    options.filterVoice = true;
+    options.filterVideo = true;
+  }
+  currentExtensionList.value = [
+    ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, options),
+  ];
+}
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: IConversationModel) => {
@@ -95,6 +115,7 @@ TUIStore.watch(StoreName.CONV, {
     } else {
       isGroup.value = false;
     }
+    getExtensionList(conversation?.conversationID);
   },
 });
 
@@ -106,12 +127,12 @@ const extensionList: Array<ExtensionInfo> = [
 // 按展示位置分类 extensionList （注意：仅 web 端 区分展示位置在 从 start 开始和 从 end 开始，在移动端不生效）
 const extensionListShowInStart = computed(
   (): Array<ExtensionInfo> =>
-    isPC ? extensionList.filter((extension: ExtensionInfo) => extension?.data?.name !== "search") : extensionList
+    isPC ? currentExtensionList.value.filter((extension: ExtensionInfo) => extension?.data?.name !== "search") : currentExtensionList.value
 );
 
 const extensionListShowInEnd = computed(
   (): Array<ExtensionInfo> =>
-    isPC ? [extensionList.find((extension: ExtensionInfo) => extension?.data?.name === "search")] : []
+    isPC ? [currentExtensionList.value.find((extension: ExtensionInfo) => extension?.data?.name === "search")] : []
 );
 
 // handle extensions onclick

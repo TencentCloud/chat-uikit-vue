@@ -51,7 +51,7 @@ const quoteContent = computed<IQuoteContent | undefined>(() => {
   try {
     const cloudCustomData: ICloudCustomData = JSON.parse(props.message?.cloudCustomData || "{}");
     return cloudCustomData.messageReply;
-  } catch {
+  } catch (error) {
     return undefined;
   }
 });

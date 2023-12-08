@@ -11,7 +11,7 @@
     ></Transfer>
   </Overlay>
 </template>
-    
+
 <script lang="ts" setup>
 import { onUnmounted, ref } from "../../../adapter-vue";
 import {
@@ -20,12 +20,12 @@ import {
   TUIChatService,
   TUITranslateService,
   IConversationModel,
-  IMessageModel
 } from "@tencentcloud/chat-uikit-engine";
 import Overlay from "../../common/Overlay/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
 import { Toast, TOAST_TYPE } from "../../../components/common/Toast";
 import { isPC, isUniFrameWork } from "../../../utils/env";
+import { isEnabledMessageReadReceiptGlobal } from "../utils/utils";
 
 const isShowForwardPanel = ref(false);
 const customConversationList = ref();
@@ -66,7 +66,7 @@ function openForwardPanel(): void {
   isShowForwardPanel.value = true;
 }
 
-function finishSelected(selectedConvIDWrapperList: Array<{userID: string}>): void {
+function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): void {
   /**
    * 这里传递的是 coversationID
    * 但为了实现 Transfer 的复用 这里用 userID 代替 ConversationID
@@ -75,26 +75,27 @@ function finishSelected(selectedConvIDWrapperList: Array<{userID: string}>): voi
     const { userID: conversationID } = convIDWrapper;
     return TUIStore.getConversationModel(conversationID);
   });
-  const singleForwardMessageID: string = TUIStore.getData(StoreName.CUSTOM, 'singleForwardMessageID');
+  const singleForwardMessageID: string = TUIStore.getData(StoreName.CUSTOM, "singleForwardMessageID");
   const message = TUIStore.getMessageModel(singleForwardMessageID);
-  TUIChatService.sendForwardMessage(selectedConversationList, [message])
-    .catch((error: {message: string, code: number}) => {
-      if (error.code === 80001) {
-        Toast({
-          message: TUITranslateService.t('内容包含敏感词汇'),
-          type: TOAST_TYPE.ERROR
-        });
-      } else {
-        Toast({
-          message: error.message as string,
-          type: TOAST_TYPE.ERROR
-        });
-      }
-    });
+  TUIChatService.sendForwardMessage(selectedConversationList, [message], {
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+  } as any).catch((error: { message: string; code: number }) => {
+    if (error.code === 80001) {
+      Toast({
+        message: TUITranslateService.t("内容包含敏感词汇"),
+        type: TOAST_TYPE.ERROR,
+      });
+    } else {
+      Toast({
+        message: error.message as string,
+        type: TOAST_TYPE.ERROR,
+      });
+    }
+  });
   closeForwardPanel();
 }
 
-function onSubmit(convIDWrapperList: Array<{userID: string}>) {
+function onSubmit(convIDWrapperList: Array<{ userID: string }>) {
   if (convIDWrapperList?.length === 0) return;
   finishSelected(convIDWrapperList);
 }

@@ -392,7 +392,7 @@ const generateButton = () => {
 
 // 总: 当前联系人信息页数据源获取
 TUIStore.watch(StoreName.CUSTOM, {
-  currentContactInfo: async (data: object) => {
+  currentContactInfo: async (data: any) => {
     // 去重
     if (
       contactInfoData.value &&
@@ -413,6 +413,16 @@ TUIStore.watch(StoreName.CUSTOM, {
     isBothFriend.value = await isFriend(contactInfoData.value);
     generateMoreInfo();
     generateButton();
+    if (data.infoKeyList) {
+      contactInfoMoreList.value = data.infoKeyList.map((key: string) => {
+        return (contactMoreInfoConfig as any)[key];
+      })
+    }
+    if (data.btnKeyList) {
+      contactInfoButtonList.value = data.btnKeyList.map((key: string) => {
+        return (contactButtonConfig as any)[key];
+      })
+    }
   },
 });
 </script>

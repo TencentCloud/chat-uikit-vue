@@ -28,10 +28,10 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
-import { isPC, isUniFrameWork } from "../../../../utils/env";
-
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import fileIcon from "../../../../assets/icon/files.png";
+import { isPC, isUniFrameWork } from "../../../../utils/env";
+import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 
 const emits = defineEmits(["close"]);
 
@@ -65,6 +65,7 @@ const sendFileMessage = (e: any) => {
     payload: {
       file: e?.target,
     },
+    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   TUIChatService.sendFileMessage(options);
   e.target.value = "";

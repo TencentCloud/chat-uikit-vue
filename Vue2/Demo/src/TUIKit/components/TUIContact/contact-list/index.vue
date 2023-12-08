@@ -76,8 +76,10 @@ import {
   TUIFriendService,
   Friend,
   FriendApplication,
+  TUIUserService,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, computed } from "../../../adapter-vue";
+import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
+import { ref, computed, onMounted } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import downSVG from "../../../assets/icon/down-icon.svg";
 import rightSVG from "../../../assets/icon/right-icon.svg";
@@ -92,19 +94,23 @@ const currentContactListKey = ref<string>("");
 const currentContactInfo = ref<any>({});
 const contactListMap = ref<IContactList>({
   friendApplicationList: {
+    key: 'friendApplicationList',
     title: "新的联系人",
     list: [] as Array<FriendApplication>,
     unreadCount: 0,
   },
   blackList: {
+    key: 'blackList',
     title: "黑名单",
     list: [] as Array<IBlackListUserItem>,
   },
   groupList: {
+    key: 'groupList',
     title: "我的群聊",
     list: [] as Array<IGroupModel>,
   },
   friendList: {
+    key: 'friendList',
     title: "我的好友",
     list: [] as Array<Friend>,
   },
@@ -117,6 +123,35 @@ const isContactSearchNoResult = computed((): boolean => {
     !contactSearchResult?.value?.user?.list[0] &&
     !contactSearchResult?.value?.group?.list[0]
   );
+});
+
+const tuiContactExtensionList = TUICore.getExtensionList(TUIConstants.TUIContact.EXTENSION.CONTACT_LIST.EXT_ID);
+
+onMounted(() => {
+  if (tuiContactExtensionList.length > 0) {
+    const customerData = tuiContactExtensionList.find((extension:any) => {
+      const { name, accountList = [] } = extension.data || {};
+      return name === 'customer' && accountList.length > 0;
+    });
+    if (customerData) {
+      const { data: { accountList }, text } = customerData;
+      TUIUserService.getUserProfile({userIDList: accountList}).then((res: any) => {
+        if (res.data.length > 0) {
+          const customerList = {
+            title: TUITranslateService.t(`TUIContact.${text}`),
+            list: res.data.map((item: any) => {
+              return {
+                ...item,
+                infoKeyList: [],
+                btnKeyList: ["enterC2CConversation"],
+              }
+            })
+          }
+          contactListMap.value = Object.assign({}, contactListMap.value, { customerList });
+        }
+      })
+    }
+  }
 });
 
 const updateCurrentContactInfoFromList = (list: Array<any>, type: string) => {
