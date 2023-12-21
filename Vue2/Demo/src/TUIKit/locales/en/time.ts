@@ -12,7 +12,26 @@ const time = {
   "星期四": "Thursday",
   "星期五": "Friday",
   "星期六": "Saturday",
-  "星期日": "Sunday"
+  "星期日": "Sunday",
+  "一月": "January",
+  "二月": "February",
+  "三月": "March",
+  "四月": "April",
+  "五月": "May",
+  "六月": "June",
+  "七月": "July",
+  "八月": "August",
+  "九月": "September",
+  "十月": "October",
+  "十一月": "November",
+  "十二月": "December",
+  "一": "Mon",
+  "二": "Tues",
+  "三": "Wed",
+  "四": "Thur",
+  "五": "Fri",
+  "六": "Sat",
+  "日": "Sun",
 }
 
 export default time;

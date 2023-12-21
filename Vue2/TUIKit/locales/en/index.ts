@@ -1,7 +1,6 @@
 import TUIChat from './TUIChat';
 import TUIConversation from './TUIConversation';
 import TUIGroup from './TUIGroup';
-import TUIProfile from './TUIProfile';
 import TUIContact from './TUIContact';
 import TUISearch from './TUISearch';
 
@@ -19,10 +18,11 @@ const messages = {
     系统通知: 'System notification',
     关闭: 'Close',
     确定: 'Save',
+    开始时间: "Start Date",
+    结束时间: "End Date",
     TUIChat,
     TUIConversation,
     TUIGroup,
-    TUIProfile,
     TUIContact,
     message,
     component,

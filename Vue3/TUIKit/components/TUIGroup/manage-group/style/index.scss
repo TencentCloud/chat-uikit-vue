@@ -1,0 +1,40 @@
+@import '../../../../assets/styles/common.scss';
+@import './color.scss';
+@import './web.scss';
+@import './h5.scss';
+
+
+.icon-close {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  position: relative;
+  border-radius: 50%;
+}
+
+.icon-close::before,
+.icon-close::after {
+  content: "";
+  position: absolute;
+  /*方便进行定位*/
+  background-color: #8F959E;
+  height: 16px;
+  width: 2px;
+  top: 50%;
+  left: 50%;
+  margin-top: -8px;
+  margin-left: -1px;
+}
+
+.icon-close::before {
+  transform: rotate(45deg);
+}
+
+.icon-close::after {
+  transform: rotate(-45deg);
+}
+
+.tab-icon {
+  position: absolute;
+  left: 20px;
+}

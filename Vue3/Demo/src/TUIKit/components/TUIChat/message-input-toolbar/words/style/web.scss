@@ -1,0 +1,32 @@
+.words {
+  z-index: 5;
+  width: 315px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  width: 19.13rem;
+  height: 12.44rem;
+  overflow-y: auto;
+  &-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    font-weight: 500;
+  }
+  &-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    &-item {
+      cursor: pointer;
+      padding: 4px 0;
+      font-size: 14px;
+      color: #50545c;
+      line-height: 18px;
+    }
+    &-item:hover {
+      color: #006eff;
+    }
+  }
+}

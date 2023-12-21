@@ -9,16 +9,45 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  align-items: stretch;
   margin: 0;
   padding: 0;
   z-index: 10;
   border-radius: 5px 5px 0 0;
   &-main {
-    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
     height: fit-content;
     background-color: #ffffff;
+    .header {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 20px;
+      font-size: 16px;
+      .header-close {
+        font-family: PingFangSC-Regular;
+        font-weight: 400;
+        color: #006eff;
+        font-size: 18px;
+      }
+    }
+    .footer {
+      padding: 20px;
+      .footer-submit {
+        color: #ffffff;
+        padding: 12px 0px;
+        width: 100%;
+        background: #006eff;
+        text-align: center;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+    }
   }
 }
-.bottom-popup-uni{
+.bottom-popup-uni {
   padding-bottom: var(--window-bottom);
 }

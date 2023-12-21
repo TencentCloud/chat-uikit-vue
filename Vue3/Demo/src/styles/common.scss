@@ -1,0 +1,116 @@
+@import "../TUIKit/assets/styles/common.scss";
+// button
+@mixin btn {
+  border-radius: 5px;
+  padding: 13px 0;
+  cursor: pointer;
+}
+@mixin btn-default {
+  @include btn;
+  background: #006eff;
+  border: 1px solid #006eff;
+  color: #fff;
+}
+@mixin btn-error {
+  @include btn;
+  border: 1px solid #e54545;
+  color: #e54545;
+  background: #fff;
+}
+@mixin btn-normal {
+  @include btn;
+  background: #fff;
+  border: 1px solid #ddd;
+  color: #000;
+}
+
+// flex
+// flex布局 默认 纵向垂直居中水平居中
+@mixin flex($direction: column, $js: center, $al: center) {
+  box-sizing: border-box;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $js;
+  align-items: $al;
+  border: 0px solid black;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+// 文本超出隐藏 ...隐藏文本
+@mixin single-line-ellipsis($width: 100%) {
+  width: $width;
+  overflow: hidden;
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// 文本最多(n)行，超出部分用...表示
+@mixin line($num) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $num;
+  -webkit-box-orient: vertical;
+}
+
+// position居中
+@mixin positionCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.container {
+  @include flex;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  background: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  .box {
+    @include flex;
+    border-radius: 0.5rem;
+    background: #fff;
+    overflow: hidden;
+    color: #000;
+  }
+  .box-h5 {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    border-radius: 0px;
+    justify-content: flex-start;
+    .title {
+      @include flex;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 15px 18px;
+      position: relative;
+      .title-back {
+        position: absolute;
+        left: 18px;
+      }
+      .title-name {
+        font-size: 18px;
+        font-weight: 500;
+        font-family: PingFangSC-Medium;
+      }
+    }
+  }
+}

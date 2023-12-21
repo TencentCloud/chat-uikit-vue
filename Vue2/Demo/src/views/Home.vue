@@ -1,288 +1,165 @@
 <template>
-  <div :class="[isPC ? 'home' : 'home-h5']" :id="isPC ? 'preloadedImages' : ''">
-    <Header class="home-header" v-if="isPC">
-      <template v-slot:right>
-        <el-dropdown>
-          <span class="dropdown">
-            <i class="icon icon-global"></i>
-            <label>{{ TUITranslateService.t("当前语言") }}</label>
-            <i class="icon icon-arrow-down"></i>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item command="zh_cn" class="language-item"
-                >简体中文</el-dropdown-item
-              >
-              <el-dropdown-item command="en" class="language-item">
-                English(敬请期待)
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </template>
-    </Header>
-    <!-- 这里暂时只考虑PC端 -->
-    <div :class="[isPC ? 'menu' : '']" v-if="isPC">
-      <Menu class="home-menu" v-show="false"> </Menu>
+  <div :class="['home', isH5 && 'home-h5']" :id="isPC ? 'preloadedImages' : ''">
+    <div v-show="isMenuShow" class="home-menu">
+      <Menu @closeMenu="toggleMenu(false)"></Menu>
     </div>
-    <main
-      class="home-main"
-      :class="[!isPC ? '' : 'home-main-open']"
-      v-if="isPC"
-    >
-      <div class="home-main-box">
+    <div :class="['home-container', isMenuShow && 'menu-expand']">
+      <div v-if="isPC" class="home-header">
+        <Header
+          :class="[isMenuShow && 'header-menu-show']"
+          showType="menu"
+          :defaultLanguage="locale"
+          @toggleMenu="toggleMenu(!isMenuShow)"
+          @changeLanguage="changeLanguage"
+        ></Header>
+      </div>
+      <div class="home-main">
         <div class="home-TUIKit">
-          <div class="setting">
-            <main class="setting-main">
-              <aside class="userInfo">
-                <img
-                  class="avatar"
-                  src="https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png"
+          <div v-if="isPC || !currentConversationID" class="home-TUIKit-navbar">
+            <NavBar
+              :currentNavBar="currentNavBar"
+              :isSettingShow="isSettingShow"
+              @toggleSettingShow="toggleSettingShow"
+              @switchNavBar="switchNavBar"
+            >
+              <template v-slot:profile>
+                <Profile display-type="profile"></Profile>
+              </template>
+              <template v-slot:setting>
+                <Profile
+                  display-type="setting"
+                  :showSetting="isSettingShow"
+                  @toggleSettingShow="toggleSettingShow"
+                ></Profile>
+              </template>
+            </NavBar>
+          </div>
+          <div v-if="isPC" class="home-TUIKit-main">
+            <div v-show="currentNavBar === 'message'" class="home-TUIKit-main">
+              <div class="home-conversation">
+                <TUISearch searchType="global"></TUISearch>
+                <TUIConversation></TUIConversation>
+              </div>
+              <div class="home-chat">
+                <TUIChat>
+                  <ChatDefaultContent></ChatDefaultContent>
+                </TUIChat>
+                <TUIGroup class="chat-aside" />
+                <TUISearch class="chat-aside" searchType="conversation" />
+              </div>
+              <TUIContact display-type="selectFriend" />
+            </div>
+            <div v-show="currentNavBar === 'relation'" class="home-TUIKit-main">
+              <TUIContact
+                display-type="contactList"
+                @switchConversation="currentNavBar = 'message'"
+              />
+            </div>
+          </div>
+          <div v-else-if="isH5" class="home-TUIKit-main">
+            <div class="home-TUIKit-main" v-if="!currentConversationID">
+              <div v-show="currentNavBar === 'message'" class="home-TUIKit-main">
+                <TUISearch searchType="global"></TUISearch>
+                <TUIConversation></TUIConversation>
+                <TUIContact display-type="selectFriend"></TUIContact>
+              </div>
+              <div v-show="currentNavBar === 'relation'" class="home-TUIKit-main">
+                <TUIContact
+                  display-type="contactList"
+                  @switchConversation="currentNavBar = 'message'"
                 />
-                <div class="userInfo-main">
-                  <Profile></Profile>
-                </div>
-              </aside>
-              <ul class="setting-main-list">
-                <li
-                  class="setting-main-list-item"
-                  :class="[currentTab === 'message' && 'selected']"
-                  @click="selectModel('message')"
-                >
-                  <i
-                    :class="[
-                      'icon',
-                      `icon-message${
-                        currentTab === 'message' ? '-selected' : ''
-                      }`,
-                    ]"
-                  ></i>
-                </li>
-                <li
-                  class="setting-main-list-item"
-                  :class="[currentTab === 'relation' && 'selected']"
-                  @click="selectModel('relation')"
-                >
-                  <i
-                    :class="[
-                      'icon',
-                      `icon-relation${
-                        currentTab === 'relation' ? '-selected' : ''
-                      }`,
-                    ]"
-                  ></i>
-                </li>
-              </ul>
-            </main>
-            <div class="setting-footer">
-              <i class="icon icon-setting" @click="openShowMore"></i>
-              <div class="setting-more" v-if="showMore">
-                <div class="showmore">
-                  <Profile
-                    displayType="setting"
-                    :showSetting="showMore"
-                    @update:showSetting="showMore = false"
-                  ></Profile>
-                </div>
-                <div class="moreMask" @click.self="openShowMore"></div>
+              </div>
+              <div v-show="currentNavBar === 'profile'" class="home-TUIKit-main">
+                <Profile display-type="all" />
               </div>
             </div>
+            <TUIChat v-else></TUIChat>
+            <TUIGroup class="chat-popup" />
+            <TUISearch class="chat-popup" searchType="conversation" />
           </div>
-          <div class="home-TUIKit-main" v-show="currentTab === 'message'">
-            <div class="home-conversation">
-              <TUISearch searchType="global"></TUISearch>
-              <TUIConversation
-                :class="['TUIConversation', !isPC && 'TUIConversation-h5']"
-              ></TUIConversation>
-            </div>
-            <div class="home-chat">
-              <!-- 聊天入口在这里，注意需要当前的 conversationID 才能打开 chat -->
-              <TUIChat :class="['TUIChat', !isPC && 'TUIChat-h5']">
-                <div class="container-default">
-                  <h1>
-                    {{ TUITranslateService.t("Home.欢迎使用") }}
-                    <img class="logo" src="../assets/image/logo.png" alt="" />
-                    {{ TUITranslateService.t("即时通信") }}
-                  </h1>
-                  <p>
-                    {{
-                      TUITranslateService.t(
-                        "Home.我们为您默认提供了一位“示例好友”和一个“示例客服群”您不用额外添加好友和群聊就可完整体验腾讯云 IM 单聊、群聊的所有功能。"
-                      )
-                    }}
-                    <br />
-                    {{ TUITranslateService.t("Home.随时随地") }}
-                  </p>
-                </div>
-              </TUIChat>
-              <TUIGroup class="chat-aside" />
-              <TUISearch class="chat-aside" searchType="conversation" />
-            </div>
-            <TUIContact display-type="selectFriend" />
-          </div>
-          <div
-            :class="[currentTab === 'relation' && 'home-TUIKit-main']"
-            v-show="currentTab === 'relation'"
-          >
-            <TUIContact
-              display-type="contactList"
-              @switchConversation="currentTab = 'message'"
+          <Drag :show="isCalling" domClassName="callkit-drag-container" ref="dragRef">
+            <TUICallKit
+              :class="[
+                'callkit-drag-container',
+                `callkit-drag-container-${isMinimized ? 'mini' : isH5 ? 'h5' : 'pc'}`,
+              ]"
+              :allowedMinimized="true"
+              :allowedFullScreen="false"
+              :beforeCalling="beforeCalling"
+              :afterCalling="afterCalling"
+              :onMinimized="onMinimized"
             />
-          </div>
+          </Drag>
         </div>
       </div>
-    </main>
-    <main class="home-h5-main" v-if="!isPC">
-      <div class="home-h5-main" v-if="!currentConversationID">
-        <main class="home-h5-main" v-if="currentTab === 'message'">
-          <TUISearch searchType="global"></TUISearch>
-          <TUIConversation></TUIConversation>
-          <TUIContact display-type="selectFriend"></TUIContact>
-        </main>
-        <main class="home-h5-main" v-if="currentTab === 'relation'">
-          <TUIContact
-            display-type="contactList"
-            @switchConversation="currentTab = 'message'"
-          />
-        </main>
-        <main class="home-h5-main" v-if="currentTab === 'profile'">
-          <Profile display-type="all" />
-        </main>
-        <footer class="nav">
-          <ul class="nav-list">
-            <li
-              class="nav-list-item"
-              v-for="(item, index) in navList"
-              :key="index"
-              @click.stop="selectModel(item.name)"
-            >
-              <i
-                class="icon"
-                :class="[
-                  'icon-' +
-                    (currentTab === item.name
-                      ? `${item.icon}-selected`
-                      : `${item.icon}-real`),
-                ]"
-              ></i>
-              <label :class="[currentTab === item.name && `selected`]">{{
-                `${item.label}`
-              }}</label>
-            </li>
-          </ul>
-        </footer>
-      </div>
-      <!-- 聊天入口在这里，注意需要当前的 conversationID 才能打开 chat -->
-      <TUIChat
-        :class="['TUIChat', !isPC && 'TUIChat-h5']"
-        v-else
-        @closeChat="closeChat"
-      >
-      </TUIChat>
-      <TUIGroup class="group-h5" />
-      <TUISearch searchType="conversation" />
-    </main>
-    <Drag
-      :show="showCall"
-      :domClassName="
-        !isMinimized ? 'callkit-drag-container' : 'callkit-drag-container-mini'
-      "
-      ref="dragRef"
-    >
-      <TUICallKit
-        :class="[
-          isMinimized && 'callkit-drag-container-mini',
-          !isMinimized && 'callkit-drag-container',
-          !isPC && 'callkit-drag-container-H5',
-        ]"
-        :allowedMinimized="true"
-        :allowedFullScreen="false"
-        :beforeCalling="beforeCalling"
-        :afterCalling="afterCalling"
-        :onMinimized="onMinimized"
-      />
-    </Drag>
+    </div>
   </div>
 </template>
-
 <script setup lang="ts">
-import {
-  TUIStore,
-  StoreName,
-  TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+import { ref, withDefaults, defineProps, defineEmits } from "../TUIKit/adapter-vue";
+import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
 import { TUIChat, TUIConversation, TUIContact, TUIGroup, TUISearch } from "../TUIKit";
-import { ref } from "../TUIKit/adapter-vue";
-import { isPC } from "../TUIKit/utils/env";
 import Header from "../components/Header.vue";
 import Menu from "../components/Menu.vue";
+import NavBar from "../components/NavBar.vue";
 import Profile from "./Profile.vue";
-import { TUICallKit } from "@tencentcloud/call-uikit-vue2";
+import ChatDefaultContent from "../components/ChatDefaultContent.vue";
 import Drag from "../TUIKit/components/common/Drag";
-
-const currentTab = ref("message");
-const currentConversationID = ref("");
-const showMore = ref(false);
-const showCall = ref<boolean>(false);
+import { isPC, isH5 } from "../TUIKit/utils/env";
+import { enableSampleTaskStatus } from "../TUIKit/utils/enableSampleTaskStatus";
+const props = withDefaults(
+  defineProps<{
+    language: string;
+  }>(),
+  {
+    language: "zh",
+  }
+);
+const emits = defineEmits(["changeLanguage"]);
+const locale = ref<string>(props.language);
+const isMenuShow = ref<boolean>(true);
+const currentNavBar = ref<string>("message");
+const currentConversationID = ref<string>("");
+const isCalling = ref<boolean>(false);
 const isMinimized = ref<boolean>(false);
-const dragRef = ref();
-
+const dragRef = ref<typeof Drag>();
+const isSettingShow = ref<boolean>(false);
+// changeLanguage: 语言切换
+function changeLanguage(language: string) {
+  emits("changeLanguage", language);
+}
 TUIStore.watch(StoreName.CONV, {
   currentConversationID: (id: string) => {
     currentConversationID.value = id;
   },
 });
-
-const navList = [
-  {
-    icon: "message",
-    name: "message",
-    label: "消息",
-  },
-  {
-    icon: "relation",
-    name: "relation",
-    label: "通讯录",
-  },
-  {
-    icon: "profile",
-    name: "profile",
-    label: "个人中心",
-  },
-];
-
-const selectModel = (modelName: string) => {
-  currentTab.value = modelName;
-};
-
-const closeChat = (closedConversationID: string) => {
-  console.log(`conversation ${closedConversationID} has been closed.`);
-};
-
-const openShowMore = () => {
-  showMore.value = !showMore.value;
-};
-
-// beforeCalling：在拨打电话前与收到通话邀请前执行
-const beforeCalling = () => {
-  showCall.value = true;
-};
-// afterCalling：结束通话后执行
-const afterCalling = () => {
-  showCall.value = false;
+function toggleMenu(value: boolean) {
+  isMenuShow.value = value;
+}
+// beforeCalling: 通话前执行
+function beforeCalling() {
+  isCalling.value = true;
+  enableSampleTaskStatus("call");
+}
+// afterCalling: 通话后执行
+function afterCalling() {
+  isCalling.value = false;
   isMinimized.value = false;
-};
-// onMinimized：组件切换最小化状态时执行
-const onMinimized = (
-  oldMinimizedStatus: boolean,
-  newMinimizedStatus: boolean
-) => {
+}
+// onMinimized：音视频通话组件切换最小化状态时执行
+function onMinimized(oldMinimizedStatus: boolean, newMinimizedStatus: boolean) {
   isMinimized.value = newMinimizedStatus;
-  dragRef?.value?.positionReset && dragRef?.value?.positionReset();
-};
+  dragRef?.value?.positionReset();
+}
+function toggleSettingShow(value: boolean) {
+  isSettingShow.value = value;
+}
+function switchNavBar(value: string) {
+  currentNavBar.value = value;
+}
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 @import "../styles/home.scss";
-@import "../styles/icon.scss";
 </style>

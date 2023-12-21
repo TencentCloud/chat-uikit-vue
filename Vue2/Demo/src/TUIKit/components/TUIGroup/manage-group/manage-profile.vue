@@ -4,27 +4,27 @@
       <img
         class="avatar"
         :src="
-          userInfoManage.avatar ||
+          userInfoManager.avatar ||
           'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
         "
         onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
       />
       <ul class="list">
-        <h2>{{ userInfoManage.nick || userInfoManage.userID }}</h2>
+        <h2>{{ userInfoManager.nick || userInfoManager.userID }}</h2>
         <li>
           <label>ID：</label>
-          <span>{{ userInfoManage.userID }}</span>
+          <span>{{ userInfoManager.userID }}</span>
         </li>
         <li>
           <label>{{ TUITranslateService.t("TUIContact.个性签名") }}：</label>
-          <span>{{ userInfoManage.selfSignature }}</span>
+          <span>{{ userInfoManager.selfSignature }}</span>
         </li>
       </ul>
     </div>
     <div class="memeber-profile-footer">
       <div
         class="button"
-        @click="enter(userInfoManage.userID, 'C2C')"
+        @click="enter(userInfoManager.userID, 'C2C')"
         v-if="showEnter()"
       >
         {{ TUITranslateService.t("TUIContact.发送消息") }}
@@ -46,29 +46,29 @@
           <img
             class="avatar"
             :src="
-              userInfoManage.avatar ||
+              userInfoManager.avatar ||
               'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
             "
             onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
           />
           <ul class="list">
-            <h1>{{ userInfoManage.nick || userInfoManage.userID }}</h1>
+            <h1>{{ userInfoManager.nick || userInfoManager.userID }}</h1>
             <li>
               <label>ID：</label>
-              <span>{{ userInfoManage.userID }}</span>
+              <span>{{ userInfoManager.userID }}</span>
             </li>
             <li>
               <label
                 >{{ TUITranslateService.t("TUIContact.个性签名") }}：</label
               >
-              <span>{{ userInfoManage.selfSignature }}</span>
+              <span>{{ userInfoManager.selfSignature }}</span>
             </li>
           </ul>
         </div>
         <div class="memeber-profile-footer">
           <div
             class="button"
-            @click="enter(userInfoManage.userID, 'C2C')"
+            @click="enter(userInfoManager.userID, 'C2C')"
             v-if="showEnter()"
           >
             {{ TUITranslateService.t("TUIContact.发送消息") }}
@@ -79,16 +79,18 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {
+import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
   TUIConversationService,
+  TUIFriendService,
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref, watch, watchEffect } from "../../../adapter-vue";
 import { IUserProfile } from "../../../interface";
 import { isUniFrameWork } from "../../../utils/env";
+import { TUIGlobal } from "../../../utils/universal-api"
 
 const props = defineProps({
   userInfo: {
@@ -98,10 +100,10 @@ const props = defineProps({
 });
 
 const isFriendShip = ref(false);
-const userInfoManage = ref<IUserProfile>({});
+const userInfoManager = ref<IUserProfile>({});
 
 watchEffect(() => {
-  userInfoManage.value = props.userInfo;
+  userInfoManager.value = props.userInfo;
 });
 const emits = defineEmits([
   "handleSwitchConversation",
@@ -116,7 +118,7 @@ watch(
     const res = await TUIUserService.getUserProfile({
       userIDList: [props.userInfo.userID],
     });
-    userInfoManage.value = res?.data[0];
+    userInfoManager.value = res?.data[0];
     // 这里需要确认是否是好友关系
     checkFriend();
   },
@@ -130,31 +132,30 @@ const enter = async (ID: any, type: string) => {
   const name = `${type}${ID}`;
   TUIConversationService.getConversationProfile(name)
     .then((res: any) => {
-      TUIConversationService.switchConversation(
-        res.data.conversation.conversationID
-      );
+      TUIConversationService.switchConversation(res.data.conversation.conversationID).then(() => {
+        TUIStore.update(StoreName.GRP, "isShowManageComponent", false);
       if (isUniFrameWork) {
-        emits("openConversation");
-      } else {
-        emits("handleSwitchConversation", res.data.conversation.conversationID);
+        TUIGlobal?.navigateBack();
       }
+      });
     })
     .catch((err: any) => {
       console.warn("获取会话资料失败", err.code, err.msg);
     });
 };
 const checkFriend = async () => {
-  if (!(userInfoManage.value as any).userID) return;
-  // 这里暂时屏蔽
-  // const relation = await TUIFriendService.checkFriend(userInfo.value.userID, TUIChatEngine.TYPES.SNS_CHECK_TYPE_BOTH);
-  // isFriendShip.value = (relation === TUIChatEngine.TYPES.SNS_TYPE_BOTH_WAY) ? true : false;
-  if (!isUniFrameWork) {
-    isFriendShip.value = true;
-  }
+  if (!(userInfoManager.value as any).userID) return;
+  TUIFriendService.checkFriend({
+    userIDList: [userInfoManager.value.userID],
+    type: TUIChatEngine.TYPES.SNS_CHECK_TYPE_BOTH,
+  }).then((res: any) => {
+    const relation = res?.data?.successUserIDList?.[0]?.relation;
+    isFriendShip.value = (relation === TUIChatEngine.TYPES.SNS_TYPE_BOTH_WAY);
+  });
 };
 
 const showEnter = () => {
-  return isFriendShip.value || TUIStore.getData(StoreName.APP, 'isOfficial');
+  return isFriendShip.value || !TUIStore.getData(StoreName.APP, "isOfficial");
 };
 
 const close = (tabName: string) => {

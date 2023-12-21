@@ -1,9 +1,33 @@
 <template>
-  <div class="app">
-    <router-view />
+  <div id="app">
+    <router-view :key="locale" :language="locale" @changeLanguage="changeLanguage" />
   </div>
 </template>
+<script setup lang="ts">
+import { ref } from "./TUIKit/adapter-vue";
+import { RouterView, useRouter } from "vue-router";
+import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+const router = useRouter();
+const locale = ref<string>("zh");
+TUIStore.watch(StoreName.USER, {
+  kickedOut: (value: string) => {
+    if (value && router.currentRoute.value.name !== "login") {
+      localStorage.removeItem("TUIKit-userInfo");
+      router.replace({ name: "login" });
+    }
+  }
+});
+function changeLanguage(language: string) {
+  locale.value = language;
+}
+</script>
 
 <style lang="scss">
-@import url('./styles/app.scss');
+html,
+body,
+#app {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
 </style>

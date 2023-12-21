@@ -60,7 +60,7 @@ onUnmounted(() => {
 
 const isShowReadStatus = computed<boolean>(() => {
   if (!isDisplayMessageReadReceipt.value) {
-    // 用户级开关关闭
+    // 用户级已读回执开关关闭 不展示已读状态
     return false;
   }
 
@@ -69,9 +69,22 @@ const isShowReadStatus = computed<boolean>(() => {
     type,
     flow,
     status,
+    hasRiskContent,
+    conversationID,
     conversationType,
     needReadReceipt = false
   } = props.message;
+
+  // 异步消息打击 消息已发出判断是否存在风险内容
+  if (hasRiskContent) {
+    return false;
+  }
+
+  const { groupProfile } = TUIStore.getConversationModel(conversationID) || {};
+  // 直播群以及社群不展示已读状态
+  if (groupProfile?.type === TYPES.GRP_AVCHATROOM || groupProfile?.type === TYPES.GRP_COMMUNITY) {
+    return false;
+  }
 
   if (type === TYPES.MSG_CUSTOM) {
     const message = TUIStore.getMessageModel(ID);
@@ -136,7 +149,13 @@ const readStatusText = computed(() => {
 });
 
 const isUseUnreadStyle = computed(() => {
-  return !(readState.value === ReadState.AllRead);
+  const { conversationType } = props.message;
+  if (conversationType === 'C2C') {
+    return readState.value !== ReadState.Read;
+  } else if (conversationType === 'GROUP') {
+    return readState.value !== ReadState.AllRead;
+  }
+  return false;
 });
 
 const isHoverFingerPointer = computed<boolean>(() => {

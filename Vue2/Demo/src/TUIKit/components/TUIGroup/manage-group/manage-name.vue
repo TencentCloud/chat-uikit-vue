@@ -80,7 +80,7 @@ const emit = defineEmits(["update"]);
 const updateProfile = () => {
   if (!inputGroupName.value) {
     Toast({
-      message: "群名称不能为空",
+      message: TUITranslateService.t("TUIGroup.群名称不能为空"),
       type: TOAST_TYPE.ERROR,
     });
   } else {
@@ -89,7 +89,7 @@ const updateProfile = () => {
       groupProfile.value.name = inputGroupName.value;
       inputGroupName.value = "";
       Toast({
-        message: "群名称修改成功",
+        message: TUITranslateService.t("TUIGroup.群名称修改成功"),
         type: TOAST_TYPE.SUCCESS,
       });
     }

@@ -1,0 +1,25 @@
+.tui-search-container-h5 {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  .tui-search-container-h5-main {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    .tui-search-time {
+      background-color: #f4f4f4;
+      .tui-search-time-item {
+        background-color: #ffffff;
+      }
+      .tui-search-time-item-selected {
+        background-color: rgba(0, 122, 255, 0.2);
+      }
+    }
+  }
+}

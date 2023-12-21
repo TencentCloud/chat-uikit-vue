@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from "../../../adapter-vue";
-import { IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { IMessageModel, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
 import iconClose from "../../../assets/icon/icon-close.svg";
 import iconArrowLeft from "../../../assets/icon/icon-arrow-left.svg";
@@ -318,7 +318,7 @@ const save = () => {
   const imageSrc = imageMessage?.payload?.imageInfoArray[0]?.url;
   if (!imageSrc) {
     Toast({
-      message: "图片 url 不存在",
+      message: TUITranslateService.t("component.图片 url 不存在"),
       type: TOAST_TYPE.ERROR,
     });
     return;
@@ -350,7 +350,7 @@ const save = () => {
                       });
                     } else if (res.cancel) {
                       return Toast({
-                        message: "已取消",
+                        message: TUITranslateService.t("component.已取消"),
                         type: TOAST_TYPE.ERROR,
                       });
                     }
@@ -365,7 +365,7 @@ const save = () => {
         },
         fail: () => {
           Toast({
-            message: "获取权限失败",
+            message: TUITranslateService.t("component.获取权限失败"),
             type: TOAST_TYPE.ERROR,
           });
         },
@@ -393,17 +393,16 @@ const downloadImgInUni = (src: string) => {
         filePath: res.tempFilePath,
         success: () => {
           Toast({
-            message: "已保存至相册",
+            message: TUITranslateService.t("component.已保存至相册"),
             type: TOAST_TYPE.SUCCESS,
           });
         },
       });
     },
     fail: function (error: any) {
-      console.warn("图片下载失败", error);
       TUIGlobal.hideLoading();
       Toast({
-        message: "图片下载失败",
+        message: TUITranslateService.t("component.图片下载失败"),
         type: TOAST_TYPE.ERROR,
       });
     },
@@ -423,7 +422,7 @@ const downloadImgInWeb = (src: string) => {
   const imageFormat: number = imageMessage?.payload?.imageFormat;
   if (!imageFormatMap.has(imageFormat)) {
     Toast({
-      message: "暂不支持下载此类型图片",
+      message: TUITranslateService.t("component.暂不支持下载此类型图片"),
       type: TOAST_TYPE.ERROR,
     });
     return;

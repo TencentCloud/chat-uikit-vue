@@ -5,10 +5,15 @@
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   border-radius: 10px;
-
-  &-box {
-    .closeIcon {
-      transform: scale(2.2);
+  .group-box {
+    .group-box-header {
+      display: flex;
+      flex-direction: row-reverse;
+      justify-content: space-between;
+      .group-box-header-title {
+        font-size: 18px;
+        line-height: 30px;
+      }
     }
   }
 
@@ -21,12 +26,12 @@
       }
     }
     input {
+      flex: 1;
       box-sizing: border-box;
       padding: 6px 10px;
       border-radius: 2px;
       font-size: 14px;
       line-height: 20px;
-      width: 100%;
     }
   }
 }
@@ -74,23 +79,6 @@
   }
 }
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  h1 {
-    padding-bottom: 20px;
-    font-size: 18px;
-    line-height: 30px;
-  }
-
-  .icon icon-close {
-    left: 10px;
-    top: -10px;
-  }
-}
-
 .group-profile-footer {
   padding-top: 10px;
   display: flex;
@@ -111,4 +99,3 @@ header {
   margin-left: 10px;
   font-size: 14px;
 }
-

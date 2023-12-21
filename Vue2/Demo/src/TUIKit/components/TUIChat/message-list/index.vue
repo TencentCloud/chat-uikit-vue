@@ -246,6 +246,7 @@ const props = defineProps({
   },
 });
 let observer: IntersectionObserver | null = null;
+let groupType: string | undefined;
 const messageListRef = ref<HTMLElement>();
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
 const messageList = ref<Array<IMessageModel>>();
@@ -331,6 +332,9 @@ onUnmounted(() => {
   });
 
   messageListRef.value?.removeEventListener("scroll", handelScrollListScroll);
+
+  observer?.disconnect();
+  observer = null;
 });
 
 async function onMessageListUpdated(list: Array<IMessageModel>) {
@@ -439,6 +443,12 @@ const onCurrentConversationIDUpdated = (conversationID: string) => {
     });
     TUIStore.update(StoreName.CUSTOM, "groupApplicationCount", applicationList.length);
   });
+
+  // 开启已读回执的状态 群聊缓存群类型
+  if (isEnabledMessageReadReceiptGlobal()) {
+    const { groupProfile } = TUIStore.getConversationModel(conversationID) || {};
+    groupType = groupProfile?.type;
+  }
 };
 
 const onCurrentConversationUpdated = (conversation: IConversationModel) => {
@@ -597,11 +607,16 @@ const handelScrollListScroll = throttle(function(e: Event) {
   scrollButtonInstanceRef.value?.judgeScrollOverOneScreen(e);
 }, 150, {leading: true});
 
-function bindIntersectionObserver() {
-  // TODO 如果不是旗舰 or 没有scrollListDom return false
+async function bindIntersectionObserver() {
   if (messageList.value.length === 0) {
     return;
   }
+
+  if (groupType === TYPES.value.GRP_AVCHATROOM || groupType === TYPES.value.GRP_COMMUNITY) {
+    // 直播群以及社群不进行消息的已读回执监听
+    return;
+  }
+
   const mappingFromIDToMessage: Record<string, {
     msgDom: HTMLElement,
     msgModel: IMessageModel | undefined

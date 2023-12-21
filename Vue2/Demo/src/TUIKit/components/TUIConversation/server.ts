@@ -10,6 +10,7 @@ import { isUniFrameWork } from "../../utils/env";
 import { TUIGlobal } from "../../utils/universal-api/index";
 import createGroupIcon from "../../assets/icon/start-group.svg";
 import createC2CIcon from "../../assets/icon/icon-c2c.svg";
+import { enableSampleTaskStatus } from "../../utils/enableSampleTaskStatus";
 
 export default class TUIConversationServer {
   static instance: TUIConversationServer;
@@ -90,7 +91,7 @@ export default class TUIConversationServer {
       params: {
         title: item.text,
         isRadio: item.data.name !== CONV_CREATE_TYPE.TYPEGROUP,
-        isNeedSearch: true,
+        isNeedSearch: !TUIStore.getData(StoreName.APP, "isOfficial"),
       },
       callback: async (memberList: Array<any>) => {
         if (!memberList || memberList.length === 0) {
@@ -147,6 +148,9 @@ export default class TUIConversationServer {
   private generateConversation(conversationID: string) {
     TUIConversationService.switchConversation(conversationID)
       .then(() => {
+        if (conversationID.startsWith("GROUP")) {
+          enableSampleTaskStatus("groupChat");
+        }
         console.warn("打开会话成功");
       })
       .catch((err: any) => {

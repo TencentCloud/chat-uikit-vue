@@ -1,28 +1,24 @@
 /* eslint-disable */
-declare module '*.vue' {
-  import type { DefineComponent } from 'vue'
-  const component: DefineComponent<{}, {}, any>
-  export default component
+declare module "*.vue" {
+  import type { DefineComponent } from "vue";
+  const component: DefineComponent<{}, {}, any>;
+  export default component;
 }
 
-declare module 'tim-profanity-filter-plugin' {
-  import TIMProfanityFilterPlugin from 'tim-profanity-filter-plugin'
-  export default TIMProfanityFilterPlugin
-}
+declare module "*.svg";
+declare module "*.png";
+declare module "*.jpg";
+declare module "*.jpeg";
+declare module "*.gif";
+declare module "*.bmp";
+declare module "*.tiff";
 
-declare module 'tuicall-engine-webrtc' {
-  import { TUICallEngine, TUICallEvent, TUICallType } from 'tuicall-engine-webrtc';
-  export { TUICallEngine, TUICallEvent, TUICallType };
-}
-
-declare module '*.svg' {
+declare module "*.json" {
   const content: any;
   export default content;
 }
 
-declare module '*.json' {
-  const content: any;
-  export default content;
-}
-
-
+declare module "dayjs";
+declare module "dayjs/plugin/localeData.js";
+declare module "dayjs/plugin/isSameOrAfter.js";
+declare module "dayjs/plugin/isSameOrBefore.js";

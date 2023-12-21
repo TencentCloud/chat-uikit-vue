@@ -1,0 +1,162 @@
+.TUIChat {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  &-main {
+    min-height: 0px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    .TUIChat-safe-tips {
+      padding: 12px 20px;
+      background-color: rgba(255, 149, 0, 0.1);
+      color: #ff8c39;
+      line-height: 18px;
+      font-family: "PingFang SC";
+      font-style: normal;
+      font-weight: 400;
+      text-align: justify;
+      font-size: 12px;
+
+      a {
+        color: #006eff;
+        float: right;
+      }
+    }
+    .TUIChat-application-tips {
+      text-align: center;
+      width: 100%;
+      background: #fce4d3;
+      padding: 2px;
+      font-size: 12px;
+    }
+    .application-tips-btn {
+      color: #006eff;
+      padding-left: 10px;
+    }
+    .TUI-message-list {
+      flex: 1;
+      height: 100%;
+      overflow-y: auto;
+      overflow-x: hidden;
+      .message-more {
+        font-size: 14px;
+        padding: 5px;
+        text-align: center;
+      }
+
+      .to-bottom-tip {
+        position: sticky;
+        bottom: 10px;
+        left: 100%;
+        margin-right: 15px;
+        width: 92px;
+        height: 28px;
+        padding: 0 5px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        border-radius: 3px;
+        cursor: pointer;
+        &-text {
+          font-family: PingFangSC-Regular;
+          font-weight: 400;
+          font-size: 10px;
+          color: #147aff;
+          letter-spacing: 0;
+          text-align: center;
+          padding-left: 3px;
+        }
+      }
+
+      .message-li:first-child {
+        margin-top: 5px;
+      }
+
+      .message-li {
+        display: flex;
+        padding: 0;
+        flex-direction: column;
+
+        .message-item {
+          display: flex;
+          position: relative;
+          flex-direction: column;
+          .message-tool {
+            position: absolute;
+            cursor: pointer;
+            z-index: 5;
+            transform: translateY(-100%);
+          }
+          .message-tool-out {
+            right: 30px;
+            left: auto;
+          }
+          .message-tool-in {
+            left: 30px;
+            right: auto;
+          }
+        }
+        .message-label {
+          max-width: 50px;
+        }
+      }
+
+      .right {
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .disabled {
+    position: relative;
+
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.image-dialog {
+  position: fixed;
+  z-index: 5;
+  width: 100vw;
+  height: calc(100vh - 63px);
+  top: 63px;
+  left: 0;
+
+  header {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 10px;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 140px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #9a999c;
+}

@@ -1,0 +1,13 @@
+@import '../../../../assets/styles/common.scss';
+@import "./color.scss";
+@import "./web.scss";
+@import "./h5.scss";
+
+.icon-unselected {
+    width: 18px;
+    height: 18px;
+    background: #FFFFFF;
+    border: 1px solid #DDDDDD;
+    border-radius: 11px;
+    box-sizing: border-box;
+}

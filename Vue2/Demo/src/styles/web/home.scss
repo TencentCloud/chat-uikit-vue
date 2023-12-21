@@ -5,455 +5,117 @@
 }
 
 .home {
+  box-sizing: border-box;
   flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   min-width: 1024px;
   background-size: contain;
   width: 100%;
   height: 100%;
   overflow: hidden;
-
-  &-header {
-    width: 100%;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-
-    .dropdown {
-      display: flex;
-      align-items: center;
-
-      label {
-        padding: 0 8px;
-      }
-    }
-
-    .menu {
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-
-      label {
-        padding: 0 18px;
-      }
-
-      &-open {
-        padding-left: 265px;
-      }
-    }
-  }
-
-  &-menu {
-    position: fixed;
-    z-index: 11;
-    top: 0;
-    left: 0;
-    width: 300px;
-    height: 100%;
-
-    // overflow: hidden;
-    &-header {
-      width: 100%;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-
-      .dropdown {
-        display: flex;
-        align-items: center;
-
-        label {
-          padding: 0 8px;
-        }
-      }
-
-      &-name {
-        font-size: 16px;
-      }
-
-      p {
-        position: relative;
-        padding-left: 40px;
-        font-size: 14px;
-
-        &::before {
-          content: "";
-          position: absolute;
-          width: 1px;
-          height: 20px;
-          top: 0;
-          left: 20px;
-          bottom: 0;
-          margin: auto 0;
-        }
-
-        label {
-          padding: 0 3px;
-        }
-      }
-
-      .txc-logo {
-        width: 80px;
-      }
-
-      .im-logo {
-        width: 30px;
-      }
-    }
-
-    .menu-main {
-      flex: 1;
-
-      &-title {
-        padding: 20px 0;
-        font-size: 16px;
-      }
-
-      .menu-main-list {
-        padding-bottom: 14px;
-
-        &-item {
-          display: flex;
-          align-items: center;
-          padding-bottom: 16px;
-          font-size: 14px;
-
-          .step {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 11.67px;
-          }
-
-          a {
-            margin: 0 12px;
-            font-size: 14px;
-            line-height: 22px;
-          }
-        }
-      }
-    }
-  }
-
-  &-main {
-    flex: 1;
+  .home-menu {
     box-sizing: border-box;
     display: flex;
-    justify-content: center;
-    align-items: center;
+  }
+  .home-container {
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
     overflow: hidden;
-
-    &-box {
-      flex: 1;
+    align-items: stretch;
+    .home-header {
       box-sizing: border-box;
-      height: 100%;
-      min-width: 968px;
-      padding: 3rem 6rem;
+      overflow: hidden;
+      .header-menu-show {
+        padding-left: 0px;
+      }
+    }
+    .home-main {
+      box-sizing: border-box;
+      flex: 1;
       display: flex;
       justify-content: center;
-      align-items: center;
-    }
-  }
-
-  &-TUIKit {
-    width: 100%;
-    height: 100%;
-    max-width: 1400px;
-    overflow: hidden;
-    box-sizing: border-box;
-    min-height: 640px;
-    flex: 1;
-    border-radius: 12px;
-    display: flex;
-
-    .setting {
-      box-sizing: border-box;
-      width: 60px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 56px 0 17px;
-      border-top-left-radius: 12px;
-      border-bottom-left-radius: 12px;
-
-      &-main {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-
-        .userInfo {
-          position: relative;
-          padding: 0 12px;
-
-          .avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 5px;
-          }
-
-          &:hover {
-            .userInfo-main {
-              display: block;
-            }
-          }
-
-          &-main {
-            width: 100%;
-            display: none;
-            min-width: 165px;
-            max-width: 200px;
-            position: absolute;
-            top: 0;
-            left: 99.9%;
-            z-index: 5;
-            padding: 14px 20px;
-            border-radius: 0 4px 4px 0;
-          }
-
-          .TUIProfile {
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-            max-width: none !important;
-            top: 0;
-            left: 0;
-            z-index: 10;
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-
-            main {
-              width: 550px;
-              border-radius: 10px;
-              padding: 20px;
-            }
-          }
-        }
-
-        &-list {
-          padding: 13px 0;
-
-          &-item {
-            padding: 13px 0;
-            text-align: center;
-            line-height: 100%;
-
-            .icon {
-              width: 24px;
-              height: 24px;
-            }
-          }
-        }
-      }
-
-      &-footer {
-        position: relative;
-      }
-    }
-
-    &-main {
-      flex: 1;
-      display: flex;
       overflow: hidden;
-
-      .home-conversation,
-      .home-relation {
-        min-width: 285px;
-        flex: 0 0 24%;
-        display: flex;
-        flex-direction: column;
-
-        .TUI-search {
-          padding: 12px;
-        }
-      }
-
-      .home-relation {
-        min-width: 285px;
-        flex: 0 0 100%;
-        display: flex;
-        flex-direction: column;
-
-        h1 {
-          font-size: 1.75rem;
-          display: flex;
-          align-items: center;
-
-          img {
-            width: 2.5rem;
-            height: 1.63rem;
-            padding-left: 0.98rem;
-            padding-right: 0.98rem;
-          }
-        }
-
-        p {
-          padding-top: 1.88rem;
-          max-width: 393px;
-          font-size: 16px;
-          line-height: 24px;
-        }
-      }
-    }
-
-    .home-chat {
-      flex: 1;
-      position: relative;
-      min-width: 0;
-      .group {
-        position: absolute;
-        top: 30px;
-        right: 0;
+      padding: 50px;
+      min-width: 968px;
+      .home-TUIKit {
         box-sizing: border-box;
-        width: 360px;
-        border-radius: 8px 0 0 8px;
-        z-index: 2;
-        max-height: calc(100% - 30px);
+        display: flex;
+        flex: 1;
+        width: 100%;
+        height: 100%;
+        max-width: 1400px;
+        overflow: hidden;
+        min-height: 640px;
+        border-radius: 12px;
+        background-color: #ffffff;
+        box-shadow: 0 11px 20px 0 rgba(0, 0, 0, 0.3);
+        .home-TUIKit-navbar {
+          box-sizing: border-box;
+          display: flex;
+        }
+        .home-TUIKit-main {
+          box-sizing: border-box;
+          flex: 1;
+          display: flex;
+          overflow: hidden;
+          flex-direction: row;
+          border: 0 solid black;
+          .home-conversation,
+          .home-relation {
+            min-width: 285px;
+            box-sizing: border-box;
+            flex: 0 0 24%;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid #f4f5f9;
+          }
+          .home-chat {
+            box-sizing: border-box;
+            min-width: 0;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+          }
+        }
+        .callkit-drag-container {
+          position: fixed;
+          z-index: 100;
+          background-color: #ffffff;
+          user-select: none;
+          &-pc {
+            left: calc(50% - 25rem);
+            top: calc(50% - 18rem);
+            width: 50rem;
+            height: 36rem;
+            border-radius: 16px;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+          }
+          &-mini {
+            width: 168px;
+            height: 56px;
+            right: 10px;
+            top: 70px;
+            background-color: transparent;
+            border-radius: 0px;
+            box-shadow: none;
+          }
+        }
       }
     }
-    .TUIConversation {
-      flex: 1;
-      overflow: hidden;
+  }
+  .home-container.menu-expand {
+    .dialog,
+    .container {
+      width: calc(100% - 300px) !important;
+      left: 300px !important;
+    }
+    .home-main .home-TUIKit .callkit-drag-container.callkit-drag-container-pc {
+      left: calc(50% - 25rem + 150px);
     }
   }
-}
-
-.container-default {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding-left: 40px;
-  padding-top: 100px;
-  display: flex;
-  flex-direction: column;
-  background: url("../assets/image/login-background.png") no-repeat;
-  background-size: cover;
-  background-position-x: -17px;
-  background-position-y: 173px;
-
-  h1 {
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-  }
-
-  p {
-    padding-top: 10px;
-    max-width: 393px;
-    font-size: 16px;
-    line-height: 24px;
-  }
-
-  .logo {
-    width: 40px;
-    padding-left: 0.98rem;
-    padding-right: 0.98rem;
-  }
-}
-
-.contact-default {
-  width: 100vw;
-  height: 100vh;
-}
-
-.language-intl {
-  color: inherit;
-}
-
-.language-item {
-  padding-left: 5px;
-  padding-right: 5px;
-  text-align: center;
-}
-
-.setting-more {
-  position: relative;
-}
-
-.showmore {
-  min-width: 11.25rem;
-  border-radius: 0 4px 4px 0;
-  position: absolute;
-  bottom: 10px;
-  left: 202%;
-  z-index: 2;
-  white-space: nowrap;
-}
-
-.setting-more-li {
-  position: relative;
-}
-
-.setting-more-item {
-  height: 40px;
-  padding-left: 14px;
-  padding-right: 8px;
-  display: flex;
-  line-height: 40px;
-  text-align: center;
-  align-items: center;
-  justify-content: space-between;
-  cursor: pointer;
-
-  span {
-    display: inline-block;
-    font-size: 14px;
-  }
-
-  &-next {
-    position: absolute;
-    left: 100%;
-    top: 0;
-    width: 11.25rem;
-    height: 80px;
-    border-radius: 0 4px 4px 0;
-    bottom: 10px;
-    z-index: 2;
-    background: #ffffff;
-    box-shadow: 2px 1px 6px 0px rgba(2, 16, 43, 0.15);
-  }
-}
-
-.setting-more-item:hover {
-  background-color: rgba(0, 110, 255, 0.1);
-}
-
-.callkit-drag-container {
-  left: calc(50% - 25rem);
-  top: calc(50% - 18rem);
-  width: 50rem;
-  height: 36rem;
-  border-radius: 16px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
-  background-color: #ffffff;
-  position: fixed;
-  z-index: 100;
-
-  &-left {
-    left: calc(50% - 25rem + 150px);
-  }
-
-  &-H5 {
-    width: 100vw;
-    height: 100vh;
-    left: 0;
-    top: 0;
-    border-radius: 0;
-    box-shadow: none;
-    background-color: #ffffff;
-  }
-}
-
-.callkit-drag-container-mini {
-  width: 168px;
-  height: 56px;
-  right: 10px;
-  top: 70px;
-  position: fixed;
-  z-index: 100;
 }

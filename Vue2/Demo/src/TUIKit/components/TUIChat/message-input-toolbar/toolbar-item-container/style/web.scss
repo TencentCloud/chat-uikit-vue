@@ -3,6 +3,7 @@
   &-icon {
     padding: 8px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   &-dialog {
     z-index: 5;

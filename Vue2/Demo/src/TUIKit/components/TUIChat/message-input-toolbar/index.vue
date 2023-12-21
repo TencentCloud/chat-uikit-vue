@@ -61,7 +61,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed } from "../../../adapter-vue";
+import { ref, computed, onUnmounted } from "../../../adapter-vue";
 import TUIChatEngine, {
   IConversationModel,
   TUIStore,
@@ -79,6 +79,7 @@ import UserSelector from "./user-selector/index.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isPC, isH5, isApp, isUniFrameWork } from "../../../utils/env";
 import TUIChatConfig from "../config";
+import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus";
 
 const emits = defineEmits(["insertEmoji"]);
 const h5Dialog = ref();
@@ -101,22 +102,33 @@ const getExtensionList = (conversationID:string) => {
   if (chatType === "customerService") {
     options.filterVoice = true;
     options.filterVideo = true;
+    enableSampleTaskStatus("customerService");
   }
   currentExtensionList.value = [
     ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, options),
   ];
 }
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
+const onCurrentConversationUpdate = (conversation: IConversationModel) => {
+  if (conversation?.conversationID && currentConversation.value?.conversationID !== conversation?.conversationID) {
+      getExtensionList(conversation?.conversationID);
+    }
     currentConversation.value = conversation;
     if (currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_GROUP) {
       isGroup.value = true;
     } else {
       isGroup.value = false;
     }
-    getExtensionList(conversation?.conversationID);
-  },
+}
+
+TUIStore.watch(StoreName.CONV, {
+  currentConversation: onCurrentConversationUpdate,
+});
+
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdate,
+  });
 });
 
 // extensions

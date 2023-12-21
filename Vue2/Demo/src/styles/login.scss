@@ -1,17 +1,3 @@
-@import "./color/login.scss";
 @import "./web/login.scss";
 @import "./h5/login.scss";
-@import "../TUIKit/assets/styles/common.scss";
-
-.btn {
-  background: none;
-  border: none;
-}
-
-.code-box {
-  padding: 0 20px;
-  color: #006EFF;
-  border-top: none;
-  border-bottom: none;
-  font-weight: normal;
-}
+@import "./common.scss";

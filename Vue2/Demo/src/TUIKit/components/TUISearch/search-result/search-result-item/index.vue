@@ -1,30 +1,49 @@
 <!-- 用于展示【联系人】/【群组】/【全部会话】搜索结果，是用户/群组/会话维度的展示 -->
 <template>
-  <div :class="[
-    'search-result-list-item',
-    !isPC && 'search-result-list-item-h5',
-    'search-result-list-item-' + displayType,
-    isHovering && 'hover-' + displayType,
-  ]" @click="onResultItemClicked" @mouseenter="setHoverStatus(true)" @mouseleave="setHoverStatus(false)">
+  <div
+    :class="[
+      'search-result-list-item',
+      !isPC && 'search-result-list-item-h5',
+      'search-result-list-item-' + displayType,
+      isHovering && 'hover-' + displayType,
+    ]"
+    @click="onResultItemClicked"
+    @mouseenter="setHoverStatus(true)"
+    @mouseleave="setHoverStatus(false)"
+  >
     <div v-if="displayType === 'info' || displayType === 'bubble'" :class="[displayType]">
       <div :class="displayType + '-left'">
-        <img :class="displayType + '-left-avatar'" :src="avatarForShow"
-          onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+        <img
+          :class="displayType + '-left-avatar'"
+          :src="avatarForShow"
+          onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+        />
       </div>
       <div :class="[displayType + '-main']">
         <div :class="[displayType + '-main-name']">
           {{ nameForShow }}
         </div>
         <div :class="[displayType + '-main-content']">
-          <MessageAbstractText v-if="displayType === 'info' || listItem.type === TYPES.MSG_TEXT" :content="contentForShow"
-            :highlightType="displayType === 'info' ? 'font' : 'background'" :displayType="displayType">
+          <MessageAbstractText
+            v-if="displayType === 'info' || listItem.type === TYPES.MSG_TEXT"
+            :content="contentForShow"
+            :highlightType="displayType === 'info' ? 'font' : 'background'"
+            :displayType="displayType"
+          >
           </MessageAbstractText>
-          <MessageAbstractFile v-else-if="listItem.type === TYPES.MSG_FILE" :contentText="contentForShow"
-            :messageContent="listItemContent"></MessageAbstractFile>
+          <MessageAbstractFile
+            v-else-if="listItem.type === TYPES.MSG_FILE"
+            :contentText="contentForShow"
+            :messageContent="listItemContent"
+          ></MessageAbstractFile>
           <div v-else-if="listItem.type === TYPES.MSG_IMAGE"></div>
           <div v-else-if="listItem.type === TYPES.MSG_VIDEO"></div>
-          <MessageAbstractCustom v-else-if="listItem.type === TYPES.MSG_CUSTOM" :contentText="contentForShow"
-            :message="listItem" :messageContent="listItemContent"></MessageAbstractCustom>
+          <MessageAbstractCustom
+            v-else-if="listItem.type === TYPES.MSG_CUSTOM"
+            :contentText="contentForShow"
+            :message="listItem"
+            :messageContent="listItemContent"
+          ></MessageAbstractCustom>
           <div v-else>{{ getMessageAbstractType(listItem) }}</div>
         </div>
       </div>
@@ -32,16 +51,22 @@
         <div :class="displayType + '-right-time'">
           {{ timeForShow }}
         </div>
-        <div :class="displayType + '-right-to'" v-if="displayType === 'bubble' && isHovering"
-          @click="navigateToChatPosition">
+        <div
+          :class="displayType + '-right-to'"
+          v-if="displayType === 'bubble' && isHovering"
+          @click="navigateToChatPosition"
+        >
           {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
         </div>
       </div>
     </div>
     <div v-else-if="displayType === 'file'" :class="[displayType]">
       <div :class="[displayType + '-header']">
-        <img :class="displayType + '-header-avatar'" :src="avatarForShow"
-          onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'" />
+        <img
+          :class="displayType + '-header-avatar'"
+          :src="avatarForShow"
+          onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
+        />
         <div :class="[displayType + '-header-name']">
           {{ nameForShow }}
         </div>
@@ -53,13 +78,22 @@
         </div>
       </div>
       <div :class="[displayType + '-main-content']">
-        <MessageAbstractFile :contentText="contentForShow" :messageContent="listItemContent"></MessageAbstractFile>
+        <MessageAbstractFile
+          :contentText="contentForShow"
+          :messageContent="listItemContent"
+        ></MessageAbstractFile>
       </div>
     </div>
     <div v-else-if="displayType === 'image'" :class="[displayType]">
       <div :class="['image-container']" @click="navigateToChatPosition">
-        <MessageAbstractImage v-if="listItem.type === TYPES.MSG_IMAGE" :messageContent="listItemContent" />
-        <MessageAbstractVideo v-else-if="listItem.type === TYPES.MSG_VIDEO" :messageContent="listItemContent" />
+        <MessageAbstractImage
+          v-if="listItem.type === TYPES.MSG_IMAGE"
+          :messageContent="listItemContent"
+        />
+        <MessageAbstractVideo
+          v-else-if="listItem.type === TYPES.MSG_VIDEO"
+          :messageContent="listItemContent"
+        />
         <div :class="['image-container-hover']" v-if="isHovering">
           <div :class="['image-container-hover-text']">
             {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
@@ -165,7 +199,9 @@ const navigateToChatPosition = () => {
 };
 
 const getMessageAbstractType = (message: any) => {
-  return message?.type ? messageTypeAbstractMap[message.type] : ""
-}
+  return message?.type
+    ? TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[message.type]}`)
+    : "";
+};
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

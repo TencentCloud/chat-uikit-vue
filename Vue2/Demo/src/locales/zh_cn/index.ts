@@ -1,5 +1,6 @@
-import Login from './Login';
-import Home from './Home';
+import Login from './login.json';
+import Home from './home.json';
+import Profile from './profile.json';
 
 const messages = {
   zh_cn: {
@@ -11,6 +12,7 @@ const messages = {
     使用指引: '使用指引',
     Login,
     Home,
+    Profile
   },
 };
 

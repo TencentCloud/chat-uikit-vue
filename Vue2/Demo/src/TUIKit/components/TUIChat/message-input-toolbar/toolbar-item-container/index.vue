@@ -26,13 +26,13 @@
       {{ props.title }}
     </div>
     <div
+      v-show="showDialog"
+      ref="dialogRef"
       :class="[
         'toolbar-item-container-dialog',
         !isPC && 'toolbar-item-container-h5-dialog',
         isUniFrameWork && 'toolbar-item-container-uni-dialog',
       ]"
-      ref="dialogRef"
-      v-show="showDialog"
     >
       <BottomPopup
         v-if="props.needBottomPopup && !isPC"

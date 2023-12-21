@@ -19,7 +19,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUIStore, StoreName, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import searchIcon from "../../../assets/icon/search.svg";
@@ -27,7 +27,7 @@ import closeIcon from "../../../assets/icon/input-close.svg";
 const props = defineProps({
   placeholder: {
     type: String,
-    default: "搜索",
+    default: () => TUITranslateService.t("TUISearch.搜索"),
   },
   searchType: {
     type: String,

@@ -126,6 +126,7 @@ const handleH5LongPress = (
   align-content: center;
   align-items: center;
   text-align: center;
+  margin: 0px 10px 10px 10px;
 }
 .message-tip-highlight{
   animation: highlight 1000ms infinite;

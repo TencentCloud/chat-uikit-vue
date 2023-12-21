@@ -1,10 +1,10 @@
 
 import en from './en';
-import zhcn from './zh_cn';
+import zh from './zh_cn';
 
 const messages = {
   ...en,
-  ...zhcn,
+  ...zh,
 };
 
 export default messages;

@@ -3,7 +3,7 @@
     <tbody :class="['tui-date-table-body']">
       <tr :class="['tui-date-table-body-weeks']">
         <th :class="['tui-date-table-body-weeks-item']" v-for="item in WEEKS" :aria-label="item + ''" scope="col">
-          {{ item }}
+          {{ TUITranslateService.t(`time.${item}`)  }}
         </th>
       </tr>
       <tr :class="['tui-date-table-body-days']" v-for="(row, rowKey) in rows" :key="rowKey">
@@ -21,7 +21,8 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "vue";
+import { computed, ref } from "../../../adapter-vue";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { DateCell, DateCellType } from "./date-picker";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/zh-cn";
@@ -232,6 +233,9 @@ const generateVueRenderKey = (rowKey: number, colKey: number): string => {
           background-color: #007aff33;
         }
 
+        .selected{
+          border-radius: 12px;
+        }
         .selected-start {
           border-radius: 12px 0 0 12px;
         }

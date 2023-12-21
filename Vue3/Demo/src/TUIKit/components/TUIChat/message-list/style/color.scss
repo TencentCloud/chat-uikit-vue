@@ -1,0 +1,27 @@
+.TUIChat {
+  .TUI-message-list {
+    .message-more {
+      color: #999999;
+      cursor: pointer;
+    }
+  }
+  .image-dialog {
+    background: rgba(0, 0, 0, 0.3);
+    header {
+      background: rgba(0,0,0,0.49);
+    }
+  }
+}
+.TUIChat-H5 {
+  .TUIChat-header {
+    background: #FFFFFF;
+  }
+  .TUIChat-footer {
+    background: #FFFFFF;
+    .input {
+      input {
+        background: #F4F5F9;
+      }
+    }
+  }
+}
