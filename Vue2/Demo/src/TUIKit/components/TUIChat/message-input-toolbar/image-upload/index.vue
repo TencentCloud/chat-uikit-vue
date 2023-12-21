@@ -15,7 +15,7 @@
         title="图片"
         type="file"
         data-type="image"
-        accept="image/*"
+        accept="image/gif,image/jpeg,image/jpg,image/png,image/bmp,image/webp"
         @change="sendImageInWeb"
         ref="inputRef"
       />
@@ -115,7 +115,9 @@ const onIconClick = () => {
       });
     }
   } else {
-    inputRef?.value?.click && inputRef?.value?.click();
+    if (inputRef.value?.click) {
+      inputRef.value.click();
+    }
   }
 };
 

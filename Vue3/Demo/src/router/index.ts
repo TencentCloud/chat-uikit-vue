@@ -1,37 +1,36 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
-import { TUICore } from '../TUIKit';
+import { createRouter, createWebHashHistory } from 'vue-router'
+import Home from '../views/Home.vue'
 
-const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    redirect: { name: 'Login' },
-  },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue'),
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/Home.vue'),
-  },
-];
+let isLogin = false;
 
 const router = createRouter({
-  history: createWebHashHistory(process.env.BASE_URL),
-  routes,
-});
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'login',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/Login.vue')
+    },
+    {
+      path: '/home',
+      name: 'home',
+      component: Home
+    },
+  ]
+})
 
 router.beforeEach((to, from, next) => {
-  if (to.name !== 'Login' && !(TUICore as any).isLogin) {
-    next({ name: 'Login' });
+  if(to.name === 'home' && from.name === 'login'){
+    isLogin = true;
+ }
+ if (to.name !== 'login' && !isLogin ) {
+    next({ name: 'login' });
   } else {
     next();
   }
 });
 
-export default router;
+export default router

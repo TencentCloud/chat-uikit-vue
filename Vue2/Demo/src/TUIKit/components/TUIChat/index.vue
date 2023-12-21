@@ -40,7 +40,7 @@
           ref="messageInputRef"
           :isMuted="false"
           :muteText="TUITranslateService.t('TUIChat.您已被管理员禁言')"
-          :placeholder="TUITranslateService.t('请输入消息')"
+          :placeholder="TUITranslateService.t('TUIChat.请输入消息')"
           @handleToolbarListShow="handleToolbarListShow"
         ></MessageInput>
       </div>

@@ -16,7 +16,9 @@
     flex: 1;
     overflow-y: scroll;
     &-item {
-      cursor: pointer;
+      cursor: none;
+      -webkit-tap-highlight-color: transparent;
+      -moz-tap-highlight-color: transparent;
       padding: 12px 0;
       font-size: 16px;
       color: #50545c;

@@ -240,6 +240,7 @@ import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isPC, isUniFrameWork } from "../../../utils/env";
 import { TUIGlobal } from "../../../utils/universal-api/index";
 import Server from "../server";
+import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus";
 
 const TUIGroupServer = Server.getInstance();
 const TUIConstants = TUIGroupServer.constants;
@@ -270,6 +271,7 @@ const typeName = ref({
   [TUIChatEngine.TYPES.GRP_PUBLIC]: "陌生人社交群",
   [TUIChatEngine.TYPES.GRP_MEETING]: "临时会议群",
   [TUIChatEngine.TYPES.GRP_AVCHATROOM]: "直播群",
+  [TUIChatEngine.TYPES.GRP_COMMUNITY]: "社群",
   [TUIChatEngine.TYPES.JOIN_OPTIONS_FREE_ACCESS]: "自由加入",
   [TUIChatEngine.TYPES.JOIN_OPTIONS_NEED_PERMISSION]: "需要验证",
   [TUIChatEngine.TYPES.JOIN_OPTIONS_DISABLE_APPLY]: "禁止加群",
@@ -600,8 +602,9 @@ const handleGroupIDCopy = () => {
 const dismissGroup = async (group: any) => {
   // 解散群组
   await TUIGroupService.dismissGroup(group.groupID);
+  enableSampleTaskStatus("dismissGroup");
   Toast({
-    message: "群组解散成功！",
+    message: TUITranslateService.t("TUIGroup.群组解散成功"),
     type: TOAST_TYPE.SUCCESS,
   });
   clearGroupInfo();
@@ -623,13 +626,14 @@ const setAllMuteTime = (value: boolean) => {
   // 设置全体禁言时间
   updateProfile({ key: "muteAllMembers", value });
   if (value) {
+    enableSampleTaskStatus("muteGroup");
     Toast({
-      message: "禁言设置成功",
+      message: TUITranslateService.t("TUIGroup.禁言设置成功"),
       type: TOAST_TYPE.SUCCESS,
     });
   } else {
     Toast({
-      message: "取消禁言成功",
+      message: TUITranslateService.t("TUIGroup.取消禁言成功"),
       type: TOAST_TYPE.SUCCESS,
     });
   }

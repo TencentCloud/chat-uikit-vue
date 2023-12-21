@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-const Login = require('./login.json');
-const Home = require('./Home.json');
+import Login from './login.json';
+import Home from './home.json';
+import Profile from './profile.json';
 
 const messages = {
   zh_cn: {
@@ -12,6 +12,7 @@ const messages = {
     使用指引: '使用指引',
     Login,
     Home,
+    Profile
   },
 };
 

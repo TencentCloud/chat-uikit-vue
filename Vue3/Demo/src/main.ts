@@ -1,35 +1,48 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
-import store from './store';
-import ElementPlus from 'element-plus';
-import 'element-plus/dist/index.css';
-
-import locales from './locales';
-
-import { TUICore, TUIComponents } from './TUIKit';
-import { TUICallKit } from '@tencentcloud/call-uikit-vue';
-import { TUINotification } from './TUIKit/TUIPlugin';
-
-const SDKAppID = 0; // Your SDKAppID
-const secretKey = ''; // Your secretKey
-
-const TUIKit = TUICore.init({
-  SDKAppID,
-});
-
-TUIKit.config.i18n.provideMessage(locales);
-
-TUIKit.use(TUIComponents);
-TUIKit.use(TUICallKit);
-TUIKit.use(TUINotification);
+import { TUIComponents, TUIChatKit } from './TUIKit';
+import {
+  TUIStore,
+  StoreName,
+  TUITranslateService
+} from '@tencentcloud/chat-uikit-engine';
+import TUINotification from './TUIKit/components/TUINotification/index';
+import { locales } from './locales';
 
 const app = createApp(App);
+app.use(router);
+app.mount("#app");
 
-app.use(store)
-  .use(router)
-  .use(TUIKit)
-  .use(ElementPlus)
-  .mount('#app');
+const SDKAppID = 0; // Your SDKAppID
+const secretKey = ""; // Your secretKey
+
+TUIChatKit.components(TUIComponents, app);
+TUIChatKit.init();
+
+TUITranslateService.provideLanguages(locales);
+TUITranslateService.useI18n();
+
+/**
+ * Init TUINotification configuration.
+ */
+TUINotification.setNotificationConfiguration({
+  showPreviews: true,
+  allowNotifications: true,
+  notificationTitle: "Tencent Cloud Chat",
+  notificationIcon: "https://web.sdk.qcloud.com/im/demo/latest/faviconnew.png",
+});
+
+/**
+ * Listen for new messages and use notification components.
+ * This capability is only available in the web environmen.
+ */
+TUIStore.watch(StoreName.CHAT, {
+  newMessageList: (newMessageList: unknown) => {
+    if (Array.isArray(newMessageList)) {
+      newMessageList.forEach(message => TUINotification.notify(message));
+    }
+  }
+});
 
 export { SDKAppID, secretKey };

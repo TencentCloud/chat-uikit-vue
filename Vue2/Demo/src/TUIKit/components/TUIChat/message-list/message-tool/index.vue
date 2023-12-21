@@ -39,6 +39,7 @@ import copyIcon from "../../../../assets/icon/msg-copy.svg";
 import quoteIcon from "../../../../assets/icon/msg-quote.svg";
 import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
 import forwardIcon from "../../../../assets/icon/msg-forward.svg";
+import { enableSampleTaskStatus } from "../../../../utils/enableSampleTaskStatus";
 
 const props = defineProps({
   messageItem: {
@@ -152,7 +153,12 @@ function revokeMessage() {
   if (!message.value) return;
   // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.value.ID);
-  messageModel.revokeMessage().catch((error: any) => {
+  messageModel
+    .revokeMessage()
+    .then(() => {
+      enableSampleTaskStatus('revokeMessage');
+    })
+    .catch((error: any) => {
     // 调用异常时业务侧可以通过 promise.catch 捕获异常进行错误处理
     if ((error.code = 20016)) {
       const message = TUITranslateService.t("TUIChat.已过撤回时限");

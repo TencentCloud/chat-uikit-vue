@@ -21,7 +21,9 @@
         </div>
         <div :class="[n('body-header-label')]">
           <div :class="[n('body-header-label-item')]">{{ year }}</div>
-          <div :class="[n('body-header-label-item')]">{{ month }}</div>
+          <div :class="[n('body-header-label-item')]">
+            {{ TUITranslateService.t(`time.${month}`) }}
+          </div>
         </div>
         <div :class="[n('body-header-next')]">
           <div
@@ -40,6 +42,7 @@
       <div :class="[n('body-content')]">
         <DateTable
           :type="props.type"
+          :date="props.date"
           :startDate="props.startDate"
           :endDate="props.endDate"
           :currentPanelDate="currentPanelDate"
@@ -51,8 +54,9 @@
 </template>
 
 <script lang="ts" setup>
-import dayjs, { Dayjs, ManipulateType } from "dayjs";
 import { computed, ref, onMounted } from "../../../adapter-vue";
+import dayjs, { Dayjs, ManipulateType } from "dayjs";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { DateCell } from "./date-picker";
 import DateTable from "./date-table.vue";
 import Icon from "../Icon.vue";
@@ -72,7 +76,7 @@ const props = defineProps({
     type: Dayjs,
     default: () => dayjs(),
   },
-  // type 为 range时特有属性
+  // type 为 range 时特有属性
   startDate: {
     type: Dayjs,
     default: null,

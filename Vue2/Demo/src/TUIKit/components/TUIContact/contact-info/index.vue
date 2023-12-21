@@ -25,7 +25,7 @@
           !isPC && 'TUI-contact-info-h5-header-title',
         ]"
       >
-        {{ TUITranslateService.t("添加好友/群聊") }}
+        {{ TUITranslateService.t("TUIContact.添加好友/群聊") }}
       </div>
     </div>
     <div
@@ -54,7 +54,7 @@
           :key="item.label"
         >
           {{
-            `${TUITranslateService.t(item.label)}: 
+            `${TUITranslateService.t(`TUIContact.${item.label}`)}: 
             ${item.data}`
           }}
         </div>
@@ -88,7 +88,7 @@
             !isPC && 'TUI-contact-info-h5-more-item-label',
           ]"
         >
-          {{ `${TUITranslateService.t(item.label)}` }}
+          {{ `${TUITranslateService.t(`TUIContact.${item.label}`)}` }}
         </div>
         <div
           :class="[
@@ -169,7 +169,7 @@
         :key="item.key"
         @click="onContactInfoButtonClicked(item)"
       >
-        {{ TUITranslateService.t(item.label) }}
+        {{ TUITranslateService.t(`TUIContact.${item.label}`) }}
       </button>
     </div>
   </div>

@@ -50,7 +50,7 @@
     >
       <div class="TUI-contact-search-list" v-if="item.list[0]">
         <div class="TUI-contact-search-list-title">
-          {{ item.label }}
+          {{ TUITranslateService.t(`TUIContact.${item.label}`)}}
         </div>
         <div
           v-for="listItem in item.list"
@@ -138,7 +138,7 @@ onMounted(() => {
       TUIUserService.getUserProfile({userIDList: accountList}).then((res: any) => {
         if (res.data.length > 0) {
           const customerList = {
-            title: TUITranslateService.t(`TUIContact.${text}`),
+            title: text,
             list: res.data.map((item: any) => {
               return {
                 ...item,

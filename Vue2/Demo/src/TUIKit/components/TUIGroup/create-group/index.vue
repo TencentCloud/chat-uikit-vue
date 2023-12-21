@@ -10,18 +10,23 @@
     <div class="group" :class="[!isPC ? 'group-h5' : '']">
       <div class="group-box">
         <header class="group-box-header">
+          <Icon :file="isPC ? closeIcon : backIcon" class="icon-close" @onClick="closeCreated" size="16px"></Icon>
           <h1 class="group-box-header-title">{{ headerTitle }}</h1>
-          <Icon class="closeIcon" :file="isPC ? closeIcon : backIcon"  @click="closeCreated"></Icon>
         </header>
         <ul class="group-list" v-if="!groupInfo.isEdit">
           <li class="group-list-item">
             <label class="group-list-item-label">{{ TUITranslateService.t('TUIGroup.群头像') }}</label>
-            <Icon :file="groupInfo.profile.avatar"></Icon>
+            <Avatar :url="groupInfo.profile.avatar"></Avatar>
           </li>
           <ul>
             <li class="group-list-item" v-for="(item, index) in createInfo" :key="index">
               <label class="group-list-item-label">{{ item.name }}</label>
-              <input v-if="isPC" type="text" v-model="groupInfo.profile[item.key]" placeholder="请输入群名称">
+              <input
+                v-if="isPC"
+                type="text"
+                v-model="groupInfo.profile[item.key]"
+                :placeholder="item.placeholder"
+              />
               <span v-else class="group-h5-list-item-content" @click="edit(item.key)">
                 <p class="content">{{ groupInfo.profile[item.key] }}</p>
                 <Icon :file="rightIcon"></Icon>
@@ -39,16 +44,23 @@
               <article class="group-h5-list-item-introduction" v-if="!isPC">
                 <label class="introduction-name">{{ groupTypeDetail.label }}：</label>
                 <span class="introduction-detail">{{ groupTypeDetail.detail }}</span>
-                <a :href="documentLink.product.url" target="view_window">{{
-                  TUITranslateService.t(`TUIGroup.${groupTypeDetail.src}`) }}</a>
+                <a :href="documentLink.product.url" target="view_window">
+                  {{ TUITranslateService.t(`TUIGroup.${groupTypeDetail.src}`) }}
+                </a>
               </article>
             </li>
           </ul>
         </ul>
+        <!-- 修改群名称 -->
         <div class="group-list group-list-edit" v-else>
-          <input v-if="groupInfo.groupConfig.type === 'input'" type="text" v-model="groupInfo.groupConfig.value"
-            :placeholder="TUITranslateService.t(`TUIGroup.${groupInfo.groupConfig.placeholder}`)"/>
-          <GroupIntroduction v-else :groupType="groupInfo.groupConfig.value" @selectType="selected" />
+          <input
+            v-if="groupInfo.groupConfig.type === 'input'"
+            class="group-name-input"
+            type="text"
+            v-model="groupInfo.groupConfig.value"
+            :placeholder="TUITranslateService.t(`TUIGroup.${groupInfo.groupConfig.placeholder}`)"
+          />
+          <GroupIntroduction v-else class="group-introduction-list" :groupType="groupInfo.groupConfig.value" @selectType="selected" />
         </div>
         <footer class="group-profile-footer">
           <button v-if="isPC && !groupInfo.isEdit" class="btn-default" @click="closeCreated">
@@ -74,13 +86,15 @@ import documentLink from "../../../utils/documentLink";
 import { isPC } from "../../../utils/env";
 import Icon from "../../common/Icon.vue"
 import backIcon from "../../../assets/icon/back.svg";
-import closeIcon from "../../../assets/icon/close.png";
-import rightIcon from "../../../assets/icon/right.png";
+import closeIcon from "../../../assets/icon/icon-close.svg";
+import rightIcon from "../../../assets/icon/right-icon.svg";
 import GroupIntroduction from "./group-introduction/index.vue";
 import { groupIntroConfig, findGroupIntroConfig } from "./group-introduction/config";
 import Dialog from "../../common/Dialog/index.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import Avatar from "../../common/Avatar/index.vue"
 import Server from "../server";
+import { IUserProfile } from "../../../interface";
 const TUIGroupServer = Server.getInstance();
 const TUIConstants = TUIGroupServer.constants;
 
@@ -94,6 +108,7 @@ const groupInfo = reactive<any>({
     notification: '',
     // joinOption: '',
     memberList: [],
+    isSupportTopic: false,
   },
   groupConfig: {
     title: '',
@@ -124,14 +139,19 @@ const headerTitle = computed(() => {
 });
 
 const createInfo = computed(() => {
-  return [{
-      name: TUITranslateService.t('TUIGroup.群名称'),
-      key: 'name'
-    },
-    {
-      name: `${TUITranslateService.t('TUIGroup.群ID')}(${TUITranslateService.t('TUIGroup.选填')})`,
-      key: 'groupID'
-    }]
+  const groupNameInput = {
+    name: TUITranslateService.t("TUIGroup.群名称"),
+    key: "name",
+    placeholder: TUITranslateService.t("TUIGroup.请输入群名称"),
+  };
+  const groupIDInput = {
+    name: `${TUITranslateService.t("TUIGroup.群ID")}(${TUITranslateService.t("TUIGroup.选填")})`,
+    key: "groupID",
+    placeholder: TUITranslateService.t("TUIGroup.请输入群ID"),
+  };
+  return groupInfo.profile.type === TUIChatEngine.TYPES.GRP_COMMUNITY
+    ? [groupNameInput]
+    : [groupNameInput, groupIDInput];
 });
 
 const submitDisabledStatus = computed(() => {
@@ -150,8 +170,14 @@ const selected = (type: any) => {
 
 const createGroup = async (options: any) => {
   try {
+    options.memberList = options.memberList.map((item: IUserProfile) => {
+      return { userID: item.userID };
+    });
+    if(options.type === TUIChatEngine.TYPES.GRP_COMMUNITY){
+      delete options.groupID;
+    }
     const res = await TUIGroupService.createGroup(options);
-    const { groupID, type } = res.data.group;
+    const { type } = res.data.group;
     if (type === TUIChatEngine.TYPES.GRP_AVCHATROOM) {
       await TUIGroupService.joinGroup({
         groupID: res.data.group.groupID,
@@ -160,7 +186,7 @@ const createGroup = async (options: any) => {
     }
     handleCompleteCreate(res.data.group);
     Toast({
-      message: "群组创建成功",
+      message: TUITranslateService.t("TUIGroup.群组创建成功"),
       type: TOAST_TYPE.SUCCESS
     });
   } catch (err: any) {

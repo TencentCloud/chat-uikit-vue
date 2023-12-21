@@ -130,8 +130,7 @@ const onClickTarget = () => {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
-    width: 100px;
+    align-items: flex-start;
     padding: 0px;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
     .list-item {
@@ -140,12 +139,13 @@ const onClickTarget = () => {
       justify-content: space-between;
       align-items: center;
       height: 40px;
-      width: calc(100% - 20px);
       padding: 0 10px;
       &-icon {
+        margin-right: 2px;
       }
       &-title {
         font-size: 14px;
+        text-wrap: nowrap;
       }
     }
   }

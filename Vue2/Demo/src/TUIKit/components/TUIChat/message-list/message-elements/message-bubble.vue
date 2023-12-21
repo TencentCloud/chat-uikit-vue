@@ -4,7 +4,7 @@
     <div class="message-bubble-main-content" :class="[message.flow === 'in' ? '' : 'reverse']">
       <Avatar
         useSkeletonAnimation
-        :url="message.avatar"
+        :url="message.avatar || ''"
       />
       <main class="message-body">
         <div
@@ -13,56 +13,58 @@
         >
           {{ props.content.showName }}
         </div>
-        <div
-          :class="[
-            'blink',
-            'message-body-content',
-            message.flow === 'out' ? 'content-out' : 'content-in',
-            message.hasRiskContent && 'content-has-risk',
-            isNoPadding ? 'content-noPadding' : '',
-            isNoPadding && isBlink ? 'blink-shadow' : '',
-            !isNoPadding && isBlink ? 'blink-content' : '',
-          ]"
-        >
-          <div class="content-main">
-            <img
-              v-if="
-                (message.type === TYPES.MSG_IMAGE || message.type === TYPES.MSG_VIDEO) &&
-                message.hasRiskContent
-              "
-              :class="['message-risk-replace', !isPC && 'message-risk-replace-h5']"
-              :src="riskImageReplaceUrl"
-            />
-            <slot v-else></slot>
+        <div :class="['message-body-main', message.flow === 'out' && 'message-body-main-reverse']">
+          <div
+            :class="[
+              'blink',
+              'message-body-content',
+              message.flow === 'out' ? 'content-out' : 'content-in',
+              message.hasRiskContent && 'content-has-risk',
+              isNoPadding ? 'content-noPadding' : '',
+              isNoPadding && isBlink ? 'blink-shadow' : '',
+              !isNoPadding && isBlink ? 'blink-content' : '',
+            ]"
+          >
+            <div class="content-main">
+              <img
+                v-if="
+                  (message.type === TYPES.MSG_IMAGE || message.type === TYPES.MSG_VIDEO) &&
+                  message.hasRiskContent
+                "
+                :class="['message-risk-replace', !isPC && 'message-risk-replace-h5']"
+                :src="riskImageReplaceUrl"
+              />
+              <slot v-else></slot>
+            </div>
+            <!-- 敏感信息失败提示 -->
+            <div v-if="message.hasRiskContent" class="content-has-risk-tips">
+              {{ riskContentText }}
+            </div>
           </div>
-          <!-- 敏感信息失败提示 -->
-          <div v-if="message.hasRiskContent" class="content-has-risk-tips">
-            {{ riskContentText }}
+          <!-- 发送失败 -->
+          <div
+            v-if="message.status === 'fail' || message.hasRiskContent"
+            class="message-label fail"
+            @click="resendMessage()"
+          >
+            !
           </div>
+          <!-- 加载图标 -->
+          <Icon
+            v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
+            class="message-label loadingCircle"
+            :file="loadingIcon"
+            :width="'15px'"
+            :height="'15px'"
+          ></Icon>
+          <!-- 已读 & 未读 -->
+          <ReadStatus
+            class="message-label align-self-bottom"
+            :message="shallowCopyMessage(message)"
+            @openReadUserPanel="openReadUserPanel"
+          />
         </div>
       </main>
-      <!-- 发送失败 -->
-      <div
-        v-if="message.status === 'fail' || message.hasRiskContent"
-        class="message-label fail"
-        @click="resendMessage()"
-      >
-        !
-      </div>
-      <!-- 加载图标 -->
-      <Icon
-        v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
-        class="message-label loadingCircle"
-        :file="loadingIcon"
-        :width="'15px'"
-        :height="'15px'"
-      ></Icon>
-      <!-- 已读 & 未读 -->
-      <ReadStatus
-        class="align-self-bottom"
-        :message="shallowCopyMessage(message)"
-        @openReadUserPanel="openReadUserPanel"
-      />
     </div>
     <!-- 消息附加区域 -->
     <div class="message-bubble-extra-content" :class="message.flow === 'in' || 'reverse'">
@@ -74,17 +76,14 @@
 
 <script lang="ts" setup>
 import { computed, toRefs } from "../../../../adapter-vue";
-import TUIChatEngine, {
-  TUITranslateService,
-  TUIGlobal,
-  IMessageModel,
-} from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine, { TUITranslateService, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import ReadStatus from "./read-status/index.vue";
 import MessageQuote from "./message-quote/index.vue";
 import Avatar from "../../../common/Avatar/index.vue";
 import loadingIcon from "../../../../assets/icon/loading.png";
 import { shallowCopyMessage } from "../../utils/utils";
+import { isPC } from "../../../../utils/env";
 
 interface IProps {
   messageItem: IMessageModel;
@@ -103,12 +102,11 @@ interface IEmits {
 const emits = defineEmits<IEmits>();
 
 const props = withDefaults(defineProps<IProps>(), {
-  messageItem: () => ({}) as IMessageModel,
+  messageItem: () => ({} as IMessageModel),
   content: () => ({}),
   blinkMessageIDList: () => [],
 });
 
-const isPC = TUIGlobal.getPlatform() === "pc";
 const TYPES = TUIChatEngine.TYPES;
 const riskImageReplaceUrl =
   "https://web.sdk.qcloud.com/component/TUIKit/assets/has_risk_default.png";
@@ -199,39 +197,54 @@ function openReadUserPanel() {
 
       .message-body-nickName {
         margin-bottom: 4px;
-        font-size: 10px;
+        font-size: 12px;
         color: #999;
       }
 
-      .message-body-content {
+      .message-body-main {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         min-width: 0px;
         box-sizing: border-box;
-        padding: 12px;
-        font-size: 14px;
-        color: #000;
-        letter-spacing: 0;
-        word-wrap: break-word;
-        word-break: break-all;
-        position: relative;
-        overflow: hidden;
-
-        .content-main {
-          box-sizing: border-box;
+        &-reverse {
+          flex-direction: row-reverse;
+        }
+        .message-body-content {
           display: flex;
           flex-direction: column;
-          flex-shrink: 0;
-          align-content: flex-start;
-          border: 0 solid black;
-          margin: 0;
-          padding: 0;
-          min-width: 0;
+          min-width: 0px;
+          box-sizing: border-box;
+          padding: 12px;
+          font-size: 14px;
+          color: #000;
+          letter-spacing: 0;
+          word-wrap: break-word;
+          word-break: break-all;
+          position: relative;
+          overflow: hidden;
+          .content-main {
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            align-content: flex-start;
+            border: 0 solid black;
+            margin: 0;
+            padding: 0;
+            min-width: 0;
 
-          .message-risk-replace {
-            width: 130px;
-            height: 130px;
+            .message-risk-replace {
+              width: 130px;
+              height: 130px;
+            }
           }
+          .content-has-risk-tips {
+            font-size: 12px;
+            color: #fa5151;
+            font-family: PingFang SC;
+            margin-top: 5px;
+            border-top: 1px solid #e5c7c7;
+            padding-top: 5px;
         }
       }
 
@@ -260,15 +273,6 @@ function openReadUserPanel() {
         background: rgba(250, 81, 81, 0.16);
       }
 
-      .content-has-risk-tips {
-        font-size: 12px;
-        color: #fa5151;
-        font-family: PingFang SC;
-        margin-top: 5px;
-        border-top: 1px solid #e5c7c7;
-        padding-top: 5px;
-      }
-
       .blink-shadow {
         @keyframes shadowBlink {
           50% {
@@ -289,8 +293,6 @@ function openReadUserPanel() {
 
         animation: referenceBlink 1s linear 3;
       }
-    }
-
     .message-label {
       align-self: flex-end;
       font-family: PingFangSC-Regular;
@@ -298,6 +300,7 @@ function openReadUserPanel() {
       color: #b6b8ba;
       word-break: keep-all;
       flex: 0 0 auto;
+      margin: 0px 8px;
 
       &.fail {
         width: 15px;
@@ -328,9 +331,10 @@ function openReadUserPanel() {
         }
       }
     }
-
     .align-self-bottom {
       align-self: flex-end;
+        }
+      }
     }
   }
 

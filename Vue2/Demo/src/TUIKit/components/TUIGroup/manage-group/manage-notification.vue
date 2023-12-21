@@ -58,13 +58,13 @@
 </template>
 
 <script lang="ts" setup>
+import { nextTick } from "../../../adapter-vue";
 import {
   TUITranslateService,
   IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
 import { watchEffect, ref } from "../../../adapter-vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { nextTick } from "vue";
 import { isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
@@ -95,7 +95,7 @@ const emits = defineEmits(["update", "close"]);
 const updateProfile = () => {
   if (input.value.length > 150) {
     Toast({
-      message: "群公告字数超出限制，最大长度为150",
+      message: TUITranslateService.t("TUIGroup.群公告字数超出限制，最大长度为150"),
       type: TOAST_TYPE.ERROR,
     });
     return;
@@ -122,6 +122,7 @@ const close = (tabName: string) => {
   padding: 20px;
   display: flex;
   flex-direction: column;
+  word-break: break-all;
 
   .row {
     flex: 1;

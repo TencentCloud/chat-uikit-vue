@@ -70,8 +70,11 @@
             text-overflow: ellipsis;
             white-space: nowrap;
           }
-          &-icon{
-            
+          &-icon {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
           }
         }
         &-input,
@@ -99,7 +102,7 @@
     justify-content: center;
     &-item {
       margin: 15px;
-      width: 142px;
+      min-width: 142px;
       height: 36px;
       padding: 8px 20px;
       border-radius: 4px;

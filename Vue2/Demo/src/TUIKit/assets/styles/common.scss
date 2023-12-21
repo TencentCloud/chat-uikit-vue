@@ -45,7 +45,7 @@ img{
   top: 50px;
   right: 0;
   box-sizing: border-box;
-  width: 360px;
+  width: 360px !important;
   border-radius: 8px 0 0 8px;
   z-index: 2;
   max-height: calc(100% - 50px);

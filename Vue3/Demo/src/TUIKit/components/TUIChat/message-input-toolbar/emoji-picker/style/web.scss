@@ -1,0 +1,46 @@
+.emoji-picker {
+  width: 410px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  &-list {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    margin: 2px;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    &-item {
+      cursor: pointer;
+      padding: 5px;
+      .emoji {
+        width: 30px;
+        height: 30px;
+      }
+      .emoji-big {
+        width: 70px;
+        height: 70px;
+      }
+    }
+  }
+  &-tab {
+    display: flex;
+    align-items: center;
+    &-item {
+      padding: 0 10px;
+      cursor: pointer;
+      .icon {
+        margin: 10px;
+        width: 20px;
+        height: 20px;
+        &-big {
+          margin: 2px 0;
+          width: 30px;
+          height: 30px;
+        }
+      }
+    }
+  }
+}

@@ -9,8 +9,10 @@ import {
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isEnabledMessageReadReceiptGlobal } from "../utils/utils";
 import { ITipTapEditorContent } from "../../../interface";
+import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus";
 
 export const sendMessageErrorCodeMap: Map<number, string> = new Map([
+  [3123, "文本包含本地审核拦截词"],
   [4004, "图片消息失败,无效的图片格式"],
   [4005, "文件消息失败,禁止发送违规封禁的文件"],
   [7004, "文件不存在,请检查文件路径是否正确"],
@@ -35,7 +37,6 @@ export const sendMessages = async (
   }
   messageList?.forEach(async (content: ITipTapEditorContent) => {
     try {
-      const textMessageContent = JSON.parse(JSON.stringify(content?.payload?.text));
       const options: SendMessageParams = {
         to: currentConversation?.groupProfile?.groupID || currentConversation?.userProfile?.userID,
         conversationType: currentConversation?.type as any,
@@ -45,6 +46,7 @@ export const sendMessages = async (
       // handle message typing
       switch (content?.type) {
         case "text":
+          const textMessageContent = JSON.parse(JSON.stringify(content?.payload?.text));
           // 禁止发送空消息
           if (!textMessageContent) {
             break;
@@ -83,10 +85,11 @@ export const sendMessages = async (
         default:
           break;
       }
+      enableSampleTaskStatus("sendMessage");
     } catch (error: any) {
       Toast({
         message: sendMessageErrorCodeMap.get(error?.code)
-          ? TUITranslateService.t(sendMessageErrorCodeMap.get(error.code) as string)
+          ? TUITranslateService.t(`TUIChat.${sendMessageErrorCodeMap.get(error.code) as string}`)
           : error?.message,
         type: TOAST_TYPE.ERROR,
       });

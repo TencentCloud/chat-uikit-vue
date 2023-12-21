@@ -1,8 +1,8 @@
 class TUIChatConfig {
   static instance: TUIChatConfig;
-  private chatType: string;  
+  private chatType: string;
   constructor() {
-      this.chatType = '';
+    this.chatType = "";
   }
 
   static getInstance(): TUIChatConfig {

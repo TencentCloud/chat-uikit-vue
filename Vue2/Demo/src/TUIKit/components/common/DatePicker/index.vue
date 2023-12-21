@@ -1,20 +1,62 @@
 <template>
   <div :class="[n([''])]">
-    <div :class="[n(['input']), isDatePanelShow && n(['input-active'])]" @click="setDatePanelDisplay(!isDatePanelShow)">
-      <input :placeholder="startPlaceholderVal" :class="[n(['input-start'])]" type="text" v-model="startFormatDate" readonly
-        autocomplete="false" />
-      <span>-</span>
-      <input :placeholder="endPlaceholderVal" :class="[n(['input-end'])]" type="text" v-model="endFormatDate" readonly
-        autocomplete="false" />
+    <div
+      :class="[n(['input']), isDatePanelShow && n(['input-active'])]"
+      @click="setDatePanelDisplay(!isDatePanelShow)"
+    >
+      <slot name="start-icon"></slot>
+      <input
+        :placeholder="startPlaceholderVal"
+        :class="[n(['input-start'])]"
+        type="text"
+        v-model="startFormatDate"
+        readonly
+        autocomplete="false"
+      />
+      <span v-if="type !== 'single'">-</span>
+      <input
+        v-if="type !== 'single'"
+        :placeholder="endPlaceholderVal"
+        :class="[n(['input-end'])]"
+        type="text"
+        v-model="endFormatDate"
+        readonly
+        autocomplete="false"
+      />
+      <slot name="end-icon"></slot>
     </div>
     <div :class="[n(['dialog'])]" v-if="isDatePanelShow">
-      <div :class="[n(['dialog-container', 'dialog-container-' + rangeTableType])]">
-        <DatePickerPanel :type="props.type" rangeType="left" :startDate="startValue" :endDate="endValue"
-          :currentOtherPanelValue="rightCurrentPanelValue" @pick="handlePick" @change="handleLeftPanelChange">
+      <div
+        :class="[
+          n([
+            'dialog-container',
+            'dialog-container-' + rangeTableType,
+            'dialog-container-' + popupPosition,
+          ]),
+        ]"
+      >
+        <DatePickerPanel
+          :type="props.type"
+          rangeType="left"
+          :date="dateValue"
+          :startDate="startValue"
+          :endDate="endValue"
+          :currentOtherPanelValue="rightCurrentPanelValue"
+          @pick="handlePick"
+          @change="handleLeftPanelChange"
+        >
         </DatePickerPanel>
-        <DatePickerPanel v-if="props.type === 'range' && isPC && rangeTableType === 'two'" :type="props.type"
-          rangeType="right" :startDate="startValue" :endDate="endValue" :currentOtherPanelValue="leftCurrentPanelValue"
-          @pick="handlePick" @change="handleRightPanelChange"></DatePickerPanel>
+        <DatePickerPanel
+          v-if="props.type === 'range' && isPC && rangeTableType === 'two'"
+          :type="props.type"
+          rangeType="right"
+          :date="dateValue"
+          :startDate="startValue"
+          :endDate="endValue"
+          :currentOtherPanelValue="leftCurrentPanelValue"
+          @pick="handlePick"
+          @change="handleRightPanelChange"
+        ></DatePickerPanel>
       </div>
     </div>
   </div>
@@ -50,23 +92,33 @@ const props = defineProps({
   },
   startPlaceholder: {
     type: String,
-    default: "开始时间",
+    default: () => TUITranslateService.t("开始时间"),
   },
   endPlaceholder: {
     type: String,
-    default: "结束时间",
+    default: () => TUITranslateService.t("开始时间"),
+  },
+  popupPosition: {
+    type: String,
+    default: "bottom", // "top": 向上弹出 datePanel / "bottom": 向下弹出 datePanel
+  },
+  // 默认单选日期
+  defaultSingleDate: {
+    type: Dayjs,
+    default: null,
+    required: false,
   },
 });
 
 const isDatePanelShow = ref<boolean>(false);
 
-const dateValue = ref<typeof Dayjs>();
-const startValue = ref<typeof Dayjs>();
-const endValue = ref<typeof Dayjs>();
+const dateValue = ref<typeof Dayjs>(props.type === "single" ? props?.defaultSingleDate : null);
+const startValue = ref<typeof Dayjs>(props.type === "single" ? props?.defaultSingleDate : null);
+const endValue = ref<typeof Dayjs>(props.type === "single" ? props?.defaultSingleDate : null);
 const startFormatDate = computed(() => startValue?.value?.format("YYYY/MM/DD"));
 const endFormatDate = computed(() => endValue?.value?.format("YYYY/MM/DD"));
-const startPlaceholderVal = TUITranslateService.t(props.startPlaceholder);
-const endPlaceholderVal = TUITranslateService.t(props.endPlaceholder);
+const startPlaceholderVal = props.startPlaceholder;
+const endPlaceholderVal = props.endPlaceholder;
 const leftCurrentPanelValue = ref<typeof Dayjs>();
 const rightCurrentPanelValue = ref<typeof Dayjs>();
 
@@ -91,6 +143,8 @@ const n = (classNameList: Array<string>) => {
 const handlePick = (cell: DateCell) => {
   switch (props.type) {
     case "single":
+      startValue.value = cell.date;
+      endValue.value = cell.date;
       dateValue.value = cell.date;
       emit("change", cell);
       emit("pick", dateValue.value);
@@ -153,7 +207,7 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
 <style scoped lang="scss">
 .tui-date-picker {
   &-input {
-    width: 160px;
+    min-width: 160px;
     display: flex;
     flex-direction: row;
     color: #666666;
@@ -162,6 +216,7 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
 
     &-start,
     &-end {
+      flex: 1;
       color: #666666;
       height: 17px;
       border: none;
@@ -184,7 +239,6 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
 
   &-dialog {
     position: relative;
-
     &-container {
       position: absolute;
       display: flex;
@@ -194,7 +248,12 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
       background-color: #ffffff;
       box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
       z-index: 1000;
-
+      &-bottom {
+        left: 5px;
+      }
+      &-top {
+        bottom: 30px;
+      }
       &-one {
         left: -5px;
       }

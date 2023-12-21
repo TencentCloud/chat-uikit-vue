@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.png" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, viewport-fit=cover"
+    />
+    <title>腾讯云即时通信 Web-IM</title>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="https://turing.captcha.qcloud.com/TCaptcha.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+    <script>
+      /**
+       * 根据基础字体大小 和 效果图宽度设置 根节点字体大小
+       * @param baseFontSize  浏览器默认字体大小 [注]浏览器最小字体为12像素，所以该值必需大于等于12
+       * @param baseWidth  设计稿的尺寸
+       */
+      function initFontSize() {
+        // 获取当前屏幕宽度
+        var clientWidth = document.documentElement.clientWidth || window.innerWidth
+        // 根据宽度计算根节点字体大小
+        //初始化 字体16px , 设计稿宽1920px
+        var size = Math.floor((clientWidth / 1920) * 16)
+
+        size = size > 12 ? size : 12
+
+        document.querySelector('html').style.fontSize = size + 'px'
+      }
+      initFontSize()
+      // 窗口大小改变时设置根节点字体大小，通过字体大小来控制页面元素尺寸的缩放
+      window.addEventListener('resize', initFontSize)
+      // prevent page scaling
+      window.onload = function () {
+        var lastTouchEnd = 0
+        // prevent double-click on scaling
+        document.addEventListener('touchstart', function (event) {
+          if (event.touches.length > 1) {
+            event.preventDefault()
+          }
+        })
+        document.addEventListener(
+          'touchend',
+          function (event) {
+            var now = new Date().getTime()
+            if (now - lastTouchEnd <= 300) {
+              event.preventDefault()
+            }
+            lastTouchEnd = now
+          },
+          false
+        )
+        // prevent double fingers on scaling
+        document.addEventListener('gesturestart', function (event) {
+          event.preventDefault()
+        })
+        document.addEventListener('dblclick', function (event) {
+          event.preventDefault()
+        })
+        // 阻止android部分浏览器原生强制允许放大
+        document.getElementById('app').addEventListener(
+          'touchmove',
+          function (e) {
+            e.stopPropagation()
+          },
+          false
+        )
+      }
+      // 处理 safari 底部导航栏遮挡问题
+      const vh = window.innerHeight * 0.01
+      document.documentElement.style.setProperty('--vh', `${vh}px`)
+      window.addEventListener('resize', () => {
+        const vh = window.innerHeight * 0.01
+        document.documentElement.style.setProperty('--vh', `${vh}px`)
+      })
+    </script>
+    <style>
+      body {
+        margin: 0;
+        width: 100vw;
+        max-height: 100vh;
+      }
+      @supports (-webkit-touch-callout: none) {
+        body {
+          min-height: -webkit-fill-available;
+          max-height: -webkit-fill-available;
+        }
+      }
+    </style>
+  </body>
+</html>

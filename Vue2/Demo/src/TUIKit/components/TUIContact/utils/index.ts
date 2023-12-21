@@ -125,7 +125,7 @@ export const updateFriendRemark = (userID: string, remark: string) => {
   // eslint-disable-next-line no-control-regex
   if (remark?.replace(/[^\u0000-\u00ff]/g, "aa")?.length > 96) {
     Toast({
-      message: "修改备注失败: 备注长度不得超过 96 字节",
+      message: TUITranslateService.t("TUIContact.修改备注失败: 备注长度不得超过 96 字节"),
       type: TOAST_TYPE.ERROR,
     });
     return;
@@ -136,14 +136,14 @@ export const updateFriendRemark = (userID: string, remark: string) => {
   })
     .then(() => {
       Toast({
-        message: "修改备注成功",
+        message: TUITranslateService.t("TUIContact.修改备注成功"),
         type: TOAST_TYPE.SUCCESS,
       });
     })
     .catch((error: any) => {
       console.warn("update friend remark failed:", error);
       Toast({
-        message: "修改备注失败",
+        message: TUITranslateService.t("TUIContact.修改备注失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -159,12 +159,12 @@ export const deleteFriend = (userID: string) => {
       const { successUserIDList } = res.data;
       if (successUserIDList[0].userID === userID) {
         Toast({
-          message: "删除好友成功",
+          message: TUITranslateService.t("TUIContact.删除好友成功"),
           type: TOAST_TYPE.SUCCESS,
         });
       } else {
         Toast({
-          message: "删除好友失败",
+          message: TUITranslateService.t("TUIContact.删除好友失败"),
           type: TOAST_TYPE.ERROR,
         });
       }
@@ -172,7 +172,7 @@ export const deleteFriend = (userID: string) => {
     .catch((error: any) => {
       console.warn("delete friend failed:", error);
       Toast({
-        message: "删除好友失败",
+        message: TUITranslateService.t("TUIContact.删除好友失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -183,14 +183,14 @@ export const addFriend = (params: AddFriendParams) => {
   TUIFriendService.addFriend(params)
     .then((res: any) => {
       Toast({
-        message: res?.data?.message ? res?.data?.message : "申请已发送",
+        message: TUITranslateService.t("TUIContact.申请已发送"),
         type: TOAST_TYPE.SUCCESS,
       });
     })
     .catch((error: any) => {
       console.warn("delete friend failed:", error);
       Toast({
-        message: "申请发送失败",
+        message: TUITranslateService.t("TUIContact.申请发送失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -206,7 +206,7 @@ export const enterConversation = (item: any) => {
     (error: any) => {
       console.warn("switch conversation failed:", error);
       Toast({
-        message: "进入会话失败",
+        message: TUITranslateService.t("TUIContact.进入会话失败"),
         type: TOAST_TYPE.ERROR,
       });
     }
@@ -221,14 +221,14 @@ export const acceptFriendApplication = (userID: string) => {
   })
     .then(() => {
       Toast({
-        message: "添加好友成功",
+        message: TUITranslateService.t("TUIContact.添加好友成功"),
         type: TOAST_TYPE.SUCCESS,
       });
     })
     .catch((error: any) => {
       console.warn("accept friend application failed:", error);
       Toast({
-        message: "同意好友申请失败",
+        message: TUITranslateService.t("TUIContact.同意好友申请失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -239,14 +239,14 @@ export const refuseFriendApplication = (userID: string) => {
   TUIFriendService.refuseFriendApplication(userID)
     .then(() => {
       Toast({
-        message: "拒绝成功",
+        message: TUITranslateService.t("TUIContact.拒绝成功"),
         type: TOAST_TYPE.SUCCESS,
       });
     })
     .catch((error: any) => {
       console.warn("accept friend application failed:", error);
       Toast({
-        message: "拒绝好友申请失败",
+        message: TUITranslateService.t("TUIContact.拒绝好友申请失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -259,7 +259,7 @@ export const dismissGroup = (groupID: string) => {
   TUIGroupService.dismissGroup(groupID)
     .then(() => {
       Toast({
-        message: "解散群聊成功",
+        message: TUITranslateService.t("TUIContact.解散群聊成功"),
         type: TOAST_TYPE.SUCCESS,
       });
       // 解散群聊后特殊情况：
@@ -271,7 +271,7 @@ export const dismissGroup = (groupID: string) => {
     .catch((error: any) => {
       console.warn("dismiss group failed:", error);
       Toast({
-        message: "解散群聊失败",
+        message: TUITranslateService.t("TUIContact.解散群聊失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -282,14 +282,14 @@ export const quitGroup = (groupID: string) => {
   TUIGroupService.quitGroup(groupID)
     .then(() => {
       Toast({
-        message: "退出群组成功",
+        message: TUITranslateService.t("TUIContact.退出群组成功"),
         type: TOAST_TYPE.SUCCESS,
       });
     })
     .catch((error: any) => {
       console.warn("quit group failed:", error);
       Toast({
-        message: "退出群组失败",
+        message: TUITranslateService.t("TUIContact.退出群组失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -347,7 +347,7 @@ export const addToBlacklist = (userID: string, successCallBack?: Function) => {
     .catch((error: any) => {
       console.warn("add to blacklist failed:", error);
       Toast({
-        message: "加入黑名单失败",
+        message: TUITranslateService.t("TUIContact.加入黑名单失败"),
         type: TOAST_TYPE.ERROR,
       });
     });
@@ -366,7 +366,7 @@ export const removeFromBlacklist = (
     .catch((error: any) => {
       console.warn("remove from balcklist failed:", error);
       Toast({
-        message: "移除黑名单失败",
+        message: TUITranslateService.t("TUIContact.移除黑名单失败"),
         type: TOAST_TYPE.ERROR,
       });
     });

@@ -29,14 +29,14 @@
           v-if="showApplicationStatus.style === 'text'"
           class="TUI-contact-list-card-right-application-text"
         >
-          {{ TUITranslateService.t(showApplicationStatus.label) }}
+          {{ TUITranslateService.t(`TUIContact.${showApplicationStatus.label}`) }}
         </div>
         <button
           v-else-if="showApplicationStatus.style === 'button'"
           class="TUI-contact-list-card-right-application-button"
           @click="showApplicationStatus.onClick"
         >
-          {{ TUITranslateService.t(showApplicationStatus.label) }}
+          {{ TUITranslateService.t(`TUIContact.${showApplicationStatus.label}`) }}
         </button>
       </div>
     </div>

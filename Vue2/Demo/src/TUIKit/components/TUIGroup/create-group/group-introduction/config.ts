@@ -29,6 +29,13 @@ const groupIntroConfig = [
     detail: '创建后可以随意进出，没有群成员数量上限，但不支持历史消息存储；适合与直播产品结合，用于弹幕聊天场景。详见',
     src: '产品文档',
   },
+  {
+    icon: 'https://web.sdk.qcloud.com/im/assets/images/Community.png',
+    label: '社群（Community）',
+    type: TUIChatEngine.TYPES.GRP_COMMUNITY,
+    detail: '创建后可以随意进出，最多支持100000人，支持历史消息存储，用户搜索群 ID 发起加群申请后，无需管理员审批即可进群。详见',
+    src: '产品文档',
+  },
 ];
 
 const findGroupIntroConfig = (type: string) => {

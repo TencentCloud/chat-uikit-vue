@@ -28,7 +28,7 @@ export const searchCloudMessages = (
     })
     .catch((error: any) => {
       Toast({
-        message: "消息云端搜索失败：" + error?.message,
+        message: TUITranslateService.t("TUISearch.消息云端搜索失败：") + error?.message,
         type: TOAST_TYPE.ERROR,
         duration: 3000,
       });
@@ -46,7 +46,7 @@ export const searchFriends = (userIDList: Array<string>): Promise<Array<IFriendT
     .catch((error: any) => {
       console.warn("search user failed:", error?.message);
       Toast({
-        message: "查找联系人失败：" + error?.message,
+        message: TUITranslateService.t("TUISearch.查找联系人失败：") + error?.message,
         type: TOAST_TYPE.ERROR,
         duration: 1000,
       });
@@ -78,7 +78,7 @@ export const searchGroups = (groupIDList: Array<string>): Promise<Array<IGroupMo
     })
     .catch((error: any) => {
       Toast({
-        message: "查找群聊失败：" + error?.message,
+        message: TUITranslateService.t("TUISearch.查找群聊失败：") + error?.message,
         type: TOAST_TYPE.ERROR,
         duration: 1000,
       });
@@ -107,7 +107,7 @@ export const enterConversation = (item: any) => {
     .catch((error: any) => {
       console.warn("switch conversation failed:", error?.message);
       Toast({
-        message: "进入会话失败",
+        message: TUITranslateService.t("TUISearch.进入会话失败"),
         type: TOAST_TYPE.ERROR,
         duration: 1000,
       });
@@ -185,7 +185,7 @@ export const generateSearchResultShowContent = (
       const abstract: Array<{ text: string; isHighlight: boolean }> = [];
       if (message?.type !== TUIChatEngine.TYPES.MSG_TEXT && isTypeShow) {
         abstract.push({
-          text: messageTypeAbstractMap[message?.type],
+          text: TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[message?.type]}`),
           isHighlight: false,
         });
       }
@@ -197,7 +197,9 @@ export const generateSearchResultShowContent = (
           text: `${result?.messageCount}${TUITranslateService.t(
             "TUISearch.条相关"
           )}${TUITranslateService.t(
-            resultType === "allMessage" ? "结果" : searchMessageTypeList[resultType]?.label
+            `TUISearch.${
+              resultType === "allMessage" ? "结果" : searchMessageTypeList[resultType]?.label
+            }`
           )}`,
           isHighlight: false,
         },

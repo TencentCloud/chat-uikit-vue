@@ -10,7 +10,7 @@
       <div class="tui-search-result-list">
         <div class="tui-search-result-list-item" v-for="result in searchResult">
           <div class="header" v-if="props.searchType === 'global'">
-            {{ result.label }}
+            {{ TUITranslateService.t(`TUISearch.${result.label}`)  }}
           </div>
           <div class="list">
             <div v-for="item in result.list" :class="[generateListItemClass(item)]">
@@ -134,6 +134,7 @@ import {
 } from "../utils";
 import { isPC, isUniFrameWork } from "../../../utils/env";
 import { SEARCH_TYPE } from "../type";
+import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus"
 
 interface ISearchConversationResult {
   totalCount: number;
@@ -255,6 +256,7 @@ const setMessageSearchResultList = (option?: { conversationID?: string; cursor?:
     cursor: option?.cursor || undefined,
     keywordListMatchType: keywordListMatchType.value,
   }).then((res: any) => {
+    enableSampleTaskStatus("searchCloudMessage");
     if (!option?.conversationID) {
       // 全部会话搜索结果
       option?.cursor

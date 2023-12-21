@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
-import TUIChat from "./TUIChat.json";
-import TUIConversation from './TUIConversation.json';
-import TUIGroup from './TUIGroup.json';
-import TUIProfile from './TUIProfile.json';
-import TUIContact from './TUIContact.json';
-import TUISearch from './TUISearch.json';
+import TUIChat from './TUIChat';
+import TUIConversation from './TUIConversation';
+import TUIGroup from './TUIGroup';
+import TUIContact from './TUIContact';
+import TUISearch from './TUISearch';
 
-import message from './message.json';
-import component from './component.json';
-import time from './time.json';
-import Words from './words.json';
-import Evaluate from './evaluate.json';
+import message from './message';
+import component from './component';
+import time from './time';
+
+import Words from './words';
+import Evaluate from './evaluate';
 
 const messages = {
   en: {
@@ -19,10 +18,11 @@ const messages = {
     系统通知: 'System notification',
     关闭: 'Close',
     确定: 'Save',
+    开始时间: "Start Date",
+    结束时间: "End Date",
     TUIChat,
     TUIConversation,
     TUIGroup,
-    TUIProfile,
     TUIContact,
     message,
     component,

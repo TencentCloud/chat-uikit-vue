@@ -7,13 +7,22 @@
       borderRadius: avatarBorderRadius,
     }"
   >
-    <image
-      v-if="isUniFrameWork"
-      class="avatar-image"
-      :src="avatarImageUrl || defaultAvatarUrl"
-      @load="avatarLoadSuccess"
-      @error="avatarLoadFailed"
-    ></image>
+    <template v-if="isUniFrameWork">
+      <image
+        v-if="!loadErrorInUniapp"
+        class="avatar-image"
+        :src="avatarImageUrl || defaultAvatarUrl"
+        @load="avatarLoadSuccess"
+        @error="avatarLoadFailed"
+      ></image>
+      <image
+        v-else
+        class="avatar-image"
+        :src="defaultAvatarUrl"
+        @load="avatarLoadSuccess"
+        @error="avatarLoadFailed"
+      ></image>
+    </template>
     <img
       v-else
       class="avatar-image"
@@ -33,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs, watch } from '../../../adapter-vue';
+import { ref, toRefs } from '../../../adapter-vue';
 import { isUniFrameWork } from '../../../utils/env';
 
 interface IProps {
@@ -64,14 +73,9 @@ const {
   borderRadius: avatarBorderRadius,
   useSkeletonAnimation: useAvatarSkeletonAnimation,
 } = toRefs(props);
-const isImgLoaded = ref<boolean>(false);
 
-watch(avatarImageUrl, () => {
-  if (!avatarImageUrl.value && isUniFrameWork) {
-    // uniapp 下使用 watch 监听并替换
-    avatarImageUrl.value = defaultAvatarUrl;
-  }
-}, { immediate: true });
+const isImgLoaded = ref<boolean>(false);
+const loadErrorInUniapp = ref<boolean>(false);
 
 function avatarLoadSuccess(e: Event) {
   isImgLoaded.value = true;
@@ -80,7 +84,7 @@ function avatarLoadSuccess(e: Event) {
 
 function avatarLoadFailed(e: Event) {
   if (isUniFrameWork) {
-    avatarImageUrl.value = defaultAvatarUrl;
+    loadErrorInUniapp.value = true;
   } else {
     (e.currentTarget as HTMLImageElement).src = defaultAvatarUrl;
   }
@@ -101,6 +105,7 @@ function avatarLoadFailed(e: Event) {
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  flex: 0 0 auto;
 
   .placeholder {
     position: absolute;

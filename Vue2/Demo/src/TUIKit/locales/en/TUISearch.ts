@@ -1,4 +1,5 @@
 const TUISearch = {
+  搜索: "Search",
   全部: "All",
   联系人: "Contacts",
   群聊: "Groups",
@@ -21,6 +22,19 @@ const TUISearch = {
   查看更多历史记录: "View more history message",
   暂无搜索结果: "No Results",
   结果: "results",
+  "[文本]": "[Text Message]",
+  "[图片]": "[Image Message]",
+  "[语音]": "[Audio Message]",
+  "[视频]": "[Video Message]",
+  "[文件]": "[File Message]",
+  "[自定义消息]": "[Custom Message]",
+  "[系统消息]": "[System Message]",
+  "[合并消息]": "[Merged Message]",
+  "[位置消息]": "[Position Message]",
+  "消息云端搜索失败：": "Message cloud search failed: ",
+  "查找联系人失败：": "Failed to find contact: ",
+  "查找群聊失败：": "Failed to find group: ",
+  "进入会话失败": "Failed to enter conversation",
 };
 
 export default TUISearch;

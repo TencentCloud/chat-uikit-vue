@@ -27,7 +27,7 @@
           :key="index"
           @click="selectWord(item)"
         >
-          {{ item.value }}
+          {{ TUITranslateService.t(`Words.${item.value}`) }}
         </li>
       </ul>
     </div>
@@ -65,7 +65,7 @@ const selectWord = (item: any) => {
       currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
-      text: item.value,
+      text: TUITranslateService.t(`Words.${item.value}`),
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;

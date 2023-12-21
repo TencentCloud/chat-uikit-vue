@@ -82,14 +82,16 @@ export const isCreateGroupCustomMessage = (message: IMessageModel) => {
   );
 };
 
-export function isEnabledMessageReadReceiptGlobal() {
-  /**
-   * displayMessageReadReceipt 用户级别控制展示消息阅读状态
-   * 关闭后 你收发的消息均不带消息阅读状态
-   * 你将无法看到对方是否已读 同时对方也无法看到他发送的消息你是否已读
-   * 
-   * enabledMessageReadReceipt app级别是否开启已读回执
-   */
+/**
+ * displayMessageReadReceipt 用户级别控制展示消息阅读状态
+ * 关闭后 你收发的消息均不带消息阅读状态
+ * 你将无法看到对方是否已读 同时对方也无法看到他发送的消息你是否已读
+ * 
+ * enabledMessageReadReceipt app级别是否开启已读回执
+ *
+ * @return {boolean} - Returns a boolean value indicating if the message read receipt is enabled globally.
+ */
+export function isEnabledMessageReadReceiptGlobal(): boolean {
   return TUIStore.getData(StoreName.USER, "displayMessageReadReceipt") &&
   TUIStore.getData(StoreName.APP, "enabledMessageReadReceipt");
 }

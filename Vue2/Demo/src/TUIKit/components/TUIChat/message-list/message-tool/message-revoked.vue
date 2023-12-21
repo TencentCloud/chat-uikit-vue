@@ -1,12 +1,12 @@
 <template>
   <div class="revoke">
-    <label v-if="message.flow === 'in'">{{
+    <span v-if="message.flow === 'in'">{{
       message.nick || message.from
-    }}</label>
-    <label v-else-if="message.from === message.revoker">{{
+    }}</span>
+    <span v-else-if="message.from === message.revoker">{{
       TUITranslateService.t("TUIChat.您")
-    }}</label>
-    <label v-else>{{ message.revoker }}</label>
+    }}</span>
+    <span v-else>{{ message.revoker }}</span>
     <span>{{ TUITranslateService.t("TUIChat.撤回了一条消息") }}</span>
     <span
       class="edit"
@@ -19,7 +19,7 @@
 
 <script lang="ts" setup>
 import { watchEffect, ref } from "../../../../adapter-vue";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService, IMessageModel } from "@tencentcloud/chat-uikit-engine";
 const props = defineProps({
   isEdit: {
     type: Boolean,
@@ -31,7 +31,7 @@ const props = defineProps({
   },
 });
 
-const message = ref();
+const message = ref<IMessageModel>();
 const isEditMsg = ref(false);
 const emits = defineEmits(["messageEdit"]);
 watchEffect(() => {
@@ -49,7 +49,8 @@ const messageEdit = () => {
   justify-content: center;
   color: #999999;
   width: 100%;
-  font-size: 14px;
+  font-size: 12px;
+  margin-bottom: 10px;
   .edit {
     padding: 0 5px;
     color: #006eff;

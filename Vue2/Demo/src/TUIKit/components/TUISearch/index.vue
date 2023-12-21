@@ -43,7 +43,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, computed, withDefaults } from "../../adapter-vue";
+import { ref, onMounted, computed, withDefaults, onBeforeUnmount } from "../../adapter-vue";
 import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import SearchInput from "./search-input/index.vue";
 import SearchContainer from "./search-container/index.vue";
@@ -54,11 +54,14 @@ import { searchMessageTimeDefault } from "./search-time-list";
 import { isPC, isUniFrameWork } from "../../utils/env";
 import { SEARCH_TYPE } from "./type";
 
-const props = withDefaults(defineProps<{
-  searchType?: SEARCH_TYPE
-}>(), {
-  searchType: () => isUniFrameWork ? "conversation" : "global"
-})
+const props = withDefaults(
+  defineProps<{
+    searchType?: SEARCH_TYPE;
+  }>(),
+  {
+    searchType: () => (isUniFrameWork ? "conversation" : "global"),
+  }
+);
 const globalSearchRef = ref<HTMLElement | null>();
 // 当前会话
 const currentConversationID = ref<string>("");
@@ -89,37 +92,42 @@ const initSearchValue = (searchType: SEARCH_TYPE) => {
   });
 };
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversationID: (conversationID: string) => {
-    if (!isUniFrameWork && currentConversationID.value !== conversationID) {
-      // pc端 单页面 切换会话，关闭搜索
-      closeInConversationSearch();
-    }
-    currentConversationID.value = conversationID;
-  },
-});
-
-TUIStore.watch(StoreName.CUSTOM, {
-  currentSearchingStatus: (value: { isSearching: boolean; searchType: string }) => {
-    if (value?.searchType === props.searchType) {
-      searchingStatus.value = value?.isSearching;
-      // global search ui bind on click outside close
-      if (value?.searchType === "global" && value?.isSearching) {
-        onClickOutside(globalSearchRef.value);
-      }
-    }
-  },
-  isShowInConversationSearch: (value: boolean) => {
-    isShowInConversationSearch.value = value ? true : false;
-    isShowInConversationSearch.value && initSearchValue(props.searchType);
-  },
-});
-
 onMounted(() => {
   // init with default value
   ["global", "conversation"].forEach((type: string) => {
     initSearchValue(type as SEARCH_TYPE);
   });
+  // watch store change
+  TUIStore.watch(StoreName.CONV, {
+    currentConversationID: (conversationID: string) => {
+      if (!isUniFrameWork && currentConversationID.value !== conversationID) {
+        // pc端 单页面 切换会话，关闭搜索
+        closeInConversationSearch();
+      }
+      currentConversationID.value = conversationID;
+    },
+  });
+  TUIStore.watch(StoreName.CUSTOM, {
+    currentSearchingStatus: (value: { isSearching: boolean; searchType: string }) => {
+      if (value?.searchType === props.searchType) {
+        searchingStatus.value = value?.isSearching;
+        // global search ui bind on click outside close
+        if (value?.searchType === "global" && globalSearchRef.value) {
+          value?.isSearching
+            ? onClickOutside(globalSearchRef.value)
+            : removeClickListener(globalSearchRef.value);
+        }
+      }
+    },
+    isShowInConversationSearch: (value: boolean) => {
+      isShowInConversationSearch.value = value ? true : false;
+      isShowInConversationSearch.value && initSearchValue(props.searchType);
+    },
+  });
+});
+
+onBeforeUnmount(() => {
+  removeClickListener(globalSearchRef?.value);
 });
 
 function closeInConversationSearch() {

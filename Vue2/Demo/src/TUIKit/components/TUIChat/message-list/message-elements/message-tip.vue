@@ -27,6 +27,7 @@ const tipContent = computed(() => props.content?.text || props.content?.custom |
   align-content: center;
   align-items: center;
   text-align: center;
+  margin-bottom: 10px;
   &-highlight {
     animation: highlight 1000ms infinite;
     @-webkit-keyframes highlight {

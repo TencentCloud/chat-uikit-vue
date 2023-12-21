@@ -1,7 +1,7 @@
 <template>
   <Overlay v-if="isShowForwardPanel">
     <Transfer
-      :title="'转发'"
+      :title="TUITranslateService.t('TUIChat.转发')"
       :isSearch="false"
       :isCustomItem="false"
       :list="customConversationList"
@@ -44,17 +44,23 @@ TUIStore.watch(StoreName.CONV, {
 });
 
 TUIStore.watch(StoreName.CUSTOM, {
-  singleForwardMessageID(messageID: string) {
-    if (typeof messageID !== 'undefined') {
-      openForwardPanel();
-    }
-  },
+  singleForwardMessageID: onSingleForwardMessageIDUpdated
 });
 
 onUnmounted(() => {
   // 组件卸载时需要清掉数据 否则小程序会自动打开
   TUIStore.update(StoreName.CUSTOM, 'singleForwardMessageID', undefined);
+
+  TUIStore.unwatch(StoreName.CUSTOM, {
+    singleForwardMessageID: onSingleForwardMessageIDUpdated
+  });
 });
+
+function onSingleForwardMessageIDUpdated(messageID: string) {
+  if (typeof messageID !== 'undefined') {
+    openForwardPanel();
+  }
+}
 
 function closeForwardPanel(): void {
   // ! 必须通过close函数关闭转发面板 singleForwardMessage必须清掉

@@ -11,7 +11,7 @@
       <div class="max-one-line">
         {{ quoteMessage.nick || quoteMessage.from }}: {{ quoteContentText }}
       </div>
-      <Icon class="input-quote-close-icon" :file="closeIcon" width="11px" height="11px" @click="cancelQuote" />
+      <Icon class="input-quote-close-icon" :file="closeIcon" width="11px" height="11px" @onClick="cancelQuote" />
     </div>
   </div>
 </template>

@@ -29,7 +29,7 @@
           !isPC && 'TUI-contact-search-h5-header-title',
         ]"
       >
-        {{ TUITranslateService.t("添加好友/群聊") }}
+        {{ TUITranslateService.t("TUIContact.添加好友/群聊") }}
       </div>
     </div>
     <div

@@ -41,41 +41,70 @@
       </div>
       <div class="read-status-member-list">
         <div
-          v-if="tabInfo[currentTabName].memberList.length === 0 && isFirstLoadFinished"
+          v-if="tabInfo[currentTabName].count === 0 && isFirstLoadFinished"
           class="empty-list-tip"
         >
-          - 空 -
+          - {{ TUITranslateService.t('TUIChat.空') }} -
         </div>
-        <template v-else>
-          <div
-            v-for="item in tabInfo[currentTabName].memberList"
-            :key="item.userID"
-            class="read-status-member-container"
-          >
-            <Avatar
-              useSkeletonAnimation
-              :url="item.avatar"
-            />
-            <div class="username">
-              {{ item.nick || item.userID }}
+        <template v-else-if="isFirstLoadFinished">
+          <template v-if="currentTabName === 'unread'">
+            <div
+              v-for="item in tabInfo[currentTabName].memberList"
+              :key="item.userID"
+              class="read-status-member-container"
+            >
+              <Avatar
+                class="read-status-avatar"
+                useSkeletonAnimation
+                :url="item.avatar || ''"
+              />
+              <div class="username">
+                {{ item.nick || item.userID }}
+              </div>
             </div>
-          </div>
+          </template>
+          <template v-if="currentTabName === 'read'">
+            <div
+              v-for="item in tabInfo[currentTabName].memberList"
+              :key="item.userID"
+              class="read-status-member-container"
+            >
+              <Avatar
+                class="read-status-avatar"
+                useSkeletonAnimation
+                :url="item.avatar"
+              />
+              <div class="username">
+                {{ item.nick || item.userID }}
+              </div>
+            </div>
+          </template>
         </template>
+        <div v-if="isFirstLoadFinished" class="fetch-more-container">
+          <FetchMore
+            :isFetching="isPullDownFetching"
+            :isTerminateObserve="isStopFetchMore"
+            @onExposed="pullDownFetchMoreData"
+          />
+        </div>
       </div>
     </div>
   </Overlay>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from "../../../../adapter-vue";
+import { ref, onMounted, watch, nextTick } from "../../../../adapter-vue";
 
 import { IMessageModel, TUIStore, TUIChatService, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import closeIcon from "../../../../assets/icon/icon-close.svg";
 import Icon from "../../../common/Icon.vue";
 import Overlay from "../../../common/Overlay/index.vue";
 import Avatar from "../../../common/Avatar/index.vue";
-import { IGroupMessageReadMemberData, ITabInfo, TabName } from "./interface.d";
+import FetchMore from "../../../common/FetchMore/index.vue";
+import type { IGroupMessageReadMemberData, IMemberData, ITabInfo, TabName } from "./interface";
 import { isMobile } from "../../../../utils/env";
+
+type ReadType = 'unread' | 'read' | 'all';
 
 interface IProps {
   message: IMessageModel;
@@ -90,71 +119,187 @@ const props = withDefaults(defineProps<IProps>(), {
   message: () => ({}) as IMessageModel,
 });
 
+let lastUnreadCursor: string = "";
+let lastReadCursor: string = "";
 const tabNameList: TabName[] = ['unread', 'read'];
+const isListFetchCompleted: Record<TabName, boolean> = {
+  unread: false,
+  read: false,
+  close: false,
+};
 
+const isPullDownFetching = ref<boolean>(false);
 const isPanelClose = ref<boolean>(false);
-let isFirstLoadFinished = ref<boolean>(false);
+const isFirstLoadFinished = ref<boolean>(false);
+const isStopFetchMore = ref<boolean>(false);
 const currentTabName = ref<TabName>('unread');
-const tabInfo = ref<ITabInfo>({
-  read: {
-    tabName: TUITranslateService.t("TUIChat.已读"),
-    count: undefined,
-    memberList: [],
-  },
-  unread: {
-    tabName: TUITranslateService.t("TUIChat.未读"),
-    count: undefined,
-    memberList: [],
-  },
-  close: {
-    tabName: TUITranslateService.t("TUIChat.关闭"),
-    count: undefined,
-    memberList: [],
-  },
-});
+const tabInfo = ref<ITabInfo>(generateInitalTabInfo());
 
-onMounted(() => {
-  fetchGroupMessageReadMemberList();
+onMounted(async () => {
+  await initAndRefetchReceiptInfomation();
+  nextTick(() => {
+    isFirstLoadFinished.value = true;
+  });
 });
 
 watch(
   // uniapp下监听不到数据变化
   () => props.message.readReceiptInfo.readCount,
   () => {
-    fetchGroupMessageReadMemberList();
+    initAndRefetchReceiptInfomation();
   },
 );
 
-async function fetchGroupMessageReadMemberList() {
+async function fetchGroupMessageRecriptMemberListByType(readType: ReadType = 'all') {
   const message = TUIStore.getMessageModel(props.message.ID);
-  const unreadResult: IGroupMessageReadMemberData = await TUIChatService.getGroupMessageReadMemberList({
-    message,
-    filter: 1,
-    cursor: "",
-    count: 100,
-  });
-  if (unreadResult) {
-    tabInfo.value.unread.count = unreadResult.data.unreadUserInfoList.length;
-    tabInfo.value.unread.memberList = unreadResult.data.unreadUserInfoList;
+
+  let unreadResult = {} as IGroupMessageReadMemberData;
+  let readResult = {} as IGroupMessageReadMemberData;
+
+  if (readType === 'all' || readType === 'unread') {
+    unreadResult = await TUIChatService.getGroupMessageReadMemberList({
+      message,
+      filter: 1,
+      cursor: lastUnreadCursor,
+      count: 100,
+    });
+    if (unreadResult) {
+      lastUnreadCursor = unreadResult.data.cursor;
+      if (unreadResult.data.isCompleted) {
+        isListFetchCompleted.unread = true;
+      }
+    }
   }
-  const readResult: IGroupMessageReadMemberData = await TUIChatService.getGroupMessageReadMemberList({
-    message,
-    filter: 0,
-    cursor: "",
-    count: 100,
-  });
-  if (readResult) {
-    tabInfo.value.read.memberList = readResult.data.readUserInfoList;
-    tabInfo.value.read.count = readResult.data.readUserInfoList.length;
+  
+  if (readType === 'all' || readType === 'read') {
+    readResult = await TUIChatService.getGroupMessageReadMemberList({
+      message,
+      filter: 0,
+      cursor: lastReadCursor,
+      count: 100,
+    });
+    if (readResult) {
+      lastReadCursor = readResult.data.cursor;
+      if (readResult.data.isCompleted) {
+        isListFetchCompleted.read = true;
+      }
+    }
   }
-  isFirstLoadFinished.value = true;
+
+  // Fetch the total number of read and unread users
+  const { unreadCount: totalUnreadCount, readCount: totalReadCount } = message.readReceiptInfo;
+
+  return {
+    unreadResult: {
+      count: totalUnreadCount,
+      ...unreadResult.data
+    },
+    readResult: {
+      count: totalReadCount,
+      ...readResult.data
+    },
+  };
 }
 
-function toggleTabName(tabName: TabName) {
+async function pullDownFetchMoreData() {
+  /**
+   * 使用 isPullDownFetching 控制 FetchMore 组件的状态
+   * 顺便同时做 uniapp 下的 intersectionObserver 的加锁
+   * 因为 uniapp 下 没有 isIntersecting 无法判断被观察的元素进入还是退出观察区
+   */
+  if (isListFetchCompleted[currentTabName.value] || isPullDownFetching.value) {
+    return;
+  }
+  isPullDownFetching.value = true;
+  const { unreadResult, readResult } = await fetchGroupMessageRecriptMemberListByType(currentTabName.value);
+  checkStopFetchMore();
+  try {
+    tabInfo.value.unread.memberList = tabInfo.value.unread.memberList.concat(unreadResult.unreadUserInfoList || []);
+    tabInfo.value.read.memberList = tabInfo.value.read.memberList.concat(readResult.readUserInfoList || []);
+  } finally {
+    isPullDownFetching.value = false;
+  }
+}
+
+/**
+ * Initializes and refetches receipt information.
+ *
+ * @return {Promise<void>} A promise that resolves when the function has completed.
+ */
+async function initAndRefetchReceiptInfomation(): Promise<void> {
+  lastUnreadCursor = "";
+  lastReadCursor = "";
+  isStopFetchMore.value = false;
+  isListFetchCompleted.unread = false;
+  isListFetchCompleted.read = false;
+  const { unreadResult, readResult } = await fetchGroupMessageRecriptMemberListByType('all');
+  checkStopFetchMore();
+  resetTabInfo('read', readResult.count, readResult.readUserInfoList);
+  resetTabInfo('unread', unreadResult.count, unreadResult.unreadUserInfoList);
+  resetTabInfo('close');
+}
+
+/**
+ * Checks if the fetch more operation should be stopped
+ * by IntersetctionObserver.disconnect().
+ *
+ * @return {void} 
+ */
+function checkStopFetchMore(): void {
+  if (isListFetchCompleted.read && isListFetchCompleted.unread) {
+    isStopFetchMore.value = true;
+  }
+}
+
+/**
+ * Resets the information of a specific tab.
+ *
+ * @param {TabName} tabName - The name of the tab to reset.
+ * @param {number} [count] - The count to assign to the tab. Optional.
+ * @param {IMemberData[]} [memberList] - The list of members to assign to the tab. Optional.
+ * @return {void} - This function does not return anything.
+ */
+function resetTabInfo(tabName: TabName, count?: number, memberList?: IMemberData[]): void {
+  tabInfo.value[tabName].count = count;
+  tabInfo.value[tabName].memberList = memberList || [];
+}
+
+/**
+ * Generates the initial tab information.
+ *
+ * @return {ITabInfo} The initial tab information.
+ */
+function generateInitalTabInfo(): ITabInfo {
+  return {
+    read: {
+      tabName: TUITranslateService.t("TUIChat.已读"),
+      count: undefined,
+      memberList: [],
+    },
+    unread: {
+      tabName: TUITranslateService.t("TUIChat.未读"),
+      count: undefined,
+      memberList: [],
+    },
+    close: {
+      tabName: TUITranslateService.t("TUIChat.关闭"),
+      count: undefined,
+      memberList: [],
+    },
+  };
+}
+
+/**
+ * Toggles the tab name.
+ *
+ * @param {TabName} tabName - The name of the tab to toggle.
+ * @return {void} This function does not return anything.
+ */
+function toggleTabName(tabName: TabName): void {
   currentTabName.value = tabName;
 }
 
-function closeReadReciptPanel() {
+function closeReadReciptPanel(): void {
   isPanelClose.value = true;
   setTimeout(() => {
     emits("setReadReciptPanelVisible", false);
@@ -248,14 +393,25 @@ function closeReadReciptPanel() {
       flex-direction: row;
       align-items: center;
 
+      .read-status-avatar {
+        flex: 0 0 auto;
+      }
+
       .username {
         margin-left: 8px;
         line-height: 20px;
+        flex: 0 1 auto;
       }
 
       & + .read-status-member-container {
         margin-top: 20px;
       }
+    }
+
+    .fetch-more-container {
+      justify-content: center;
+      align-items: center;
+      margin-top: auto;
     }
   }
 }
@@ -280,4 +436,3 @@ function closeReadReciptPanel() {
   transform: translateX(100%);
 }
 </style>
-./interface
