@@ -247,6 +247,7 @@ const props = defineProps({
 });
 let observer: IntersectionObserver | null = null;
 let groupType: string | undefined;
+const sentReceiptMessageIDSet = new Set<string>();
 const messageListRef = ref<HTMLElement>();
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
 const messageList = ref<Array<IMessageModel>>();
@@ -333,6 +334,7 @@ onUnmounted(() => {
 
   messageListRef.value?.removeEventListener("scroll", handelScrollListScroll);
 
+  sentReceiptMessageIDSet.clear();
   observer?.disconnect();
   observer = null;
 });
@@ -627,9 +629,14 @@ async function bindIntersectionObserver() {
     entries.forEach((entry) => {
       const { isIntersecting, target } = entry;
       if (isIntersecting) {
-        const {msgDom, msgModel} = mappingFromIDToMessage[target.id];
-        if (msgModel && !msgModel.readReceiptInfo?.isPeerRead) {
+        const { msgDom, msgModel } = mappingFromIDToMessage[target.id];
+        if (
+          msgModel
+          && !msgModel.readReceiptInfo?.isPeerRead
+          && !sentReceiptMessageIDSet.has(msgModel.ID)
+        ) {
           TUIChatService.sendMessageReadReceipt([msgModel]);
+          sentReceiptMessageIDSet.add(msgModel.ID);
           observer?.unobserve(msgDom);
         }
       }
