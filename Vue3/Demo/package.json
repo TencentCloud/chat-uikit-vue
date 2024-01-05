@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue3",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,7 @@
   "dependencies": {
     "@tencentcloud/call-uikit-vue": "latest",
     "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue2": "latest",
+    "@tencentcloud/chat-uikit-vue": "latest",
     "@tencentcloud/tui-core": "latest",
     "@tencentcloud/tui-customer-service-plugin": "latest",
     "@tiptap/core": "^2.0.0-beta.220",

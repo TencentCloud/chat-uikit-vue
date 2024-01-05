@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue2",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "keywords": [],
   "author": "",
@@ -14,7 +14,7 @@
     "@types/webpack-env": "^1.18.0",
     "@tencentcloud/call-uikit-vue2": "latest",
     "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue2": "latest",
+    "@tencentcloud/chat-uikit-vue": "latest",
     "@tencentcloud/tui-core": "latest",
     "@tencentcloud/tui-customer-service-plugin": "latest",
     "axios": "^0.26.1",

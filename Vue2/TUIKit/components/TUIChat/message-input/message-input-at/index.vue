@@ -147,7 +147,7 @@ const closeAt = () => {
 };
 
 const selectItem = (index: number) => {
-  if (TUIGlobal.selectItem) {
+  if (isPC && TUIGlobal.selectItem) {
     TUIGlobal.selectItem(index);
   } else {
     if (showMemberList?.value?.length) {
