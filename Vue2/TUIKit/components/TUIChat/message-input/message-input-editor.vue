@@ -12,6 +12,8 @@
       @keydown.enter="handleEnter"
       @drop="handleFileDrop"
       @paste="handleFilePaste"
+      @input="handleAt"
+      :contenteditable="isH5"
     ></div>
   </div>
 </template>
@@ -31,7 +33,7 @@ import Mention from "@tiptap/extension-mention";
 import CustomImage from "./message-input-file";
 import type { ITipTapEditorContent } from "../../../interface";
 import MessageInputAtSuggestion from "./message-input-at/index";
-import { isH5 } from "../../../utils/env";
+import { isH5, isPC } from "../../../utils/env";
 
 const props = defineProps({
   placeholder: {
@@ -67,13 +69,14 @@ const props = defineProps({
     default: true,
   },
 });
-const emits = defineEmits(["sendMessage", "onTyping"]);
+const emits = defineEmits(["sendMessage", "onTyping", "onAt"]);
 const { placeholder, enableAt, enableDragUpload, enableTyping } = toRefs(props);
 const inputContentEmpty = ref(true);
 const inputBlur = ref(true);
 const isC2C = ref(false);
+const allInsertedAtInfo = new Map<string, string>();
 const editorDom = ref();
-let editor: Editor;
+let editor: Editor = null;
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: IConversationModel) => {
@@ -82,72 +85,74 @@ TUIStore.watch(StoreName.CONV, {
 });
 
 onMounted(() => {
-  editor = new Editor({
-    element: editorDom.value,
-    extensions: [
-      Document,
-      Paragraph,
-      Text,
-      Placeholder.configure({
-        emptyEditorClass: "is-editor-empty",
-        placeholder: placeholder.value,
-      }),
-      Mention.configure({
-        HTMLAttributes: {
-          class: "mention",
-        },
-        suggestion: enableAt.value && (MessageInputAtSuggestion() as any),
-      }),
-      CustomImage.configure({
-        inline: true,
-        allowBase64: true,
-        HTMLAttributes: {
-          class: "custom-image",
-        },
-      }),
-    ],
-    autofocus: !isH5,
-    editable: true,
-    injectCSS: false,
+  editor = isPC
+    ? new Editor({
+      element: editorDom.value,
+      extensions: [
+        Document,
+        Paragraph,
+        Text,
+        Placeholder.configure({
+          emptyEditorClass: "is-editor-empty",
+          placeholder: placeholder.value,
+        }),
+        Mention.configure({
+          HTMLAttributes: {
+            class: "mention",
+          },
+          suggestion: enableAt.value && (MessageInputAtSuggestion() as any),
+        }),
+        CustomImage.configure({
+          inline: true,
+          allowBase64: true,
+          HTMLAttributes: {
+            class: "custom-image",
+          },
+        }),
+      ],
+      autofocus: !isH5,
+      editable: true,
+      injectCSS: false,
 
-    // handle input edtor typing (only in C2C and enable typing)
-    onUpdate({ editor, transaction }) {
-      if (!enableTyping.value || !isC2C.value) return;
-      inputBlur.value = !editor.isFocused;
-      if (transaction?.doc?.content?.size > 2) {
-        inputContentEmpty.value = false;
-      } else {
-        inputContentEmpty.value = true;
-      }
-    },
-    onFocus() {
-      if (isH5 && document?.getElementById("app")?.style) {
-        // set app height when keyboard popup
-        const keyboardHeight = document.body.scrollHeight - window.innerHeight;
-        (
-          document.getElementById("app") as any
-        ).style.marginBottom = `${keyboardHeight}px`;
-        (
-          document.getElementById("app") as any
-        ).style.height = `calc(100% - ${keyboardHeight}px)`;
-      }
-      if (!enableTyping.value || !isC2C.value) return;
-      inputBlur.value = true;
-    },
-    onBlur() {
-      if (isH5 && document?.getElementById("app")?.style) {
-        // reset app height to normal
-        (document.getElementById("app") as any).style.marginBottom = ``;
-        (document.getElementById("app") as any).style.height = `100%`;
-      }
-      if (!enableTyping.value || !isC2C.value) return;
-      inputBlur.value = true;
-    },
-  });
+      // handle input edtor typing (only in C2C and enable typing)
+      onUpdate({ editor, transaction }) {
+        if (!enableTyping.value || !isC2C.value) return;
+        inputBlur.value = !editor.isFocused;
+        if (transaction?.doc?.content?.size > 2) {
+          inputContentEmpty.value = false;
+        } else {
+          inputContentEmpty.value = true;
+        }
+      },
+      onFocus() {
+        if (isH5 && document?.getElementById("app")?.style) {
+          // set app height when keyboard popup
+          const keyboardHeight = document.body.scrollHeight - window.innerHeight;
+          (
+            document.getElementById("app") as any
+          ).style.marginBottom = `${keyboardHeight}px`;
+          (
+            document.getElementById("app") as any
+          ).style.height = `calc(100% - ${keyboardHeight}px)`;
+        }
+        if (!enableTyping.value || !isC2C.value) return;
+        inputBlur.value = true;
+      },
+      onBlur() {
+        if (isH5 && document?.getElementById("app")?.style) {
+          // reset app height to normal
+          (document.getElementById("app") as any).style.marginBottom = ``;
+          (document.getElementById("app") as any).style.height = `100%`;
+        }
+        if (!enableTyping.value || !isC2C.value) return;
+        inputBlur.value = true;
+      },
+    })
+    : null;
 });
 
 const handleEnter = (e: any) => {
-  if (isH5?.value) {
+  if (isH5) {
     return;
   }
   e?.preventDefault();
@@ -159,6 +164,21 @@ const handleEnter = (e: any) => {
     // enter only: send message
     emits("sendMessage");
   }
+};
+const handleAt = (e: any) => {
+  if (isH5 && e.data === "@") {
+    emits("onAt", true);
+  }
+};
+
+const insertAt = (atInfo: { id: string; label: string }) => {
+  if (!allInsertedAtInfo.has(atInfo.id)) {
+    allInsertedAtInfo.set(atInfo.id, atInfo.label);
+  }
+  const mentionText = document.createElement("span");
+  mentionText.innerHTML = atInfo.label;
+  mentionText.className = "mention";
+  editorDom.value?.appendChild(mentionText);
 };
 
 // fileMap 存储 fileURL 与 fileObject 的映射
@@ -312,99 +332,13 @@ const handleNameForShow = (value: string): string => {
 };
 
 const getEditorContent = () => {
-  return handleEditorForMessage();
+  return isPC ? parsePCEditorContent() : parseH5EditorContent();
 };
 
-const handleEditorForMessage = (): Array<ITipTapEditorContent> => {
+function parsePCEditorContent(): Array<ITipTapEditorContent> {
   const editorJSON = editor?.getJSON();
   const content: Array<ITipTapEditorContent> = [];
-  function handleEditorContent(root: JSONContent) {
-    if (!root || !root.type) {
-      return;
-    }
-    if (
-      root.type !== "text" &&
-      root.type !== "custom-image" &&
-      root.type !== "mention"
-    ) {
-      if (root.type === "paragraph") {
-        handleEditorNode(root);
-      }
-      if (root.content?.length) {
-        root.content.forEach((item: JSONContent) => {
-          handleEditorContent(item);
-        });
-      }
-      return;
-    } else {
-      handleEditorNode(root);
-    }
-  }
-  function handleEditorNode(node: JSONContent) {
-    // handle enter
-    if (node.type === "paragraph") {
-      if (
-        content.length > 0 &&
-        content[content.length - 1] &&
-        content[content.length - 1]?.type === "text"
-      ) {
-        content[content.length - 1].payload.text += "\n";
-      }
-    } else if (
-      node.type === "text" ||
-      (node.type === "custom-image" && node?.attrs?.class === "emoji")
-    ) {
-      // 处理 text 和 emoji
-      const text = node.type === "text" ? node?.text : node?.attrs?.alt;
-      if (
-        content.length > 0 &&
-        content[content.length - 1] &&
-        content[content.length - 1]?.type === "text"
-      ) {
-        content[content.length - 1].payload.text += text;
-      } else {
-        content.push({
-          type: "text",
-          payload: { text: text },
-        });
-      }
-    } else if (
-      node.type === "custom-image" &&
-      node?.attrs?.class === "normal"
-    ) {
-      // 处理富文本图像
-      content.push({
-        type: "image",
-        payload: { file: fileMap?.get(node?.attrs?.src) },
-      });
-    } else if (node.type === "custom-image" && node?.attrs?.class === "file") {
-      const file = fileMap?.get(node?.attrs?.src);
-      content.push({
-        type: file?.type?.includes("video") ? "video" : "file",
-        payload: { file },
-      });
-    } else if (node.type === "mention") {
-      const text = "@" + node?.attrs?.label + " ";
-      if (
-        content.length > 0 &&
-        content[content.length - 1] &&
-        content[content.length - 1]?.type === "text"
-      ) {
-        content[content.length - 1].payload.text += text;
-      } else {
-        content.push({
-          type: "text",
-          payload: { text: text },
-        });
-      }
-      if (content[content.length - 1]?.payload?.atUserList) {
-        content[content.length - 1]?.payload?.atUserList?.push(node?.attrs?.id);
-      } else {
-        content[content.length - 1].payload.atUserList = [node?.attrs?.id];
-      }
-    }
-  }
-  handleEditorContent(editorJSON);
+  handleEditorContent(editorJSON, content);
   if (
     content.length > 0 &&
     content[content.length - 1] &&
@@ -418,26 +352,176 @@ const handleEditorForMessage = (): Array<ITipTapEditorContent> => {
     );
   }
   return content;
-};
+}
+
+function handleEditorContent(root: JSONContent, content: Array<ITipTapEditorContent>) {
+  if (!root || !root.type) {
+    return;
+  }
+  if (
+    root.type !== "text" &&
+    root.type !== "custom-image" &&
+    root.type !== "mention"
+  ) {
+    if (root.type === "paragraph") {
+      handleEditorNode(root, content);
+    }
+    if (root.content?.length) {
+      root.content.forEach((item: JSONContent) => {
+        handleEditorContent(item, content);
+      });
+    }
+    return;
+  } else {
+    handleEditorNode(root, content);
+  }
+}
+
+function handleEditorNode(node: JSONContent, content: Array<ITipTapEditorContent>) {
+  // handle enter
+  if (node.type === "paragraph") {
+    if (
+      content.length > 0 &&
+      content[content.length - 1] &&
+      content[content.length - 1]?.type === "text"
+    ) {
+      content[content.length - 1].payload.text += "\n";
+    }
+  } else if (
+    node.type === "text" ||
+    (node.type === "custom-image" && node?.attrs?.class === "emoji")
+  ) {
+    // 处理 text 和 emoji
+    const text = node.type === "text" ? node?.text : node?.attrs?.alt;
+    if (
+      content.length > 0 &&
+      content[content.length - 1] &&
+      content[content.length - 1]?.type === "text"
+    ) {
+      content[content.length - 1].payload.text += text;
+    } else {
+      content.push({
+        type: "text",
+        payload: { text: text },
+      });
+    }
+  } else if (
+    node.type === "custom-image" &&
+    node?.attrs?.class === "normal"
+  ) {
+    // 处理富文本图像
+    content.push({
+      type: "image",
+      payload: { file: fileMap?.get(node?.attrs?.src) },
+    });
+  } else if (node.type === "custom-image" && node?.attrs?.class === "file") {
+    const file = fileMap?.get(node?.attrs?.src);
+    content.push({
+      type: file?.type?.includes("video") ? "video" : "file",
+      payload: { file },
+    });
+  } else if (node.type === "mention") {
+    const text = "@" + node?.attrs?.label + " ";
+    if (
+      content.length > 0 &&
+      content[content.length - 1] &&
+      content[content.length - 1]?.type === "text"
+    ) {
+      content[content.length - 1].payload.text += text;
+    } else {
+      content.push({
+        type: "text",
+        payload: { text: text },
+      });
+    }
+    if (content[content.length - 1]?.payload?.atUserList) {
+      content[content.length - 1]?.payload?.atUserList?.push(node?.attrs?.id);
+    } else {
+      content[content.length - 1].payload.atUserList = [node?.attrs?.id];
+    }
+  }
+}
+
+function parseH5EditorContent() {
+  let root = editorDom.value;
+  let text: string = "";
+  let atUserList: Array<string> = [];
+  for (const child of root?.childNodes) {
+    if (
+      child.nodeName === "#text" ||
+      child.nodeName === "SPAN" ||
+      (child as HTMLElement).classList?.contains("custom-image-emoji") ||
+      (child as HTMLElement).classList?.contains("mention")
+    ) {
+      text += child.nodeValue || (child as any).alt || child.innerHTML;
+    }
+  }
+  allInsertedAtInfo?.forEach((value: string, key: string) => {
+    if (text?.includes("@" + value)) {
+      atUserList.push(key);
+    }
+  });
+  return [
+    {
+      type: "text",
+      payload: {
+        text,
+        atUserList,
+      },
+    },
+  ];
+}
 
 const addEmoji = (emoji: any) => {
-  editor?.commands?.insertContent({
-    type: "custom-image",
-    attrs: {
-      src: emoji?.url,
-      alt: emoji?.name,
-      title: emoji?.name,
-      class: "emoji",
-    },
-  });
+  if (isPC) {
+    editor?.commands?.insertContent({
+      type: "custom-image",
+      attrs: {
+        src: emoji?.url,
+        alt: emoji?.name,
+        title: emoji?.name,
+        class: "emoji",
+      },
+    });
+  } else {
+    const emojiImgNode = document.createElement("img");
+    emojiImgNode?.setAttribute("src", emoji?.url);
+    emojiImgNode?.setAttribute("class", "custom-image custom-image-emoji");
+    emojiImgNode?.setAttribute("alt", emoji?.name);
+    emojiImgNode?.setAttribute("title", emoji?.name);
+    emojiImgNode?.setAttribute("width", "20px");
+    emojiImgNode?.setAttribute("height", "20px");
+    editorDom.value?.appendChild(emojiImgNode);
+  }
   if (!isH5) {
     editor?.commands?.focus();
+    editor?.commands?.scrollIntoView();
+  } else {
+    editorDom.value?.focus();
+    placeCaretAtEnd(editorDom.value);
   }
-  editor?.commands?.scrollIntoView();
 };
 
+function placeCaretAtEnd(el: HTMLElement) {
+  el.focus();
+  if (typeof window.getSelection !== "undefined"
+    && typeof document.createRange !== "undefined") {
+    let range = document.createRange();
+    range.selectNodeContents(el);
+    range.collapse(false);
+    let sel = window.getSelection();
+    sel?.removeAllRanges();
+    sel?.addRange(range);
+  } else if (typeof document.body?.createTextRange !== "undefined") {
+    let textRange = document.body.createTextRange();
+    textRange.moveToElementText(el);
+    textRange.collapse(false);
+    textRange.select();
+  }
+}
+
 const blur = () => {
-  editor?.commands?.blur();
+  isPC ? editor?.commands?.blur() : editorDom.value?.blur();
 };
 
 const resetEditor = () => {
@@ -447,6 +531,9 @@ const resetEditor = () => {
   inputContentEmpty.value = true;
   if (!isH5) {
     editor?.commands?.focus();
+  } else {
+    allInsertedAtInfo?.clear();
+    editorDom.value.innerHTML = "";
   }
 };
 
@@ -471,6 +558,7 @@ defineExpose({
   getEditorContent,
   addEmoji,
   resetEditor,
+  insertAt,
   setEditorContent,
   blur,
 });
@@ -478,6 +566,7 @@ defineExpose({
 
 <style scoped lang="scss">
 @import url("../../../assets/styles/common.scss");
+
 .message-input-editor {
   &-container {
     box-sizing: border-box;
@@ -487,13 +576,17 @@ defineExpose({
     flex: 1;
     padding: 3px 10px 10px 10px;
   }
+
   &-area {
     box-sizing: border-box;
     height: 100%;
     flex: 1;
     display: flex;
     overflow-y: auto;
+    border: none;
+    outline: none;
   }
+
   &-mute {
     box-sizing: border-box;
     flex: 1;
@@ -504,6 +597,7 @@ defineExpose({
     align-items: center;
   }
 }
+
 .message-input-editor-container-h5 {
   box-sizing: border-box;
   flex: 1;
@@ -514,6 +608,21 @@ defineExpose({
   font-size: 16px !important;
   max-height: 86px;
   margin-right: 7px;
+  overflow: hidden;
+
+  .message-input-editor-area {
+    line-height: 20px;
+    overflow: hidden;
+    -moz-hyphens: auto;
+    -ms-hyphens: auto;
+    -webkit-hyphens: auto;
+    -webkit-user-select: text;
+    user-select: text;
+    hyphens: auto;
+    word-wrap: break-word;
+    word-break: break-word;
+    flex-wrap: wrap;
+  }
 }
 </style>
 <style lang="scss">
@@ -525,6 +634,7 @@ defineExpose({
   word-wrap: break-word;
   word-break: break-all;
   white-space: pre-wrap;
+
   div,
   ul,
   ol,
@@ -542,17 +652,21 @@ defineExpose({
     padding: 0;
     font-style: normal;
   }
+
   p {
     * {
       vertical-align: bottom;
     }
   }
+
   -webkit-user-select: text;
   user-select: text;
+
   &-focused {
     border: none;
     outline: none;
   }
+
   img {
     &.ProseMirror-selectednode {
       outline: 2px solid #68cef8;
@@ -564,17 +678,20 @@ defineExpose({
       max-height: 120px;
       max-width: 200px;
     }
+
     &-file {
       height: 50px;
       width: 160px;
       border: 1px solid #e8e8e9;
       border-radius: 5px;
     }
+
     &-emoji {
       height: 20px;
       width: 20px;
     }
-    &-image{
+
+    &-image {
       display: none;
     }
   }
@@ -583,6 +700,7 @@ defineExpose({
     outline: 2px solid #68cef8;
     cursor: none;
   }
+
   p,
   [contenteditable] {
     -webkit-user-select: text;

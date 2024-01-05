@@ -16,14 +16,14 @@
 </template>
 <script setup lang="ts">
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { ref } from "../../../adapter-vue";
+import { isPC } from "../../../utils/env";
 const props = defineProps({
   enableSend: {
     type: Boolean,
     default: true,
   },
 });
-import { isPC } from "../../../utils/env";
+
 const emits = defineEmits(["sendMessage"]);
 
 const sendMessage = () => {

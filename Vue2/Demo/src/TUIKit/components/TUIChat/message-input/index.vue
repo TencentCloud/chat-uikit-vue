@@ -12,6 +12,7 @@
         :enableDragUpload="props.enableDragUpload"
         @sendMessage="sendMessage"
         @onTyping="onTyping"
+        @onAt="onAt"
       ></MessageInputEditor>
       <MessageInputButton
         v-if="!props.isMuted"
@@ -19,6 +20,8 @@
       ></MessageInputButton>
       <MessageInputAt
         v-if="props.enableAt"
+        ref="messageInputAtRef"
+        @insertAt="insertAt"
         @onAtListOpen="onAtListOpen"
       ></MessageInputAt>
     </div>
@@ -73,6 +76,7 @@ const props = defineProps({
 
 const emit = defineEmits(["sendMessage", "resetReplyOrReference", "onTyping"]);
 const editor = ref<InstanceType<typeof MessageInputEditor>>();
+const messageInputAtRef = ref<InstanceType<typeof MessageInputAt>>();
 const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
@@ -83,6 +87,10 @@ TUIStore.watch(StoreName.CONV, {
 
 const onTyping = (inputContentEmpty: boolean, inputBlur: boolean) => {
   sendTyping(inputContentEmpty, inputBlur);
+};
+
+const onAt = (show: boolean) => {
+  messageInputAtRef.value?.toggleAtList(show);
 };
 
 const sendMessage = async () => {
@@ -104,6 +112,10 @@ const onAtListOpen = () => {
   if (isH5) {
     editor.value?.blur();
   }
+};
+
+const insertAt = (atInfo: any) => {
+  editor?.value?.insertAt && editor?.value?.insertAt(atInfo);
 };
 
 const reEdit = (content: any) => {
@@ -139,7 +151,7 @@ defineExpose({
 .message-input-container-h5 {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: flex-end;
 }
 </style>

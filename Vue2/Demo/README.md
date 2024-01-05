@@ -1,10 +1,10 @@
 # 快速跑通 Demo 
 
-## 关于 chat-uikit-vue2
+## 关于 chat-uikit-vue
 
-chat-uikit-vue2 是一款 Vue2 版本 Chat UI 组件库，它提供了一些通用的 UI 组件，包含会话、聊天、音视频通话、关系链、资料、群组等功能。基于这些精心设计的 UI 组件，您可以快速构建优雅的、可靠的、可扩展的 Chat 应用。
-开发者在使用 chat-uikit-vue2 时只需关注自身业务需求或个性化扩展即可，chat 相关的逻辑操作和数据处理，chat-uikit-vue2 已为您封装好。
-chat-uikit-vue2 Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT WEB DEMO 体验地址 ](https://web.sdk.qcloud.com/im/demo/latest/index.html)进行在线体验。
+chat-uikit-vue 是一款 Vue2 & Vue3 全版本 Chat UI 组件库，它提供了一些通用的 UI 组件，包含会话、聊天、音视频通话、关系链、资料、群组等功能。基于这些精心设计的 UI 组件，您可以快速构建优雅的、可靠的、可扩展的 Chat 应用。
+开发者在使用 chat-uikit-vue 时只需关注自身业务需求或个性化扩展即可，chat 相关的逻辑操作和数据处理，chat-uikit-vue 已为您封装好。
+chat-uikit-vue Web 端 和 H5 端界面效果如下图所示, 可点击[ CHAT WEB DEMO 体验地址 ](https://web.sdk.qcloud.com/im/demo/latest/index.html)进行在线体验。
 <img width="2072" alt="page00" src="https://user-images.githubusercontent.com/57951148/192585375-6260280f-4a67-4b64-a908-efcedee1c253.png">
 <img width="1015" alt="page02" src="https://user-images.githubusercontent.com/57951148/192585298-c79960ed-a6a9-4927-89b9-31c1b3f68740.png">
 
@@ -36,8 +36,7 @@ npm run dev
 ```
 
 ### 相关链接
-- [@tencentcloud/chat-uikit-vue2 npm（vue2版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue2)
-- [@tencentcloud/chat-uikit-vue npm（vue3版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
+- [@tencentcloud/chat-uikit-vue npm（Vue2&Vue3 版本）](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue)
 - [Demo(Vue2) github仓库](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue2/Demo)
 - [Demo(Vue3) github仓库](https://github.com/TencentCloud/chat-uikit-vue/tree/main/Vue3/Demo)
 - [CHAT WEB DEMO 体验地址](https://web.sdk.qcloud.com/im/demo/latest/index.html)
