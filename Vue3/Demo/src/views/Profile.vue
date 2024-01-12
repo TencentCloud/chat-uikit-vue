@@ -163,7 +163,7 @@ import selectedIcon from "../TUIKit/assets/icon/selected.svg";
 import { IUserProfile } from "../TUIKit/interface";
 import { isPC } from "../TUIKit/utils/env";
 import router from "../router/index";
-import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils"
+import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils";
 
 const props = defineProps({
   displayType: {
@@ -270,6 +270,34 @@ const settingList = ref<{
       }
     }
   },
+  displayOnlineStatus: {
+    value: "displayOnlineStatus",
+    label: "显示在线状态",
+    selectedChild: "userLevelOnlineStatusOpen",
+    childrenShowType: "bottomPopup",
+    showChildren: false,
+    onClick(item: any) {
+      if (!isPC) {
+        item.showChildren = true;
+      }
+    },
+    children: {
+      userLevelOnlineStatusOpen: {
+        value: "userLevelOnlineStatusOpen",
+        label: "开启",
+        onClick() {
+          switchUserLevelOnlineStatus(true);
+        }
+      },
+      userLevelOnlineStatusClose: {
+        value: "userLevelOnlineStatusClose",
+        label: "关闭",
+        onClick() {
+          switchUserLevelOnlineStatus(false);
+        }
+      }
+    }
+  },
   about: {
     value: "about",
     label: "关于腾讯云IM",
@@ -334,8 +362,14 @@ TUIStore.watch(StoreName.USER, {
     }
   },
   displayMessageReadReceipt(isDisplay: boolean) {
-    settingList.value.displayMessageReadReceipt.selectedChild
-      = isDisplay ? "userLevelReadReceiptOpen" : "userLevelReadReceiptClose";
+    settingList.value.displayMessageReadReceipt.selectedChild = isDisplay
+      ? "userLevelReadReceiptOpen"
+      : "userLevelReadReceiptClose";
+  },
+  displayOnlineStatus(isOnlineStatusDisplay: boolean) {
+    settingList.value.displayOnlineStatus.selectedChild = isOnlineStatusDisplay
+      ? "userLevelOnlineStatusOpen"
+      : "userLevelOnlineStatusClose";
   }
 });
 
@@ -389,6 +423,10 @@ onMounted(() => {
 
 function switchEnableUserLevelReadReceipt(status: boolean) {
   TUIStore.update(StoreName.USER, "displayMessageReadReceipt", status);
+}
+
+function switchUserLevelOnlineStatus(status: boolean) {
+  TUIUserService.switchUserStatus({ displayOnlineStatus: status });
 }
 </script>
 
