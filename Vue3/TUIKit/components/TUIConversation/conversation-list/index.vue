@@ -29,7 +29,7 @@
         ]"
       >
         <aside class="left">
-          <img class="avatar" :src="conversation.getAvatar()" />
+          <Avatar useSkeletonAnimation :url="conversation.getAvatar()" size="30px" />
           <div
             v-if="userOnlineStatusMap && isShowUserOnlineStatus(conversation)"
             :class="[
@@ -104,6 +104,7 @@ import TUIChatEngine, {
   TUIConversationService,
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../common/Icon.vue";
+import Avatar from "../../common/Avatar/index.vue";
 import ActionsMenu from "../actions-menu/index.vue";
 import muteIcon from "../../../assets/icon/mute.svg";
 import { isPC, isH5, isUniFrameWork } from "../../../utils/env";

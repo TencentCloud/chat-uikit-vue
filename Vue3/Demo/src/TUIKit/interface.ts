@@ -143,6 +143,7 @@ export interface IUserProfile {
 export interface IContactListItem {
   title: string;
   list: Array<any>;
+  key: string;
   unreadCount?: number;
 }
 
@@ -151,7 +152,7 @@ export interface IContactList {
   blackList: IContactListItem;
   groupList: IContactListItem;
   friendList: IContactListItem;
-  [key:string]: IContactListItem;
+  [key: string]: IContactListItem;
 }
 
 export interface IContactSearchResult {
@@ -223,4 +224,12 @@ export interface ITipTapEditorContent {
     file?: File;
     atUserList?: string[];
   };
+}
+
+export interface IUserStatus {
+  statusType: number;
+  customStatus: string;
+}
+export interface IUserStatusMap {
+  [userID: string]: IUserStatus;
 }

@@ -12,7 +12,9 @@
       @keydown.enter="handleEnter"
       @drop="handleFileDrop"
       @paste="handleFilePaste"
-      @input="handleAt"
+      @input="handleH5Input"
+      @blur="handleH5Blur"
+      @focus="handleH5Focus"
       :contenteditable="isH5"
     ></div>
   </div>
@@ -165,10 +167,20 @@ const handleEnter = (e: any) => {
     emits("sendMessage");
   }
 };
-const handleAt = (e: any) => {
-  if (isH5 && e.data === "@") {
-    emits("onAt", true);
+
+const handleH5Input = (e: any) => {
+  if (isH5) {
+    e.data === "@" && emits("onAt", true);
+    inputContentEmpty.value = editorDom.value?.childNodes ? false : true;
   }
+};
+
+const handleH5Blur = () => {
+  isH5 && (inputBlur.value = true);
+};
+
+const handleH5Focus = () => {
+  isH5 && (inputBlur.value = false);
 };
 
 const insertAt = (atInfo: { id: string; label: string }) => {

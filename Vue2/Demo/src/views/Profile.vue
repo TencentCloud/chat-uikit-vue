@@ -266,9 +266,37 @@ const settingList = ref<{
         label: "关闭",
         onClick() {
           switchEnableUserLevelReadReceipt(false);
-        },
-      },
+        }
+      }
+    }
+  },
+  displayOnlineStatus: {
+    value: "displayOnlineStatus",
+    label: "显示在线状态",
+    selectedChild: "userLevelOnlineStatusOpen",
+    childrenShowType: "bottomPopup",
+    showChildren: false,
+    onClick(item: any) {
+      if (!isPC) {
+        item.showChildren = true;
+      }
     },
+    children: {
+      userLevelOnlineStatusOpen: {
+        value: "userLevelOnlineStatusOpen",
+        label: "开启",
+        onClick() {
+          switchUserLevelOnlineStatus(true);
+        }
+      },
+      userLevelOnlineStatusClose: {
+        value: "userLevelOnlineStatusClose",
+        label: "关闭",
+        onClick() {
+          switchUserLevelOnlineStatus(false);
+        }
+      }
+    }
   },
   about: {
     value: "about",
@@ -336,6 +364,11 @@ TUIStore.watch(StoreName.USER, {
   displayMessageReadReceipt(isDisplay: boolean) {
     settingList.value.displayMessageReadReceipt.selectedChild
       = isDisplay ? "userLevelReadReceiptOpen" : "userLevelReadReceiptClose";
+  },
+  displayOnlineStatus(isOnlineStatusDisplay: boolean) {
+    settingList.value.displayOnlineStatus.selectedChild = isOnlineStatusDisplay
+      ? "userLevelOnlineStatusOpen"
+      : "userLevelOnlineStatusClose";
   }
 });
 
@@ -389,6 +422,10 @@ onMounted(() => {
 
 function switchEnableUserLevelReadReceipt(status: boolean) {
   TUIStore.update(StoreName.USER, "displayMessageReadReceipt", status);
+}
+
+function switchUserLevelOnlineStatus(status: boolean) {
+  TUIUserService.switchUserStatus({ displayOnlineStatus: status });
 }
 </script>
 
