@@ -40,6 +40,7 @@ import quoteIcon from "../../../../assets/icon/msg-quote.svg";
 import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
 import forwardIcon from "../../../../assets/icon/msg-forward.svg";
 import { enableSampleTaskStatus } from "../../../../utils/enableSampleTaskStatus";
+import { copyText } from "../../utils/utils";
 
 const props = defineProps({
   messageItem: {
@@ -70,7 +71,7 @@ const actionItems = [
     iconUrl: copyIcon,
     renderCondition() {
       if (!message.value) return false;
-      return isUniFrameWork && message.value?.type === TYPES.MSG_TEXT;
+      return message.value?.type === TYPES.MSG_TEXT;
     },
     clickEvent: copyMessage,
   },
@@ -177,11 +178,13 @@ function deleteMessage() {
   messageModel.deleteMessage();
 }
 
-function copyMessage() {
+async function copyMessage() {
   if (isUniFrameWork) {
     TUIGlobal?.setClipboardData({
       data: message.value?.payload?.text,
     });
+  } else {
+    copyText(message.value?.payload?.text);
   }
 }
 

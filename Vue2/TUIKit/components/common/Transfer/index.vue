@@ -1,7 +1,7 @@
 <template>
   <div
     class="transfer"
-    :class="[!isPC ? 'transfer-h5' : '', isWeChat ? 'transfer-h5-wechat' : '']"
+    :class="[!isPC ? 'transfer-h5' : '', isMobile ? 'transfer-h5-wechat' : '']"
   >
     <header class="transfer-header transfer-h5-header" v-if="!isPC">
       <div v-if="!props.isHiddenBackIcon" @click="cancel">
@@ -163,7 +163,7 @@ import Icon from "../Icon.vue";
 import selectedIcon from "../../../assets/icon/selected.svg";
 import backIcon from "../../../assets/icon/back.svg";
 import cancelIcon from "../../../assets/icon/cancel.svg";
-import { isPC, isWeChat, isUniFrameWork } from "../../../utils/env";
+import { isPC, isUniFrameWork, isMobile } from "../../../utils/env";
 
 const props = defineProps({
   list: {

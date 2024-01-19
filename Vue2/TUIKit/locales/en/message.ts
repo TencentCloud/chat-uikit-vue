@@ -37,7 +37,7 @@ const message = {
   "custom": {
     "自定义消息": "Custom message",
     "通话时长": "Call duration",
-    "结束群聊": "End",
+    "通话结束": "Call End",
     "切换语音通话": "Switch voice call",
     "切换视频通话": "Switch video call",
     "发起通话": "Start a call",

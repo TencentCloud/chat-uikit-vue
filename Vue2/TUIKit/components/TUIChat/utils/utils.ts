@@ -1,4 +1,5 @@
-import TUIChatEngine, { TUIStore, StoreName, IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine, { TUITranslateService, TUIStore, StoreName, IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 
 export function deepCopy(data: any, hash = new WeakMap()) {
   if (typeof data !== "object" || data === null || data === undefined) {
@@ -98,4 +99,55 @@ export function isEnabledMessageReadReceiptGlobal(): boolean {
 
 export function shallowCopyMessage(message: IMessageModel) {
   return Object.assign({}, message);
+}
+
+export async function copyText(text: string) {
+  const textString = text.toString();
+  try {
+    // 优先采用异步 copy navigator.clipboard 方案
+    await navigator.clipboard.writeText(textString);
+  } catch (err: any) {
+    // 不支持 navigator.clipboard 时，走兼容替代方案
+    copyTextByDocumentExecCommand(textString);
+  }
+}
+
+function copyTextByDocumentExecCommand(textString: string) {
+  let input = document.createElement("input");
+  input.id = "copy-input";
+  input.readOnly = true; // Prevent IOS focus from triggering keyboard events
+  input.style.position = "absolute";
+  input.style.left = "-1000px";
+  input.style.zIndex = "-1000";
+  document.body.appendChild(input);
+  input.value = textString;
+  selectText(input, 0, textString.length);
+  if (document.execCommand("copy")) {
+    document.execCommand("copy");
+  } else {
+    Toast({
+      message: TUITranslateService.t("TUIChat.此机型暂不支持复制"),
+      type: TOAST_TYPE.ERROR,
+    });
+  }
+  input.blur();
+}
+
+function selectText(
+  textbox: HTMLInputElement,
+  startIndex: number,
+  stopIndex: number
+) {
+  if ((textbox as any).createTextRange) {
+    // ie
+    const range = (textbox as any).createTextRange();
+    range.collapse(true);
+    range.moveStart("character", startIndex); //start character
+    range.moveEnd("character", stopIndex - startIndex); //end character
+    range.select();
+  } else {
+    // firefox / chrome
+    (textbox as any).setSelectionRange(startIndex, stopIndex);
+    (textbox as any).focus();
+  }
 }
