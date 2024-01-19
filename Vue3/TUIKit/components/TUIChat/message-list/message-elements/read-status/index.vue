@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isShowReadStatus"
+    v-show="isShowReadStatus"
     :class="{
       'message-label': true,
       'unread': isUseUnreadStyle,

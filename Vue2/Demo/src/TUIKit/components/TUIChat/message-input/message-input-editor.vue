@@ -196,17 +196,26 @@ const insertAt = (atInfo: { id: string; label: string }) => {
 // fileMap 存储 fileURL 与 fileObject 的映射
 const fileMap = new Map<string, any>();
 const handleFileDrop = (e: any) => {
-  handleFileDropOrPaste(e, "drop");
-};
-const handleFilePaste = (e: any) => {
-  handleFileDropOrPaste(e, "paste");
-};
-const handleFileDropOrPaste = async (e: any, type: string) => {
+  // pc 端 支持富文本拖拽上传
+  // 移动端 不支持
   e.preventDefault();
   e.stopPropagation();
-  if (isH5) {
-    return;
+  if (isPC) {
+    handleFileDropOrPaste(e, "drop");
   }
+};
+const handleFilePaste = (e: any) => {
+  // pc 端 屏蔽原生复制，支持富文本复制，走富文本复制上传解析
+  // 移动端，仅支持文本复制，走默认复制解析
+  if (isPC) {
+    // pc 端 支持富文本复制，走富文本复制上传解析
+    e.preventDefault();
+    e.stopPropagation();
+    handleFileDropOrPaste(e, "paste");
+  }
+};
+
+const handleFileDropOrPaste = async (e: any, type: string) => {
   if (!enableDragUpload?.value && type === "drop") {
     return;
   }

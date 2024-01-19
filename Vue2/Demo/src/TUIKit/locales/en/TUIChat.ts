@@ -100,6 +100,13 @@ const TUIChat = {
   "腾讯云 IM": "Tencent Cloud Chat",
   "空": "Empty",
   "文本包含本地审核拦截词": "Text contains local moderation blocking words",
+  "按住说话": "Hold to speak",
+  "抬起发送": "Release to send",
+  "抬起取消": "Release to cancel",
+  "正在录音": "Recording",
+  "继续上滑可取消": "Continue to swipe to cancel",
+  "松开手指 取消发送": "Release to cancel",
+  "此机型暂不支持复制功能": "This model does not support the copy",
 };
 
 export default TUIChat;
