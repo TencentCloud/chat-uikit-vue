@@ -41,6 +41,7 @@ import MessageInputAt from "./message-input-at/index.vue";
 import MessageInputButton from "./message-input-button.vue";
 import MessageInputQuote from "./message-input-quote/index.vue";
 import { sendMessages, sendTyping } from "../utils/sendMessage";
+import { transformEmojiValueToKey } from "../utils/emojiList";
 import { isPC, isH5 } from "../../../utils/env";
 
 const props = defineProps({
@@ -93,9 +94,16 @@ const onAt = (show: boolean) => {
   messageInputAtRef.value?.toggleAtList(show);
 };
 
+
 const sendMessage = async () => {
-  const editorContentList = editor.value?.getEditorContent();
-  if (!editorContentList || !currentConversation.value) return;
+  const _editorContentList = editor.value?.getEditorContent();
+  if (!_editorContentList || !currentConversation.value) return;
+  const editorContentList = _editorContentList.map((editor: any) => {
+    if(editor.type==='text') {
+      editor.payload.text = transformEmojiValueToKey(editor.payload.text);
+    }
+    return editor
+  });
   await sendMessages(
     editorContentList,
     currentConversation.value

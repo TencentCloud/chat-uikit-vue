@@ -57,6 +57,9 @@ export default class TUIChatServer {
       case TUIConstants.TUIChat.SERVICE.METHOD.SET_CHAT_TYPE:
         TUIChatConfig.setChatType(params?.chatType);
         break;
+      case TUIConstants.TUIChat.SERVICE.METHOD.CLOSE_MESSAGE_POP_MENU:
+        TUIStore.update(StoreName.CUSTOM, "isShowMessagePopMenu", false);
+        break;
       default:
         break;
     }

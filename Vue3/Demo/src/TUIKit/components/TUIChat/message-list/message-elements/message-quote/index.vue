@@ -6,7 +6,7 @@
     @click="scrollToOriginalMessage"
   >
     <div class="max-double-line">
-    {{ quoteContent.messageSender }}: {{ quoteContent.messageAbstract }}
+    {{ quoteContent.messageSender }}: {{ decodeTextMessage(quoteContent.messageAbstract) }}
     </div>
   </div>
 </template>
@@ -23,6 +23,7 @@ import { isUniFrameWork } from "../../../../../utils/env";
 import { getBoundingClientRect, getScrollInfo } from "../../../../../utils/universal-api/domOperation";
 import { Toast, TOAST_TYPE } from "../../../../../components/common/Toast/index";
 import type { ICloudCustomData, IQuoteContent } from "./interface.d.ts";
+import { decodeTextMessage } from "../../../utils/emojiList";
 
 export interface IProps {
   message: IMessageModel;

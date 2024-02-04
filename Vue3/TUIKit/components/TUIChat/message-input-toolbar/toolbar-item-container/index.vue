@@ -105,9 +105,8 @@ const onClickOutside = (component: any) => {
   if (isUniFrameWork) {
     return;
   }
-  document.addEventListener("click", onClickDocument);
-  component?.addEventListener &&
-    component?.addEventListener("click", onClickTarget);
+  document.addEventListener("mouseup", onClickDocument);
+  component?.addEventListener && component?.addEventListener("mouseup", onClickTarget);
 };
 
 const onClickDocument = () => {
@@ -129,9 +128,8 @@ const removeClickListener = (component: any) => {
   if (isUniFrameWork) {
     return;
   }
-  document.removeEventListener("click", onClickDocument);
-  component?.removeEventListener &&
-    component?.removeEventListener("click", onClickTarget);
+  document.removeEventListener("mouseup", onClickDocument);
+  component?.removeEventListener && component?.removeEventListener("mouseup", onClickTarget);
 };
 
 const toggleDialogDisplay = (showStatus: boolean) => {

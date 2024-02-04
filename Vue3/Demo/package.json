@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue3",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,7 @@
     "@tencentcloud/chat-uikit-vue": "latest",
     "@tencentcloud/tui-core": "latest",
     "@tencentcloud/tui-customer-service-plugin": "latest",
+    "@tencentcloud/tui-emoji-plugin": "latest",
     "@tiptap/core": "^2.0.0-beta.220",
     "@tiptap/extension-document": "^2.0.0-beta.220",
     "@tiptap/extension-image": "^2.0.0-beta.220",

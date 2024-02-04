@@ -4,6 +4,7 @@
     class="dialog-item"
     :class="!isPC ? 'dialog-item-h5' : 'dialog-item-web'"
   >
+    <slot name="TUIEmojiPlugin"></slot>
     <div
       class="dialog-item-list"
       :class="!isPC ? 'dialog-item-list-h5' : 'dialog-item-list-web'"
@@ -40,6 +41,7 @@ import quoteIcon from "../../../../assets/icon/msg-quote.svg";
 import revokeIcon from "../../../../assets/icon/msg-revoke.svg";
 import forwardIcon from "../../../../assets/icon/msg-forward.svg";
 import { enableSampleTaskStatus } from "../../../../utils/enableSampleTaskStatus";
+import { decodeTextMessage } from "../../utils/emojiList";
 import { copyText } from "../../utils/utils";
 
 const props = defineProps({
@@ -179,12 +181,13 @@ function deleteMessage() {
 }
 
 async function copyMessage() {
+  const text = decodeTextMessage(message.value?.payload?.text);
   if (isUniFrameWork) {
     TUIGlobal?.setClipboardData({
-      data: message.value?.payload?.text,
+      data: text,
     });
   } else {
-    copyText(message.value?.payload?.text);
+    copyText(text);
   }
 }
 
@@ -204,7 +207,6 @@ function quoteMessage() {
 .dialog-item-web {
   background: #ffffff;
   border-radius: 8px;
-  display: flex;
   border: 1px solid #e0e0e0;
   padding: 12px 0;
 
@@ -212,9 +214,8 @@ function quoteMessage() {
     display: flex;
     align-items: baseline;
     white-space: nowrap;
-    justify-content: space-around;
-    width: 100%;
-
+    flex-wrap: wrap;
+    width: 280px;
     .list-item {
       padding: 4px 12px;
       display: flex;
@@ -235,6 +236,8 @@ function quoteMessage() {
   .dialog-item-list {
     flex-wrap: nowrap;
     margin: 10px;
+    justify-content: space-around;
+    width: 280px;
     .list-item {
       padding: 0 8px;
       display: flex;
