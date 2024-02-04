@@ -17,7 +17,7 @@
 </template>
   
 <script setup lang="ts">
-import { ref, computed } from "../../../../adapter-vue";
+import { ref, computed, onMounted, onUnmounted } from "../../../../adapter-vue";
 import TUIChatEngine, {
   TUIStore,
   StoreName,
@@ -27,31 +27,38 @@ import TUIChatEngine, {
 import Icon from "../../../common/Icon.vue";
 import closeIcon from "../../../../assets/icon/icon-close.svg";
 import { isPC, isUniFrameWork } from "../../../../utils/env";
+import { decodeTextMessage } from "../../utils/emojiList";
 
 const props = defineProps(["currentFunction"]);
 
 const TYPES = TUIChatEngine.TYPES;
 const quoteMessage = ref<IMessageModel>();
 
-TUIStore.watch(StoreName.CHAT, {
-  quoteMessage: (options?: { message: IMessageModel, type: string }) => {
-    if (options?.message && options?.type === "quote") {
-      quoteMessage.value = options.message;
-    } else {
-      quoteMessage.value = undefined;
-    }
-  },
+onMounted(() => {
+  TUIStore.watch(StoreName.CHAT, {
+    quoteMessage: onQuoteMessageUpdated,
+  });
+
+  TUIStore.watch(StoreName.CONV, {
+    currentConversationID: onConversationIDUpdated,
+  });
 });
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversationID: () => cancelQuote(),
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CHAT, {
+    quoteMessage: onQuoteMessageUpdated,
+  });
+
+  TUIStore.unwatch(StoreName.CONV, {
+    currentConversationID: onConversationIDUpdated,
+  });
 });
 
 const quoteContentText = computed(() => {
   let _quoteContentText;
   switch (quoteMessage.value?.type) {
     case TYPES.MSG_TEXT:
-      _quoteContentText = quoteMessage.value.payload?.text;
+      _quoteContentText = decodeTextMessage(quoteMessage.value.payload?.text);
       break;
     case TYPES.MSG_IMAGE:
       _quoteContentText = TUITranslateService.t("TUIChat.图片");
@@ -77,6 +84,18 @@ const quoteContentText = computed(() => {
 
 function cancelQuote() {
   TUIStore.update(StoreName.CHAT, "quoteMessage", { message: undefined, type: "quote" });
+}
+
+function onQuoteMessageUpdated(options?: { message: IMessageModel, type: string }) {
+  if (options?.message && options?.type === "quote") {
+    quoteMessage.value = options.message;
+  } else {
+    quoteMessage.value = undefined;
+  }
+}
+
+function onConversationIDUpdated() {
+  cancelQuote();
 }
 </script>
   

@@ -62,7 +62,7 @@ import {
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
 import { ref } from "../../../../adapter-vue";
-import { emojiList, basicEmojiMap } from "../../utils/emojiList";
+import { emojiList, basicEmojiMap, basicEmojiList } from "../../utils/emojiList";
 import { IEmojiList, IEmojiListItem } from "../../../../interface";
 import { EMOJI_TYPE } from ".././../../../constant";
 import Icon from "../../../common/Icon.vue";
@@ -98,7 +98,7 @@ const toggleEmojiTab = (index: number) => {
 
 const select = (item: any, index: number) => {
   const options: any = {
-    name: item,
+    emoji: { key: item, name: basicEmojiList[item] },
     type: currentTabItem?.value?.type,
   };
   switch (currentTabItem?.value?.type) {

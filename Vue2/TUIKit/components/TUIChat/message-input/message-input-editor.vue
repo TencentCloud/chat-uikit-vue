@@ -493,23 +493,23 @@ function parseH5EditorContent() {
   ];
 }
 
-const addEmoji = (emoji: any) => {
+const addEmoji = (emojiData: any) => {
   if (isPC) {
     editor?.commands?.insertContent({
       type: "custom-image",
       attrs: {
-        src: emoji?.url,
-        alt: emoji?.name,
-        title: emoji?.name,
+        src: emojiData?.url,
+        alt: emojiData?.emoji.key,
+        title: emojiData?.emoji.key,
         class: "emoji",
       },
     });
   } else {
     const emojiImgNode = document.createElement("img");
-    emojiImgNode?.setAttribute("src", emoji?.url);
+    emojiImgNode?.setAttribute("src", emojiData?.url);
     emojiImgNode?.setAttribute("class", "custom-image custom-image-emoji");
-    emojiImgNode?.setAttribute("alt", emoji?.name);
-    emojiImgNode?.setAttribute("title", emoji?.name);
+    emojiImgNode?.setAttribute("alt", emojiData?.emoji.key);
+    emojiImgNode?.setAttribute("title", emojiData?.emoji.key);
     emojiImgNode?.setAttribute("width", "20px");
     emojiImgNode?.setAttribute("height", "20px");
     editorDom.value?.appendChild(emojiImgNode);

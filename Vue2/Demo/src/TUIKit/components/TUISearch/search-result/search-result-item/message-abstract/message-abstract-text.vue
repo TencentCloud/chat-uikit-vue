@@ -11,12 +11,13 @@
       :key="index"
       :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']"
     >
-      {{ contentItem.text }}
+      {{ decodeTextMessage(contentItem.text) }}
     </span>
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from "../../../../../adapter-vue";
+import { decodeTextMessage } from "../../../../TUIChat/utils/emojiList";
 const props = defineProps({
   content: {
     type: Array,

@@ -91,9 +91,9 @@
           position: relative;
           flex-direction: column;
           .message-tool {
+            z-index: 5;
             position: absolute;
             cursor: pointer;
-            z-index: 5;
             transform: translateY(-100%);
           }
           .message-tool-out {
@@ -103,6 +103,11 @@
           .message-tool-in {
             left: 30px;
             right: auto;
+          }
+          .message-tool-bottom {
+            z-index: 5;
+            bottom: 0;
+            transform: translateY(100%);
           }
         }
         .message-label {

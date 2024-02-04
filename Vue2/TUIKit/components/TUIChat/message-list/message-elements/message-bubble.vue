@@ -34,7 +34,11 @@
                 :class="['message-risk-replace', !isPC && 'message-risk-replace-h5']"
                 :src="riskImageReplaceUrl"
               />
-              <slot v-else></slot>
+              <template v-else>
+                <slot name="messageElement"></slot>
+                <slot name="TUIEmojiPlugin"></slot>
+              </template>
+
             </div>
             <!-- 敏感信息失败提示 -->
             <div v-if="message.hasRiskContent" class="content-has-risk-tips">
@@ -108,8 +112,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 const TYPES = TUIChatEngine.TYPES;
-const riskImageReplaceUrl =
-  "https://web.sdk.qcloud.com/component/TUIKit/assets/has_risk_default.png";
+const riskImageReplaceUrl = "https://web.sdk.qcloud.com/component/TUIKit/assets/has_risk_default.png";
 const needLoadingIconMessageType = [
   TYPES.MSG_LOCATION,
   TYPES.MSG_TEXT,
@@ -120,8 +123,13 @@ const needLoadingIconMessageType = [
 
 const { blinkMessageIDList, messageItem: message } = toRefs(props);
 
+// 当表情删除时，reactionList 会更新对应表情中 totalUserCount
+const hasEmojiReaction = computed(() => {
+  return message.value?.reactionList.some((item: any) => item.totalUserCount !== 0) 
+});
+
 const isNoPadding = computed(() => {
-  return [TYPES.MSG_IMAGE, TYPES.MSG_VIDEO].includes(message.value.type);
+  return !hasEmojiReaction.value && [TYPES.MSG_IMAGE, TYPES.MSG_VIDEO].includes(message.value.type);
 });
 
 const riskContentText = computed<string>(() => {
@@ -226,7 +234,6 @@ function openReadUserPanel() {
           word-wrap: break-word;
           word-break: break-all;
           position: relative;
-          overflow: hidden;
           .content-main {
             box-sizing: border-box;
             display: flex;

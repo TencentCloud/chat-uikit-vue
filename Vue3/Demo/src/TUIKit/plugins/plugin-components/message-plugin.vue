@@ -7,7 +7,9 @@
         :blinkMessageIDList="props.blinkMessageIDList"
         @resendMessage="resendMessage(messageModel)"
       >
-        <TUICustomerServicePlugin :message="messageModel" />
+        <template #messageElement>
+          <TUICustomerServicePlugin :message="messageModel" />
+        </template>
       </messageBubble>
     </template>
     <template v-else>
@@ -35,11 +37,13 @@
           :blinkMessageIDList="props.blinkMessageIDList"
           @resendMessage="resendMessage(messageModel)"
         >
-          <MessageCallC2C
-            :message="messageModel"
-            :signalingInfo="messageSignalingInfo"
-            :customContent="messageCustomContent"
-          ></MessageCallC2C>
+          <template #messageElement>
+            <MessageCallC2C
+              :message="messageModel"
+              :signalingInfo="messageSignalingInfo"
+              :customContent="messageCustomContent"
+            ></MessageCallC2C>
+          </template>
         </messageBubble>
       </div>
     </template>

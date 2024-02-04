@@ -142,16 +142,16 @@ const onClickOutside = (component: any) => {
   if (isUniFrameWork || !isPC) {
     return;
   }
-  document.addEventListener("click", onClickDocument);
-  component?.addEventListener && component?.addEventListener("click", onClickTarget);
+  document.addEventListener("mousedown", onClickDocument);
+  component?.addEventListener && component?.addEventListener("mousedown", onClickTarget);
 };
 
 const removeClickListener = (component: any) => {
   if (isUniFrameWork || !isPC) {
     return;
   }
-  document.removeEventListener("click", onClickDocument);
-  component?.removeEventListener && component?.removeEventListener("click", onClickTarget);
+  document.removeEventListener("mousedown", onClickDocument);
+  component?.removeEventListener && component?.removeEventListener("mousedown", onClickTarget);
 };
 
 const onClickDocument = () => {

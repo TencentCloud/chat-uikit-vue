@@ -217,6 +217,27 @@ export interface IFileMessageContent {
   size: number;
 }
 
+export interface IAudioMessageContent {
+  showName: string;
+  url: string;
+  second: number;
+}
+
+export interface IAudioContext {
+  src: string | undefined;
+  startTime: number;
+  duration: number;
+  play: () => void;
+  pause: () => void;
+  stop: () => void;
+  destroy: () => void;
+  onPlay: (callback: (...args: unknown[]) => void) => void;
+  onPause: (callback: (...args: unknown[]) => void) => void;
+  onStop: (callback: (...args: unknown[]) => void) => void;
+  onEnded: (callback: (...args: unknown[]) => void) => void;
+  onError: (callback: (...args: unknown[]) => void) => void;
+}
+
 export interface ITipTapEditorContent {
   type: "text" | "image" | "video" | "file";
   payload: {
