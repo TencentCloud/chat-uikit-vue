@@ -62,8 +62,8 @@ import {
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { isPC } from "../../../utils/env";
-import { TUIGlobal } from "../../../utils/universal-api/index";
 import Icon from "../../common/Icon.vue";
 import addSVG from "../../../assets/icon/add.svg";
 import backSVG from "../../../assets/icon/back.svg";

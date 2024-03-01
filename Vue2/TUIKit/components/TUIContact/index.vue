@@ -15,9 +15,9 @@
 </template>
 <script lang="ts" setup>
 import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ref, watchEffect } from "../../adapter-vue";
 import { isPC, isUniFrameWork } from "../../utils/env";
-import { TUIGlobal } from "../../utils/universal-api/index";
 
 import SelectFriend from "./select-friend/index.vue";
 import ContactSearch from "./contact-search/index.vue";

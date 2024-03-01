@@ -1,36 +1,37 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    // Type Checking
     "strict": true,
-    "jsx": "preserve",
+    "exactOptionalPropertyTypes": true,
+    "noImplicitAny": false,
+    // Language and Environment
+    "target": "ESNext",
+    // Modules
     "moduleResolution": "node",
-    "experimentalDecorators": true,
+    // Completeness
     "skipLibCheck": true,
+    // Interop Constraints
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": true,
+    // Emit
     "sourceMap": true,
-    "strictFunctionTypes": false,
-    "preserveValueImports": false,
-    "importsNotUsedAsValues": "preserve",
+    // "strictFunctionTypes": false,
     "isolatedModules": false,
     "baseUrl": ".",
-    "types": ["node", "webpack-env", "vue/types", "vue-router/types"],
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["src/*"],
+      "@tencentcloud/chat-uikit-engine": ["../chat-uikit-engine/src"],
+      "@tencentcloud/tui-core": ["../tui-core/src"],
+      "@tencentcloud/universal-api": ["../../universal-api/src"],
+      "@tencentcloud/universal-component": ["../../universal-component/src"]
     },
-    "lib": ["esnext", "dom", "dom.iterable", "scripthost"]
+    "lib": ["esnext", "dom"]
   },
-  "files": ["*.d.ts", "**/*.ts", "**/*.tsx", "**/*.vue", "**/*.ts", "**/*.tsx"],
   "include": [
-    "*.d.ts",
+    "**/*.js",
+    "**/*.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "**/*.vue",
-    "**/*.ts",
-    "**/*.tsx"
+    "**/*.vue"
   ],
   "exclude": ["node_modules"]
 }

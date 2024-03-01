@@ -5,6 +5,7 @@
     :needBottomPopup="true"
     :iconWidth="isUniFrameWork ? '26px' : '20px'"
     :iconHeight="isUniFrameWork ? '26px' : '20px'"
+    @onDialogShow="onDialogShow"
     @onDialogClose="onDialogClose"
     ref="container"
   >
@@ -72,7 +73,10 @@
             !isPC && 'evaluate-h5-content-button',
           ]"
         >
-          <button class="btn" @click="submitEvaluate">
+          <button
+            class="btn"
+            @click="submitEvaluate"
+          >
             {{ TUITranslateService.t("Evaluate.提交评价") }}
           </button>
         </div>
@@ -114,6 +118,7 @@ const props = defineProps({
     default: 5,
   },
 });
+const emits = defineEmits(["onDialogPopupShowOrHide"]);
 
 const container = ref();
 
@@ -128,8 +133,13 @@ TUIStore.watch(StoreName.CONV, {
   },
 });
 
+const onDialogShow = () => {
+  emits("onDialogPopupShowOrHide", true);
+};
+
 const onDialogClose = () => {
   resetEvaluate();
+  emits("onDialogPopupShowOrHide", false);
 };
 
 const openLink = (link: any) => {

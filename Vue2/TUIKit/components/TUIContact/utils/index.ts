@@ -6,8 +6,8 @@ import TUIChatEngine, {
   TUITranslateService,
   AddFriendParams,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { TUIGlobal } from "../../../utils/universal-api/index";
 
 // 解析 用户头像/群头像
 export const generateAvatar = (item: any): string => {

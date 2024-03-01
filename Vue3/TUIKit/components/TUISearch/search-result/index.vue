@@ -1,6 +1,6 @@
 <template>
-  <SearchResultLoading v-if="isLoading" />
-  <SearchResultDefault v-else-if="isSearchDefaultShow" />
+  <SearchResultLoading v-if="isLoading" :class="['search-result-loading', !isPC && 'search-result-loading-h5']" />
+  <SearchResultDefault v-else-if="isSearchDefaultShow" :class="['search-result-default', !isPC && 'search-result-default-h5']" />
   <div v-else :class="[
     'tui-search-result',
     !isPC && 'tui-search-result-h5',
@@ -8,12 +8,12 @@
   ]">
     <div class="tui-search-result-main" v-if="props.searchType !== 'conversation' && (isPC || !isResultDetailShow)">
       <div class="tui-search-result-list">
-        <div class="tui-search-result-list-item" v-for="result in searchResult">
+        <div class="tui-search-result-list-item" v-for="result in searchResult" :key="result.key">
           <div class="header" v-if="props.searchType === 'global'">
             {{ TUITranslateService.t(`TUISearch.${result.label}`)  }}
           </div>
           <div class="list">
-            <div v-for="item in result.list" :class="[generateListItemClass(item)]">
+            <div v-for="item in result.list" :key="item.ID" :class="[generateListItemClass(item)]">
               <SearchResultItem v-if="result.key === 'contact' || result.key === 'group' || item.conversation"
                 :listItem="item" :type="result.key" displayType="info" :keywordList="keywordList"
                 @showResultDetail="showResultDetail" @navigateToChatPosition="navigateToChatPosition"></SearchResultItem>
@@ -33,7 +33,7 @@
       'tui-search-result-detail',
       props.searchType === 'conversation' && 'tui-search-result-in-conversation',
     ]" v-if="isResultDetailShow || props.searchType === 'conversation'">
-      <SearchResultLoading v-if="isSearchDetailLoading" />
+      <SearchResultLoading v-if="isSearchDetailLoading" :class="['search-result-loading', !isPC && 'search-result-loading-h5']" />
       <div class="tui-search-message-header"
         v-if="!isSearchDetailLoading && isResultDetailShow && props.searchType !== 'conversation'">
         <div class="header-content">
@@ -133,12 +133,13 @@ import {
   debounce,
 } from "../utils";
 import { isPC, isUniFrameWork } from "../../../utils/env";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { SEARCH_TYPE } from "../type";
 import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus"
 
 interface ISearchConversationResult {
   totalCount: number;
-  cursor: number;
+  cursor: string;
   searchResultList: Array<{
     conversationID: string;
     messageCount: number;
@@ -222,7 +223,7 @@ TUIStore.watch(StoreName.CONV, {
   },
 });
 
-TUIStore.watch(StoreName.CUSTOM, {
+TUIStore.watch(StoreName.SEARCH, {
   currentSearchInputValue: (obj: { value: string; searchType: string }) => {
     if (obj?.searchType === props?.searchType) {
       // 根据空格模糊搜索结果
@@ -246,7 +247,7 @@ TUIStore.watch(StoreName.CUSTOM, {
   },
 });
 
-const setMessageSearchResultList = (option?: { conversationID?: string; cursor?: number }) => {
+const setMessageSearchResultList = (option?: { conversationID?: string; cursor?: string }) => {
   searchCloudMessages({
     keywordList: keywordList?.value?.length ? keywordList.value : undefined,
     messageTypeList: messageTypeList.value,
@@ -295,7 +296,8 @@ const setMessageSearchResultList = (option?: { conversationID?: string; cursor?:
           ...res?.data?.searchResultList[0]?.messageList,
         ])
         : (searchConversationMessageList.value = res?.data?.searchResultList[0]?.messageList);
-      searchConversationMessageTotalCount.value = res?.data?.totalCount;
+      // todo: 此处为 后台 totalCount 不准确的规避方案，待后台修复后请改为 res?.data?.totalCount
+      searchConversationMessageTotalCount.value = res?.data?.searchResultList[0]?.messageCount;
       // 计算时间戳展示位置（仅会话内搜索 文件/图片 类型需要）
       if (
         props?.searchType === "conversation" &&
@@ -370,7 +372,7 @@ watch(
 const getMoreResult = (result: any) => {
   if (currentSearchTabKey.value === "all") {
     // 此时查看更多：切换到相应结果对应的result，展示其类型全量搜索结果
-    TUIStore.update(StoreName.CUSTOM, "currentSearchMessageType", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchMessageType", {
       value: searchMessageTypeList[result.key],
       searchType: props.searchType,
     });
@@ -390,7 +392,7 @@ const getMoreResultInConversation = () => {
 const showResultDetail = (isShow: boolean, targetType?: string, targetResult?: any) => {
   isResultDetailShow.value = isShow;
   if (targetType) {
-    TUIStore.update(StoreName.CUSTOM, "currentSearchMessageType", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchMessageType", {
       value: searchMessageTypeList[targetType],
       searchType: props.searchType,
     });
@@ -450,18 +452,22 @@ const groupResultListByDate = (
 const navigateToChatPosition = (message: IMessageModel) => {
   if (props.searchType === "global") {
     // 全局搜索，关闭 search container
-    TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
       isSearching: false,
       searchType: props.searchType,
     });
     // 切换会话
     TUIConversationService.switchConversation(message?.conversationID).then(() => {
       TUIStore.update(StoreName.CHAT, "messageSource", message);
+      isUniFrameWork && TUIGlobal?.navigateTo({
+        url: "/TUIKit/components/TUIChat/index",
+      });
     });
   } else if (props.searchType === "conversation") {
     // 会话内搜索，关闭 search container
-    TUIStore.update(StoreName.CUSTOM, "isShowInConversationSearch", false);
+    TUIStore.update(StoreName.SEARCH, "isShowInConversationSearch", false);
     TUIStore.update(StoreName.CHAT, "messageSource", message);
+    isUniFrameWork && TUIGlobal?.navigateBack();
   }
 };
 

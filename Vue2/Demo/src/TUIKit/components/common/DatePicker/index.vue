@@ -8,9 +8,11 @@
       <input
         :placeholder="startPlaceholderVal"
         :class="[n(['input-start'])]"
+        style="pointer-events: none"
         type="text"
         v-model="startFormatDate"
-        readonly
+        :readonly="true"
+        :disabled="isUniFrameWork"
         autocomplete="false"
       />
       <span v-if="type !== 'single'">-</span>
@@ -18,14 +20,19 @@
         v-if="type !== 'single'"
         :placeholder="endPlaceholderVal"
         :class="[n(['input-end'])]"
+        style="pointer-events: none"
         type="text"
         v-model="endFormatDate"
-        readonly
+        :readonly="true"
+        :disabled="isUniFrameWork"
         autocomplete="false"
       />
       <slot name="end-icon"></slot>
     </div>
-    <div :class="[n(['dialog'])]" v-if="isDatePanelShow">
+    <div
+      v-if="isDatePanelShow"
+      :class="[n(['dialog'])]"
+    >
       <div
         :class="[
           n([
@@ -62,17 +69,17 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref, computed, vueVersion } from "../../../adapter-vue";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import DatePickerPanel from "./date-picker-panel.vue";
-import { ref, computed } from "../../../adapter-vue";
-import { DateCell } from "./date-picker";
 // dayjs extension
 import dayjs, { Dayjs } from "dayjs";
 import localeData from "dayjs/plugin/localeData.js";
 import isSameOrAfter from "dayjs/plugin/isSameOrAfter.js";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore.js";
 import "dayjs/locale/zh-cn";
-import { isPC } from "../../../utils/env";
+import DatePickerPanel from "./date-picker-panel.vue";
+import { DateCell } from "./date-picker";
+import { isPC, isH5, isWeChat, isApp, isUniFrameWork } from "../../../utils/env";
 
 dayjs.extend(localeData);
 dayjs.extend(isSameOrAfter);
@@ -221,7 +228,6 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
       height: 17px;
       border: none;
       width: 67px;
-      padding: 2px 5px;
       background-color: transparent;
       font-size: 12px;
       text-align: center;

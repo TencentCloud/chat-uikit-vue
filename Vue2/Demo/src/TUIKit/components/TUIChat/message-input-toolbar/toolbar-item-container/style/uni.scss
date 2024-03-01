@@ -5,6 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  position: static;
   &-icon {
     background: #ffffff;
     border-radius: 15px;
@@ -18,5 +19,11 @@
   &-title {
     font-size: 14px;
     color: #8F959D;
+  }
+  &-dialog{
+    position: absolute !important;
+    background: transparent;
+    left: -10px;
+    bottom: -5px;
   }
 }

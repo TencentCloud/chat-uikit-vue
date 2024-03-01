@@ -39,9 +39,9 @@ import TUIChatEngine, {
   TUIGroupService,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ref, watch } from "../../../../adapter-vue";
 import { isPC, isH5 } from "../../../../utils/env";
-import { TUIGlobal } from "../../../../utils/universal-api/index";
 import BottomPopup from "../../../common/BottomPopup/index.vue";
 
 const emits = defineEmits(["onAtListOpen", "insertAt"]);

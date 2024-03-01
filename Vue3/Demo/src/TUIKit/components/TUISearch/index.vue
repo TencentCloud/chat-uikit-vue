@@ -1,50 +1,92 @@
 <template>
   <div
-    v-if="searchType === 'global' || (searchType === 'conversation' && isShowInConversationSearch)"
+    v-if="
+      searchType === 'global' ||
+      ((searchType === 'conversation' || (!searchType && isUniFrameWork)) &&
+        isShowInConversationSearch)
+    "
     :class="[
       'tui-search',
       !isPC && 'tui-search-h5',
-      `tui-search-main-${searchType}`,
+      `tui-search-main-${searchType ? searchType : 'conversation'}`,
       isFullScreen && 'tui-search-h5-full-screen',
     ]"
   >
     <div
-      :class="['tui-search-global', !isPC && 'tui-search-h5-global']"
       v-if="searchType === 'global'"
+      :class="['tui-search-global', !isPC && 'tui-search-h5-global']"
       ref="globalSearchRef"
     >
-      <div :class="['tui-search-global-header', !isPC && 'tui-search-h5-global-header']">
-        <SearchInput :searchType="searchType"></SearchInput>
-        <SearchMore :searchType="searchType" v-if="isPC || !searchingStatus"></SearchMore>
+      <div
+        :class="[
+          'tui-search-global-header',
+          !isPC && 'tui-search-h5-global-header',
+        ]"
+      >
+        <SearchInput
+          class="search-input"
+          :searchType="searchType"
+        ></SearchInput>
+        <SearchMore
+          v-if="isPC || !searchingStatus"
+          class="search-more"
+          :searchType="searchType"
+        ></SearchMore>
       </div>
-      <SearchContainer v-if="searchingStatus" popupPosition="bottom" :searchType="searchType">
+      <SearchContainer
+        v-if="searchingStatus"
+        class="search-container"
+        popupPosition="bottom"
+        :searchType="searchType"
+      >
         <template #result>
-          <SearchResult :searchType="searchType"></SearchResult>
+          <SearchResult
+            class="search-result"
+            :searchType="searchType"
+          ></SearchResult>
         </template>
       </SearchContainer>
     </div>
     <div
-      :class="['tui-search-conversation', !isPC && 'tui-search-h5-conversation']"
-      v-else-if="searchType === 'conversation' && isShowInConversationSearch"
+      v-else-if="
+        (searchType === 'conversation' && isShowInConversationSearch) ||
+        isUniFrameWork
+      "
+      :class="[
+        'tui-search-conversation',
+        !isPC && 'tui-search-h5-conversation',
+      ]"
     >
       <SearchContainer
+        class="search-container"
         popupPosition="aside"
-        :searchType="searchType"
+        :searchType="searchType ? searchType : 'conversation'"
         @closeInConversationSearch="closeInConversationSearch"
       >
         <template #input>
-          <SearchInput :searchType="searchType"></SearchInput>
+          <SearchInput
+            :searchType="searchType ? searchType : 'conversation'"
+          ></SearchInput>
         </template>
         <template #result>
-          <SearchResult :searchType="searchType"></SearchResult>
+          <SearchResult
+            class="search-result"
+            :searchType="searchType ? searchType : 'conversation'"
+          ></SearchResult>
         </template>
       </SearchContainer>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, computed, withDefaults, onBeforeUnmount } from "../../adapter-vue";
+import {
+  ref,
+  onMounted,
+  computed,
+  withDefaults,
+} from "../../adapter-vue";
 import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal, outsideClick } from "@tencentcloud/universal-api";
 import SearchInput from "./search-input/index.vue";
 import SearchContainer from "./search-container/index.vue";
 import SearchResult from "./search-result/index.vue";
@@ -59,7 +101,9 @@ const props = withDefaults(
     searchType?: SEARCH_TYPE;
   }>(),
   {
-    searchType: () => (isUniFrameWork ? "conversation" : "global"),
+    searchType: () => {
+      return isUniFrameWork ? "conversation" : "global";
+    },
   }
 );
 const globalSearchRef = ref<HTMLElement | null>();
@@ -68,7 +112,7 @@ const currentConversationID = ref<string>("");
 // 控制搜索状态
 const searchingStatus = ref<boolean>(false);
 // 是否展示指定会话内搜索: 与 TUIChat 交互，由 TUIChat MessageInputToolBar 中 "查看历史消息ICON" 控制
-const isShowInConversationSearch = ref<boolean>(isUniFrameWork ? true : false);
+const isShowInConversationSearch = ref<boolean>(isUniFrameWork);
 // 是否全屏搜索 - 移动端正在搜索时全屏搜索
 const isFullScreen = computed(
   () =>
@@ -78,15 +122,15 @@ const isFullScreen = computed(
 );
 
 const initSearchValue = (searchType: SEARCH_TYPE) => {
-  TUIStore.update(StoreName.CUSTOM, "currentSearchInputValue", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchInputValue", {
     value: "",
     searchType: searchType,
   });
-  TUIStore.update(StoreName.CUSTOM, "currentSearchMessageType", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchMessageType", {
     value: searchMessageTypeDefault[searchType],
     searchType: searchType,
   });
-  TUIStore.update(StoreName.CUSTOM, "currentSearchMessageTime", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchMessageTime", {
     value: searchMessageTimeDefault,
     searchType: searchType,
   });
@@ -107,15 +151,25 @@ onMounted(() => {
       currentConversationID.value = conversationID;
     },
   });
-  TUIStore.watch(StoreName.CUSTOM, {
-    currentSearchingStatus: (value: { isSearching: boolean; searchType: string }) => {
+  TUIStore.watch(StoreName.SEARCH, {
+    currentSearchingStatus: (value: {
+      isSearching: boolean;
+      searchType: string;
+    }) => {
       if (value?.searchType === props.searchType) {
         searchingStatus.value = value?.isSearching;
         // global search ui bind on click outside close
         if (value?.searchType === "global" && globalSearchRef.value) {
-          value?.isSearching
-            ? onClickOutside(globalSearchRef.value)
-            : removeClickListener(globalSearchRef.value);
+          if (isPC && value.isSearching) {
+            outsideClick.listen({
+              domRefs: globalSearchRef.value,
+              handler: closeGlobalSearch,
+            });
+          }
+        }
+        if (value?.searchType === 'global' && isUniFrameWork) {
+          // hide tab bar in uni-app when global searching
+          value.isSearching ? TUIGlobal?.hideTabBar() : TUIGlobal?.showTabBar();
         }
       }
     },
@@ -126,49 +180,15 @@ onMounted(() => {
   });
 });
 
-onBeforeUnmount(() => {
-  removeClickListener(globalSearchRef?.value);
-});
-
-function closeInConversationSearch() {
-  TUIStore.update(StoreName.CUSTOM, "isShowInConversationSearch", false);
+function closeGlobalSearch() {
+  TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
+    isSearching: false,
+    searchType: props.searchType,
+  });
 }
 
-// 全局搜索dialog-点击外侧关闭
-// click outside
-let clickOutside = false;
-let clickInner = false;
-const onClickOutside = (component: any) => {
-  if (isUniFrameWork || !isPC) {
-    return;
-  }
-  document.addEventListener("mousedown", onClickDocument);
-  component?.addEventListener && component?.addEventListener("mousedown", onClickTarget);
-};
-
-const removeClickListener = (component: any) => {
-  if (isUniFrameWork || !isPC) {
-    return;
-  }
-  document.removeEventListener("mousedown", onClickDocument);
-  component?.removeEventListener && component?.removeEventListener("mousedown", onClickTarget);
-};
-
-const onClickDocument = () => {
-  clickOutside = true;
-  if (!clickInner && clickOutside) {
-    TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
-      isSearching: false,
-      searchType: props.searchType,
-    });
-    removeClickListener(globalSearchRef?.value);
-  }
-  clickOutside = false;
-  clickInner = false;
-};
-
-const onClickTarget = () => {
-  clickInner = true;
-};
+function closeInConversationSearch() {
+  TUIStore.update(StoreName.SEARCH, "isShowInConversationSearch", false);
+}
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

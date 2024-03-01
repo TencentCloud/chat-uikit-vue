@@ -3,7 +3,6 @@
     <div :class="[n('body')]">
       <div :class="[n('body-header')]">
         <div :class="[n('body-header-prev')]">
-          <!-- todo: 此处催产品给个双箭头icon -->
           <div
             :class="[n('icon')]"
             @click="change('year', -1)"
@@ -54,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted } from "../../../adapter-vue";
+import { computed, ref, onBeforeMount } from "../../../adapter-vue";
 import dayjs, { Dayjs, ManipulateType } from "dayjs";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { DateCell } from "./date-picker";
@@ -106,8 +105,8 @@ const n = (className: string) => {
 };
 
 const currentPanelDate = ref<typeof Dayjs>();
-const year = computed(() => currentPanelDate?.value?.get("year"));
-const month = computed(() => currentPanelDate?.value?.format("MMMM"));
+const year = computed(() => currentPanelDate.value?.get("year"));
+const month = computed(() => currentPanelDate.value?.format("MMMM"));
 const canYearMore = computed(() => {
   const prevYearNumber = props.currentOtherPanelValue?.year() - 1;
   const prevYear = props.currentOtherPanelValue?.year(prevYearNumber);
@@ -213,7 +212,7 @@ function change(type: typeof ManipulateType, num: number) {
   emit("change", currentPanelDate.value);
 }
 
-onMounted(() => {
+onBeforeMount(() => {
   switch (props.type) {
     case "single":
       currentPanelDate.value = handleSingleDate().date;

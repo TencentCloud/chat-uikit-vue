@@ -8,8 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     About: typeof import('./src/components/About.vue')['default']
-    AdvList: typeof import('./src/components/advList.vue')['default']
-    AdvListItem: typeof import('./src/components/advListItem.vue')['default']
+    AdvList: typeof import('./src/components/AdvList.vue')['default']
+    AdvListItem: typeof import('./src/components/AdvListItem.vue')['default']
     ChatDefaultContent: typeof import('./src/components/ChatDefaultContent.vue')['default']
     DvList: typeof import('./src/components/dvList.vue')['default']
     EditProfile: typeof import('./src/components/EditProfile.vue')['default']

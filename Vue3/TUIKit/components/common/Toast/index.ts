@@ -1,5 +1,5 @@
 import { createVNode, render, VNode, vueVersion } from "../../../adapter-vue";
-import { TUIGlobal } from "../../../utils/universal-api/index";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import TOAST_TYPE from "./type";
 import MessageConstructor from "./index.vue";
 

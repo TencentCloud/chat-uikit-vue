@@ -1,16 +1,43 @@
 <template>
-  <table :class="['tui-date-table']" cellspacing="0" cellpadding="0" role="grid">
-    <tbody :class="['tui-date-table-body']">
-      <tr :class="['tui-date-table-body-weeks']">
-        <th :class="['tui-date-table-body-weeks-item']" v-for="item in WEEKS" :aria-label="item + ''" scope="col">
-          {{ TUITranslateService.t(`time.${item}`)  }}
+  <table
+    :class="['tui-date-table', !isPC && 'tui-date-table-h5']"
+    cellspacing="0"
+    cellpadding="0"
+    role="grid"
+  >
+    <tbody class="tui-date-table-body">
+      <tr class="tui-date-table-body-weeks">
+        <th
+          class="tui-date-table-body-weeks-item"
+          v-for="item in WEEKS"
+          :key="item"
+          :aria-label="item + ''"
+          scope="col"
+        >
+          {{ TUITranslateService.t(`time.${item}`) }}
         </th>
       </tr>
-      <tr :class="['tui-date-table-body-days']" v-for="(row, rowKey) in rows" :key="rowKey">
-        <td v-for="(col, colKey) in row" :key="generateVueRenderKey(rowKey, colKey)"
-          :class="['tui-date-table-body-days-item', col.type]">
-          <div :class="[handleDateCellClass(col)]" @click="handlePick(col)">
-            <span :class="'tui-date-table-body-days-item-cell-text'">
+      <tr
+        class="tui-date-table-body-days"
+        v-for="(row, rowKey) in rows"
+        :key="rowKey"
+      >
+        <td
+          v-for="(col, colKey) in row"
+          :key="colKey"
+          :class="['tui-date-table-body-days-item', col.type]"
+        >
+          <div
+            :class="[
+              'tui-date-table-body-days-item-cell',
+              col.isSelected && 'selected',
+              col.isSelectedStart && 'selected-start',
+              col.isSelectedEnd && 'selected-end',
+              col.isInRange && 'range',
+            ]"
+            @click="handlePick(col)"
+          >
+            <span class="tui-date-table-body-days-item-cell-text">
               {{ col.text }}
             </span>
           </div>
@@ -21,11 +48,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from "../../../adapter-vue";
+import {
+  computed,
+  ref,
+  getCurrentInstance,
+  nextTick,
+  watch,
+} from "../../../adapter-vue";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { DateCell, DateCellType } from "./date-picker";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/zh-cn";
+import { DateCell, DateCellType } from "./date-picker";
+import { isPC } from "../../../utils/env";
 
 const props = defineProps({
   type: {
@@ -41,7 +75,7 @@ const props = defineProps({
     type: Dayjs,
     default: null,
   },
-  // type 为 range时特有属性
+  // type 为 range 时特有属性
   startDate: {
     type: Dayjs,
     default: null,
@@ -53,10 +87,16 @@ const props = defineProps({
 });
 
 const emit = defineEmits(["pick"]);
-// 当前日期
-const now = dayjs();
+// vue 实例
+const instance = getCurrentInstance();
 // 面板行数
 const tableRows = ref<DateCell[][]>([[], [], [], [], [], []]);
+const currentPanelDateObject = ref<typeof Dayjs>(
+  dayjs(props.currentPanelDate || null)
+);
+const dateObject = ref<typeof Dayjs>(dayjs(props.date || null));
+const startDateObject = ref<typeof Dayjs>(dayjs(props.startDate || null));
+const endDateObject = ref<typeof Dayjs>(dayjs(props.endDate || null));
 
 const WEEKS_CONSTANT = computed(() => {
   return dayjs.weekdaysShort();
@@ -69,8 +109,8 @@ const WEEKS = computed(() =>
 
 // 表格开始日期
 const startDate = computed(() => {
-  const startDayOfMonth = props?.currentPanelDate?.startOf("month");
-  return startDayOfMonth.subtract(startDayOfMonth.day() || 7, "day");
+  const startDayOfMonth = currentPanelDateObject.value?.startOf("month");
+  return startDayOfMonth?.subtract(startDayOfMonth?.day() || 7, "day");
 });
 
 // 表格数据
@@ -79,32 +119,34 @@ const rows = computed(() => {
   const cols = WEEKS.value.length;
 
   // 当月第一天
-  const startOfMonth = props.currentPanelDate.startOf("month");
-  const startOfMonthDay = startOfMonth.day() || 7; // day of this month first day
-  const dateCountOfMonth = startOfMonth.daysInMonth(); // total days of this month
+  const startOfMonth = currentPanelDateObject.value?.startOf("month");
+  const startOfMonthDay = startOfMonth?.day() || 7; // day of this month first day
+  const dateCountOfMonth = startOfMonth?.daysInMonth(); // total days of this month
 
   let count = 1;
   // 循环填充表格，6行7列
   for (let row = 0; row < tableRows.value.length; row++) {
     for (let col = 0; col < cols; col++) {
-      const cellDate = startDate.value.add(count, "day");
-      const text = cellDate.date();
+      const cellDate = startDate.value?.add(count, "day");
+      const text = cellDate?.date();
       // 对于 type === "single", 选中传入日期
       // 对于 type === "range", 选中传入的开始与结束的日期
       const isSelected =
         props.type === "single" &&
-        cellDate.format("YYYY-MM-DD") === props?.date?.format("YYYY-MM-DD");
+        cellDate?.format("YYYY-MM-DD") ===
+          dateObject.value?.format("YYYY-MM-DD");
       const isSelectedStart =
         props.type === "range" &&
-        cellDate.format("YYYY-MM-DD") ===
-        props?.startDate?.format("YYYY-MM-DD");
+        cellDate?.format("YYYY-MM-DD") ===
+          startDateObject.value?.format("YYYY-MM-DD");
       const isSelectedEnd =
         props.type === "range" &&
-        cellDate.format("YYYY-MM-DD") === props?.endDate?.format("YYYY-MM-DD");
+        cellDate?.format("YYYY-MM-DD") ===
+          endDateObject.value?.format("YYYY-MM-DD");
       // 对于 type === "range", 是否在选择区间中
       const isInRange =
-        cellDate.isSameOrBefore(props.endDate, "day") &&
-        cellDate.isSameOrAfter(props.startDate, "day");
+        cellDate?.isSameOrBefore(endDateObject.value, "day") &&
+        cellDate?.isSameOrAfter(startDateObject.value, "day");
       let type: DateCellType = "normal";
       if (count < startOfMonthDay) {
         // 上个月日期
@@ -128,15 +170,6 @@ const rows = computed(() => {
   return rows_;
 });
 
-const handleDateCellClass = (cell: DateCell): Array<string> => {
-  const classNameList = ["tui-date-table-body-days-item-cell"];
-  cell?.isSelected && classNameList.push("selected");
-  cell?.isSelectedStart && classNameList.push("selected-start");
-  cell?.isSelectedEnd && classNameList.push("selected-end");
-  cell?.isInRange && classNameList.push("range");
-  return classNameList;
-};
-
 const handlePick = (cell: DateCell) => {
   if (cell?.type !== "normal") {
     return;
@@ -144,9 +177,22 @@ const handlePick = (cell: DateCell) => {
   emit("pick", cell);
 };
 
-const generateVueRenderKey = (rowKey: number, colKey: number): string => {
-  return `${rowKey + colKey} `
-}
+watch(
+  () => [props.currentPanelDate, props.date, props.startDate, props.endDate],
+  () => {
+    currentPanelDateObject.value = dayjs(props.currentPanelDate || null);
+    dateObject.value = dayjs(props.date || null);
+    startDateObject.value = dayjs(props.startDate || null);
+    endDateObject.value = dayjs(props.endDate || null);
+    nextTick(() => {
+      instance?.proxy?.$forceUpdate();
+    });
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+);
 </script>
 
 <style scoped lang="scss">
@@ -168,6 +214,15 @@ const generateVueRenderKey = (rowKey: number, colKey: number): string => {
   &-body {
     width: 100%;
     background-color: #ffffff;
+    &-weeks,
+    &-days {
+      box-sizing: border-box;
+      min-width: 0;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-around;
+      overflow: hidden;
+    }
 
     &-weeks {
       width: 100%;
@@ -233,7 +288,7 @@ const generateVueRenderKey = (rowKey: number, colKey: number): string => {
           background-color: #007aff33;
         }
 
-        .selected{
+        .selected {
           border-radius: 12px;
         }
         .selected-start {
@@ -250,5 +305,16 @@ const generateVueRenderKey = (rowKey: number, colKey: number): string => {
       }
     }
   }
+}
+.tui-date-table-h5 {
+  .tui-date-table-body-days-item-cell-text {
+    cursor: none !important;
+  }
+}
+
+td,
+._td,
+.tui-date-table-body-days-item {
+  flex: 1;
 }
 </style>

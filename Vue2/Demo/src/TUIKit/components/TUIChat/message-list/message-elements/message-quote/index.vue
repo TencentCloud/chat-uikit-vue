@@ -12,15 +12,15 @@
 </template>
   
 <script lang="ts" setup>
+import { computed } from "../../../../../adapter-vue";
 import {
   TUIStore,
   StoreName,
   IMessageModel, 
   TUITranslateService
 } from "@tencentcloud/chat-uikit-engine";
-import { computed } from "../../../../../adapter-vue";
+import { getBoundingClientRect, getScrollInfo } from "@tencentcloud/universal-api";
 import { isUniFrameWork } from "../../../../../utils/env";
-import { getBoundingClientRect, getScrollInfo } from "../../../../../utils/universal-api/domOperation";
 import { Toast, TOAST_TYPE } from "../../../../../components/common/Toast/index";
 import type { ICloudCustomData, IQuoteContent } from "./interface.d.ts";
 import { decodeTextMessage } from "../../../utils/emojiList";

@@ -74,6 +74,7 @@
 <script setup lang="ts">
 import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from "../../../adapter-vue";
 import { IMessageModel, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal, getPlatform } from "@tencentcloud/universal-api";
 import Icon from "../../common/Icon.vue";
 import iconClose from "../../../assets/icon/icon-close.svg";
 import iconArrowLeft from "../../../assets/icon/icon-arrow-left.svg";
@@ -85,7 +86,6 @@ import iconDownload from "../../../assets/icon/download.svg";
 import ImageItem from "./image-item.vue";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isPC, isMobile, isUniFrameWork } from "../../../utils/env";
-import { TUIGlobal, getPlatform } from "../../../utils/universal-api/index";
 
 interface touchesPosition {
   pageX1?: number;

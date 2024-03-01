@@ -13,6 +13,8 @@ import { ISearchResultListItem, IFriendType } from "../../interface";
 import { searchMessageTypeList } from "./search-type-list";
 import { Toast, TOAST_TYPE } from "../common/Toast/index";
 import { messageTypeAbstractMap } from "./type";
+import { isUniFrameWork } from "../../utils/env";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 
 /**************************************
  * TUISearch 搜索逻辑
@@ -95,13 +97,16 @@ export const enterConversation = (item: any) => {
     item?.conversationID || (item?.groupID ? `GROUP${item?.groupID}` : `C2C${item?.userID}`);
   TUIConversationService.switchConversation(conversationID)
     .then(() => {
-      TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
+      TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
         isSearching: false,
         searchType: "global",
       });
-      TUIStore.update(StoreName.CUSTOM, "currentSearchInputValue", {
+      TUIStore.update(StoreName.SEARCH, "currentSearchInputValue", {
         value: "",
         searchType: "global",
+      });
+      isUniFrameWork && TUIGlobal?.navigateTo({
+        url: "/TUIKit/components/TUIChat/index",
       });
     })
     .catch((error: any) => {
@@ -128,9 +133,13 @@ export const generateSearchResultShowName = (result: any, resultContent: any): s
   if (result?.userID) {
     return result?.remark || result?.nick || result?.name || result?.userID;
   }
-  if (result?.conversation) {
+  if (result?.conversation?.conversationID) {
     // todo: 此处后续需要验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
-    return result?.conversation?.getShowName();
+    if(result.conversation?.getShowName){
+      return result.conversation.getShowName() || result.conversation.conversationID;
+    }else{
+      return TUIStore.getConversationModel(result.conversation.conversationID)?.getShowName?.() || result.conversation.conversationID;
+    }
   }
   return "";
 };
@@ -146,9 +155,13 @@ export const generateSearchResultAvatar = (result: any, resultContent: any): str
   if (result?.userID) {
     return result?.avatar || "https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png";
   }
-  if (result?.conversation) {
+  if (result?.conversation?.conversationID) {
     // todo: 此处后续需要验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
-    return result.conversation?.getAvatar();
+    if(result.conversation.getAvatar){
+      return result.conversation?.getAvatar();
+    }else{
+      return TUIStore.getConversationModel(result.conversation.conversationID).getAvatar();
+    }
   }
   return "";
 };

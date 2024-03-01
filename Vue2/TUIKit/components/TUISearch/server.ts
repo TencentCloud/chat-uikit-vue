@@ -7,6 +7,7 @@ import {
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
 import { isUniFrameWork } from "../../utils/env";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 
 export default class TUISearchServer {
   constructor() {
@@ -29,10 +30,6 @@ export default class TUISearchServer {
 
   public onGetExtension(extensionID: string, params: Object) {
     if (extensionID === TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID) {
-      if (isUniFrameWork) {
-        // uniapp 暂不支持搜索功能
-        return [];
-      }
       const searchExtension = {
         weight: 3000,
         text: "搜索",
@@ -42,7 +39,10 @@ export default class TUISearchServer {
         },
         listener: {
           onClicked: (options: any) => {
-            TUIStore.update(StoreName.CUSTOM, "isShowInConversationSearch", true);
+            TUIStore.update(StoreName.SEARCH, "isShowInConversationSearch", true);
+            isUniFrameWork && TUIGlobal?.navigateTo({
+              url: "/TUIKit/components/TUISearch/index",
+            });
           },
         },
       };

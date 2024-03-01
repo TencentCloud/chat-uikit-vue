@@ -1,10 +1,10 @@
 import TUICore, { TUILogin, TUIConstants } from "@tencentcloud/tui-core";
 import TUIChatEngine, { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ITUIComponents, ITUIPlugins } from "./interface";
 import TUILocales from "./locales";
 import { isFunction, isObject } from "./utils";
 import { isApp } from "./utils/env";
-import { TUIGlobal } from "./utils/universal-api/index";
 import CallkitPluginServer from "./plugins/extension-server/callkit";
 export default class TUIChatKit {
   public chat: any;

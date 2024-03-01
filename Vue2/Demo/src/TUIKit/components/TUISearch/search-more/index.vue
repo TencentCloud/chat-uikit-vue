@@ -1,7 +1,7 @@
 <template>
-  <div class="tui-search-more" ref="searchMoreRef">
+  <div :class="['tui-search-more', !isPC && 'tui-search-more-h5']" ref="searchMoreRef">
     <div class="more" @click="toggleMore()">
-      <Icon class="more-icon" :file="searchMoreSVG" width="28px" height="28px"></Icon>
+      <Icon class="more-icon" :file="searchMoreSVG" :width="isPC ? '28px' : '34px'" :height="isPC ? '28px' : '34px'"></Icon>
     </div>
     <ul class="tui-search-more-list" v-if="isListShow">
       <li
@@ -20,9 +20,10 @@
 import { ref, watch, onMounted } from "../../../adapter-vue";
 import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
 import TUICore, { ExtensionInfo, TUIConstants } from "@tencentcloud/tui-core";
+import { outsideClick } from "@tencentcloud/universal-api";
 import Icon from "../../common/Icon.vue";
 import searchMoreSVG from "../../../assets/icon/search-more.svg";
-import { isUniFrameWork } from "../../../utils/env";
+import { isPC, isUniFrameWork } from "../../../utils/env";
 
 const props = defineProps({
   searchType: {
@@ -38,6 +39,12 @@ const searchMoreRef = ref<HTMLElement | null>();
 const isListShow = ref<boolean>(false);
 const toggleMore = () => {
   isListShow.value = !isListShow.value;
+  if (!isUniFrameWork && isListShow.value) {
+    outsideClick.listen({
+      domRefs: searchMoreRef.value,
+      handler: closeSearchMore,
+    });
+  }
 };
 const extensionList = ref<Array<ExtensionInfo>>([]);
 
@@ -45,6 +52,10 @@ const handleMenu = (item: any) => {
   const { listener = { onClicked: () => { } } } = item;
   listener.onClicked(item);
   toggleMore();
+};
+
+const closeSearchMore = () => {
+  isListShow.value = false;
 };
 
 onMounted(() => {
@@ -64,47 +75,13 @@ watch(
   () => isListShow.value,
   () => {
     if (isListShow.value) {
-      onClickOutside(searchMoreRef.value);
-      TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
+      TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
         isSearching: false,
         searchType: props.searchType,
       });
     }
   }
 );
-
-// 全局搜索dialog-点击外侧关闭
-// click outside
-let clickOutside = false;
-let clickInner = false;
-const onClickOutside = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.addEventListener("click", onClickDocument);
-  component?.addEventListener && component?.addEventListener("click", onClickTarget);
-};
-
-const removeClickListener = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.removeEventListener("click", onClickDocument);
-  component?.removeEventListener && component?.removeEventListener("click", onClickTarget);
-};
-
-const onClickDocument = () => {
-  clickOutside = true;
-  if (!clickInner && clickOutside) {
-    isListShow.value = false;
-  }
-  clickOutside = false;
-  clickInner = false;
-};
-
-const onClickTarget = () => {
-  clickInner = true;
-};
 </script>
 
 <style lang="scss" scoped>
@@ -146,8 +123,15 @@ const onClickTarget = () => {
       &-title {
         font-size: 14px;
         text-wrap: nowrap;
+        word-break: keep-all;
       }
     }
+  }
+}
+.tui-search-more-h5{
+  .more{
+    width: 34px;
+    height: 34px;
   }
 }
 </style>

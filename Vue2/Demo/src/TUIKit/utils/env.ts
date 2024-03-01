@@ -1,4 +1,4 @@
-import { getPlatform } from "./universal-api/index";
+import { getPlatform } from "@tencentcloud/universal-api";
 declare const uni: any;
 
 export const isPC = getPlatform() === "pc";

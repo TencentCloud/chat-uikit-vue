@@ -30,9 +30,9 @@ import TUIChatEngine, {
   TUITranslateService,
   IMessageModel,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ref, watchEffect, computed } from "../../../../adapter-vue";
 import { isPC, isUniFrameWork } from "../../../../utils/env";
-import { TUIGlobal } from "../../../../utils/universal-api/index";
 import Icon from "../../../common/Icon.vue";
 import { Toast, TOAST_TYPE } from "../../../common/Toast/index";
 import delIcon from "../../../../assets/icon/msg-del.svg";
