@@ -27,7 +27,7 @@
         <!-- 兼容 uni 打包支付宝小程序 v-show 无效问题 -->
         <MessageInputToolbar
           v-if="isToolbarShow"
-          :class="['TUI-chat-message-input-toolbar', !isPC && 'TUI-chat-h5-message-input-toolbar']"
+          :class="['TUI-chat-message-input-toolbar', !isPC && 'TUI-chat-h5-message-input-toolbar', isUniFrameWork && 'TUI-chat-uni-message-input-toolbar']"
           @insertEmoji="insertEmoji"
         ></MessageInputToolbar>
         <MessageInput

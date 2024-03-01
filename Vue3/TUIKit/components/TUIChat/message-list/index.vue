@@ -1,6 +1,6 @@
 <template>
   <div class="TUIChat" :class="[!isPC ? 'TUIChat-H5' : '']">
-    <div class="TUIChat-main"  id="TUIChat-main"  @click="closeChatPop">
+    <div class="TUIChat-main"  id="TUIChat-main" @click="closeChatPop">
       <!-- 安全提示 -->
       <div class="TUIChat-safe-tips">
         <span>
@@ -54,7 +54,7 @@
             <div
               v-else-if="!item.isRevoked && !isPluginMessage(item)"
               @longpress="handleToggleMessageItem($event, item, true)"
-              @click.prevent.right="handleToggleMessageItemForPC($event, item)"
+              @click.prevent.right="handleToggleMessageItemForPC($event, item, index)"
               @touchstart="handleH5LongPress($event, item, 'touchstart')"
               @touchend="handleH5LongPress($event, item, 'touchend')"
               @mouseover="handleH5LongPress($event, item, 'touchend')"
@@ -142,13 +142,14 @@
               @messageEdit="handleEdit(item)"
             />
             <MessageTool
-              v-if="item.ID === toggleID"
+              ref="messageToolListRef"
+              v-show="item.ID === toggleID"
               :class="[
                 'message-tool',
                 item.flow === 'out' ? 'message-tool-out' : 'message-tool-in', isTopMessageDom ? 'message-tool-bottom' : ''
               ]"
               :messageItem="item"
-             >
+            >
               <!-- 必须加 template, 否则不生效 -->
               <template #TUIEmojiPlugin>
                 <TUIEmojiPlugin v-if="isShowEmojiPlugin" :message="item" :emojiConfig="emojiConfig" />
@@ -211,7 +212,8 @@ import TUIChatEngine, {
   TUIGroupService,
   IConversationModel,
 } from "@tencentcloud/chat-uikit-engine";
-import TUICore, { ExtensionInfo, TUIConstants } from "@tencentcloud/tui-core";
+import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
+import { outsideClick, getBoundingClientRect, getScrollInfo } from "@tencentcloud/universal-api";
 import { TUIEmojiPlugin } from "@tencentcloud/tui-emoji-plugin";
 import throttle from "lodash/throttle";
 import Link from "./link";
@@ -237,8 +239,7 @@ import Dialog from "../../common/Dialog/index.vue";
 import ImagePreviewer from "../../common/ImagePreviewer/index.vue";
 import ProgressMessage from "../../common/ProgressMessage/index.vue";
 import { emojiConfig } from "../utils/emoji-config";
-import { isPC, isH5, isUniFrameWork } from "../../../utils/env";
-import { getBoundingClientRect, getScrollInfo } from "../../../utils/universal-api/domOperation";
+import { isPC, isH5 } from "../../../utils/env";
 import { isEnabledMessageReadReceiptGlobal, shallowCopyMessage, isCreateGroupCustomMessage } from "../utils/utils";
 
 import { IGroupApplicationListItem } from "../../../interface";
@@ -269,6 +270,7 @@ let observer: IntersectionObserver | null = null;
 let groupType: string | undefined;
 const sentReceiptMessageIDSet = new Set<string>();
 const messageListRef = ref<HTMLElement>();
+const messageToolListRef = ref<HTMLElement>();
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
 const messageList = ref<Array<IMessageModel>>();
 // 所有 messageList 序列，包含 isDeleted 为 true 的 message
@@ -592,11 +594,17 @@ const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = f
   filterTopMessageDom(e.target);
 }
 
-const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => {
+const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel, index: number) => {
   if (isPC) {
     toggleID.value = message.ID;
     targetMessageDom.value = messageElementListRef.value?.find((dom: HTMLElement) => dom?.id === `tui-${message.ID}`);
-    onClickOutside(targetMessageDom.value);
+    const ignoreDomRefs = messageToolListRef.value && messageToolListRef.value[index];
+    outsideClick.listen({
+      domRefs: targetMessageDom.value,
+      ignoreDomRefs: ignoreDomRefs.$el,
+      handler: closeChatPop,
+      button: e.button,
+    });
     filterTopMessageDom(e.target);
   }
 }
@@ -756,40 +764,6 @@ function setReadReciptPanelVisible(visible: boolean, message?: IMessageModel) {
 
 function closeChatPop() {
   toggleID.value = "";
-}
-
-// 全局搜索dialog-点击外侧关闭
-// click outside
-let clickOutside = false;
-let clickInner = false;
-function onClickOutside(component: any) {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.addEventListener("mousedown", onClickDocument);
-  component?.addEventListener && component?.addEventListener("mousedown", onClickTarget);
-}
-
-function removeClickListener(component: any) {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.removeEventListener("mousedown", onClickDocument);
-  component?.removeEventListener && component?.removeEventListener("mousedown", onClickTarget);
-}
-
-function onClickDocument() {
-  clickOutside = true;
-  if (!clickInner && clickOutside) {
-    toggleID.value = "";
-    removeClickListener(targetMessageDom.value)
-  }
-  clickOutside = false;
-  clickInner = false;
-}
-
-function onClickTarget() {
-  clickInner = true;
 }
 
 </script>

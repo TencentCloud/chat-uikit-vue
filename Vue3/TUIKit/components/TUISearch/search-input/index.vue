@@ -1,29 +1,61 @@
 <template>
-  <div class="tui-search-input">
-    <div class="tui-search-input-left">
-      <Icon class="icon" :file="searchIcon" width="14px" height="14px"></Icon>
+  <div
+    :class="[
+      'tui-search-input-container',
+      !isPC && 'tui-search-input-container-h5',
+      props.searchType === 'global'
+        ? 'tui-search-input-container-global'
+        : 'tui-search-input-container-conversation'
+    ]"
+  >
+    <div :class="['tui-search-input', !isPC && 'tui-search-input-h5']">
+      <div class="tui-search-input-left">
+        <Icon class="icon" :file="searchIcon" width="14px" height="14px" />
+      </div>
+      <input
+        class="tui-search-input-main"
+        type="text"
+        v-model="searchValueModel"
+        :placeholder="props.placeholder"
+        :focus="false"
+        @blur="onBlur"
+        @keyup.enter="search"
+        @confirm="search"
+        @click.stop.prevent="onSearchInputClick"
+        enterkeyhint="search"
+      />
+      <div
+        v-if="searchingStatus"
+        class="tui-search-input-right"
+        @click="endSearching"
+      >
+        <Icon class="icon" :file="closeIcon" width="14px" height="14px"></Icon>
+      </div>
     </div>
-    <input
-      class="tui-search-input-main"
-      type="text"
-      v-model="searchValueModel"
-      :placeholder="props.placeholder"
-      @focus="onFocus"
-      @keyup.enter="search"
-      @confirm="search"
-      enterkeyhint="search"
-    />
-    <div v-if="searchingStatus" class="tui-search-input-right" @click="endSearching">
-      <Icon class="icon" :file="closeIcon" width="14px" height="14px"></Icon>
+    <div
+      v-if="!isPC && searchingStatus && props.searchType === 'global'"
+      :class="[
+        'tui-search-input-cancel',
+        !isPC && 'tui-search-input-h5-cancel',
+      ]"
+      @click="endSearching"
+    >
+      {{ TUITranslateService.t("TUISearch.取消") }}
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { TUIStore, StoreName, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import {
+  TUIStore,
+  StoreName,
+  TUITranslateService,
+} from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ref } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import searchIcon from "../../../assets/icon/search.svg";
 import closeIcon from "../../../assets/icon/input-close.svg";
+import { isPC } from "../../../utils/env";
 const props = defineProps({
   placeholder: {
     type: String,
@@ -42,14 +74,17 @@ const searchValueModel = ref<string>("");
 const currentSearchInputValue = ref<string>("");
 const searchingStatus = ref<boolean>(false);
 
-TUIStore.watch(StoreName.CUSTOM, {
+TUIStore.watch(StoreName.SEARCH, {
   currentSearchInputValue: (obj: { value: string; searchType: string }) => {
     if (obj?.searchType === props?.searchType) {
       currentSearchInputValue.value = obj?.value;
       searchValueModel.value = obj?.value;
     }
   },
-  currentSearchingStatus: (obj: { isSearching: boolean; searchType: string }) => {
+  currentSearchingStatus: (obj: {
+    isSearching: boolean;
+    searchType: string;
+  }) => {
     if (obj?.searchType === props?.searchType) {
       searchingStatus.value = obj?.isSearching;
     }
@@ -61,7 +96,7 @@ const search = () => {
   if (searchValueModel.value === currentSearchInputValue.value) {
     return;
   }
-  TUIStore.update(StoreName.CUSTOM, "currentSearchInputValue", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchInputValue", {
     value: searchValueModel.value,
     searchType: props.searchType,
   });
@@ -69,55 +104,83 @@ const search = () => {
 
 const endSearching = () => {
   searchingStatus.value = false;
-  TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
     isSearching: false,
     searchType: props.searchType,
   });
-  TUIStore.update(StoreName.CUSTOM, "currentSearchInputValue", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchInputValue", {
     value: "",
     searchType: props.searchType,
   });
 };
 
-const onFocus = () => {
-  TUIStore.update(StoreName.CUSTOM, "currentSearchingStatus", {
+const onSearchInputClick = () => {
+  TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
     isSearching: true,
     searchType: props.searchType,
   });
 };
+
+const onBlur = () => {
+  TUIGlobal?.hideKeyboard?.();
+};
 </script>
 <style lang="scss" scoped>
-.tui-search-input {
+.tui-search-input-container {
   display: flex;
   flex-direction: row;
-  width: calc(100% - 20px);
-  margin: 10px;
-  background: #ededed;
-  justify-content: center;
-  align-items: center;
-  height: 28px;
-  border-radius: 4px;
-  &-main {
+  box-sizing: border-box;
+  &-global {
     flex: 1;
-    background: transparent;
-    border: none;
-    caret-color: #007aff;
-    font-size: 14px;
-    &:focus {
+  }
+  .tui-search-input {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    width: calc(100% - 20px);
+    margin: 10px;
+    background: #ededed;
+    justify-content: center;
+    align-items: center;
+    height: 28px;
+    border-radius: 4px;
+    &-main {
+      flex: 1;
+      background: transparent;
       border: none;
-      outline: none;
+      caret-color: #007aff;
+      font-size: 14px;
+      &:focus {
+        border: none;
+        outline: none;
+      }
+      &::placeholder {
+        color: #666666;
+        font-size: 12px;
+      }
     }
-    &::placeholder {
-      color: #666666;
-      font-size: 12px;
+    &-left,
+    &-right {
+      display: flex;
+      width: 14px;
+      height: 14px;
+      padding: 0 7px;
     }
   }
-  &-left,
-  &-right {
+}
+.tui-search-input-container-h5 {
+  .tui-search-input-h5 {
+    height: 34px;
+  }
+  .tui-search-input-cancel {
     display: flex;
-    width: 14px;
-    height: 14px;
-    padding: 0 7px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #007aff;
+    font-size: 16px;
+    padding: 7px 10px 7px 3px;
+    font-family: PingFang SC;
   }
 }
 </style>

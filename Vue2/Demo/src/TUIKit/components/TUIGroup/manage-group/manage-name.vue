@@ -16,13 +16,14 @@
             TUITranslateService.t(`关闭`)
           }}</span>
         </header>
-        <div class="input-box" ref="nameInputRef">
+        <div class="input-box">
           <input
-            class="input"
             v-if="isEdit"
+            ref="nameInputRef"
+            class="input"
             v-model="inputGroupName"
             type="text"
-            @keyup.enter="updateProfile"
+            @blur="updateProfile"
           />
           <span v-if="!isPC">{{
             TUITranslateService.t(
@@ -45,11 +46,11 @@
 </template>
 
 <script lang="ts" setup>
+import { watchEffect, ref, nextTick, watch } from "../../../adapter-vue";
 import {
   TUITranslateService,
   IGroupModel,
 } from "@tencentcloud/chat-uikit-engine";
-import { watchEffect, ref, nextTick } from "../../../adapter-vue";
 import Icon from "../../common/Icon.vue";
 import editIcon from "../../../assets/icon/edit.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
@@ -76,7 +77,6 @@ watchEffect(() => {
 });
 
 const emit = defineEmits(["update"]);
-
 const updateProfile = () => {
   if (!inputGroupName.value) {
     Toast({
@@ -100,48 +100,21 @@ const updateProfile = () => {
 const close = () => {
   if (props.isAuthor) {
     isEdit.value = !isEdit.value;
-    // 只有 pc 会有这样的情况
-    isPC &&
-      nextTick(() => {
-        // 点击 dom 外侧更改群组名称并关闭input
-        onClickOutside(nameInputRef.value);
-      });
   }
   if (isEdit.value) {
     inputGroupName.value = groupProfile.value.name;
   }
 };
-
-let clickOutside = false;
-let clickInner = false;
-const onClickOutside = (component: any) => {
-  if (isUniFrameWork) {
-    return;
+watch(
+  () => isEdit.value,
+  (newVal: boolean, oldVal: boolean) => {
+    if (newVal) {
+      nextTick(() => {
+        nameInputRef.value.focus();
+      });
+    }
   }
-  document.addEventListener("mousedown", onClickDocument);
-  component?.addEventListener &&
-    component?.addEventListener("mousedown", onClickTarget);
-};
-
-const onClickDocument = () => {
-  clickOutside = true;
-  if (!clickInner && clickOutside) {
-    updateProfile();
-    removeClickListener(nameInputRef.value);
-  }
-  clickOutside = false;
-  clickInner = false;
-};
-
-const onClickTarget = () => {
-  clickInner = true;
-};
-
-const removeClickListener = (component: any) => {
-  document.removeEventListener("mousedown", onClickDocument);
-  component?.removeEventListener &&
-    component?.removeEventListener("mousedown", onClickTarget);
-};
+);
 </script>
 
 <style lang="scss" scoped>

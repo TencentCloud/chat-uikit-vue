@@ -4,9 +4,9 @@ import {
   StoreName,
   TUIGroupService,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import settingSVG from "../../assets/icon/setting.svg";
 import { isUniFrameWork } from "../../utils/env";
-import { TUIGlobal } from "../../utils/universal-api/index";
 
 export default class TUIGroupServer {
   static instance: TUIGroupServer;

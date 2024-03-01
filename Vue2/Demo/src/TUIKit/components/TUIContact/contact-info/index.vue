@@ -180,9 +180,9 @@ import TUIChatEngine, {
   StoreName,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ref, computed } from "../../../adapter-vue";
 import { isPC } from "../../../utils/env";
-import { TUIGlobal } from "../../../utils/universal-api/index";
 
 import {
   generateAvatar,

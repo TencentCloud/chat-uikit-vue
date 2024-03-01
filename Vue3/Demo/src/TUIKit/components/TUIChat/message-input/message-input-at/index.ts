@@ -3,8 +3,8 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { isH5 } from "../../../../utils/env";
-import { TUIGlobal } from "../../../../utils/universal-api/index";
 
 let currentConversationID = "";
 let memberList = [];

@@ -12,9 +12,15 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    .tui-search-tabs{
+      .tui-search-tabs-item {
+        cursor: none;
+      }
+    }
     .tui-search-time {
       background-color: #f4f4f4;
       .tui-search-time-item {
+        cursor: none;
         background-color: #ffffff;
       }
       .tui-search-time-item-selected {

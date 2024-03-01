@@ -180,6 +180,7 @@ const onCallExtensionClicked = (extension: ExtensionInfo, callType: number) => {
 const genExtensionIcon = (extension: any) => {
   return extension?.icon;
 };
+
 const genExtensionText = (extension: any) => {
   return extension?.text;
 };

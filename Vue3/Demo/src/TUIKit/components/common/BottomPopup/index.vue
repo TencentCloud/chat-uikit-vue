@@ -43,7 +43,9 @@
 <script setup lang="ts">
 import { ref, watch, nextTick } from "../../../adapter-vue";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { outsideClick } from "@tencentcloud/universal-api";
 import { isPC, isH5, isUniFrameWork } from "../../../utils/env";
+
 const props = defineProps({
   // 是否展示 底部弹出对话框
   show: {
@@ -105,52 +107,24 @@ watch(
     switch (newVal) {
       case true:
         emits("onOpen", dialogRef);
-        if (!isPC) {
-          nextTick(() => props.closeByClickOutside && onClickOutside(dialogRef.value));
-        }
+        nextTick(() => {
+          // web h5 下生效
+          if (isH5 && !isUniFrameWork) {
+            if (props.closeByClickOutside) {
+              outsideClick.listen({
+                domRefs: dialogRef.value,
+                handler: closeBottomPopup,
+              });
+            }
+          }
+        })
         break;
       case false:
         emits("onClose", dialogRef);
-        if (!isPC) {
-          removeClickListener(dialogRef.value);
-        }
         break;
     }
   }
 );
-
-// click outside
-let clickOutside = false;
-let clickInner = false;
-const onClickOutside = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.addEventListener("mousedown", onClickDocument);
-  component?.addEventListener && component?.addEventListener("mousedown", onClickTarget);
-};
-
-const onClickDocument = () => {
-  clickOutside = true;
-  if (!clickInner && clickOutside) {
-    emits("onClose", dialogRef);
-    removeClickListener(dialogRef.value);
-  }
-  clickOutside = false;
-  clickInner = false;
-};
-
-const onClickTarget = () => {
-  clickInner = true;
-};
-
-const removeClickListener = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.removeEventListener("mousedown", onClickDocument);
-  component?.removeEventListener && component?.removeEventListener("mousedown", onClickTarget);
-};
 
 const closeBottomPopup = () => {
   if (isUniFrameWork || isH5) {

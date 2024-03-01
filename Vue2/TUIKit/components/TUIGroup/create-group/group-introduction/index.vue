@@ -19,14 +19,14 @@
   </ul>
 </template>
 <script lang="ts" setup>
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
 import { ref, watchEffect } from "../../../../adapter-vue";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import documentLink from "../../../../utils/documentLink";
 import Icon from "../../../common/Icon.vue"
 import selectedIcon from "../../../../assets/icon/selected.svg";
 import { groupIntroConfig } from "./config";
 import { isUniFrameWork } from "../../../../utils/env";
-import { TUIGlobal } from "../../../../utils/universal-api";
 
 const props = defineProps({
   groupType: {

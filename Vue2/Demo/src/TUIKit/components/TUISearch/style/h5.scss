@@ -20,4 +20,16 @@
   &-conversation {
     overflow: hidden;
   }
+  &.tui-search-main-conversation {
+    box-shadow: none;
+  }
+  .search-input,
+  .search-container,
+  .search-result {
+    min-width: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
 }

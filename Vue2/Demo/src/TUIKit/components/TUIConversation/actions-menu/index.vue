@@ -75,9 +75,9 @@ import TUIChatEngine, {
   TUIStore,
   TUITranslateService,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { CONV_OPERATION } from "../../../constant";
 import { isPC, isUniFrameWork } from "../../../utils/env";
-import { TUIGlobal } from "../../../utils/universal-api/index";
 import Overlay from "../../common/Overlay/index.vue";
 import Dialog from "../../common/Dialog/index.vue";
 const emits = defineEmits(["closeConversationActionMenu"]);

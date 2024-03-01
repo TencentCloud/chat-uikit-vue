@@ -22,7 +22,10 @@
         :height="props.iconHeight"
       ></Icon>
     </div>
-    <div v-if="isUniFrameWork" :class="['toolbar-item-container-uni-title']">
+    <div
+      v-if="isUniFrameWork"
+      :class="['toolbar-item-container-uni-title']"
+    >
       {{ props.title }}
     </div>
     <div
@@ -37,7 +40,10 @@
       <BottomPopup
         v-if="props.needBottomPopup && !isPC"
         :show="showDialog"
+        @touchmove.stop.prevent
         @onClose="onPopupClose"
+        class="toolbar-bottom-popup"
+        style="position: sticky"
       >
         <slot></slot>
       </BottomPopup>
@@ -47,6 +53,7 @@
 </template>
 <script lang="ts" setup>
 import { ref } from "../../../../adapter-vue";
+import { outsideClick } from "@tencentcloud/universal-api";
 import Icon from "../../../common/Icon.vue";
 import BottomPopup from "../../../common/BottomPopup/index.vue";
 import { isPC, isUniFrameWork } from "../../../../utils/env";
@@ -89,7 +96,10 @@ const dialogRef = ref();
 const toggleToolbarItem = () => {
   emits("onIconClick", dialogRef);
   if (isPC) {
-    onClickOutside(toolbarItemRef.value);
+    outsideClick.listen({
+      domRefs: toolbarItemRef.value,
+      handler: closeToolbarItem,
+    });
   }
   if (!props.needDialog) {
     return;
@@ -98,38 +108,9 @@ const toggleToolbarItem = () => {
   emits("onDialogShow", dialogRef);
 };
 
-// click outside
-let clickOutside = false;
-let clickInner = false;
-const onClickOutside = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.addEventListener("mouseup", onClickDocument);
-  component?.addEventListener && component?.addEventListener("mouseup", onClickTarget);
-};
-
-const onClickDocument = () => {
-  clickOutside = true;
-  if (!clickInner && clickOutside) {
-    showDialog.value = false;
-    removeClickListener(dialogRef.value);
-    emits("onDialogClose", dialogRef);
-  }
-  clickOutside = false;
-  clickInner = false;
-};
-
-const onClickTarget = () => {
-  clickInner = true;
-};
-
-const removeClickListener = (component: any) => {
-  if (isUniFrameWork) {
-    return;
-  }
-  document.removeEventListener("mouseup", onClickDocument);
-  component?.removeEventListener && component?.removeEventListener("mouseup", onClickTarget);
+const closeToolbarItem = () => {
+  showDialog.value = false;
+  emits("onDialogClose", dialogRef);
 };
 
 const toggleDialogDisplay = (showStatus: boolean) => {
@@ -151,4 +132,4 @@ defineExpose({
   toggleDialogDisplay,
 });
 </script>
-<style scoped lang="scss" src="./style/index.scss"></style>
+<style lang="scss" scoped src="./style/index.scss"></style>

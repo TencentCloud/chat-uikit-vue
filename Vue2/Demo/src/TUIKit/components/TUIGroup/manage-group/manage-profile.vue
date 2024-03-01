@@ -79,6 +79,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ref, watch, watchEffect } from "../../../adapter-vue";
 import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
@@ -87,10 +88,9 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
-import { ref, watch, watchEffect } from "../../../adapter-vue";
+import { TUIGlobal } from "@tencentcloud/universal-api"
 import { IUserProfile } from "../../../interface";
 import { isUniFrameWork } from "../../../utils/env";
-import { TUIGlobal } from "../../../utils/universal-api"
 
 const props = defineProps({
   userInfo: {

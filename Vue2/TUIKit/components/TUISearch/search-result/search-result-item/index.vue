@@ -54,7 +54,7 @@
         <div
           :class="displayType + '-right-to'"
           v-if="displayType === 'bubble' && isHovering"
-          @click="navigateToChatPosition"
+          @click.stop="navigateToChatPosition"
         >
           {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
         </div>
@@ -70,7 +70,7 @@
         <div :class="[displayType + '-header-name']">
           {{ nameForShow }}
         </div>
-        <div :class="displayType + '-header-to'" v-if="isHovering" @click="navigateToChatPosition">
+        <div :class="displayType + '-header-to'" v-if="isHovering" @click.stop="navigateToChatPosition">
           {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
         </div>
         <div :class="displayType + '-header-time'">
@@ -85,7 +85,7 @@
       </div>
     </div>
     <div v-else-if="displayType === 'image'" :class="[displayType]">
-      <div :class="['image-container']" @click="navigateToChatPosition">
+      <div class="image-container" @click.stop="navigateToChatPosition">
         <MessageAbstractImage
           v-if="listItem.type === TYPES.MSG_IMAGE"
           :messageContent="listItemContent"
@@ -94,8 +94,8 @@
           v-else-if="listItem.type === TYPES.MSG_VIDEO"
           :messageContent="listItemContent"
         />
-        <div :class="['image-container-hover']" v-if="isHovering">
-          <div :class="['image-container-hover-text']">
+        <div v-if="isHovering" class="image-container-hover">
+          <div class="image-container-hover-text">
             {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
           </div>
         </div>

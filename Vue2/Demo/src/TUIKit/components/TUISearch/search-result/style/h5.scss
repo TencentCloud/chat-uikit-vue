@@ -46,3 +46,14 @@
     }
   }
 }
+.search-result-loading,
+.search-result-default {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &-h5 {
+    background-color: #f4f4f4;
+  }
+}

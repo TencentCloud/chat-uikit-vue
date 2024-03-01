@@ -6,17 +6,15 @@
     </span>
   </div>
 </template>
-
+ 
 <script lang="ts" setup>
 import { watchEffect, ref } from "../../../../adapter-vue";
 interface IProps {
   content: Record<string, any>;
 }
-
 const props = withDefaults(defineProps<IProps>(), {
   content: () => ({}),
 });
-
 const data = ref();
 watchEffect(() => {
   data.value = props.content;

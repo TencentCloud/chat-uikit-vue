@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isExistLatestMessage || isScrollOverOneScreen"
+    v-if="isExistLastMessage || isScrollOverOneScreen"
     class="scroll-button"
     @click="scrollToMessageListBottom"
   >
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from "../../../../adapter-vue";
+import { ref, onMounted, onUnmounted } from "../../../../adapter-vue";
 import {
   TUIStore,
   StoreName,
@@ -26,6 +26,7 @@ import {
 } from "@tencentcloud/chat-uikit-engine";
 import Icon from "../../../common/Icon.vue";
 import doubleArrowIcon from "../../../../assets/icon/double-arrow.svg";
+import { getBoundingClientRect } from "@tencentcloud/universal-api";
 
 interface IEmits {
   (key: "scrollToLatestMessage"): void;
@@ -35,6 +36,7 @@ const emits = defineEmits<IEmits>();
 const messageList = ref<IMessageModel[]>([]);
 const currentLastMessageTime = ref<number>(0);
 const isScrollOverOneScreen = ref<boolean>(false);
+const isExistLastMessage = ref<boolean>(false);
 
 onMounted(() => {
   TUIStore.watch(StoreName.CHAT, {
@@ -56,19 +58,12 @@ onUnmounted(() => {
   });
 });
 
-// TODO
-const isExistLatestMessage = computed((): boolean => {
-  const lastSuccessMessageIndex = messageList.value?.findLastIndex(
-    (message: IMessageModel) => message.status === "success"
-  );
-  return (
-    lastSuccessMessageIndex &&
-    messageList?.value[lastSuccessMessageIndex]?.time < currentLastMessageTime?.value
-  );
-});
-
-function onMessageListUpdated(newMessageList: IMessageModel[]) {
+function onMessageListUpdated(newMessageList: Array<IMessageModel>) {
   messageList.value = newMessageList || [];
+  const lastMessage = messageList.value?.[messageList.value?.length - 1];
+  isExistLastMessage.value = !!(
+    lastMessage && lastMessage?.time < currentLastMessageTime?.value
+  );
 }
 
 function getLatestMessageTime(conversation: IConversationModel | undefined) {
@@ -76,17 +71,19 @@ function getLatestMessageTime(conversation: IConversationModel | undefined) {
 }
 
 // 消息列表向上的滚动高度大于一屏时，展示滚动到最新
-function judgeScrollOverOneScreen(e: Event) {
-  if (typeof (e.target as HTMLElement)?.scrollTop === "number") {
-    const scrollListDom = e.target as HTMLElement;
-    const { height } = scrollListDom.getBoundingClientRect() || {};
-    const { scrollHeight, scrollTop } = scrollListDom;
-    if (height && scrollHeight) {
-      if (scrollTop < scrollHeight - 2 * height) {
+async function judgeScrollOverOneScreen(e: any) {
+  if (e.target) {
+    try {
+      const { height } = await getBoundingClientRect(`#${(e.target as HTMLElement)?.id}`, 'messageList') || {};
+      const scrollHeight = (e.target as HTMLElement)?.scrollHeight || (e.detail as HTMLElement)?.scrollHeight;
+      const scrollTop = (e.target as HTMLElement)?.scrollTop || (e.detail as HTMLElement)?.scrollTop;
+      if (height && scrollHeight && (scrollTop < scrollHeight - 2 * height)) {
         isScrollOverOneScreen.value = true;
-      } else {
-        isScrollOverOneScreen.value = false;
+        return;
       }
+      isScrollOverOneScreen.value = false;
+    } catch (error) {
+      isScrollOverOneScreen.value = false;
     }
   }
 }
@@ -101,7 +98,7 @@ function resetMessageSource() {
 // 滚动到消息列表最底部
 function scrollToMessageListBottom() {
   resetMessageSource();
-  setTimeout(() => emits("scrollToLatestMessage"), 100);
+  emits("scrollToLatestMessage");
 }
 
 defineExpose({

@@ -1,7 +1,7 @@
 import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
 import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { isUniFrameWork } from "../../utils/env";
-import { TUIGlobal } from "../../utils/universal-api/index";
 
 export default class TUIContactServer {
   static instance: TUIContactServer;

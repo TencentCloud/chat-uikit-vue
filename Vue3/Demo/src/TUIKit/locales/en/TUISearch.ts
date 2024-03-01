@@ -22,6 +22,7 @@ const TUISearch = {
   查看更多历史记录: "View more history message",
   暂无搜索结果: "No Results",
   结果: "results",
+  取消: "Cancel",
   "[文本]": "[Text Message]",
   "[图片]": "[Image Message]",
   "[语音]": "[Audio Message]",

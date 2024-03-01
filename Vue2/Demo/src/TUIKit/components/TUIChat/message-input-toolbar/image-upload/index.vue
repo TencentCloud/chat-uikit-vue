@@ -30,9 +30,9 @@ import {
   IConversationModel,
   SendMessageParams,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { ref, computed } from "../../../../adapter-vue";
 import { isPC, isWeChat, isUniFrameWork } from "../../../../utils/env";
-import { TUIGlobal } from "../../../../utils/universal-api/index";
 import ToolbarItemContainer from "../toolbar-item-container/index.vue";
 import imageIcon from "../../../../assets/icon/image.png";
 import imageUniIcon from "../../../../assets/icon/image-uni.png";

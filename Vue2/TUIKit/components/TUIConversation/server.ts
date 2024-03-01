@@ -5,9 +5,9 @@ import {
   TUIStore,
   StoreName,
 } from "@tencentcloud/chat-uikit-engine";
+import { TUIGlobal } from "@tencentcloud/universal-api";
 import { CONV_CREATE_TYPE } from "../../constant";
 import { isUniFrameWork } from "../../utils/env";
-import { TUIGlobal } from "../../utils/universal-api/index";
 import createGroupIcon from "../../assets/icon/start-group.svg";
 import createC2CIcon from "../../assets/icon/icon-c2c.svg";
 import { enableSampleTaskStatus } from "../../utils/enableSampleTaskStatus";

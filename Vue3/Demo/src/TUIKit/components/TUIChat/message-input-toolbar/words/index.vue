@@ -5,6 +5,8 @@
     :needBottomPopup="true"
     :iconWidth="isUniFrameWork ? '26px' : '20px'"
     :iconHeight="isUniFrameWork ? '26px' : '20px'"
+    @onDialogShow="onDialogShow"
+    @onDialogClose="onDialogClose"
     ref="container"
   >
     <div :class="['words', !isPC && 'words-h5']">
@@ -49,6 +51,7 @@ import { wordsList } from "../../utils/wordsList";
 import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
 import { isPC, isUniFrameWork } from "../../../../utils/env";
 
+const emits = defineEmits(["onDialogPopupShowOrHide"]);
 const currentConversation = ref<IConversationModel>();
 const container = ref();
 
@@ -77,6 +80,14 @@ const selectWord = (item: any) => {
 
 const closeDialog = () => {
   container?.value?.toggleDialogDisplay(false);
+};
+
+const onDialogShow = () => {
+  emits("onDialogPopupShowOrHide", true);
+};
+
+const onDialogClose = () => {
+  emits("onDialogPopupShowOrHide", false);
 };
 </script>
 <style scoped lang="scss" src="./style/index.scss"></style>

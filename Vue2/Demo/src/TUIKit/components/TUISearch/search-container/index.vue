@@ -13,7 +13,7 @@
         !isPC && 'tui-search-container-h5-main',
       ]"
     >
-      <div class="tui-search-header" v-if="props.searchType === 'conversation'">
+      <div class="tui-search-header" v-if="props.searchType === 'conversation' && !isUniFrameWork">
         <div class="tui-search-header-title">
           {{ TUITranslateService.t("TUISearch.搜索会话内容") }}
         </div>
@@ -140,7 +140,7 @@ const datePickerRangeDisplayType = computed((): string =>
 );
 const isDatePickerShow = ref<boolean>(false);
 
-TUIStore.watch(StoreName.CUSTOM, {
+TUIStore.watch(StoreName.SEARCH, {
   currentSearchMessageType: (typeObject: { value: any; searchType: string }) => {
     if (typeObject?.searchType === props?.searchType) {
       currentSearchMessageType.value =
@@ -155,7 +155,7 @@ TUIStore.watch(StoreName.CUSTOM, {
 });
 
 const selectSearchType = (item: any) => {
-  TUIStore.update(StoreName.CUSTOM, "currentSearchMessageType", {
+  TUIStore.update(StoreName.SEARCH, "currentSearchMessageType", {
     value: item,
     searchType: props.searchType,
   });
@@ -167,7 +167,7 @@ const selectSearchTime = (item: any) => {
     isDatePickerShow.value = false;
   } else {
     isDatePickerShow.value = false;
-    TUIStore.update(StoreName.CUSTOM, "currentSearchMessageTime", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchMessageTime", {
       value: item,
       searchType: props.searchType,
     });
@@ -176,7 +176,7 @@ const selectSearchTime = (item: any) => {
 
 const handleSelectAllTimeClicked = () => {
   if (currentSearchMessageTime.value?.key !== "all") {
-    TUIStore.update(StoreName.CUSTOM, "currentSearchMessageTime", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchMessageTime", {
       value: searchMessageTimeDefault,
       searchType: props.searchType,
     });
@@ -198,7 +198,7 @@ const pickTimePeriod = (time: any) => {
         timePeriod,
       },
     };
-    TUIStore.update(StoreName.CUSTOM, "currentSearchMessageTime", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchMessageTime", {
       value: newSearchMessageTime,
       searchType: props.searchType,
     });
@@ -208,7 +208,7 @@ const pickTimePeriod = (time: any) => {
 const clearTimePicker = () => {
   isDatePickerShow.value = false;
   if (currentSearchMessageTime.value?.key === "all") {
-    TUIStore.update(StoreName.CUSTOM, "currentSearchMessageTime", {
+    TUIStore.update(StoreName.SEARCH, "currentSearchMessageTime", {
       value: searchMessageTimeDefault,
       searchType: props.searchType,
     });

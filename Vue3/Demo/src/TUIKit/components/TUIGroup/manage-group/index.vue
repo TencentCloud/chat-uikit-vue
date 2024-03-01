@@ -206,6 +206,14 @@
   </div>
 </template>
 <script lang="ts" setup>
+import {
+  ref,
+  computed,
+  watchEffect,
+  onMounted,
+  onBeforeUnmount,
+  nextTick,
+} from "../../../adapter-vue";
 import TUIChatEngine, {
   TUITranslateService,
   TUIGroupService,
@@ -217,14 +225,7 @@ import TUIChatEngine, {
   IConversationModel,
   IGroupMember,
 } from "@tencentcloud/chat-uikit-engine";
-import {
-  ref,
-  computed,
-  watchEffect,
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-} from "../../../adapter-vue";
+import { TUIGlobal, outsideClick } from "@tencentcloud/universal-api";
 import MaskLayer from "../../common/MaskLayer/index.vue";
 import Dialog from "../../common/Dialog/index.vue";
 import Transfer from "../../common/Transfer/index.vue";
@@ -238,7 +239,6 @@ import backSVG from "../../../assets/icon/back.svg";
 import rightIcon from "../../../assets/icon/right-icon.svg";
 import { Toast, TOAST_TYPE } from "../../common/Toast/index";
 import { isPC, isUniFrameWork } from "../../../utils/env";
-import { TUIGlobal } from "../../../utils/universal-api/index";
 import Server from "../server";
 import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus";
 
@@ -292,43 +292,16 @@ const deletedUserList = ref([]);
 const currentGroup = ref<IGroupModel>();
 const currentSelfRole = ref("");
 const groupID = ref("");
-const isClickSelf = ref(false);
-
-const handleClick = (event: any) => {
-  const e = event || window.event;
-  const target = e.target || e.srcElement;
-  if(!(target == manageRef.value) && !manageRef.value.contains(target) && !isClickSelf.value) {    // 目标元素外
-    handleCompleteManage();
-  }
-  isClickSelf.value = false;
-}
-
-const handleTargetClick = () => {
-  isClickSelf.value  = true;
-}
-
-const onClickOutside = () : void => {
-  if (document && !isUniFrameWork) {
-    document.addEventListener('click', handleClick);
-    manageRef.value.addEventListener("click", handleTargetClick);
-  }
-}
-
-const offClickOutside = () : void => {
-  if (document && !isUniFrameWork) {
-    document.removeEventListener('click', handleClick);
-    manageRef.value.removeEventListener("click", handleTargetClick);
-  }
-}
 
 onMounted(() => {
   nextTick(() => {
-    manageRef.value && onClickOutside();
+    if (manageRef.value) {
+      outsideClick.listen({
+        domRefs: manageRef.value,
+        handler: handleCompleteManage,
+      });
+    }
   });
-})
-
-onBeforeUnmount(() => {
-  offClickOutside();
 })
 
 TUIStore.watch(StoreName.GRP, {
