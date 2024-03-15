@@ -1,8 +1,8 @@
-import TUIChatEngine, { TUITranslateService, TUIStore, StoreName, IMessageModel } from "@tencentcloud/chat-uikit-engine";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
+import TUIChatEngine, { TUITranslateService, TUIStore, StoreName, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 
 export function deepCopy(data: any, hash = new WeakMap()) {
-  if (typeof data !== "object" || data === null || data === undefined) {
+  if (typeof data !== 'object' || data === null || data === undefined) {
     return data;
   }
   if (hash.has(data)) {
@@ -12,7 +12,7 @@ export function deepCopy(data: any, hash = new WeakMap()) {
   const dataKeys = Object.keys(data);
   dataKeys.forEach((value) => {
     const currentDataValue = data[value];
-    if (typeof currentDataValue !== "object" || currentDataValue === null) {
+    if (typeof currentDataValue !== 'object' || currentDataValue === null) {
       newData[value] = currentDataValue;
     } else if (Array.isArray(currentDataValue)) {
       newData[value] = [...currentDataValue];
@@ -32,7 +32,7 @@ export const handleSkeletonSize = (
   width: number,
   height: number,
   maxWidth: number,
-  maxHeight: number
+  maxHeight: number,
 ): { width: number; height: number } => {
   const widthToHeight = width / height;
   const maxWidthToHeight = maxWidth / maxHeight;
@@ -40,8 +40,8 @@ export const handleSkeletonSize = (
     return { width, height };
   }
   if (
-    (width <= maxWidth && height > maxHeight) ||
-    (width > maxWidth && height > maxHeight && widthToHeight <= maxWidthToHeight)
+    (width <= maxWidth && height > maxHeight)
+    || (width > maxWidth && height > maxHeight && widthToHeight <= maxWidthToHeight)
   ) {
     return { width: width * (maxHeight / height), height: maxHeight };
   }
@@ -52,7 +52,7 @@ export const handleSkeletonSize = (
 export function getImgLoad(container: any, className: string, callback: any) {
   const images = container?.querySelectorAll(`.${className}`) || [];
   const promiseList = Array.prototype.slice.call(images).map((node: any) => {
-    return new Promise((resolve: any, reject: any) => {
+    return new Promise((resolve: any) => {
       node.onload = () => {
         resolve(node);
       };
@@ -72,14 +72,14 @@ export function getImgLoad(container: any, className: string, callback: any) {
       callback && callback();
     })
     .catch((e) => {
-      console.error("网络异常", e);
+      console.error('网络异常', e);
     });
 }
 
 export const isCreateGroupCustomMessage = (message: IMessageModel) => {
   return (
-    message.type === TUIChatEngine.TYPES.MSG_CUSTOM &&
-    message?.getMessageContent()?.businessID === "group_create"
+    message.type === TUIChatEngine.TYPES.MSG_CUSTOM
+    && message?.getMessageContent()?.businessID === 'group_create'
   );
 };
 
@@ -87,14 +87,14 @@ export const isCreateGroupCustomMessage = (message: IMessageModel) => {
  * displayMessageReadReceipt 用户级别控制展示消息阅读状态
  * 关闭后 你收发的消息均不带消息阅读状态
  * 你将无法看到对方是否已读 同时对方也无法看到他发送的消息你是否已读
- * 
+ *
  * enabledMessageReadReceipt app级别是否开启已读回执
  *
  * @return {boolean} - Returns a boolean value indicating if the message read receipt is enabled globally.
  */
 export function isEnabledMessageReadReceiptGlobal(): boolean {
-  return TUIStore.getData(StoreName.USER, "displayMessageReadReceipt") &&
-  TUIStore.getData(StoreName.APP, "enabledMessageReadReceipt");
+  return TUIStore.getData(StoreName.USER, 'displayMessageReadReceipt')
+    && TUIStore.getData(StoreName.APP, 'enabledMessageReadReceipt');
 }
 
 export function shallowCopyMessage(message: IMessageModel) {
@@ -113,20 +113,20 @@ export async function copyText(text: string) {
 }
 
 function copyTextByDocumentExecCommand(textString: string) {
-  let input = document.createElement("input");
-  input.id = "copy-input";
+  const input = document.createElement('input');
+  input.id = 'copy-input';
   input.readOnly = true; // Prevent IOS focus from triggering keyboard events
-  input.style.position = "absolute";
-  input.style.left = "-1000px";
-  input.style.zIndex = "-1000";
+  input.style.position = 'absolute';
+  input.style.left = '-1000px';
+  input.style.zIndex = '-1000';
   document.body.appendChild(input);
   input.value = textString;
   selectText(input, 0, textString.length);
-  if (document.execCommand("copy")) {
-    document.execCommand("copy");
+  if (document.execCommand('copy')) {
+    document.execCommand('copy');
   } else {
     Toast({
-      message: TUITranslateService.t("TUIChat.此机型暂不支持复制"),
+      message: TUITranslateService.t('TUIChat.此机型暂不支持复制'),
       type: TOAST_TYPE.ERROR,
     });
   }
@@ -136,14 +136,14 @@ function copyTextByDocumentExecCommand(textString: string) {
 function selectText(
   textbox: HTMLInputElement,
   startIndex: number,
-  stopIndex: number
+  stopIndex: number,
 ) {
   if ((textbox as any).createTextRange) {
     // ie
     const range = (textbox as any).createTextRange();
     range.collapse(true);
-    range.moveStart("character", startIndex); //start character
-    range.moveEnd("character", stopIndex - startIndex); //end character
+    range.moveStart('character', startIndex); // start character
+    range.moveEnd('character', stopIndex - startIndex); // end character
     range.select();
   } else {
     // firefox / chrome

@@ -1,20 +1,20 @@
-import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { isPC } from "../../../utils/env";
-import createGroup from "../../../assets/icon/start-group.svg";
-import C2C from "../../../assets/icon/icon-c2c.svg";
-import { CONV_CREATE_TYPE } from "../../../constant";
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { isPC } from '../../../utils/env';
+import createGroup from '../../../assets/icon/start-group.svg';
+import C2C from '../../../assets/icon/icon-c2c.svg';
+import { CONV_CREATE_TYPE } from '../../../constant';
 
 export interface IMenuItem {
-  icon?: string,
+  icon?: string;
   text: string;
   data: {
-    name: string,
-    children?: Array<IMenuItem>,
-  },
+    name: string;
+    children?: Array<IMenuItem>;
+  };
   listener?: {
-    onClicked: Function,
-  }
+    onClicked: (...args: any[]) => void;
+  };
 }
 
 export default class ConversationHeaderServer {
@@ -36,7 +36,7 @@ export default class ConversationHeaderServer {
           name: 'all',
           children: list,
         },
-      }]
+      }];
     }
     return list;
   }
@@ -51,7 +51,7 @@ export default class ConversationHeaderServer {
         },
         listener: {
           onClicked: this.createConversation.bind(this),
-        }
+        },
       },
       {
         icon: createGroup,
@@ -61,8 +61,8 @@ export default class ConversationHeaderServer {
         },
         listener: {
           onClicked: this.createConversation.bind(this),
-        }
-      }
+        },
+      },
     ];
     return list;
   }
@@ -73,6 +73,6 @@ export default class ConversationHeaderServer {
       serviceName: TUIConstants.TUIConversation.SERVICE.NAME,
       method: TUIConstants.TUIConversation.SERVICE.METHOD.CREATE_CONVERSATION,
       params: item,
-    })
+    });
   }
 }

@@ -2,27 +2,32 @@
   height: 100%;
   overflow: hidden;
 }
-.TUI-chat-h5 {
+
+.tui-chat-h5 {
   &-message-list {
     flex: 1;
     overflow: hidden;
     display: flex;
   }
+
   &-message-input {
     height: auto;
     padding: 10px 10px 0;
     border-top: 1px solid #eee;
   }
+
   &-message-input-toolbar {
     order: 1;
     border: none;
   }
 }
-.TUI-chat-uniapp {
+
+.tui-chat-uniapp {
   &-header {
     display: none;
   }
 }
+
 .group-profile {
   position: absolute;
   top: 14%;

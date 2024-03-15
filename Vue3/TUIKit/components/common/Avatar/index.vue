@@ -14,14 +14,14 @@
         :src="avatarImageUrl || defaultAvatarUrl"
         @load="avatarLoadSuccess"
         @error="avatarLoadFailed"
-      ></image>
+      />
       <image
         v-else
         class="avatar-image"
         :src="defaultAvatarUrl"
         @load="avatarLoadSuccess"
         @error="avatarLoadFailed"
-      ></image>
+      />
     </template>
     <img
       v-else
@@ -29,7 +29,7 @@
       :src="avatarImageUrl || defaultAvatarUrl"
       @load="avatarLoadSuccess"
       @error="avatarLoadFailed"
-    />
+    >
     <div
       v-if="useAvatarSkeletonAnimation"
       :class="{
@@ -37,7 +37,7 @@
         hidden: isImgLoaded,
         'skeleton-animation': useAvatarSkeletonAnimation
       }"
-    ></div>
+    />
   </div>
 </template>
 
@@ -57,13 +57,13 @@ interface IEmits {
   (key: 'onError', e: Event): void;
 }
 
-const defaultAvatarUrl = "https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png";
+const defaultAvatarUrl = 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png';
 const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   // uniapp vue2 不支持在defineProps中使用常量
-  url: "https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png",
-  size: "36px",
-  borderRadius: "5px",
+  url: 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png',
+  size: '36px',
+  borderRadius: '5px',
   useSkeletonAnimation: false,
 });
 

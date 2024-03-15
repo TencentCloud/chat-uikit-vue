@@ -8,13 +8,14 @@ import TUIChatEngine, {
   IGroupModel,
   TUIStore,
   StoreName,
-} from "@tencentcloud/chat-uikit-engine";
-import { ISearchResultListItem, IFriendType } from "../../interface";
-import { searchMessageTypeList } from "./search-type-list";
-import { Toast, TOAST_TYPE } from "../common/Toast/index";
-import { messageTypeAbstractMap } from "./type";
-import { isUniFrameWork } from "../../utils/env";
-import { TUIGlobal } from "@tencentcloud/universal-api";
+  IMessageModel,
+} from '@tencentcloud/chat-uikit-engine';
+import { ISearchCloudMessageResult, IFriendType, ISearchResultListItem, IUserProfile } from '../../interface';
+import { searchMessageTypeList } from './search-type-list';
+import { Toast, TOAST_TYPE } from '../common/Toast/index';
+import { messageTypeAbstractMap } from './type';
+import { isUniFrameWork } from '../../utils/env';
+import { TUIGlobal } from '@tencentcloud/universal-api';
 
 /**************************************
  * TUISearch 搜索逻辑
@@ -22,15 +23,15 @@ import { TUIGlobal } from "@tencentcloud/universal-api";
 
 // 消息云端搜索
 export const searchCloudMessages = (
-  params: SearchCloudMessagesParams
-): Promise<Array<ISearchResultListItem>> => {
+  params: SearchCloudMessagesParams,
+): Promise<{ data: ISearchCloudMessageResult }> => {
   return TUIChatService.searchCloudMessages(params)
-    .then((imResponse: any) => {
+    .then((imResponse) => {
       return imResponse;
     })
-    .catch((error: any) => {
+    .catch((error) => {
       Toast({
-        message: TUITranslateService.t("TUISearch.消息云端搜索失败：") + error?.message,
+        message: TUITranslateService.t('TUISearch.消息云端搜索失败：') + error?.message,
         type: TOAST_TYPE.ERROR,
         duration: 3000,
       });
@@ -42,13 +43,13 @@ export const searchCloudMessages = (
 export const searchFriends = (userIDList: Array<string>): Promise<Array<IFriendType>> => {
   // 仅展示已存在好友关系的用户
   return TUIFriendService.getFriendProfile({ userIDList })
-    .then((imResponse: any) => {
+    .then((imResponse) => {
       return imResponse;
     })
-    .catch((error: any) => {
-      console.warn("search user failed:", error?.message);
+    .catch((error) => {
+      console.warn('search user failed:', error?.message);
       Toast({
-        message: TUITranslateService.t("TUISearch.查找联系人失败：") + error?.message,
+        message: TUITranslateService.t('TUISearch.查找联系人失败：') + error?.message,
         type: TOAST_TYPE.ERROR,
         duration: 1000,
       });
@@ -59,28 +60,28 @@ export const searchFriends = (userIDList: Array<string>): Promise<Array<IFriendT
 // 搜索所有已加入群聊
 export const searchGroups = (groupIDList: Array<string>): Promise<Array<IGroupModel>> => {
   // searchGroupList.value = [];
-  const promiseList: Array<Promise<any>> = [];
+  const promiseList: Array<Promise<IGroupModel>> = [];
   groupIDList.forEach((groupID: string) => {
     // todo: 此处需等待engine searchGroupByID 包裹好结果后，替换为 searchGroupByID 接口
-    let promise = TUIGroupService.searchGroupByID(groupID)
-      .then((imResponse: any) => {
+    const promise = TUIGroupService.searchGroupByID(groupID)
+      .then((imResponse) => {
         // 仅展示已加入的群聊
         if (imResponse?.data?.group?.isJoinedGroup) {
           return imResponse?.data?.group;
         }
       })
-      .catch((error: any) => {
-        console.warn("search group failed:", error?.message);
+      .catch((error) => {
+        console.warn('search group failed:', error?.message);
       });
     promiseList.push(promise);
   });
   return Promise.all(promiseList)
-    .then((imResponse: any) => {
-      return imResponse.filter((x: any) => x !== undefined);
+    .then((imResponse) => {
+      return imResponse.filter(x => x !== undefined);
     })
-    .catch((error: any) => {
+    .catch((error) => {
       Toast({
-        message: TUITranslateService.t("TUISearch.查找群聊失败：") + error?.message,
+        message: TUITranslateService.t('TUISearch.查找群聊失败：') + error?.message,
         type: TOAST_TYPE.ERROR,
         duration: 1000,
       });
@@ -92,27 +93,27 @@ export const searchGroups = (groupIDList: Array<string>): Promise<Array<IGroupMo
  * TUISearch 交互逻辑
  **************************************/
 // 切换会话
-export const enterConversation = (item: any) => {
-  const conversationID =
-    item?.conversationID || (item?.groupID ? `GROUP${item?.groupID}` : `C2C${item?.userID}`);
+export const enterConversation = (item: { conversationID?: string;groupID?: string; userID?: string }) => {
+  const conversationID
+    = item?.conversationID || (item?.groupID ? `GROUP${item?.groupID}` : `C2C${item?.userID}`);
   TUIConversationService.switchConversation(conversationID)
     .then(() => {
-      TUIStore.update(StoreName.SEARCH, "currentSearchingStatus", {
+      TUIStore.update(StoreName.SEARCH, 'currentSearchingStatus', {
         isSearching: false,
-        searchType: "global",
+        searchType: 'global',
       });
-      TUIStore.update(StoreName.SEARCH, "currentSearchInputValue", {
-        value: "",
-        searchType: "global",
+      TUIStore.update(StoreName.SEARCH, 'currentSearchInputValue', {
+        value: '',
+        searchType: 'global',
       });
       isUniFrameWork && TUIGlobal?.navigateTo({
-        url: "/TUIKit/components/TUIChat/index",
+        url: '/TUIKit/components/TUIChat/index',
       });
     })
-    .catch((error: any) => {
-      console.warn("switch conversation failed:", error?.message);
+    .catch((error) => {
+      console.warn('switch conversation failed:', error?.message);
       Toast({
-        message: TUITranslateService.t("TUISearch.进入会话失败"),
+        message: TUITranslateService.t('TUISearch.进入会话失败'),
         type: TOAST_TYPE.ERROR,
         duration: 1000,
       });
@@ -123,82 +124,90 @@ export const enterConversation = (item: any) => {
  * TUISearch UI展示逻辑
  **************************************/
 // 解析搜索结果展示名称
-export const generateSearchResultShowName = (result: any, resultContent: any): string => {
-  if (result?.ID) {
+export const generateSearchResultShowName = (result: IMessageModel | ISearchResultListItem | IGroupModel | IFriendType | IUserProfile, resultContent: Record<string, string>): string => {
+  if (!result) {
+    return '';
+  }
+  if ((result as IMessageModel).ID) {
     return resultContent?.showName;
   }
-  if (result?.groupID) {
-    return result?.groupName || result?.groupID;
+  if ((result as IGroupModel).groupID) {
+    return (result as IGroupModel).name || (result as IGroupModel).groupID;
   }
-  if (result?.userID) {
-    return result?.remark || result?.nick || result?.name || result?.userID;
+  if ((result as IFriendType | IUserProfile).userID) {
+    return (result as IFriendType).remark || (result as IUserProfile).nick || (result as IFriendType).userID || '';
   }
-  if (result?.conversation?.conversationID) {
-    // todo: 此处后续需要验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
-    if(result.conversation?.getShowName){
-      return result.conversation.getShowName() || result.conversation.conversationID;
-    }else{
-      return TUIStore.getConversationModel(result.conversation.conversationID)?.getShowName?.() || result.conversation.conversationID;
+  if ((result as ISearchResultListItem).conversation?.conversationID) {
+    // 验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
+    if (typeof (result as ISearchResultListItem).conversation.getShowName === 'function') {
+      return (result as ISearchResultListItem).conversation.getShowName();
+    } else {
+      return TUIStore.getConversationModel((result as ISearchResultListItem).conversation.conversationID)?.getShowName?.() || (result as ISearchResultListItem).conversation.conversationID;
     }
   }
-  return "";
+  return '';
 };
 
 // 解析搜索结果展示头像
-export const generateSearchResultAvatar = (result: any, resultContent: any): string => {
-  if (result?.ID) {
-    return result?.avatar || "https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png";
+export const generateSearchResultAvatar = (result: IMessageModel | ISearchResultListItem | IGroupModel | IFriendType | IUserProfile): string => {
+  if (!result) {
+    return '';
   }
-  if (result?.groupID) {
-    return result?.avatar || `https://web.sdk.qcloud.com/im/assets/images/${result?.type}.svg`;
+  if ((result as IMessageModel).ID) {
+    return (result as IMessageModel).avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png';
   }
-  if (result?.userID) {
-    return result?.avatar || "https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png";
+  if ((result as IGroupModel).groupID) {
+    return (result as IGroupModel).avatar || `https://web.sdk.qcloud.com/im/assets/images/${(result as IGroupModel)?.type}.svg`;
   }
-  if (result?.conversation?.conversationID) {
-    // todo: 此处后续需要验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
-    if(result.conversation.getAvatar){
-      return result.conversation?.getAvatar();
-    }else{
-      return TUIStore.getConversationModel(result.conversation.conversationID).getAvatar();
+  if ((result as IUserProfile).userID) {
+    return (result as IUserProfile).avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png';
+  }
+  if ((result as ISearchResultListItem)?.conversation?.conversationID) {
+    // 验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
+    if (typeof (result as ISearchResultListItem).conversation.getAvatar === 'function') {
+      return (result as ISearchResultListItem).conversation?.getAvatar();
+    } else {
+      return TUIStore.getConversationModel((result as ISearchResultListItem).conversation.conversationID)?.getAvatar?.();
     }
   }
-  return "";
+  return '';
 };
 
 // 解析搜索结果展示内容（包含对于关键词内容匹配高亮）
 export const generateSearchResultShowContent = (
-  result: any,
+  result: IMessageModel | ISearchResultListItem | IGroupModel | IUserProfile,
   resultType: string,
   keywordList: Array<string>,
-  isTypeShow = true // 除文本消息以外类型消息是否需要类型前缀
+  isTypeShow = true, // 除文本消息以外类型消息是否需要类型前缀
 ): Array<{ text: string; isHighlight: boolean }> => {
-  if (result?.groupID) {
+  if ((result as IGroupModel)?.groupID) {
     return [
-      { text: "groupID: ", isHighlight: false },
-      { text: result?.groupID, isHighlight: true },
+      { text: 'groupID: ', isHighlight: false },
+      { text: (result as IGroupModel).groupID, isHighlight: true },
     ];
   }
-  if (result?.userID) {
+  if ((result as IUserProfile)?.userID) {
     return [
-      { text: "userID: ", isHighlight: false },
-      { text: result?.userID, isHighlight: true },
+      { text: 'userID: ', isHighlight: false },
+      { text: (result as IUserProfile).userID, isHighlight: true },
     ];
   }
-  if (result?.conversation || result?.flow) {
-    if (result?.messageCount === 1 || result?.flow) {
+  if ((result as ISearchResultListItem)?.conversation || (result as IMessageModel)?.flow) {
+    if ((result as ISearchResultListItem)?.messageCount === 1 || (result as IMessageModel)?.flow) {
       // 单条消息摘要显示结果：
       // 文本消息，显示消息内容+关键词高亮
       // 文件类型消息，显示[文件]文件名+关键词高亮
       // 自定义类型消息，显示[自定义消息]description+关键词高亮
       // 其他类型消息，显示[消息类型]
-      const message = result?.flow ? result : result?.messageList[0];
-      const text =
-        message?.payload?.text || message?.payload?.fileName || message?.payload?.description;
+      const message: IMessageModel = (result as IMessageModel)?.flow
+        ? (result as IMessageModel)
+        : (result as ISearchResultListItem)?.messageList[0];
+      const text
+        = message?.payload?.text || message?.payload?.fileName || message?.payload?.description;
       const abstract: Array<{ text: string; isHighlight: boolean }> = [];
-      if (message?.type !== TUIChatEngine.TYPES.MSG_TEXT && isTypeShow) {
+      if ((result as IMessageModel)?.type !== TUIChatEngine.TYPES.MSG_TEXT && isTypeShow) {
         abstract.push({
-          text: TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[message?.type]}`),
+          text: TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[(result as IMessageModel)?.type]}`),
           isHighlight: false,
         });
       }
@@ -207,12 +216,12 @@ export const generateSearchResultShowContent = (
     } else {
       return [
         {
-          text: `${result?.messageCount}${TUITranslateService.t(
-            "TUISearch.条相关"
+          text: `${(result as ISearchResultListItem)?.messageCount}${TUITranslateService.t(
+            'TUISearch.条相关',
           )}${TUITranslateService.t(
             `TUISearch.${
-              resultType === "allMessage" ? "结果" : searchMessageTypeList[resultType]?.label
-            }`
+              resultType === 'allMessage' ? '结果' : searchMessageTypeList[resultType]?.label
+            }`,
           )}`,
           isHighlight: false,
         },
@@ -225,22 +234,22 @@ export const generateSearchResultShowContent = (
 // 解析搜索消息结果【高亮关键词】位置
 export const generateMessageContentHighlight = (
   content: string,
-  keywordList: Array<string>
+  keywordList: Array<string>,
 ): Array<{ text: string; isHighlight: boolean }> => {
   if (!content || !keywordList || !keywordList.length) {
-    return [{ text: content || "", isHighlight: false }];
+    return [{ text: content || '', isHighlight: false }];
   }
   //  获取所有 key 匹配的开始与结束位置
-  const matches = [];
+  const matches: Array<Array<number>> = [];
   for (let i = 0; i < keywordList.length; i++) {
     // 特殊字符转译
-    const substring = keywordList[i]?.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const regex = new RegExp(substring, "gi"); // 全局搜索并且忽略大小写
+    const substring = keywordList[i]?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(substring, 'gi'); // 全局搜索并且忽略大小写
     let match;
 
     while ((match = regex.exec(content)) !== null) {
-      const start = match.index;
-      const end = match.index + match[0].length - 1;
+      const start: number = match.index;
+      const end: number = match.index + match[0].length - 1;
       matches.push([start, end]);
     }
   }
@@ -264,17 +273,17 @@ export const generateMessageContentHighlight = (
     return [{ text: content, isHighlight: false }];
   }
   // 根据高亮范围分割原内容字符串，增加highlight相关标识字段
-  const contentArray = [];
+  const contentArray: Array<{ text: string; isHighlight: boolean }> = [];
   let start = 0;
   for (let i = 0; i < mergedRanges.length; i++) {
-    let str1 = content.substring(start, mergedRanges[i][0]);
+    const str1 = content.substring(start, mergedRanges[i][0]);
     str1 && contentArray.push({ text: str1, isHighlight: false });
-    let str2 = content.substring(mergedRanges[i][0], mergedRanges[i][1] + 1);
+    const str2 = content.substring(mergedRanges[i][0], mergedRanges[i][1] + 1);
     str2 && contentArray.push({ text: str2, isHighlight: true });
     start = mergedRanges[i][1] + 1;
   }
   // 添加结尾最后一段
-  let lastStr = content.substring(start);
+  const lastStr = content.substring(start);
   lastStr && contentArray.push({ text: lastStr, isHighlight: false });
   return contentArray;
 };
@@ -291,7 +300,7 @@ export const generateSearchResultTime = (timestamp: number): string => {
   const diff = todayZero - target.getTime();
 
   function formatNum(num: number): string {
-    return num < 10 ? "0" + num : num.toString();
+    return num < 10 ? '0' + num : num.toString();
   }
 
   if (diff <= 0) {
@@ -299,25 +308,25 @@ export const generateSearchResultTime = (timestamp: number): string => {
     return `${formatNum(target.getHours())}:${formatNum(target.getMinutes())}`;
   } else if (diff <= oneDay) {
     // yesterday, display yesterday:hour:minute
-    return `${TUITranslateService.t("time.昨天")} ${formatNum(target.getHours())}:${formatNum(
-      target.getMinutes()
+    return `${TUITranslateService.t('time.昨天')} ${formatNum(target.getHours())}:${formatNum(
+      target.getMinutes(),
     )}`;
   } else if (diff <= oneWeek - oneDay) {
     // Within a week, display weekday hour:minute
-    const weekdays = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+    const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
     const weekday = weekdays[target.getDay()];
-    return `${TUITranslateService.t("time." + weekday)} ${formatNum(target.getHours())}:${formatNum(
-      target.getMinutes()
+    return `${TUITranslateService.t('time.' + weekday)} ${formatNum(target.getHours())}:${formatNum(
+      target.getMinutes(),
     )}`;
   } else if (target.getTime() >= thisYear) {
     // Over a week, within this year, display mouth/day hour:minute
     return `${target.getMonth() + 1}/${target.getDate()} ${formatNum(
-      target.getHours()
+      target.getHours(),
     )}:${formatNum(target.getMinutes())}`;
   } else {
     // Not within this year, display year/mouth/day hour:minute
     return `${target.getFullYear()}/${target.getMonth() + 1}/${target.getDate()} ${formatNum(
-      target.getHours()
+      target.getHours(),
     )}:${formatNum(target.getMinutes())}`;
   }
 };
@@ -326,13 +335,13 @@ export const generateSearchResultTime = (timestamp: number): string => {
 export const generateSearchResultYMD = (timestamp: number): string => {
   const date = new Date(timestamp * 1000); // 将时间戳转换为毫秒
   const year = date.getFullYear(); // 获取年份
-  const month = ("0" + (date.getMonth() + 1)).slice(-2); // 获取月份，并补零
-  const day = ("0" + date.getDate()).slice(-2); // 获取日期，并补零
+  const month = ('0' + (date.getMonth() + 1)).slice(-2); // 获取月份，并补零
+  const day = ('0' + date.getDate()).slice(-2); // 获取日期，并补零
 
   return `${year}-${month}-${day}`; // 返回年月日格式的字符串
 };
 
-export const debounce = <F extends (...args: any[]) => any>(func: F, waitFor: number) => {
+export const debounce = <F extends (...args: any[]) => void>(func: F, waitFor: number) => {
   let timeout: ReturnType<typeof setTimeout> | null = null;
 
   const debounced = (...args: Parameters<F>) => {

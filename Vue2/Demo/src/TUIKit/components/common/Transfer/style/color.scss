@@ -1,5 +1,5 @@
 .main {
-  background: #FFFFFF;
+  background: #FFF;
   border: 1px solid #E0E0E0;
   box-shadow: 0 -4px 12px 0 rgba(0, 0, 0, 0.06);
 
@@ -9,11 +9,11 @@
 
   .transfer-header {
     font-weight: 500;
-    color: #000000;
+    color: #000;
     letter-spacing: 0;
 
     input {
-      background: #FFFFFF;
+      background: #FFF;
       border: 1px solid #DEE0E3;
       font-weight: 500;
       color: #8F959E;
@@ -30,7 +30,7 @@
 
     &-item {
       .disabled {
-        background: #eeeeee;
+        background: #eee;
       }
     }
   }
@@ -40,29 +40,29 @@
   background: #3370FF;
   border: 0 solid #2F80ED;
   font-weight: 400;
-  color: #FFFFFF;
+  color: #FFF;
 
   &-cancel {
-    background: #FFFFFF;
-    border: 1px solid #DDDDDD;
+    background: #FFF;
+    border: 1px solid #DDD;
     color: #828282;
   }
 }
 
 .btn-no {
   background: #e8e8e9;
-  border: 1px solid #DDDDDD;
+  border: 1px solid #DDD;
   font-weight: 400;
-  color: #FFFFFF;
+  color: #FFF;
 }
 
 .transfer-h5-header {
-  background: #FFFFFF;
+  background: #FFF;
 
   .title {
     font-family: PingFangSC-Medium;
     font-weight: 500;
-    color: #000000;
+    color: #000;
     letter-spacing: 0;
   }
 }

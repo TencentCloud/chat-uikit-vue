@@ -1,4 +1,4 @@
-import TUIChatEngine from "@tencentcloud/chat-uikit-engine";
+import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
 export interface ISearchMessageTypeList {
   [propsName: string]: {
     key: string;
@@ -36,28 +36,28 @@ export const searchMessageTypeList: ISearchMessageTypeList = {
   //   value: "group",
   // },
   allMessage: {
-    key: "allMessage",
-    label: "全部",
+    key: 'allMessage',
+    label: '全部',
     value: allMessageTypeList,
   },
   textMessage: {
-    key: "textMessage",
-    label: "文本",
+    key: 'textMessage',
+    label: '文本',
     value: [TUIChatEngine.TYPES.MSG_TEXT],
   },
   fileMessage: {
-    key: "fileMessage",
-    label: "文件",
+    key: 'fileMessage',
+    label: '文件',
     value: [TUIChatEngine.TYPES.MSG_FILE],
   },
   imageMessage: {
-    key: "imageMessage",
-    label: "图片/视频",
+    key: 'imageMessage',
+    label: '图片/视频',
     value: [TUIChatEngine.TYPES.MSG_IMAGE, TUIChatEngine.TYPES.MSG_VIDEO],
   },
   otherMessage: {
-    key: "otherMessage",
-    label: "其他",
+    key: 'otherMessage',
+    label: '其他',
     value: [
       TUIChatEngine.TYPES.MSG_AUDIO,
       TUIChatEngine.TYPES.MSG_LOCATION,
@@ -69,17 +69,17 @@ export const searchMessageTypeList: ISearchMessageTypeList = {
 
 export const searchMessageTypeKeys = Object.keys(searchMessageTypeList);
 export const searchMessageSingleTypeKeys = Object.keys(searchMessageTypeList).filter(
-  (key: string) => key !== "all"
+  (key: string) => key !== 'all',
 );
-export const searchInGlobalDefaultType = searchMessageTypeList["allMessage"];
-export const searchInConversationDefaultType = searchMessageTypeList["textMessage"];
+export const searchInGlobalDefaultType = searchMessageTypeList['allMessage'];
+export const searchInConversationDefaultType = searchMessageTypeList['textMessage'];
 export const searchMessageTypeDefault = {
   global: searchInGlobalDefaultType,
   conversation: searchInConversationDefaultType,
 };
 
 // 全局搜索类型 key 列表
-export const globalSearchTypeKeys = ["allMessage", "textMessage", "fileMessage", "otherMessage"];
+export const globalSearchTypeKeys = ['allMessage', 'textMessage', 'fileMessage', 'otherMessage'];
 // 全局搜索类型列表
 export const globalSearchTypeList = Object.keys(searchMessageTypeList)
   .filter((key: string) => globalSearchTypeKeys?.includes(key))
@@ -90,10 +90,10 @@ export const globalSearchTypeList = Object.keys(searchMessageTypeList)
 
 // 会话内搜索类型 key 列表
 export const conversationSearchTypeKeys = [
-  "textMessage",
-  "fileMessage",
-  "imageMessage",
-  "otherMessage",
+  'textMessage',
+  'fileMessage',
+  'imageMessage',
+  'otherMessage',
 ];
 // 会话内搜索类型列表
 export const conversationSearchTypeList = Object.keys(searchMessageTypeList)

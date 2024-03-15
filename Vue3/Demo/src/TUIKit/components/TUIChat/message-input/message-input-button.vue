@@ -15,8 +15,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { isPC } from "../../../utils/env";
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { isPC } from '../../../utils/env';
 const props = defineProps({
   enableSend: {
     type: Boolean,
@@ -24,21 +24,24 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["sendMessage"]);
+const emits = defineEmits(['sendMessage']);
 
 const sendMessage = () => {
-  emits("sendMessage");
+  emits('sendMessage');
 };
 </script>
 <style scoped lang="scss">
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
+
 .message-input-button {
   position: absolute;
   bottom: 20px;
   right: 20px;
+
   &-h5 {
     position: static;
   }
+
   &-cont {
     padding: 8px 20px;
     border-radius: 4px;
@@ -48,15 +51,11 @@ const sendMessage = () => {
     line-height: 20px;
     font-weight: 400;
     background: #006eff;
-    color: #ffffff;
+    color: #fff;
     letter-spacing: 0;
     cursor: pointer;
   }
-  &:hover {
-    .message-input-button-hover {
-      display: flex;
-    }
-  }
+
   &-hover {
     display: none;
     justify-content: center;
@@ -71,8 +70,8 @@ const sendMessage = () => {
     margin: auto 0;
     padding: 5px 10px;
     border-radius: 3px;
-    background: #000000;
-    color: #ffffff;
+    background: #000;
+    color: #fff;
     opacity: 0.3;
 
     &::before {
@@ -82,7 +81,13 @@ const sendMessage = () => {
       height: 0;
       right: -20px;
       border: 10px solid transparent;
-      border-left: 10px solid #000000;
+      border-left: 10px solid #000;
+    }
+  }
+
+  &:hover {
+    .message-input-button-hover {
+      display: flex;
     }
   }
 }

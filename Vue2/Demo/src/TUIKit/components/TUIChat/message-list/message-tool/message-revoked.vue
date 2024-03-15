@@ -9,17 +9,16 @@
     <span v-else>{{ message.revoker }}</span>
     <span>{{ TUITranslateService.t("TUIChat.撤回了一条消息") }}</span>
     <span
-      class="edit"
       v-if="message.flow === 'out' && isEditMsg"
+      class="edit"
       @click="messageEdit"
-      >{{ TUITranslateService.t("TUIChat.重新编辑") }}</span
-    >
+    >{{ TUITranslateService.t("TUIChat.重新编辑") }}</span>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref } from "../../../../adapter-vue";
-import { TUITranslateService, IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { watchEffect, ref } from '../../../../adapter-vue';
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 const props = defineProps({
   isEdit: {
     type: Boolean,
@@ -33,24 +32,26 @@ const props = defineProps({
 
 const message = ref<IMessageModel>();
 const isEditMsg = ref(false);
-const emits = defineEmits(["messageEdit"]);
+const emits = defineEmits(['messageEdit']);
 watchEffect(() => {
   message.value = props.messageItem;
   isEditMsg.value = props.isEdit;
 });
 const messageEdit = () => {
-  emits("messageEdit");
+  emits('messageEdit');
 };
 </script>
 <style lang="scss" scoped>
-@import "../../../../assets/styles/common.scss";
+@import "../../../../assets/styles/common";
+
 .revoke {
   display: flex;
   justify-content: center;
-  color: #999999;
+  color: #999;
   width: 100%;
   font-size: 12px;
   margin-bottom: 10px;
+
   .edit {
     padding: 0 5px;
     color: #006eff;

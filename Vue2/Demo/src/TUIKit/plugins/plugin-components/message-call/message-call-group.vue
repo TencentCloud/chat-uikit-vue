@@ -1,15 +1,15 @@
 <template>
   <div
     v-if="isCallMessage && conversationType === TYPES.CONV_GROUP"
-    :class="{ blinkText: isBlink }"
+    :class="{ 'blink-text': isBlink }"
   >
     {{ custom }}
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "../../../adapter-vue";
-import TUIChatEngine, { IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import { computed } from '../../../adapter-vue';
+import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine';
 
 interface IProps {
   message: IMessageModel;
@@ -19,7 +19,7 @@ interface IProps {
 }
 
 const props = withDefaults(defineProps<IProps>(), {
-  message: () => ({}),
+  message: () => ({}) as IMessageModel,
   signalingInfo: () => ({}),
   customContent: () => ({}),
   blinkMessageIDList: () => [],
@@ -39,12 +39,13 @@ const isBlink = computed(() => {
 </script>
 
 <style scoped lang="scss">
-@keyframes blinkText {
+@keyframes blink-text {
   50% {
     color: #ff9c19;
   }
 }
-.blinkText {
+
+.blink-text {
   animation: blinkText 1s linear 3;
 }
 </style>

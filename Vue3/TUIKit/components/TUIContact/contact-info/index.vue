@@ -1,19 +1,19 @@
 <template>
   <div
-    :class="['TUI-contact-info', !isPC && 'TUI-contact-info-h5']"
     v-if="showContactInfo"
+    :class="['tui-contact-info', !isPC && 'tui-contact-info-h5']"
   >
     <div
       v-if="!isPC"
       :class="[
-        'TUI-contact-info-header',
-        !isPC && 'TUI-contact-info-h5-header',
+        'tui-contact-info-header',
+        !isPC && 'tui-contact-info-h5-header',
       ]"
     >
       <div
         :class="[
-          'TUI-contact-info-header-icon',
-          !isPC && 'TUI-contact-info-h5-header-icon',
+          'tui-contact-info-header-icon',
+          !isPC && 'tui-contact-info-h5-header-icon',
         ]"
         @click="resetContactSearchingUIData"
       >
@@ -21,127 +21,131 @@
       </div>
       <div
         :class="[
-          'TUI-contact-info-header-title',
-          !isPC && 'TUI-contact-info-h5-header-title',
+          'tui-contact-info-header-title',
+          !isPC && 'tui-contact-info-h5-header-title',
         ]"
       >
         {{ TUITranslateService.t("TUIContact.添加好友/群聊") }}
       </div>
     </div>
     <div
-      :class="['TUI-contact-info-basic', !isPC && 'TUI-contact-info-h5-basic']"
+      :class="['tui-contact-info-basic', !isPC && 'tui-contact-info-h5-basic']"
     >
       <div
         :class="[
-          'TUI-contact-info-basic-text',
-          !isPC && 'TUI-contact-info-h5-basic-text',
+          'tui-contact-info-basic-text',
+          !isPC && 'tui-contact-info-h5-basic-text',
         ]"
       >
         <div
           :class="[
-            'TUI-contact-info-basic-text-name',
-            !isPC && 'TUI-contact-info-h5-basic-text-name',
+            'tui-contact-info-basic-text-name',
+            !isPC && 'tui-contact-info-h5-basic-text-name',
           ]"
         >
           {{ generateContactInfoName(contactInfoData) }}
         </div>
         <div
-          :class="[
-            'TUI-contact-info-basic-text-other',
-            !isPC && 'TUI-contact-info-h5-basic-text-other',
-          ]"
           v-for="item in contactInfoBasicList"
           :key="item.label"
+          :class="[
+            'tui-contact-info-basic-text-other',
+            !isPC && 'tui-contact-info-h5-basic-text-other',
+          ]"
         >
           {{
-            `${TUITranslateService.t(`TUIContact.${item.label}`)}: 
+            `${TUITranslateService.t(`TUIContact.${item.label}`)}:
             ${item.data}`
           }}
         </div>
       </div>
       <img
         :class="[
-          'TUI-contact-info-basic-avatar',
-          !isPC && 'TUI-contact-info-h5-basic-avatar',
+          'tui-contact-info-basic-avatar',
+          !isPC && 'tui-contact-info-h5-basic-avatar',
         ]"
         :src="generateAvatar(contactInfoData)"
-      />
+      >
     </div>
     <div
-      :class="['TUI-contact-info-more', !isPC && 'TUI-contact-info-h5-more']"
       v-if="contactInfoMoreList[0]"
+      :class="['tui-contact-info-more', !isPC && 'tui-contact-info-h5-more']"
     >
       <div
-        :class="[
-          'TUI-contact-info-more-item',
-          !isPC && 'TUI-contact-info-h5-more-item',
-          item.labelPosition === CONTACT_INFO_LABEL_POSITION.TOP
-            ? 'TUI-contact-info-more-item-top'
-            : 'TUI-contact-info-more-item-left',
-        ]"
         v-for="item in contactInfoMoreList"
         :key="item.key"
+        :class="[
+          'tui-contact-info-more-item',
+          !isPC && 'tui-contact-info-h5-more-item',
+          item.labelPosition === CONTACT_INFO_LABEL_POSITION.TOP
+            ? 'tui-contact-info-more-item-top'
+            : 'tui-contact-info-more-item-left',
+        ]"
       >
         <div
           :class="[
-            'TUI-contact-info-more-item-label',
-            !isPC && 'TUI-contact-info-h5-more-item-label',
+            'tui-contact-info-more-item-label',
+            !isPC && 'tui-contact-info-h5-more-item-label',
           ]"
         >
           {{ `${TUITranslateService.t(`TUIContact.${item.label}`)}` }}
         </div>
         <div
           :class="[
-            'TUI-contact-info-more-item-content',
-            !isPC && 'TUI-contact-info-h5-more-item-content',
+            'tui-contact-info-more-item-content',
+            !isPC && 'tui-contact-info-h5-more-item-content',
           ]"
         >
           <div
-            :class="[
-              'TUI-contact-info-more-item-content-text',
-              !isPC && 'TUI-contact-info-h5-more-item-content-text',
-            ]"
             v-if="!item.editing"
+            :class="[
+              'tui-contact-info-more-item-content-text',
+              !isPC && 'tui-contact-info-h5-more-item-content-text',
+            ]"
           >
             <div
               :class="[
-                'TUI-contact-info-more-item-content-text-data',
-                !isPC && 'TUI-contact-info-h5-more-item-content-text-data',
+                'tui-contact-info-more-item-content-text-data',
+                !isPC && 'tui-contact-info-h5-more-item-content-text-data',
               ]"
             >
               {{ item.data }}
             </div>
             <div
-              @click="setEditing(item)"
               v-if="item.editable"
               :class="[
-                'TUI-contact-info-more-item-content-text-icon',
-                !isPC && 'TUI-contact-info-h5-more-item-content-text-icon',
+                'tui-contact-info-more-item-content-text-icon',
+                !isPC && 'tui-contact-info-h5-more-item-content-text-icon',
               ]"
+              @click="setEditing(item)"
             >
-              <Icon :file="editSVG" width="14px" height="14px" />
+              <Icon
+                :file="editSVG"
+                width="14px"
+                height="14px"
+              />
             </div>
           </div>
           <input
-            :class="[
-              'TUI-contact-info-more-item-content-input',
-              !isPC && 'TUI-contact-info-h5-more-item-content-input',
-            ]"
             v-else-if="item.editType === CONTACT_INFO_MORE_EDIT_TYPE.INPUT"
-            type="text"
             v-model="item.data"
+            :class="[
+              'tui-contact-info-more-item-content-input',
+              !isPC && 'tui-contact-info-h5-more-item-content-input',
+            ]"
+            type="text"
             @confirm="onContactInfoEmitSubmit(item)"
             @keyup.enter="onContactInfoEmitSubmit(item)"
-          />
+          >
           <textarea
-            :class="[
-              'TUI-contact-info-more-item-content-textarea',
-              !isPC && 'TUI-contact-info-h5-more-item-content-textarea',
-            ]"
-            confirm-type="done"
             v-else-if="item.editType === CONTACT_INFO_MORE_EDIT_TYPE.TEXTAREA"
             v-model="item.data"
-          ></textarea>
+            :class="[
+              'tui-contact-info-more-item-content-textarea',
+              !isPC && 'tui-contact-info-h5-more-item-content-textarea',
+            ]"
+            confirm-type="done"
+          />
           <div
             v-else-if="item.editType === CONTACT_INFO_MORE_EDIT_TYPE.SWITCH"
             @click="onContactInfoEmitSubmit(item)"
@@ -153,20 +157,20 @@
     </div>
     <div
       :class="[
-        'TUI-contact-info-button',
-        !isPC && 'TUI-contact-info-h5-button',
+        'tui-contact-info-button',
+        !isPC && 'tui-contact-info-h5-button',
       ]"
     >
       <button
         v-for="item in contactInfoButtonList"
-        :class="[
-          'TUI-contact-info-button-item',
-          !isPC && 'TUI-contact-info-h5-button-item',
-          item.type === CONTACT_INFO_BUTTON_TYPE.CANCEL
-            ? `TUI-contact-info-button-item-cancel`
-            : `TUI-contact-info-button-item-submit`,
-        ]"
         :key="item.key"
+        :class="[
+          'tui-contact-info-button-item',
+          !isPC && 'tui-contact-info-h5-button-item',
+          item.type === CONTACT_INFO_BUTTON_TYPE.CANCEL
+            ? `tui-contact-info-button-item-cancel`
+            : `tui-contact-info-button-item-submit`,
+        ]"
         @click="onContactInfoButtonClicked(item)"
       >
         {{ TUITranslateService.t(`TUIContact.${item.label}`) }}
@@ -179,10 +183,13 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import { TUIGlobal } from "@tencentcloud/universal-api";
-import { ref, computed } from "../../../adapter-vue";
-import { isPC } from "../../../utils/env";
+  IGroupModel,
+  Friend,
+  FriendApplication,
+} from '@tencentcloud/chat-uikit-engine';
+import { TUIGlobal } from '@tencentcloud/universal-api';
+import { ref, computed } from '../../../adapter-vue';
+import { isPC } from '../../../utils/env';
 
 import {
   generateAvatar,
@@ -190,35 +197,37 @@ import {
   generateContactInfoBasic,
   isFriend,
   isApplicationType,
-} from "../utils/index";
+} from '../utils/index';
 import {
   contactMoreInfoConfig,
   contactButtonConfig,
-} from "./contact-info-config";
-import Icon from "../../common/Icon.vue";
-import editSVG from "../../../assets/icon/edit.svg";
-import backSVG from "../../../assets/icon/back.svg";
-import SwitchBar from "../../common/SwitchBar/index.vue";
+} from './contact-info-config';
+import Icon from '../../common/Icon.vue';
+import editSVG from '../../../assets/icon/edit.svg';
+import backSVG from '../../../assets/icon/back.svg';
+import SwitchBar from '../../common/SwitchBar/index.vue';
 import {
   IBlackListUserItem,
   IContactInfoMoreItem,
   IContactInfoButton,
-} from "../../../interface";
+} from '../../../interface';
 import {
   CONTACT_INFO_LABEL_POSITION,
   CONTACT_INFO_MORE_EDIT_TYPE,
   CONTACT_INFO_BUTTON_TYPE,
-} from "../../../constant";
-import { deepCopy } from "../../TUIChat/utils/utils";
+} from '../../../constant';
+import { deepCopy } from '../../TUIChat/utils/utils';
 
-const emits = defineEmits(["switchConversation"]);
+type IContactInfoType = IGroupModel | Friend | FriendApplication | IBlackListUserItem;
 
-const contactInfoData = ref<any>({});
+const emits = defineEmits(['switchConversation']);
+
+const contactInfoData = ref<IContactInfoType>();
 const contactInfoBasicList = ref<Array<{ label: string; data: string }>>([]);
 const contactInfoMoreList = ref<Array<IContactInfoMoreItem>>([]);
 const contactInfoButtonList = ref<Array<IContactInfoButton>>([]);
 const showContactInfo = computed((): boolean => {
-  for (let i in contactInfoData.value) {
+  for (const i in contactInfoData.value) {
     return true;
   }
   return false;
@@ -230,7 +239,7 @@ const setEditing = (item: any) => {
 
 // 是否为群组类型
 const isGroup = computed((): boolean =>
-  contactInfoData?.value?.groupID ? true : false
+  (contactInfoData.value as IGroupModel)?.groupID ? true : false,
 );
 // 是否为申请类型
 const isApplication = computed((): boolean => {
@@ -240,15 +249,15 @@ const isApplication = computed((): boolean => {
 const isBothFriend = ref<boolean>(false);
 // 是否是群成员（包含普通成员、管理员、群主）
 const isGroupMember = computed((): boolean => {
-  return contactInfoData?.value?.selfInfo?.userID ? true : false;
+  return (contactInfoData.value as IGroupModel)?.selfInfo?.userID ? true : false;
 });
 // 是否是黑名单用户, 若为群组类型则一直保持false
 const isInBlackList = computed((): boolean => {
   return (
-    !isGroup.value &&
-    blackList.value?.findIndex(
+    !isGroup.value
+    && blackList.value?.findIndex(
       (item: IBlackListUserItem) =>
-        item?.userID === contactInfoData?.value?.userID
+        item?.userID === (contactInfoData.value as IBlackListUserItem)?.userID,
     ) >= 0
   );
 });
@@ -256,15 +265,15 @@ const isInBlackList = computed((): boolean => {
 const blackList = ref<Array<IBlackListUserItem>>([]);
 
 const resetContactInfoUIData = () => {
-  contactInfoData.value = {};
+  contactInfoData.value = {} as IContactInfoType;
   contactInfoBasicList.value = [];
   contactInfoMoreList.value = [];
   contactInfoButtonList.value = [];
 };
 
 const resetContactSearchingUIData = () => {
-  TUIStore.update(StoreName.CUSTOM, "currentContactInfo", {});
-  TUIStore.update(StoreName.CUSTOM, "currentContactSearchingStatus", false);
+  TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', {});
+  TUIStore.update(StoreName.CUSTOM, 'currentContactSearchingStatus', false);
   TUIGlobal?.closeSearching && TUIGlobal?.closeSearching();
 };
 
@@ -275,26 +284,26 @@ TUIStore.watch(StoreName.USER, {
 });
 
 const onContactInfoEmitSubmit = (item: any) => {
-  item.editSubmitHandler &&
-    item.editSubmitHandler({
-      item,
-      contactInfoData: contactInfoData.value,
-      isBothFriend: isBothFriend.value,
-      isInBlackList: isInBlackList.value,
-    });
+  item.editSubmitHandler
+  && item.editSubmitHandler({
+    item,
+    contactInfoData: contactInfoData.value,
+    isBothFriend: isBothFriend.value,
+    isInBlackList: isInBlackList.value,
+  });
 };
 
 const onContactInfoButtonClicked = (item: any) => {
-  item.onClick &&
-    item.onClick({
-      contactInfoData: contactInfoData.value,
-      contactInfoMoreList: contactInfoMoreList.value,
-    });
+  item.onClick
+  && item.onClick({
+    contactInfoData: contactInfoData.value,
+    contactInfoMoreList: contactInfoMoreList.value,
+  });
   if (
-    item.key === "enterGroupConversation" ||
-    item.key === "enterC2CConversation"
+    item.key === 'enterGroupConversation'
+    || item.key === 'enterC2CConversation'
   ) {
-    emits("switchConversation", contactInfoData.value);
+    emits('switchConversation', contactInfoData.value);
     // 清空当前 contact 相关数据信息
     resetContactSearchingUIData();
   }
@@ -305,20 +314,20 @@ const generateMoreInfo = async () => {
   if (!isApplication.value) {
     // 非好友关系 / 非群成员 且 不在黑名单中 且 不是直播群，展示 申请加群/加好友验证信息 填写
     if (
-      (!isGroup.value && !isBothFriend.value && !isInBlackList.value) ||
-      (isGroup.value &&
-        !isGroupMember.value &&
-        contactInfoData?.value?.type !== TUIChatEngine?.TYPES?.GRP_AVCHATROOM)
+      (!isGroup.value && !isBothFriend.value && !isInBlackList.value)
+      || (isGroup.value
+      && !isGroupMember.value
+      && (contactInfoData.value as IGroupModel)?.type !== TUIChatEngine?.TYPES?.GRP_AVCHATROOM)
     ) {
-      contactMoreInfoConfig.setWords.data = "";
+      contactMoreInfoConfig.setWords.data = '';
       contactInfoMoreList.value.push(contactMoreInfoConfig.setWords);
     }
     // 用户界面，展示 备注名 设置，包含：
     // 1. 若为好友关系，直接修改好友相关资料
     // 2. 若非好友关系，且非黑名单用户，提供 申请加好友备注信息 填写
     if (!isGroup.value && !isInBlackList.value) {
-      contactMoreInfoConfig.setRemark.data =
-        contactInfoData?.value?.remark || "";
+      contactMoreInfoConfig.setRemark.data
+        = (contactInfoData.value as Friend)?.remark || '';
       contactMoreInfoConfig.setRemark.editing = false;
       contactInfoMoreList.value.push(contactMoreInfoConfig.setRemark);
     }
@@ -331,8 +340,8 @@ const generateMoreInfo = async () => {
     }
   } else {
     // 对方 好友请求/群聊申请
-    contactMoreInfoConfig.displayWords.data =
-      contactInfoData?.value?.wording || "";
+    contactMoreInfoConfig.displayWords.data
+      = (contactInfoData.value as FriendApplication)?.wording || '';
     contactInfoMoreList.value.push(contactMoreInfoConfig.displayWords);
   }
 };
@@ -345,21 +354,21 @@ const generateButton = () => {
   // 非黑名单用户
   if (isApplication.value) {
     if (
-      contactInfoData?.value?.type ===
-      TUIChatEngine?.TYPES?.SNS_APPLICATION_SENT_TO_ME
+      (contactInfoData.value as FriendApplication)?.type
+      === TUIChatEngine?.TYPES?.SNS_APPLICATION_SENT_TO_ME
     ) {
       contactInfoButtonList?.value?.push(
-        contactButtonConfig.refuseFriendApplication
+        contactButtonConfig.refuseFriendApplication,
       );
       contactInfoButtonList?.value?.push(
-        contactButtonConfig.acceptFriendApplication
+        contactButtonConfig.acceptFriendApplication,
       );
     }
   } else {
     if (isGroup.value && isGroupMember.value) {
       // 群聊信息页+是群成员
-      switch (contactInfoData?.value?.selfInfo?.role) {
-        case "Owner":
+      switch ((contactInfoData.value as IGroupModel)?.selfInfo?.role) {
+        case 'Owner':
           contactInfoButtonList?.value?.push(contactButtonConfig.dismissGroup);
           break;
         default:
@@ -367,21 +376,21 @@ const generateButton = () => {
           break;
       }
       contactInfoButtonList?.value?.push(
-        contactButtonConfig.enterGroupConversation
+        contactButtonConfig.enterGroupConversation,
       );
     } else if (!isGroup.value && isBothFriend.value) {
       // 用户信息页+是好友关系
       contactInfoButtonList?.value?.push(contactButtonConfig.deleteFriend);
       contactInfoButtonList?.value?.push(
-        contactButtonConfig.enterC2CConversation
+        contactButtonConfig.enterC2CConversation,
       );
     } else {
       // 群聊信息页+不是群成员 / 用户信息页 + 非好友关系
       if (isGroup.value) {
         contactInfoButtonList?.value?.push(
-          contactInfoData?.value?.type === TUIChatEngine?.TYPES?.GRP_AVCHATROOM
+          (contactInfoData.value as IGroupModel)?.type === TUIChatEngine?.TYPES?.GRP_AVCHATROOM
             ? contactButtonConfig.joinAVChatGroup
-            : contactButtonConfig.joinGroup
+            : contactButtonConfig.joinGroup,
         );
       } else {
         contactInfoButtonList?.value?.push(contactButtonConfig.addFriend);
@@ -395,20 +404,20 @@ TUIStore.watch(StoreName.CUSTOM, {
   currentContactInfo: async (data: any) => {
     // 去重
     if (
-      contactInfoData.value &&
-      data &&
-      JSON.stringify(contactInfoData.value) === JSON.stringify(data)
+      contactInfoData.value
+      && data
+      && JSON.stringify(contactInfoData.value) === JSON.stringify(data)
     ) {
       return;
     }
     resetContactInfoUIData();
     // deep clone
     contactInfoData.value = deepCopy(data) || {};
-    if (Object.keys(contactInfoData.value)?.length === 0) {
+    if (!contactInfoData.value || Object.keys(contactInfoData.value)?.length === 0) {
       return;
     }
     contactInfoBasicList.value = generateContactInfoBasic(
-      contactInfoData.value
+      contactInfoData.value,
     );
     isBothFriend.value = await isFriend(contactInfoData.value);
     generateMoreInfo();
@@ -416,12 +425,12 @@ TUIStore.watch(StoreName.CUSTOM, {
     if (data.infoKeyList) {
       contactInfoMoreList.value = data.infoKeyList.map((key: string) => {
         return (contactMoreInfoConfig as any)[key];
-      })
+      });
     }
     if (data.btnKeyList) {
       contactInfoButtonList.value = data.btnKeyList.map((key: string) => {
         return (contactButtonConfig as any)[key];
-      })
+      });
     }
   },
 });

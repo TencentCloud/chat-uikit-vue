@@ -19,9 +19,9 @@ export type ITabInfo = Record<
   TabName,
   {
     tabName: string;
-    count?: number;
+    count: number | undefined;
     memberList: IMemberData[];
   }
 >;
 
-export type TabName = "read" | "unread" | "close";
+export type TabName = 'read' | 'unread' | 'close';

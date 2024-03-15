@@ -1,2 +1,2 @@
-import SwitchBar from "./index.vue";
+import SwitchBar from './index.vue';
 export default SwitchBar;

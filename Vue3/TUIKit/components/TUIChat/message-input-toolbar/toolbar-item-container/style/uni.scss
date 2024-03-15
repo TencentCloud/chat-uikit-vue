@@ -6,8 +6,9 @@
   justify-content: center;
   align-items: center;
   position: static;
+
   &-icon {
-    background: #ffffff;
+    background: #fff;
     border-radius: 15px;
     width: 60px;
     height: 60px;
@@ -16,14 +17,20 @@
     justify-content: center;
     align-items: center;
   }
+
   &-title {
     font-size: 14px;
     color: #8F959D;
   }
+
   &-dialog{
     position: absolute !important;
     background: transparent;
     left: -10px;
     bottom: -5px;
+
+    .toolbar-bottom-popup{
+      position: sticky;
+    }
   }
 }

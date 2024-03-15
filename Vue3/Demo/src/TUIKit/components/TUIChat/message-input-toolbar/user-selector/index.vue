@@ -23,39 +23,39 @@
 import {
   TUIGroupService,
   TUIUserService,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref, computed, watch } from "../../../../adapter-vue";
-import Dialog from "../../../common/Dialog/index.vue";
-import Transfer from "../../../common/Transfer/index.vue";
-import { isPC } from "../../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { ref, computed, watch } from '../../../../adapter-vue';
+import Dialog from '../../../common/Dialog/index.vue';
+import Transfer from '../../../common/Transfer/index.vue';
+import { isPC } from '../../../../utils/env';
 
 const props = defineProps({
   // 类型: voiceCall/groupCall/...
   type: {
     type: String,
-    default: "",
+    default: '',
   },
   currentConversation: {
     type: Object,
-    default: {},
+    default: () => ({}),
   },
   isGroup: {
     type: Boolean,
     default: false,
   },
 });
-const emits = defineEmits(["submit", "cancel"]);
+const emits = defineEmits(['submit', 'cancel']);
 const show = ref<boolean>(false);
-const groupID = ref<string>("");
+const groupID = ref<string>('');
 const memberList = ref<Array<any>>([]);
 const searchMemberList = ref<Array<any>>([]);
-const selfUserID = ref<string>("");
+const selfUserID = ref<string>('');
 const titleMap: any = {
-  voiceCall: "发起群语音",
-  videoCall: "发起群视频",
+  voiceCall: '发起群语音',
+  videoCall: '发起群视频',
 };
 const title = computed(() => {
-  return titleMap[props.type] ? titleMap[props.type] : "";
+  return titleMap[props.type] ? titleMap[props.type] : '';
 });
 
 TUIUserService.getUserProfile().then((res: any) => {
@@ -74,12 +74,12 @@ watch(
           groupID: groupID.value,
         }).then((res: any) => {
           memberList.value = res?.data?.memberList?.filter(
-            (user: any) => user?.userID !== selfUserID.value
+            (user: any) => user?.userID !== selfUserID.value,
           );
           searchMemberList.value = memberList.value;
         });
       } else {
-        groupID.value = "";
+        groupID.value = '';
         memberList.value = [];
         searchMemberList.value = memberList.value;
       }
@@ -87,12 +87,12 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 
 const search = (searchInfo: string) => {
   const results = memberList.value?.filter(
-    (member: any) => member?.userID === searchInfo
+    (member: any) => member?.userID === searchInfo,
   );
   searchMemberList.value = results?.length ? results : memberList.value;
 };
@@ -102,10 +102,10 @@ const submit = (selectedMemberList: Array<string>) => {
   selectedMemberList?.forEach((user: any) => {
     user?.userID && userIDList.push(user.userID);
   });
-  if (props.type === "voiceCall") {
-    emits("submit", { userIDList, groupID: groupID.value, type: 1 });
-  } else if (props.type === "videoCall") {
-    emits("submit", { userIDList, groupID: groupID.value, type: 2 });
+  if (props.type === 'voiceCall') {
+    emits('submit', { userIDList, groupID: groupID.value, type: 1 });
+  } else if (props.type === 'videoCall') {
+    emits('submit', { userIDList, groupID: groupID.value, type: 2 });
   }
   searchMemberList.value = memberList.value;
   toggleShow(false);
@@ -113,7 +113,7 @@ const submit = (selectedMemberList: Array<string>) => {
 
 const cancel = () => {
   searchMemberList.value = memberList.value;
-  emits("cancel");
+  emits('cancel');
   toggleShow(false);
 };
 
@@ -125,4 +125,3 @@ defineExpose({
   toggleShow,
 });
 </script>
-<style lang="scss" scoped></style>

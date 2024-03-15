@@ -1,2 +1,2 @@
-import SearchResultLoading from "./index.vue";
+import SearchResultLoading from './index.vue';
 export default SearchResultLoading;

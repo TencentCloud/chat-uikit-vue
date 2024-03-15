@@ -1,5 +1,8 @@
 <template>
-  <div ref="selfDomRef" class="fetch-more-block">
+  <div
+    ref="selfDomRef"
+    class="fetch-more-block"
+  >
     <template v-if="props.isFetching">
       <slot name="fetching">
         <div>{{ TUITranslateService.t("TUIChat.正在加载") }}</div>
@@ -47,7 +50,7 @@ onMounted(() => {
         emits('onExposed');
       }
     }, {
-      threshold: 1.0
+      threshold: 1.0,
     });
     if (selfDomRef.value) {
       (observer as IntersectionObserver).observe(selfDomRef.value);

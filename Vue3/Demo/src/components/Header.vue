@@ -34,6 +34,7 @@
 <script lang="ts" setup>
 import { withDefaults, defineProps, defineEmits, ref } from "../TUIKit/adapter-vue";
 import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUICore, TUIConstants } from "@tencentcloud/tui-core";
 import Icon from "../TUIKit/components/common/Icon.vue";
 import menuPNG from "../assets/icon/menu.png";
 import globalPNG from "../assets/icon/global.png";
@@ -47,12 +48,12 @@ const props = withDefaults(
   }>(),
   {
     showType: "logo",
-    defaultLanguage: "zh",
+    defaultLanguage: "zh"
   }
 );
 const localeLabelMap: { [propsName: string]: string } = {
   zh: "简体中文",
-  en: "English",
+  en: "English"
 };
 const emits = defineEmits(["toggleMenu", "closeMenu", "changeLanguage"]);
 const locale = ref<string>(props.defaultLanguage);
@@ -64,6 +65,11 @@ function changeLanguage(value: string) {
   TUITranslateService.changeLanguage(value).then(() => {
     locale.value = value;
     emits("changeLanguage", locale.value);
+    TUICore.notifyEvent(
+      TUIConstants.TUITranslate.EVENT.LANGUAGE_CHANGED,
+      TUIConstants.TUITranslate.EVENT_SUB_KEY.CHANGE_SUCCESS,
+      { language: locale.value }
+    );
   });
 }
 </script>

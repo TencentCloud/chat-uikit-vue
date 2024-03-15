@@ -1,11 +1,11 @@
 <template>
   <div
+    ref="toolbarItemRef"
     :class="[
       'toolbar-item-container',
       !isPC && 'toolbar-item-container-h5',
       isUniFrameWork && 'toolbar-item-container-uni',
     ]"
-    ref="toolbarItemRef"
   >
     <div
       :class="[
@@ -20,7 +20,7 @@
         class="icon"
         :width="props.iconWidth"
         :height="props.iconHeight"
-      ></Icon>
+      />
     </div>
     <div
       v-if="isUniFrameWork"
@@ -39,24 +39,23 @@
     >
       <BottomPopup
         v-if="props.needBottomPopup && !isPC"
+        class="toolbar-bottom-popup"
         :show="showDialog"
         @touchmove.stop.prevent
         @onClose="onPopupClose"
-        class="toolbar-bottom-popup"
-        style="position: sticky"
       >
-        <slot></slot>
+        <slot />
       </BottomPopup>
-      <slot v-else></slot>
+      <slot v-else />
     </div>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from "../../../../adapter-vue";
-import { outsideClick } from "@tencentcloud/universal-api";
-import Icon from "../../../common/Icon.vue";
-import BottomPopup from "../../../common/BottomPopup/index.vue";
-import { isPC, isUniFrameWork } from "../../../../utils/env";
+import { ref } from '../../../../adapter-vue';
+import { outsideClick } from '@tencentcloud/universal-api';
+import Icon from '../../../common/Icon.vue';
+import BottomPopup from '../../../common/BottomPopup/index.vue';
+import { isPC, isUniFrameWork } from '../../../../utils/env';
 
 const props = defineProps({
   iconFile: {
@@ -65,7 +64,7 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: "",
+    default: '',
   },
   needDialog: {
     type: Boolean,
@@ -73,11 +72,11 @@ const props = defineProps({
   },
   iconWidth: {
     type: String,
-    default: "20px",
+    default: '20px',
   },
   iconHeight: {
     type: String,
-    default: "20px",
+    default: '20px',
   },
   // 是否需要移动端底部弹窗对话框展示, 默认为false
   // pc端无效
@@ -87,14 +86,14 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(["onIconClick", "onDialogClose", "onDialogShow"]);
+const emits = defineEmits(['onIconClick', 'onDialogClose', 'onDialogShow']);
 
 const showDialog = ref(false);
 const toolbarItemRef = ref();
 const dialogRef = ref();
 
 const toggleToolbarItem = () => {
-  emits("onIconClick", dialogRef);
+  emits('onIconClick', dialogRef);
   if (isPC) {
     outsideClick.listen({
       domRefs: toolbarItemRef.value,
@@ -105,22 +104,22 @@ const toggleToolbarItem = () => {
     return;
   }
   showDialog.value = true;
-  emits("onDialogShow", dialogRef);
+  emits('onDialogShow', dialogRef);
 };
 
 const closeToolbarItem = () => {
   showDialog.value = false;
-  emits("onDialogClose", dialogRef);
+  emits('onDialogClose', dialogRef);
 };
 
 const toggleDialogDisplay = (showStatus: boolean) => {
   showDialog.value = showStatus;
   switch (showStatus) {
     case true:
-      emits("onDialogShow", dialogRef);
+      emits('onDialogShow', dialogRef);
       break;
     case false:
-      emits("onDialogClose", dialogRef);
+      emits('onDialogClose', dialogRef);
   }
 };
 

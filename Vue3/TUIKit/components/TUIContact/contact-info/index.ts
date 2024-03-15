@@ -1,3 +1,3 @@
-import ContactInfo from "./index.vue";
+import ContactInfo from './index.vue';
 
 export default ContactInfo;

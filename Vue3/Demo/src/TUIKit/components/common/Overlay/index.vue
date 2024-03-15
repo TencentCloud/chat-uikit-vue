@@ -9,7 +9,7 @@
     @tap="tap"
   >
     <div @click.stop="innerContentClick">
-      <slot></slot>
+      <slot />
     </div>
   </div>
 </template>
@@ -22,11 +22,11 @@ export interface IOverlayProps {
 
 import { withDefaults } from '../../../adapter-vue';
 
-const emits = defineEmits(['clickHandler', 'touchHandler'])
+const emits = defineEmits(['clickHandler', 'touchHandler']);
 
 const props = withDefaults(defineProps<IOverlayProps>(), {
   zIndex: 9999,
-  bgColor: 'rgba(0, 0, 0, 0.6)'
+  bgColor: 'rgba(0, 0, 0, 0.6)',
 });
 
 function innerContentClick(e: Event) {
@@ -49,7 +49,7 @@ function tap() {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0%);
+  background-color: rgba(0, 0, 0, 0);
   z-index: 9999;
   display: flex;
   align-items: center;

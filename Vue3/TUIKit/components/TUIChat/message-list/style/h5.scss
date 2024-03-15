@@ -1,12 +1,14 @@
-.TUIChat-H5 {
+.tui-chat-h5 {
   flex: 1;
   position: static;
-  .TUIChat-main {
-    .TUI-message-list {
+
+  .tui-chat-main {
+    .tui-message-list {
       height: 100%;
     }
+
     .message-more {
-      color: #999999;
+      color: #999;
       cursor: pointer;
       font-size: 14px;
     }

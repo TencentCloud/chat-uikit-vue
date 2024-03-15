@@ -1,5 +1,8 @@
 <template>
-  <div class="network" v-if="isNotNetwork">
+  <div
+    v-if="isNotNetwork"
+    class="network"
+  >
     <i class="icon icon-error">!</i>
     <p class="network-content">
       {{
@@ -13,20 +16,18 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+} from '@tencentcloud/chat-uikit-engine';
 import {
   ref,
-} from "../../../adapter-vue";
+} from '../../../adapter-vue';
 
 const isNotNetwork = ref(false);
 
 TUIStore.watch(StoreName.USER, {
-  netStateChange: (value:string) => {
-    const disconnected = value === TUIChatEngine.TYPES.NET_STATE_DISCONNECTED;
-    const connecting = value === TUIChatEngine.TYPES.NET_STATE_CONNECTING;
-    return isNotNetwork.value = disconnected || connecting;
+  netStateChange: (value: string) => {
+    isNotNetwork.value = (value === TUIChatEngine.TYPES.NET_STATE_DISCONNECTED);
   },
-})
+});
 </script>
 
 <style lang="scss" scoped src="../style/index.scss"></style>

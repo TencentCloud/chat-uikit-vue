@@ -8,51 +8,45 @@
       :isHiddenBackIcon="isUniFrameWork"
       @cancel="closeForwardPanel"
       @submit="onSubmit"
-    ></Transfer>
+    />
   </Overlay>
 </template>
 
 <script lang="ts" setup>
-import { onUnmounted, ref } from "../../../adapter-vue";
+import { onMounted, onUnmounted, ref } from '../../../adapter-vue';
 import {
   TUIStore,
   StoreName,
   TUIChatService,
   TUITranslateService,
   IConversationModel,
-} from "@tencentcloud/chat-uikit-engine";
-import Overlay from "../../common/Overlay/index.vue";
-import Transfer from "../../common/Transfer/index.vue";
-import { Toast, TOAST_TYPE } from "../../../components/common/Toast";
-import { isPC, isUniFrameWork } from "../../../utils/env";
-import { isEnabledMessageReadReceiptGlobal } from "../utils/utils";
+} from '@tencentcloud/chat-uikit-engine';
+import Overlay from '../../common/Overlay/index.vue';
+import Transfer from '../../common/Transfer/index.vue';
+import { Toast, TOAST_TYPE } from '../../../components/common/Toast';
+import { isUniFrameWork } from '../../../utils/env';
+import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
 
 const isShowForwardPanel = ref(false);
 const customConversationList = ref();
 
-TUIStore.watch(StoreName.CONV, {
-  conversationList: (list: IConversationModel[]) => {
-    customConversationList.value = list.map((conversation) => {
-      return {
-        // 为了实现Transfer的复用，这里用userID代替ConversationID
-        userID: conversation.conversationID,
-        nick: conversation.getShowName(),
-        avatar: conversation.getAvatar(),
-      };
-    });
-  },
-});
-
-TUIStore.watch(StoreName.CUSTOM, {
-  singleForwardMessageID: onSingleForwardMessageIDUpdated
+onMounted(() => {
+  TUIStore.watch(StoreName.CONV, {
+    conversationList: onConversationListUpdated,
+  });
+  TUIStore.watch(StoreName.CUSTOM, {
+    singleForwardMessageID: onSingleForwardMessageIDUpdated,
+  });
 });
 
 onUnmounted(() => {
   // 组件卸载时需要清掉数据 否则小程序会自动打开
   TUIStore.update(StoreName.CUSTOM, 'singleForwardMessageID', undefined);
-
+  TUIStore.unwatch(StoreName.CONV, {
+    conversationList: onConversationListUpdated,
+  });
   TUIStore.unwatch(StoreName.CUSTOM, {
-    singleForwardMessageID: onSingleForwardMessageIDUpdated
+    singleForwardMessageID: onSingleForwardMessageIDUpdated,
   });
 });
 
@@ -81,14 +75,18 @@ function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): v
     const { userID: conversationID } = convIDWrapper;
     return TUIStore.getConversationModel(conversationID);
   });
-  const singleForwardMessageID: string = TUIStore.getData(StoreName.CUSTOM, "singleForwardMessageID");
+  const singleForwardMessageID: string = TUIStore.getData(StoreName.CUSTOM, 'singleForwardMessageID');
   const message = TUIStore.getMessageModel(singleForwardMessageID);
-  TUIChatService.sendForwardMessage(selectedConversationList, [message], {
-    needReadReceipt: isEnabledMessageReadReceiptGlobal(),
-  } as any).catch((error: { message: string; code: number }) => {
+  TUIChatService.sendForwardMessage(
+    selectedConversationList,
+    [message],
+    {
+      needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+    } as any,
+  ).catch((error: { message: string; code: number }) => {
     if (error.code === 80001) {
       Toast({
-        message: TUITranslateService.t("内容包含敏感词汇"),
+        message: TUITranslateService.t('内容包含敏感词汇'),
         type: TOAST_TYPE.ERROR,
       });
     } else {
@@ -104,5 +102,16 @@ function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): v
 function onSubmit(convIDWrapperList: Array<{ userID: string }>) {
   if (convIDWrapperList?.length === 0) return;
   finishSelected(convIDWrapperList);
+}
+
+function onConversationListUpdated(list: IConversationModel[]) {
+  customConversationList.value = list.map((conversation) => {
+    return {
+      // 为了实现Transfer的复用，这里用userID代替ConversationID
+      userID: conversation.conversationID,
+      nick: conversation.getShowName(),
+      avatar: conversation.getAvatar(),
+    };
+  });
 }
 </script>

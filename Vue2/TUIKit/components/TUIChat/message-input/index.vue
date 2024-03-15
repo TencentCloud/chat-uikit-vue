@@ -13,17 +13,17 @@
         @sendMessage="sendMessage"
         @onTyping="onTyping"
         @onAt="onAt"
-      ></MessageInputEditor>
+      />
       <MessageInputButton
         v-if="!props.isMuted"
         @sendMessage="sendMessage"
-      ></MessageInputButton>
+      />
       <MessageInputAt
         v-if="props.enableAt"
         ref="messageInputAtRef"
         @insertAt="insertAt"
         @onAtListOpen="onAtListOpen"
-      ></MessageInputAt>
+      />
     </div>
     <MessageInputQuote />
   </div>
@@ -33,21 +33,21 @@
 import {
   TUIStore,
   StoreName,
-  IConversationModel
-} from "@tencentcloud/chat-uikit-engine";
-import { ref } from "../../../adapter-vue";
-import MessageInputEditor from "./message-input-editor.vue";
-import MessageInputAt from "./message-input-at/index.vue";
-import MessageInputButton from "./message-input-button.vue";
-import MessageInputQuote from "./message-input-quote/index.vue";
-import { sendMessages, sendTyping } from "../utils/sendMessage";
-import { transformEmojiValueToKey } from "../utils/emojiList";
-import { isPC, isH5 } from "../../../utils/env";
+  IConversationModel,
+} from '@tencentcloud/chat-uikit-engine';
+import { ref } from '../../../adapter-vue';
+import MessageInputEditor from './message-input-editor.vue';
+import MessageInputAt from './message-input-at/index.vue';
+import MessageInputButton from './message-input-button.vue';
+import MessageInputQuote from './message-input-quote/index.vue';
+import { sendMessages, sendTyping } from '../utils/sendMessage';
+import { transformEmojiValueToKey } from '../utils/emojiList';
+import { isPC, isH5 } from '../../../utils/env';
 
 const props = defineProps({
   placeholder: {
     type: String,
-    default: "this is placeholder",
+    default: 'this is placeholder',
   },
   isMuted: {
     type: Boolean,
@@ -55,7 +55,7 @@ const props = defineProps({
   },
   muteText: {
     type: String,
-    default: "",
+    default: '',
   },
   enableInput: {
     type: Boolean,
@@ -75,7 +75,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["sendMessage", "resetReplyOrReference", "onTyping"]);
+const emit = defineEmits(['sendMessage', 'resetReplyOrReference', 'onTyping']);
 const editor = ref<InstanceType<typeof MessageInputEditor>>();
 const messageInputAtRef = ref<InstanceType<typeof MessageInputAt>>();
 const currentConversation = ref<IConversationModel>();
@@ -94,21 +94,20 @@ const onAt = (show: boolean) => {
   messageInputAtRef.value?.toggleAtList(show);
 };
 
-
 const sendMessage = async () => {
   const _editorContentList = editor.value?.getEditorContent();
   if (!_editorContentList || !currentConversation.value) return;
   const editorContentList = _editorContentList.map((editor: any) => {
-    if(editor.type==='text') {
+    if (editor.type === 'text') {
       editor.payload.text = transformEmojiValueToKey(editor.payload.text);
     }
-    return editor
+    return editor;
   });
   await sendMessages(
     editorContentList,
-    currentConversation.value
+    currentConversation.value,
   );
-  emit("sendMessage");
+  emit('sendMessage');
   editor.value?.resetEditor();
 };
 
@@ -139,7 +138,7 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
 
 .message-input-wrapper {
   box-sizing: border-box;
@@ -158,8 +157,7 @@ defineExpose({
 
 .message-input-container-h5 {
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+  flex-flow: row nowrap;
   align-items: flex-end;
 }
 </style>

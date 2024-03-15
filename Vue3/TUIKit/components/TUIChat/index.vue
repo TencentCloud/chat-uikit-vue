@@ -1,53 +1,55 @@
 <template>
   <div class="chat">
-    <div :class="['TUI-chat', !isPC && 'TUI-chat-h5']">
+    <div :class="['tui-chat', !isPC && 'tui-chat-h5']">
       <div
         v-if="!currentConversationID"
-        :class="['TUI-chat-default', !isPC && 'TUI-chat-h5-default']"
+        :class="['tui-chat-default', !isPC && 'tui-chat-h5-default']"
       >
-        <slot></slot>
+        <slot />
       </div>
-      <div v-if="currentConversationID" :class="['TUI-chat', !isPC && 'TUI-chat-h5']">
+      <div
+        v-if="currentConversationID"
+        :class="['tui-chat', !isPC && 'tui-chat-h5']"
+      >
         <ChatHeader
           :class="[
-            'TUI-chat-header',
-            !isPC && 'TUI-chat-H5-header',
-            isUniFrameWork && 'TUI-chat-uniapp-header',
+            'tui-chat-header',
+            !isPC && 'tui-chat-H5-header',
+            isUniFrameWork && 'tui-chat-uniapp-header',
           ]"
           @closeChat="closeChat"
-        ></ChatHeader>
-        <Forward></Forward>
+        />
+        <Forward />
         <MessageList
-          :class="['TUI-chat-message-list', !isPC && 'TUI-chat-h5-message-list']"
+          :class="['tui-chat-message-list', !isPC && 'tui-chat-h5-message-list']"
           :isGroup="isGroup"
           :groupID="groupID"
           @handleEditor="handleEditor"
-        >
-        </MessageList>
+        />
         <!-- 兼容 uni 打包支付宝小程序 v-show 无效问题 -->
         <MessageInputToolbar
           v-if="isToolbarShow"
-          :class="['TUI-chat-message-input-toolbar', !isPC && 'TUI-chat-h5-message-input-toolbar', isUniFrameWork && 'TUI-chat-uni-message-input-toolbar']"
+          :class="['tui-chat-message-input-toolbar', !isPC && 'tui-chat-h5-message-input-toolbar', isUniFrameWork && 'tui-chat-uni-message-input-toolbar']"
           @insertEmoji="insertEmoji"
-        ></MessageInputToolbar>
+        />
         <MessageInput
-          :class="[
-            'TUI-chat-message-input',
-            !isPC && 'TUI-chat-h5-message-input',
-            isUniFrameWork && 'TUI-chat-uni-message-input',
-            isWeChat && 'TUI-chat-wx-message-input',
-          ]"
           ref="messageInputRef"
+          :class="[
+            'tui-chat-message-input',
+            !isPC && 'tui-chat-h5-message-input',
+            isUniFrameWork && 'tui-chat-uni-message-input',
+            isWeChat && 'tui-chat-wx-message-input',
+          ]"
           :isMuted="false"
           :muteText="TUITranslateService.t('TUIChat.您已被管理员禁言')"
           :placeholder="TUITranslateService.t('TUIChat.请输入消息')"
           @handleToolbarListShow="handleToolbarListShow"
-        ></MessageInput>
+        />
       </div>
       <!-- 群组管理 -->
       <div
-        class="group-profile"
         v-if="isUniFrameWork && isGroup && groupManageExt"
+        class="group-profile"
         @click="handleGroup"
       >
         {{ groupManageExt.text }}
@@ -64,25 +66,25 @@ import TUIChatEngine, {
   StoreName,
   IMessageModel,
   IConversationModel,
-} from "@tencentcloud/chat-uikit-engine";
-import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
-import { ref, onUnmounted } from "../../adapter-vue";
-import ChatHeader from "./chat-header/index.vue";
-import MessageList from "./message-list/index.vue";
-import MessageInput from "./message-input/index.vue";
-import Forward from "./forward/index.vue";
-import MessageInputToolbar from "./message-input-toolbar/index.vue";
-import { isPC, isWeChat, isUniFrameWork } from "../../utils/env";
-import TUIChatConfig from "./config";
+} from '@tencentcloud/chat-uikit-engine';
+import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
+import { ref, onUnmounted } from '../../adapter-vue';
+import ChatHeader from './chat-header/index.vue';
+import MessageList from './message-list/index.vue';
+import MessageInput from './message-input/index.vue';
+import Forward from './forward/index.vue';
+import MessageInputToolbar from './message-input-toolbar/index.vue';
+import { isPC, isWeChat, isUniFrameWork } from '../../utils/env';
+import TUIChatConfig from './config';
 
-const emits = defineEmits(["closeChat"]);
+const emits = defineEmits(['closeChat']);
 const isToolbarShow = ref<boolean>(!isUniFrameWork);
 const messageInputRef = ref();
 const currentConversationID = ref();
 // 是否显示群组管理
 const isGroup = ref(false);
-const groupID = ref("");
-const groupManageExt = ref<ExtensionInfo>(undefined);
+const groupID = ref('');
+const groupManageExt = ref<ExtensionInfo | undefined>(undefined);
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: IConversationModel) => {
@@ -106,7 +108,7 @@ TUIStore.watch(StoreName.CONV, {
       groupManageExt.value = extList[0];
     }
     if (isUniFrameWork && !isGroup.value) {
-      groupManageExt.value = [];
+      groupManageExt.value = undefined;
     }
     groupID.value = conversation?.groupProfile?.groupID;
   },
@@ -122,7 +124,7 @@ const reset = () => {
 };
 
 const closeChat = (conversationID: string) => {
-  emits("closeChat", conversationID);
+  emits('closeChat', conversationID);
   reset();
 };
 
@@ -141,13 +143,13 @@ const handleToolbarListShow = (show?: boolean) => {
 const handleEditor = (message: IMessageModel, type: string) => {
   if (!message || !type) return;
   switch (type) {
-    case "reference":
+    case 'reference':
       // todo
       break;
-    case "reply":
+    case 'reply':
       // todo
       break;
-    case "reedit":
+    case 'reedit':
       if (message?.payload?.text) {
         messageInputRef?.value?.reEdit(message?.payload?.text);
       }

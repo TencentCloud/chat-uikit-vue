@@ -8,17 +8,17 @@
     @onIconClick="onIconClick"
   >
     <div
-      :class="['image-upload', !isPC && 'image-upload-h5']"
       v-if="!isUniFrameWork"
+      :class="['image-upload', !isPC && 'image-upload-h5']"
     >
       <input
+        ref="inputRef"
         title="图片"
         type="file"
         data-type="image"
         accept="image/gif,image/jpeg,image/jpg,image/png,image/bmp,image/webp"
         @change="sendImageInWeb"
-        ref="inputRef"
-      />
+      >
     </div>
   </ToolbarItemContainer>
 </template>
@@ -29,15 +29,15 @@ import {
   StoreName,
   IConversationModel,
   SendMessageParams,
-} from "@tencentcloud/chat-uikit-engine";
-import { TUIGlobal } from "@tencentcloud/universal-api";
-import { ref, computed } from "../../../../adapter-vue";
-import { isPC, isWeChat, isUniFrameWork } from "../../../../utils/env";
-import ToolbarItemContainer from "../toolbar-item-container/index.vue";
-import imageIcon from "../../../../assets/icon/image.png";
-import imageUniIcon from "../../../../assets/icon/image-uni.png";
-import cameraUniIcon from "../../../../assets/icon/camera-uni.png";
-import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
+} from '@tencentcloud/chat-uikit-engine';
+import { TUIGlobal } from '@tencentcloud/universal-api';
+import { ref, computed } from '../../../../adapter-vue';
+import { isPC, isWeChat, isUniFrameWork } from '../../../../utils/env';
+import ToolbarItemContainer from '../toolbar-item-container/index.vue';
+import imageIcon from '../../../../assets/icon/image.png';
+import imageUniIcon from '../../../../assets/icon/image-uni.png';
+import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
+import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 
 const props = defineProps({
   // 图片源, 仅uniapp版本有效, web版本仅支持从相册中选择图片
@@ -45,26 +45,24 @@ const props = defineProps({
   // camera: 使用相机拍摄
   imageSourceType: {
     type: String,
-    default: "album",
+    default: 'album',
   },
 });
-
-const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const currentConversation = ref<IConversationModel>();
 const IMAGE_TOOLBAR_SHOW_MAP = {
   web_album: {
     icon: imageIcon,
-    title: "图片",
+    title: '图片',
   },
   uni_album: {
     icon: imageUniIcon,
-    title: "图片",
+    title: '图片',
   },
   uni_camera: {
     icon: cameraUniIcon,
-    title: "拍照",
+    title: '拍照',
   },
 };
 
@@ -76,11 +74,11 @@ TUIStore.watch(StoreName.CONV, {
 
 const imageToolbarForShow = computed((): { icon: string; title: string } => {
   if (isUniFrameWork) {
-    return props.imageSourceType === "camera"
-      ? IMAGE_TOOLBAR_SHOW_MAP["uni_camera"]
-      : IMAGE_TOOLBAR_SHOW_MAP["uni_album"];
+    return props.imageSourceType === 'camera'
+      ? IMAGE_TOOLBAR_SHOW_MAP['uni_camera']
+      : IMAGE_TOOLBAR_SHOW_MAP['uni_album'];
   } else {
-    return IMAGE_TOOLBAR_SHOW_MAP["web_album"];
+    return IMAGE_TOOLBAR_SHOW_MAP['web_album'];
   }
 });
 
@@ -92,8 +90,8 @@ const onIconClick = () => {
       // 微信小程序从基础库 2.21.0 开始， wx.chooseImage 停止维护，请使用 uni.chooseMedia 代替
       TUIGlobal?.chooseMedia({
         count: 1,
-        mediaType: ["image"], // 图片
-        sizeType: ["original", "compressed"], // 可以指定是原图还是压缩图，默认二者都有
+        mediaType: ['image'], // 图片
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
         sourceType: [props.imageSourceType], // 从相册选择或使用相机拍摄
         success: function (res: any) {
           sendImageMessage(res);
@@ -104,13 +102,8 @@ const onIconClick = () => {
       TUIGlobal?.chooseImage({
         count: 1,
         sourceType: [props.imageSourceType], // 从相册选择或使用相机拍摄
-        success: function (res: any) {
-          TUIGlobal?.getImageInfo({
-            src: res.tempFilePaths[0],
-            success: function (image: any) {
-              sendImageMessage(res, image.width, image.height);
-            },
-          });
+        success: function (res) {
+          sendImageMessage(res);
         },
       });
     }
@@ -126,17 +119,17 @@ const sendImageInWeb = (e: any) => {
     return;
   }
   sendImageMessage(e?.target);
-  e.target.value = "";
+  e.target.value = '';
 };
 
-const sendImageMessage = (files: any, width?: string, height?: string) => {
+const sendImageMessage = (files: any) => {
   if (!files) {
     return;
   }
   const options = {
     to:
-      currentConversation?.value?.groupProfile?.groupID ||
-      currentConversation?.value?.userProfile?.userID,
+      currentConversation?.value?.groupProfile?.groupID
+      || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
       file: files,
@@ -147,6 +140,7 @@ const sendImageMessage = (files: any, width?: string, height?: string) => {
   TUIChatService.sendImageMessage(options);
 };
 </script>
+
 <style lang="scss" scoped>
-@import url(../../../../assets/styles/common.scss);
+@import "../../../../assets/styles/common";
 </style>

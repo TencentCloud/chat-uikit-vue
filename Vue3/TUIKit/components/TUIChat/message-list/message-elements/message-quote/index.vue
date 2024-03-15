@@ -1,37 +1,39 @@
 <template>
   <div
     v-if="quoteContent"
-    class="reference-content"
-    :class="props.message.flow === 'in' || 'reverse'"
+    :class="{
+      'reference-content': true,
+      'reverse': message.flow === 'out',
+    }"
     @click="scrollToOriginalMessage"
   >
     <div class="max-double-line">
-    {{ quoteContent.messageSender }}: {{ decodeTextMessage(quoteContent.messageAbstract) }}
+      {{ quoteContent.messageSender }}: {{ decodeTextMessage(quoteContent.messageAbstract) }}
     </div>
   </div>
 </template>
-  
+
 <script lang="ts" setup>
-import { computed } from "../../../../../adapter-vue";
+import { computed } from '../../../../../adapter-vue';
 import {
   TUIStore,
   StoreName,
-  IMessageModel, 
-  TUITranslateService
-} from "@tencentcloud/chat-uikit-engine";
-import { getBoundingClientRect, getScrollInfo } from "@tencentcloud/universal-api";
-import { isUniFrameWork } from "../../../../../utils/env";
-import { Toast, TOAST_TYPE } from "../../../../../components/common/Toast/index";
-import type { ICloudCustomData, IQuoteContent } from "./interface.d.ts";
-import { decodeTextMessage } from "../../../utils/emojiList";
+  IMessageModel,
+  TUITranslateService,
+} from '@tencentcloud/chat-uikit-engine';
+import { getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
+import { isUniFrameWork } from '../../../../../utils/env';
+import { Toast, TOAST_TYPE } from '../../../../../components/common/Toast/index';
+import type { ICloudCustomData, IQuoteContent } from './interface.ts';
+import { decodeTextMessage } from '../../../utils/emojiList';
 
 export interface IProps {
   message: IMessageModel;
 }
 
 export interface IEmits {
-  (e: "scrollTo", scrollHeight: number): void;
-  (e: "blinkMessage", messageID: string | undefined): void;
+  (e: 'scrollTo', scrollHeight: number): void;
+  (e: 'blinkMessage', messageID: string | undefined): void;
 }
 
 const emits = defineEmits<IEmits>();
@@ -50,7 +52,7 @@ TUIStore.watch(StoreName.CHAT, {
 
 const quoteContent = computed<IQuoteContent | undefined>(() => {
   try {
-    const cloudCustomData: ICloudCustomData = JSON.parse(props.message?.cloudCustomData || "{}");
+    const cloudCustomData: ICloudCustomData = JSON.parse(props.message?.cloudCustomData || '{}');
     return cloudCustomData.messageReply;
   } catch (error) {
     return undefined;
@@ -58,7 +60,7 @@ const quoteContent = computed<IQuoteContent | undefined>(() => {
 });
 
 async function scrollToOriginalMessage() {
-  let originMessageID = quoteContent.value?.messageID;
+  const originMessageID = quoteContent.value?.messageID;
   const isOriginalMessageInScreen = messageList.some(msg => msg.ID === originMessageID);
   if (originMessageID && isOriginalMessageInScreen) {
     try {
@@ -81,7 +83,7 @@ async function scrollToOriginalMessage() {
     }
   } else {
     Toast({
-      message: TUITranslateService.t("TUIChat.无法定位到原消息"),
+      message: TUITranslateService.t('TUIChat.无法定位到原消息'),
       type: TOAST_TYPE.WARNING,
     });
   }
@@ -105,9 +107,9 @@ async function scrollToOriginalMessage() {
   -webkit-tap-highlight-color: transparent;
 }
 
-.reverse {
-  margin-left: auto;
-  margin-right: 44px;
+.reverse.reference-content {
+    margin-right: 44px;
+    margin-left: auto;
 }
 
 .max-double-line {
@@ -117,12 +119,5 @@ async function scrollToOriginalMessage() {
   max-height: 33px;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-}
-
-.reverse {
-  .reference-content {
-    margin-right: 44px;
-    margin-left: auto;
-  }
 }
 </style>

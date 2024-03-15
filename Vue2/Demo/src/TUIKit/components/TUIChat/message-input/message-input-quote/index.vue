@@ -11,25 +11,31 @@
       <div class="max-one-line">
         {{ quoteMessage.nick || quoteMessage.from }}: {{ quoteContentText }}
       </div>
-      <Icon class="input-quote-close-icon" :file="closeIcon" width="11px" height="11px" @onClick="cancelQuote" />
+      <Icon
+        class="input-quote-close-icon"
+        :file="closeIcon"
+        width="11px"
+        height="11px"
+        @onClick="cancelQuote"
+      />
     </div>
   </div>
 </template>
-  
+
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from "../../../../adapter-vue";
+import { ref, computed, onMounted, onUnmounted } from '../../../../adapter-vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUITranslateService,
   IMessageModel,
-} from "@tencentcloud/chat-uikit-engine";
-import Icon from "../../../common/Icon.vue";
-import closeIcon from "../../../../assets/icon/icon-close.svg";
-import { isPC, isUniFrameWork } from "../../../../utils/env";
-import { decodeTextMessage } from "../../utils/emojiList";
+} from '@tencentcloud/chat-uikit-engine';
+import Icon from '../../../common/Icon.vue';
+import closeIcon from '../../../../assets/icon/icon-close.svg';
+import { isPC, isUniFrameWork } from '../../../../utils/env';
+import { decodeTextMessage } from '../../utils/emojiList';
 
-const props = defineProps(["currentFunction"]);
+const props = defineProps(['currentFunction']);
 
 const TYPES = TUIChatEngine.TYPES;
 const quoteMessage = ref<IMessageModel>();
@@ -61,33 +67,36 @@ const quoteContentText = computed(() => {
       _quoteContentText = decodeTextMessage(quoteMessage.value.payload?.text);
       break;
     case TYPES.MSG_IMAGE:
-      _quoteContentText = TUITranslateService.t("TUIChat.图片");
+      _quoteContentText = TUITranslateService.t('TUIChat.图片');
       break;
     case TYPES.MSG_AUDIO:
-      _quoteContentText = TUITranslateService.t("TUIChat.语音");
+      _quoteContentText = TUITranslateService.t('TUIChat.语音');
       break;
     case TYPES.MSG_VIDEO:
-      _quoteContentText = TUITranslateService.t("TUIChat.视频");
+      _quoteContentText = TUITranslateService.t('TUIChat.视频');
       break;
     case TYPES.MSG_FILE:
-      _quoteContentText = TUITranslateService.t("TUIChat.文件");
+      _quoteContentText = TUITranslateService.t('TUIChat.文件');
       break;
     case TYPES.MSG_CUSTOM:
-      _quoteContentText = TUITranslateService.t("TUIChat.自定义");
+      _quoteContentText = TUITranslateService.t('TUIChat.自定义');
+      break;
+    case TYPES.MSG_FACE:
+      _quoteContentText = TUITranslateService.t('TUIChat.表情');
       break;
     default:
-      _quoteContentText = TUITranslateService.t("TUIChat.消息");
+      _quoteContentText = TUITranslateService.t('TUIChat.消息');
       break;
   }
   return _quoteContentText;
 });
 
 function cancelQuote() {
-  TUIStore.update(StoreName.CHAT, "quoteMessage", { message: undefined, type: "quote" });
+  TUIStore.update(StoreName.CHAT, 'quoteMessage', { message: undefined, type: 'quote' });
 }
 
-function onQuoteMessageUpdated(options?: { message: IMessageModel, type: string }) {
-  if (options?.message && options?.type === "quote") {
+function onQuoteMessageUpdated(options?: { message: IMessageModel; type: string }) {
+  if (options?.message && options?.type === 'quote') {
     quoteMessage.value = options.message;
   } else {
     quoteMessage.value = undefined;
@@ -98,9 +107,9 @@ function onConversationIDUpdated() {
   cancelQuote();
 }
 </script>
-  
+
 <style lang="scss" scoped>
-.input-quote-container {
+%common-container-style {
   margin: 5px 100px 5px 8px;
   display: flex;
   flex: 0 1 auto;
@@ -132,13 +141,19 @@ function onConversationIDUpdated() {
   }
 }
 
+.input-quote-container {
+  @extend %common-container-style;
+}
+
 .input-quote-container-h5 {
-  @extend .input-quote-container;
+  @extend %common-container-style;
+
   margin: 5px 0 0;
 }
 
 .input-quote-container-uni {
-  @extend .input-quote-container;
+  @extend %common-container-style;
+
   margin: 5px 60px 0 30px;
 }
 </style>

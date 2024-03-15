@@ -8,58 +8,61 @@
       id="conversation-actions-menu"
       ref="actionsMenuDomRef"
       :class="[
-        isPC && 'isPC',
-        'actionsMenu',
-        !isHiddenActionsMenu && 'cancelHidden',
+        isPC && 'actions-menu-pc',
+        'actions-menu',
+        !isHiddenActionsMenu && 'cancel-hidden',
       ]"
-      :style="{ top: `${_actionsMenuPosition.top}px` }"
+      :style="{
+        top: `${_actionsMenuPosition.top}px`,
+        left: `${_actionsMenuPosition.left}px`,
+      }"
     >
       <div
-        :class="['actionsMenuItem']"
+        :class="['actions-menu-item']"
         @click.stop="deleteConversation()"
       >
         {{ TUITranslateService.t("TUIConversation.删除会话") }}
       </div>
       <div
-        v-if="!props.selectedConversation.isPinned"
-        :class="['actionsMenuItem']"
+        v-if="!(props.selectedConversation && props.selectedConversation.isPinned)"
+        :class="['actions-menu-item']"
         @click.stop="handleItem({ name: CONV_OPERATION.ISPINNED })"
       >
         {{ TUITranslateService.t("TUIConversation.置顶会话") }}
       </div>
       <div
-        :class="['actionsMenuItem']"
-        v-if="props.selectedConversation.isPinned"
+        v-if="props.selectedConversation && props.selectedConversation.isPinned"
+        :class="['actions-menu-item']"
         @click.stop="handleItem({ name: CONV_OPERATION.DISPINNED })"
       >
         {{ TUITranslateService.t("TUIConversation.取消置顶") }}
       </div>
       <div
-        :class="['actionsMenuItem']"
-        v-if="!props.selectedConversation.isMuted"
+        v-if="!(props.selectedConversation && props.selectedConversation.isMuted)"
+        :class="['actions-menu-item']"
         @click.stop="handleItem({ name: CONV_OPERATION.MUTE })"
       >
         {{ TUITranslateService.t("TUIConversation.消息免打扰") }}
       </div>
       <div
-        :class="['actionsMenuItem']"
-        v-if="props.selectedConversation.isMuted"
+        v-if="props.selectedConversation && props.selectedConversation.isMuted"
+        :class="['actions-menu-item']"
         @click.stop="handleItem({ name: CONV_OPERATION.NOTMUTE })"
       >
         {{ TUITranslateService.t("TUIConversation.取消免打扰") }}
       </div>
     </div>
     <Dialog
-        :show="isShowDeleteConversationDialog"
-        :center="true"
-        :isHeaderShow="isPC"
-        @submit="handleItem({ name: CONV_OPERATION.DELETE })"
-        @update:show="updateShowDeleteConversationDialog"
-      >
+      :show="isShowDeleteConversationDialog"
+      :center="true"
+      :isHeaderShow="isPC"
+      @submit="handleItem({ name: CONV_OPERATION.DELETE })"
+      @update:show="updateShowDeleteConversationDialog"
+    >
       <p class="delDialog-title">
-        {{TUITranslateService.t(deleteConversationDialogTitle)}}
+        {{ TUITranslateService.t(deleteConversationDialogTitle) }}
       </p>
-   </Dialog>
+    </Dialog>
   </Overlay>
 </template>
 
@@ -69,30 +72,38 @@ import {
   nextTick,
   onMounted,
   computed,
-  getCurrentInstance
-} from "../../../adapter-vue";
+  getCurrentInstance,
+} from '../../../adapter-vue';
 import TUIChatEngine, {
+  IConversationModel,
   TUIStore,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import { TUIGlobal } from "@tencentcloud/universal-api";
-import { CONV_OPERATION } from "../../../constant";
-import { isPC, isUniFrameWork } from "../../../utils/env";
-import Overlay from "../../common/Overlay/index.vue";
-import Dialog from "../../common/Dialog/index.vue";
-const emits = defineEmits(["closeConversationActionMenu"]);
-const props = defineProps([
-  "actionsMenuPosition",
-  "selectedConversation",
-  "selectedConversationDomRect",
-]);
+} from '@tencentcloud/chat-uikit-engine';
+import { TUIGlobal } from '@tencentcloud/universal-api';
+import { CONV_OPERATION } from '../../../constant';
+import { isPC, isUniFrameWork } from '../../../utils/env';
+import Overlay from '../../common/Overlay/index.vue';
+import Dialog from '../../common/Dialog/index.vue';
+
+interface IProps {
+  actionsMenuPosition: {
+    top: number;
+    left?: number;
+    conversationHeight?: number;
+  };
+  selectedConversation: IConversationModel | undefined;
+  selectedConversationDomRect: DOMRect | undefined;
+}
+
+const emits = defineEmits(['closeConversationActionMenu']);
+const props = defineProps<IProps>();
 
 const thisInstance = getCurrentInstance()?.proxy || getCurrentInstance();
 const actionsMenuDomRef = ref<HTMLElement | null>();
 const isHiddenActionsMenu = ref(true);
-const isShowDeleteConversationDialog  = ref<boolean>(false);
+const isShowDeleteConversationDialog = ref<boolean>(false);
 const currentConversation = TUIStore.getConversationModel(
-  props.selectedConversation?.conversationID
+  props.selectedConversation?.conversationID || '',
 );
 const _actionsMenuPosition = ref<{
   top: number;
@@ -100,33 +111,38 @@ const _actionsMenuPosition = ref<{
   conversationHeight?: number;
 }>(props.actionsMenuPosition);
 
-
 onMounted(() => {
   checkExceedBounds();
 });
 
 const deleteConversationDialogTitle = computed(() => {
-  return props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_C2C ? "TUIConversation.删除后，将清空该聊天的消息记录"
-  : props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_GROUP ? "TUIConversation.删除后，将清空该群聊的消息记录" : ''
-})
+  return props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_C2C
+    ? 'TUIConversation.删除后，将清空该聊天的消息记录'
+    : props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_GROUP ? 'TUIConversation.删除后，将清空该群聊的消息记录' : '';
+});
 function checkExceedBounds() {
   // 组件初始渲染时，执行并自检边界有没有超出屏幕，在nextTick中处理。
   nextTick(() => {
     if (isUniFrameWork) {
-      // 处理UniFrameWork菜单低于屏幕的情况
-      const query = uni.createSelectorQuery().in(thisInstance);
+      // check exceed bounds
+      const query = TUIGlobal?.createSelectorQuery().in(thisInstance);
       query
         .select(`#conversation-actions-menu`)
         .boundingClientRect((data) => {
           if (data) {
+            // check if actionsMenu is exceed bottom of the screen
             if (data.bottom > TUIGlobal?.getWindowInfo?.().windowHeight) {
               _actionsMenuPosition.value = {
                 ...props.actionsMenuPosition,
                 top:
-                  props.actionsMenuPosition.top -
-                  props.actionsMenuPosition.conversationHeight -
-                  data.height,
+                  props.actionsMenuPosition.top
+                  - (props.actionsMenuPosition.conversationHeight || 0)
+                  - data.height,
               };
+            }
+            // check if actionsMenu is exceed right of the screen
+            if (_actionsMenuPosition.value.left + data.width + 5 > TUIGlobal.getWindowInfo().windowWidth) {
+              _actionsMenuPosition.value.left = TUIGlobal.getWindowInfo().windowWidth - data.width - 5;
             }
           }
           isHiddenActionsMenu.value = false;
@@ -137,13 +153,13 @@ function checkExceedBounds() {
       const rect = actionsMenuDomRef.value?.getBoundingClientRect();
       // PC端根据鼠标点击的位置设置actionsMenu的位置，否则使用默认值167px
       if (isPC && typeof props.actionsMenuPosition.left !== 'undefined') {
-        actionsMenuDomRef.value?.style.setProperty("left", `${props.actionsMenuPosition.left}px`);
+        _actionsMenuPosition.value.left = props.actionsMenuPosition.left;
       }
       if (rect && rect.bottom > window.innerHeight) {
-        _actionsMenuPosition.value.top =
-          props.actionsMenuPosition.top -
-          props.actionsMenuPosition.conversationHeight -
-          rect.height;
+        _actionsMenuPosition.value.top
+          = props.actionsMenuPosition.top
+          - (props.actionsMenuPosition.conversationHeight || 0)
+          - rect.height;
       }
       isHiddenActionsMenu.value = false;
     }
@@ -173,7 +189,7 @@ const handleItem = (params: { name: string }) => {
       conversationModel?.muteConversation();
       break;
   }
-  emits("closeConversationActionMenu");
+  emits('closeConversationActionMenu');
 };
 
 const deleteConversation = () => {
@@ -182,28 +198,18 @@ const deleteConversation = () => {
 
 const updateShowDeleteConversationDialog = (isShow: boolean) => {
   if (!isShow) {
-    emits("closeConversationActionMenu");
+    emits('closeConversationActionMenu');
   }
   isShowDeleteConversationDialog.value = isShow;
 };
 </script>
 
 <style scoped lang="scss">
-.overlay {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(0, 0, 0, 0);
-  z-index: 9999;
-}
-
-.cancelHidden {
+.cancel-hidden {
   opacity: 1 !important;
 }
 
-.actionsMenu {
+.actions-menu {
   position: absolute;
   left: 164px;
   cursor: pointer;
@@ -214,12 +220,13 @@ const updateShowDeleteConversationDialog = (isShow: boolean) => {
   overflow: hidden;
   opacity: 0;
 
-  .actionsMenuItem {
+  .actions-menu-item {
     padding: 7px 20px;
     font-size: 12px;
+    word-break: keep-all;
   }
 
-  &.isPC .actionsMenuItem:hover {
+  &.actions-menu-pc .actions-menu-item:hover {
     background-color: #eee;
   }
 }

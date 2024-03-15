@@ -1,32 +1,48 @@
+/* stylelint-disable-next-line selector-class-pattern */
 .TUI-profile {
-  background: #ffffff;
+  background: #fff;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+
   &-basic {
-    width: 200px;
     display: flex;
     flex-direction: row;
+    box-sizing: border-box;
+    overflow: hidden;
+
     &-avatar {
       width: 30px;
       height: 30px;
       border-radius: 5px;
       margin-right: 10px;
     }
+
     &-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      overflow: hidden;
       font-size: 14px;
+
       &-nick {
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+
       &-id {
         display: flex;
         flex-direction: row;
         overflow: hidden;
+
         &-label {
           font-weight: 400;
           color: #999;
         }
+
         &-value {
           overflow: hidden;
           text-overflow: ellipsis;
@@ -35,6 +51,7 @@
       }
     }
   }
+
   &-setting {
     &-item {
       height: 40px;
@@ -46,21 +63,26 @@
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
+
       &:hover {
         background-color: rgba(0, 110, 255, 0.1);
+
+        /* stylelint-disable-next-line selector-class-pattern */
         .TUI-profile-setting-item-children {
           display: block;
         }
       }
+
       &-label {
         font-size: 14px;
         display: flex;
         flex-direction: row;
-        align-items: center;
         justify-content: space-between;
         align-items: center;
         flex: 1;
       }
+
+      /* stylelint-disable-next-line no-descending-specificity */
       &-children {
         display: none;
         position: absolute;
@@ -70,6 +92,7 @@
         z-index: 2;
         background: #fff;
         box-shadow: 2px 1px 6px 0 rgba(2, 16, 43, 0.15);
+
         &-item {
           height: 40px;
           padding-left: 14px;
@@ -80,9 +103,11 @@
           align-items: center;
           justify-content: space-between;
           cursor: pointer;
+
           &:hover {
             background-color: rgba(0, 110, 255, 0.1);
           }
+
           &-label {
             font-size: 14px;
             display: flex;

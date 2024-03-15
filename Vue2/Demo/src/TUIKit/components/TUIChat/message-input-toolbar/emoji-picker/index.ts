@@ -1,2 +1,2 @@
-import EmojiPicker from "./index.vue";
+import EmojiPicker from './index.vue';
 export default EmojiPicker;

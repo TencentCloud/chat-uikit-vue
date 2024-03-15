@@ -14,19 +14,22 @@
   padding: 0;
   z-index: 10;
   border-radius: 5px 5px 0 0;
+
   &-main {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
     height: fit-content;
-    background-color: #ffffff;
+    background-color: #fff;
+
     .header {
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       padding: 20px;
       font-size: 16px;
+
       .header-close {
         font-family: PingFangSC-Regular;
         font-weight: 400;
@@ -34,11 +37,13 @@
         font-size: 18px;
       }
     }
+
     .footer {
       padding: 20px;
+
       .footer-submit {
-        color: #ffffff;
-        padding: 12px 0px;
+        color: #fff;
+        padding: 12px 0;
         width: 100%;
         background: #006eff;
         text-align: center;
@@ -48,6 +53,7 @@
     }
   }
 }
+
 .bottom-popup-uni {
   padding-bottom: var(--window-bottom);
 }

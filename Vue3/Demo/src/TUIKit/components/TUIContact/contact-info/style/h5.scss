@@ -1,11 +1,13 @@
-.TUI-contact-info-h5 {
+.tui-contact-info-h5 {
   padding: 0;
   overflow: hidden;
+
   &-header {
-    background-color: #ffffff;
-    padding: 10px;
+    background-color: #fff;
+    padding: 10px !important;
     display: flex;
     flex-direction: row;
+
     &-title {
       flex: 1;
       text-align: center;
@@ -14,53 +16,63 @@
       margin-right: 30px;
     }
   }
+
   &-basic {
-    padding: 10px;
-    background: #ffffff;
-    margin-top: 10px;
+    padding: 10px !important;
+    background: #fff;
+    margin-top: 10px !important;
     display: flex;
     flex-direction: row-reverse;
     justify-content: left;
     border-bottom: none;
+
     &-text {
       &-name {
         font-size: 20px;
         padding-bottom: 1px;
       }
+
       &-other {
         font-size: 14px;
         padding: 3px 0;
       }
     }
+
     &-avatar {
       border-radius: 10px;
       margin-right: 10px;
     }
   }
+
   &-more {
-    background: #ffffff;
-    margin-top: 10px;
+    background: #fff;
+    margin-top: 10px !important;
     overflow: hidden;
     padding: 0;
+
     &-item {
       width: 100%;
       box-sizing: border-box;
       overflow: hidden;
-      padding: 10px;
-      border-bottom: 1px solid #eeeeee;
+      padding: 10px !important;
+      border-bottom: 1px solid #eee;
+
       &-label {
-        color: #000000;
+        color: #000;
       }
+
       &-content {
         overflow: hidden;
         color: #979797;
         display: flex;
         flex-direction: row;
         justify-content: flex-end;
+
         &-text {
           overflow: hidden;
           display: flex;
           flex-direction: row;
+
           &-data {
             flex: 1;
             overflow: hidden;
@@ -70,40 +82,48 @@
         }
       }
     }
+
     &-item:last-child {
       border-bottom: none;
     }
   }
+
   &-button {
-    margin-top: 10px;
+    margin-top: 10px !important;
     display: flex;
     flex-direction: column;
     padding: 0;
-    background-color: #ffffff;
+    background-color: #fff;
+
     &-item {
       width: 100%;
       margin: 0;
       border: none;
-      padding: 16px;
+      padding: 16px !important;
       font-size: 16px;
-      border-bottom: 1px solid #eeeeee;
+      border-bottom: 1px solid #eee;
       height: fit-content;
+
       &::after {
         border: none;
       }
+
       &-textarea {
         background-color: #f8f8f8;
       }
     }
+
     &-item:last-child {
       border-bottom: none;
     }
-    .TUI-contact-info-button-item-cancel {
-      background-color: #ffffff;
+
+    .tui-contact-info-button-item-cancel {
+      background-color: #fff;
       color: #e54545;
     }
-    .TUI-contact-info-button-item-submit {
-      background-color: #ffffff;
+
+    .tui-contact-info-button-item-submit {
+      background-color: #fff;
       color: #006eff;
     }
   }

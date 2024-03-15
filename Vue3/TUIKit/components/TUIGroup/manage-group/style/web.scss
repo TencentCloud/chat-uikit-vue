@@ -1,3 +1,27 @@
+.btn {
+  padding: 4px 28px;
+  font-size: 12px;
+  line-height: 24px;
+  border-radius: 4px;
+}
+
+.list {
+  padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+
+  &-item {
+    padding: 14px 0;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+  }
+
+  &-between {
+    justify-content: space-between;
+  }
+}
+
 .manage {
   display: flex;
   flex-direction: column;
@@ -23,7 +47,7 @@
   }
 
   .main {
-    .userInfo {
+    .user-info {
       padding: 0 20px;
       display: flex;
       flex-direction: column;
@@ -161,29 +185,13 @@
   }
 }
 
-.list {
-  padding: 0 20px;
-  display: flex;
-  flex-direction: column;
-  &-item {
-    padding: 14px 0;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-  }
-  &-between {
-    justify-content: space-between;
-  }
-}
-
-
 .input {
   border-radius: 4px;
   padding: 4px 16px;
   font-size: 14px;
 }
 
-.groupID {
+.group-id {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -203,13 +211,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.btn {
-  padding: 4px 28px;
-  font-size: 12px;
-  line-height: 24px;
-  border-radius: 4px;
 }
 
 .slider {
@@ -234,7 +235,7 @@
   justify-content: space-between;
 }
 
-.delDialog-title {
+.del-dialog-title {
   text-align: center;
   padding: 20px 0;
 }

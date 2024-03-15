@@ -5,37 +5,8 @@
   flex: 1;
   overflow: auto;
 }
-.TUI-conversation {
-  &-content {
-    position: relative;
-    .TUI-conversation-item:hover {
-      background: rgba(0, 110, 255, 0.1);
-    }
-    .dialog {
-      position: absolute;
-      z-index: 5;
-      padding: 2px 20px;
-      cursor: pointer;
 
-      &-item {
-        top: 30px;
-        left: 164px;
-        border-radius: 8px;
-      }
-
-      .conversation-options {
-        padding: 5px 0;
-        height: 17px;
-        font-size: 12px;
-        line-height: 17px;
-      }
-
-      &-item-up {
-        top: -50px;
-      }
-    }
-  }
-
+.tui-conversation {
   &-item {
     padding: 12px;
     display: flex;
@@ -50,7 +21,7 @@
       .num {
         position: absolute;
         display: inline-block;
-        right: 0px;
+        right: 0;
         top: -5px;
         min-width: 10px;
         width: fit-content;
@@ -89,7 +60,7 @@
         left: 24px;
         top: 22px;
         border: 2px solid #fff;
-        box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
         border-radius: 50%;
 
         &-online {
@@ -102,13 +73,28 @@
       }
     }
 
+    .content-footer {
+      line-height: 16px;
+      display: flex;
+      flex-direction: column;
+
+      .time {
+        font-size: 12px;
+        line-height: 16px;
+        display: inline-block;
+        white-space: nowrap;
+      }
+    }
+
     .content {
       display: flex;
       flex: 1;
       padding-left: 8px;
       justify-content: space-between;
+
       .content-footer {
         align-items: flex-end;
+
         .icon {
           display: inline-block;
           width: 16px;
@@ -136,6 +122,7 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
+
       .middle-box {
         flex: 1;
         display: flex;
@@ -157,16 +144,35 @@
       }
     }
 
-    .content-footer {
-      line-height: 16px;
-      display: flex;
-      flex-direction: column;
+    &-content {
+      position: relative;
 
-      .time {
-        font-size: 12px;
-        line-height: 16px;
-        display: inline-block;
-        white-space: nowrap;
+      .tui-conversation-item:hover {
+        background: rgba(0, 110, 255, 0.1);
+      }
+
+      .dialog {
+        position: absolute;
+        z-index: 5;
+        padding: 2px 20px;
+        cursor: pointer;
+
+        &-item {
+          top: 30px;
+          left: 164px;
+          border-radius: 8px;
+        }
+
+        .conversation-options {
+          padding: 5px 0;
+          height: 17px;
+          font-size: 12px;
+          line-height: 17px;
+        }
+
+        &-item-up {
+          top: -50px;
+        }
       }
     }
   }

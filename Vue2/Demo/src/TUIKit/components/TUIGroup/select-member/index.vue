@@ -7,7 +7,8 @@
     :total="group.memberCount"
     @getMore="getMember"
     @search="handleSearch"
-    @complete="handleSelectedResult"/>
+    @complete="handleSelectedResult"
+  />
 </template>
 <script lang="ts" setup>
 import {
@@ -17,12 +18,12 @@ import {
   TUITranslateService,
   IGroupMember,
   IGroupModel,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref, watchEffect } from "../../../adapter-vue";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import TUICore from "@tencentcloud/tui-core";
-import SelectUser from "../../common/SelectUser/index.vue";
-import Server from "../server";
+} from '@tencentcloud/chat-uikit-engine';
+import { ref, watchEffect } from '../../../adapter-vue';
+import { Toast, TOAST_TYPE } from '../../common/Toast/index';
+import TUICore from '@tencentcloud/tui-core';
+import SelectUser from '../../common/SelectUser/index.vue';
+import Server from '../server';
 const TUIContactServer = Server.getInstance();
 const TUIConstants = TUIContactServer.constants;
 
@@ -46,7 +47,7 @@ const generateSearchServer = (isNeedSearch: any) => {
   } else {
     console.warn('请添加 TUISearch 组件');
   }
-}
+};
 
 watchEffect(() => {
   const params = TUIContactServer.getOnCallParams(TUIConstants.TUIContact.SERVICE.METHOD.SELECT_FRIEND);
@@ -58,7 +59,7 @@ watchEffect(() => {
   if (params.isNeedSearch) {
     generateSearchServer(params.isNeedSearch);
   }
-})
+});
 
 TUIStore.watch(StoreName.GRP, {
   currentGroup: (data: IGroupModel) => {
@@ -69,7 +70,7 @@ TUIStore.watch(StoreName.GRP, {
       if (selectOptions.value.filterUserIDList.indexOf(item.userID) > -1) {
         item.isDisabled = true;
       }
-    })
+    });
     userList.value = memberList.value;
   },
 });
@@ -85,24 +86,24 @@ const getMember = async () => {
 };
 
 const handleSelectedResult = (memberList: Array<any>) => {
-  TUIStore.update(StoreName.GRP, "isShowSelectComponent", false);
+  TUIStore.update(StoreName.GRP, 'isShowSelectComponent', false);
   const callback = TUIContactServer.getOnCallCallback(TUIConstants.TUIGroup.SERVICE.METHOD.SELECT_GROUP_MEMBER);
   callback && callback(memberList);
 };
 
 const searchFail = () => {
   Toast({
-    message: TUITranslateService.t("TUIGroup.该用户不存在"),
-    type: TOAST_TYPE.ERROR
+    message: TUITranslateService.t('TUIGroup.该用户不存在'),
+    type: TOAST_TYPE.ERROR,
   });
   userList.value = [...memberList.value];
-}
+};
 
 const handleSearch = async (val: string) => {
   if (!val) {
     return userList.value = memberList.value;
   }
-  
+
   try {
     const imResponse: any = await TUISearchServer.value.searchGroupMember(val);
     if (!imResponse.data[0]) {
@@ -110,7 +111,7 @@ const handleSearch = async (val: string) => {
     }
     userList.value = imResponse.data;
     const searchAllResult = memberList.value.filter((item: any) => item.userID === imResponse.data[0].userID);
-    memberList.value = searchAllResult.length ? memberList.value : [...memberList.value, ...userList.value ];
+    memberList.value = searchAllResult.length ? memberList.value : [...memberList.value, ...userList.value];
   } catch (error) {
     return searchFail();
   }

@@ -1,3 +1,4 @@
+/* stylelint-disable */
 .message-input-toolbar {
   border-top: 1px solid #f4f5f9;
   width: 100%;
@@ -27,7 +28,7 @@
 }
 
 .message-input-toolbar-h5 {
-  padding: 5px 10px 5px;
+  padding: 5px 10px;
   box-sizing: border-box;
   flex-direction: column;
 }
@@ -53,10 +54,13 @@ wx-swiper .wx-swiper-slide-frame,
   overflow: visible !important;
 }
 
-.bottom-popup,
-.bottom-popup-h5,
-.bottom-popup-uni {
-  position: sticky !important;
+.message-input-toolbar {
+
+  .bottom-popup,
+  .bottom-popup-h5,
+  .bottom-popup-uni {
+    position: sticky !important;
+  }
 }
 
 .message-input-toolbar-swiper {

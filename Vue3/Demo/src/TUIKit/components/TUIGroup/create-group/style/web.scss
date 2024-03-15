@@ -5,11 +5,13 @@
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   border-radius: 10px;
+
   .group-box {
     .group-box-header {
       display: flex;
       flex-direction: row-reverse;
       justify-content: space-between;
+
       .group-box-header-title {
         font-size: 18px;
         line-height: 30px;
@@ -21,10 +23,12 @@
     &-item {
       display: flex;
       padding: 10px 0;
+
       &-label {
         width: 84px;
       }
     }
+
     input {
       flex: 1;
       box-sizing: border-box;
@@ -38,6 +42,7 @@
 
 .select {
   flex: 1;
+
   &-item {
     padding: 12px 20px !important;
     border-radius: 2px;

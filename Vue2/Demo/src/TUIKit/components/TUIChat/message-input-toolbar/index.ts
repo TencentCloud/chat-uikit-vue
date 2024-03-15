@@ -1,2 +1,2 @@
-import MessageInputToolbar from "./index.vue";
+import MessageInputToolbar from './index.vue';
 export default MessageInputToolbar;

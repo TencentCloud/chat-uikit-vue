@@ -1,5 +1,6 @@
 <template>
   <ToolbarItemContainer
+    ref="container"
     :iconFile="evaluateIcon"
     title="评价"
     :needBottomPopup="true"
@@ -7,7 +8,6 @@
     :iconHeight="isUniFrameWork ? '26px' : '20px'"
     @onDialogShow="onDialogShow"
     @onDialogClose="onDialogClose"
-    ref="container"
   >
     <div :class="['evaluate', !isPC && 'evaluate-h5']">
       <div :class="['evaluate-header', !isPC && 'evaluate-h5-header']">
@@ -38,12 +38,12 @@
           ]"
         >
           <li
+            v-for="(item, index) in starList"
+            :key="index"
             :class="[
               'evaluate-content-list-item',
               !isPC && 'evaluate-h5-content-list-item',
             ]"
-            v-for="(item, index) in starList"
-            :key="index"
             @click.stop="selectStar(index)"
           >
             <Icon
@@ -51,22 +51,22 @@
               :file="starLightIcon"
               :width="isPC ? '20px' : '30px'"
               :height="isPC ? '20px' : '30px'"
-            ></Icon>
+            />
             <Icon
               v-else
               :file="starIcon"
               :width="isPC ? '20px' : '30px'"
               :height="isPC ? '20px' : '30px'"
-            ></Icon>
+            />
           </li>
         </ul>
         <textarea
+          v-model="comment"
           :class="[
             'evaluate-content-text',
             !isPC && 'evaluate-h5-content-text',
           ]"
-          v-model="comment"
-        ></textarea>
+        />
         <div
           :class="[
             'evaluate-content-button',
@@ -74,7 +74,7 @@
           ]"
         >
           <button
-            class="btn"
+            :class="['btn', isEvaluateValid ? 'btn-valid' : 'btn-invalid']"
             @click="submitEvaluate"
           >
             {{ TUITranslateService.t("Evaluate.提交评价") }}
@@ -98,19 +98,19 @@ import {
   TUIStore,
   StoreName,
   IConversationModel,
-  SendMessageParams,
   TUIChatService,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref } from "../../../../adapter-vue";
-import ToolbarItemContainer from "../toolbar-item-container/index.vue";
-import evaluateIcon from "../../../../assets/icon/evaluate.svg";
-import Link from "../../../../utils/documentLink";
-import Icon from "../../../common/Icon.vue";
-import starIcon from "../../../../assets/icon/star.png";
-import starLightIcon from "../../../../assets/icon/star-light.png";
-import { CHAT_MSG_CUSTOM_TYPE } from "../../../../constant";
-import { isPC, isH5, isApp, isUniFrameWork } from "../../../../utils/env";
-import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
+  SendMessageParams,
+} from '@tencentcloud/chat-uikit-engine';
+import { ref, computed } from '../../../../adapter-vue';
+import ToolbarItemContainer from '../toolbar-item-container/index.vue';
+import evaluateIcon from '../../../../assets/icon/evaluate.svg';
+import Link from '../../../../utils/documentLink';
+import Icon from '../../../common/Icon.vue';
+import starIcon from '../../../../assets/icon/star.png';
+import starLightIcon from '../../../../assets/icon/star-light.png';
+import { CHAT_MSG_CUSTOM_TYPE } from '../../../../constant';
+import { isPC, isH5, isUniFrameWork } from '../../../../utils/env';
+import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 
 const props = defineProps({
   starTotal: {
@@ -118,13 +118,13 @@ const props = defineProps({
     default: 5,
   },
 });
-const emits = defineEmits(["onDialogPopupShowOrHide"]);
+const emits = defineEmits(['onDialogPopupShowOrHide']);
 
 const container = ref();
 
 const starList = ref<number>(props.starTotal);
 const currentStarIndex = ref<number>(-1);
-const comment = ref("");
+const comment = ref('');
 const currentConversation = ref<IConversationModel>();
 
 TUIStore.watch(StoreName.CONV, {
@@ -133,16 +133,18 @@ TUIStore.watch(StoreName.CONV, {
   },
 });
 
+const isEvaluateValid = computed(() => comment.value.length || currentStarIndex.value >= 0);
+
 const onDialogShow = () => {
-  emits("onDialogPopupShowOrHide", true);
+  emits('onDialogPopupShowOrHide', true);
 };
 
 const onDialogClose = () => {
   resetEvaluate();
-  emits("onDialogPopupShowOrHide", false);
+  emits('onDialogPopupShowOrHide', false);
 };
 
-const openLink = (link: any) => {
+const openLink = () => {
   if (isPC || isH5) {
     window.open(Link?.customMessage?.url);
   }
@@ -154,7 +156,7 @@ const closeDialog = () => {
 
 const resetEvaluate = () => {
   currentStarIndex.value = -1;
-  comment.value = "";
+  comment.value = '';
 };
 
 const selectStar = (starIndex?: any) => {
@@ -166,13 +168,14 @@ const selectStar = (starIndex?: any) => {
 };
 
 const submitEvaluate = () => {
-  if (currentStarIndex.value < 0) {
+  // 评价消息，星星数和文本必须有一个才可以提交
+  if (currentStarIndex.value < 0 && !comment.value.length) {
     return;
   }
   const options = {
     to:
-      currentConversation?.value?.groupProfile?.groupID ||
-      currentConversation?.value?.userProfile?.userID,
+      currentConversation?.value?.groupProfile?.groupID
+      || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
       data: JSON.stringify({
@@ -181,12 +184,12 @@ const submitEvaluate = () => {
         score: currentStarIndex.value + 1,
         comment: comment.value,
       }),
-      description: "对本次的服务评价",
-      extension: "对本次的服务评价",
+      description: '对本次的服务评价',
+      extension: '对本次的服务评价',
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   };
-  TUIChatService.sendCustomMessage(options);
+  TUIChatService.sendCustomMessage(options as SendMessageParams);
   // 提交后关闭 dialog
   // close dialog after submit evaluate
   container?.value?.toggleDialogDisplay(false);

@@ -1,3 +1,3 @@
-import SelectFriend from "./index.vue";
+import SelectFriend from './index.vue';
 
 export default SelectFriend;

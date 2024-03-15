@@ -1,12 +1,14 @@
 <template>
   <div :class="['search-result-loading', !isPC && 'search-result-loading-h5']">
-    <Loading width="40px" height="40px" />
+    <Loading
+      width="40px"
+      height="40px"
+    />
   </div>
 </template>
 <script setup lang="ts">
-import Loading from "../../../common/Loading/index.vue";
-import { ref } from "../../../../adapter-vue";
-import { isPC } from "../../../../utils/env";
+import Loading from '../../../common/Loading/index.vue';
+import { isPC } from '../../../../utils/env';
 </script>
 <style scoped lang="scss">
 .search-result-loading {
@@ -15,6 +17,7 @@ import { isPC } from "../../../../utils/env";
   display: flex;
   justify-content: center;
   align-items: center;
+
   &-h5 {
     background-color: #f4f4f4;
   }

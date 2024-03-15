@@ -1,31 +1,31 @@
 <template>
-  <div class="progressMessage">
-    <slot></slot>
+  <div class="progress-message">
+    <slot />
     <div
       v-if="props.messageItem.status === 'unSend' && props.messageItem.progress < 1"
-      class="progressContainer"
+      class="progress-container"
     >
       <progress
         v-if="!isUniFrameWork"
         class="progress"
         :value="props.messageItem.progress"
         max="1"
-      ></progress>
+      />
       <progress
         v-else
         activeColor="#006EFF"
-        class="progressCommon"
+        class="progress-common"
         :percent="Math.round(props.messageItem.progress*100)"
-      ></progress>
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { IMessageModel } from "@tencentcloud/chat-uikit-engine";
-import { withDefaults, watch, watchEffect } from "../../../adapter-vue";
-import { isUniFrameWork } from "../../../utils/env";
-import type { IImageMessageContent } from "../../../interface";
+import type { IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { withDefaults } from '../../../adapter-vue';
+import { isUniFrameWork } from '../../../utils/env';
+import type { IImageMessageContent } from '../../../interface';
 
 const props = withDefaults(
   defineProps<{
@@ -35,17 +35,18 @@ const props = withDefaults(
   {
     content: () => ({}),
     messageItem: () => ({} as IMessageModel),
-  }
+  },
 );
 </script>
 
 <style lang="scss" scoped>
-$primaryProgressColor: #006eff;
-$primaryProgressBgColor: #fff;
-.progressMessage {
+$primary-progress-color: #006eff;
+$primary-progress-bg-color: #fff;
+
+.progress-message {
   overflow: hidden;
 
-  .progressContainer {
+  .progress-container {
     position: absolute;
     box-sizing: border-box;
     width: 100%;
@@ -57,30 +58,32 @@ $primaryProgressBgColor: #fff;
     display: flex;
     align-items: center;
 
-    .progressCommon {
+    .progress-common {
       appearance: none;
       width: 100%;
       height: 0.5rem;
     }
+
     .progress {
-      @extend .progressCommon;
-      color: $primaryProgressColor;
+      @extend .progress-common;
+
+      color: $primary-progress-color;
       border-radius: 0.25rem;
-      background: $primaryProgressBgColor;
+      background: $primary-progress-bg-color;
 
       &::-webkit-progress-value {
-        background-color: $primaryProgressColor;
+        background-color: $primary-progress-color;
         border-radius: 0.25rem;
       }
 
       &::-webkit-progress-bar {
         border-radius: 0.25rem;
-        background: $primaryProgressBgColor;
+        background: $primary-progress-bg-color;
       }
 
       &::-moz-progress-bar {
-        color: $primaryProgressColor;
-        background: $primaryProgressColor;
+        color: $primary-progress-color;
+        background: $primary-progress-color;
         border-radius: 0.25rem;
       }
     }

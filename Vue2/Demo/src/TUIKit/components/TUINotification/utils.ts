@@ -1,4 +1,4 @@
-import type { IMessageModel } from "@tencentcloud/chat-uikit-engine";
+import type { IMessageModel } from '@tencentcloud/chat-uikit-engine';
 
 /**
  * Parses a JSON string and returns the resulting object.
@@ -6,7 +6,7 @@ import type { IMessageModel } from "@tencentcloud/chat-uikit-engine";
  * @param {string} jsonString - The JSON string to parse. Default value is "{}".
  * @return {Record<string, any>} - The resulting object after parsing the JSON string.
  */
-export function safeParse(jsonString: string = "{}"): Record<string, any> {
+export function safeParse(jsonString: string = '{}'): Record<string, any> {
   try {
     return JSON.parse(jsonString);
   } catch {
@@ -16,5 +16,5 @@ export function safeParse(jsonString: string = "{}"): Record<string, any> {
 
 export function isTypingMessage(message: IMessageModel): boolean {
   const { businessID } = safeParse(message.payload?.data);
-  return businessID === "user_typing_status";
+  return businessID === 'user_typing_status';
 }

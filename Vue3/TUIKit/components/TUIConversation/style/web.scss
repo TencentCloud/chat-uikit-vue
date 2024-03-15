@@ -5,6 +5,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
   &-list {
     overflow: auto;
   }
@@ -13,11 +14,13 @@
 .tui-conversation-header {
   width: 100%;
   position: relative;
+
   .list {
     display: flex;
     align-items: center;
     border-bottom: 1px solid #F4F5F9;
     padding: 7px 0;
+
     &-item {
       flex: 1;
       display: flex;
@@ -27,16 +30,19 @@
       user-select: none;
     }
   }
+
   &-item{
     flex: 1;
     display: flex;
     align-items: center;
+
     &-title {
       padding: 0 8px;
       font-size: 16px;
       font-weight: normal;
     }
   }
+
   &-children {
     position: absolute;
     top: 100%;
@@ -44,16 +50,16 @@
     padding: 7px 9px;
     border-bottom: none;
     background-color: #fff;
-    box-shadow: 0 3px 7px 0 #00000033;
+    box-shadow: 0 3px 7px 0 #0003;
     flex-direction: column;
   }
 }
 
 .network {
-  display: flex;
   padding: 0 12px;
   display: flex;
   align-items: center;
+
   .icon-error{
     display: flex;
     justify-content: center;
@@ -65,6 +71,7 @@
     color: #fff;
     font-style: normal;
   }
+
   &-content {
     padding: 5px;
     font-size: 12px;

@@ -1,18 +1,22 @@
 <template>
-  <div class="mask" @click.self="!isWeChat && toggleView" v-if="showMask">
+  <div
+    v-if="showMask"
+    class="mask"
+    @click.self="!isWeChat && toggleView"
+  >
     <slot />
   </div>
 </template>
-  
+
 <script lang="ts" setup>
-import { ref, watchEffect } from "../../../adapter-vue";
-import { isWeChat } from "../../../utils/env";
+import { ref, watchEffect } from '../../../adapter-vue';
+import { isWeChat } from '../../../utils/env';
 
 const props = defineProps({
   show: {
     type: Boolean,
     default: () => false,
-  }
+  },
 });
 
 const showMask = ref(false);
@@ -26,12 +30,12 @@ const emit = defineEmits(['update:show']);
 const toggleView = () => {
   showMask.value = !showMask.value;
   emit('update:show', showMask.value);
-}
+};
 
 </script>
-  
+
 <style lang="scss" scoped>
-@import url('../../../assets/styles/common.scss');
+@import '../../../assets/styles/common';
 
 .mask {
   position: fixed;
@@ -40,7 +44,7 @@ const toggleView = () => {
   left: 0;
   top: 0;
   z-index: 99;
-  background: rgba(#000000, 0.5);
+  background: rgba(#000, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,4 +54,3 @@ const toggleView = () => {
   }
 }
 </style>
-  

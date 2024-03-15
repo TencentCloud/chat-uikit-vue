@@ -12,4 +12,4 @@ export interface INotificationConstructorParams {
   notificationIcon?: string;
 }
 
-export type NotificationType = "chat" | "call";
+export type NotificationType = 'chat' | 'call';

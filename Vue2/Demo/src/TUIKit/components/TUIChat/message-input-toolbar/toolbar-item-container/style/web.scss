@@ -1,14 +1,16 @@
 .toolbar-item-container {
   position: relative;
+
   &-icon {
     padding: 8px;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
+
   &-dialog {
     z-index: 5;
     position: absolute;
-    background: #ffffff;
+    background: #fff;
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
     width: fit-content;
     height: fit-content;
