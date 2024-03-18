@@ -5,7 +5,7 @@
       :class="['chat-header-back', !isPC && 'chat-header-h5-back']"
       @click="closeChat(currentConversation.conversationID)"
     >
-      <Icon :file="backSVG"></Icon>
+      <Icon :file="backSVG" />
     </div>
     <div :class="['chat-header-content', !isPC && 'chat-header-h5-content']">
       {{ currentConversationName }}
@@ -14,8 +14,9 @@
       <div
         v-for="(item, index) in extensions"
         :key="index"
-        @click.stop="handleExtensions(item)">
-        <Icon :file="item.icon"></Icon>
+        @click.stop="handleExtensions(item)"
+      >
+        <Icon :file="item.icon" />
       </div>
     </div>
   </div>
@@ -26,56 +27,68 @@ import TUIChatEngine, {
   StoreName,
   TUITranslateService,
   IConversationModel,
-} from "@tencentcloud/chat-uikit-engine";
-import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
-import { ref } from "../../../adapter-vue";
-import Icon from "../../common/Icon.vue";
-import backSVG from "../../../assets/icon/back.svg";
-import { isPC } from "../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
+import { ref, onMounted, onUnmounted } from '../../../adapter-vue';
+import Icon from '../../common/Icon.vue';
+import backSVG from '../../../assets/icon/back.svg';
+import { isPC } from '../../../utils/env';
 
-const emits = defineEmits(["closeChat"]);
+const emits = defineEmits(['closeChat']);
 const currentConversation = ref<IConversationModel>();
-const currentConversationName = ref("");
+const currentConversationName = ref('');
 const typingStatus = ref(false);
-const groupID = ref("");
-const extensions = ref<ExtensionInfo>([])
+const groupID = ref('');
+const extensions = ref<ExtensionInfo[]>([]);
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
-    const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
-    if (isGroup && currentConversation.value?.conversationID !== conversation?.conversationID) {
-      extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: !isGroup });
-    }
-    if (!isGroup) {
-      extensions.value = [];
-    }
-    currentConversation.value = conversation;
-    groupID.value = currentConversation.value?.groupProfile?.groupID;
-    currentConversationName.value = currentConversation?.value?.getShowName();
-  },
-});
-TUIStore.watch(StoreName.CHAT, {
-  typingStatus: (status: boolean) => {
-    typingStatus.value = status;
-    switch (typingStatus.value) {
-      case true:
-        currentConversationName.value =
-          TUITranslateService.t("TUIChat.对方正在输入");
-        break;
-      case false:
-        currentConversationName.value =
-          currentConversation?.value?.getShowName();
-        break;
-    }
-  },
+onMounted(() => {
+  TUIStore.watch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdated,
+  });
+
+  TUIStore.watch(StoreName.CHAT, {
+    typingStatus: onTypingStatusUpdated,
+  });
 });
 
-const closeChat = (conversationID: string) => {
-  emits("closeChat", conversationID);
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdated,
+  });
+
+  TUIStore.unwatch(StoreName.CHAT, {
+    typingStatus: onTypingStatusUpdated,
+  });
+});
+
+const closeChat = (conversationID: string | undefined) => {
+  emits('closeChat', conversationID);
 };
 
 const handleExtensions = (item: ExtensionInfo) => {
-  item.listener.onClicked({groupID: groupID.value});
+  item.listener.onClicked?.({ groupID: groupID.value });
+};
+
+function onCurrentConversationUpdated(conversation: IConversationModel) {
+  const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
+  if (isGroup && currentConversation.value?.conversationID !== conversation?.conversationID) {
+    extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: !isGroup });
+  }
+  if (!isGroup) {
+    extensions.value = [];
+  }
+  currentConversation.value = conversation;
+  groupID.value = currentConversation.value?.groupProfile?.groupID;
+  currentConversationName.value = currentConversation?.value?.getShowName();
+}
+
+function onTypingStatusUpdated(status: boolean) {
+  typingStatus.value = status;
+  if (typingStatus.value) {
+    currentConversationName.value = TUITranslateService.t('TUIChat.对方正在输入');
+  } else {
+    currentConversationName.value = currentConversation.value?.getShowName() || '';
+  }
 }
 
 </script>
@@ -94,6 +107,7 @@ const handleExtensions = (item: ExtensionInfo) => {
     font-family: PingFangSC-Medium;
     font-weight: 500;
     color: #000;
+    margin-right: 30%;
     letter-spacing: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -113,10 +127,15 @@ const handleExtensions = (item: ExtensionInfo) => {
 }
 
 .chat-header-h5 {
-  &-content {
+  &-back {
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  &-content{
+    margin: 0 20%;
+    text-align: center;
   }
 }
 </style>

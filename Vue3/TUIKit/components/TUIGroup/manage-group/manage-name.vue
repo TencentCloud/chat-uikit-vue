@@ -1,9 +1,15 @@
 <template>
   <div class="name">
     <label>{{ TUITranslateService.t(`TUIGroup.群名称`) }}</label>
-    <div v-if="isEdit" :class="[!isPC ? 'edit-h5' : '']">
+    <div
+      v-if="isEdit"
+      :class="[!isPC ? 'edit-h5' : '']"
+    >
       <main>
-        <header class="edit-h5-header" v-if="!isPC">
+        <header
+          v-if="!isPC"
+          class="edit-h5-header"
+        >
           <aside class="left">
             <h1>{{ TUITranslateService.t(`TUIGroup.修改群聊名称`) }}</h1>
             <span>{{
@@ -12,7 +18,10 @@
               )
             }}</span>
           </aside>
-          <span class="close" @click="close">{{
+          <span
+            class="close"
+            @click="close"
+          >{{
             TUITranslateService.t(`关闭`)
           }}</span>
         </header>
@@ -20,41 +29,55 @@
           <input
             v-if="isEdit"
             ref="nameInputRef"
-            class="input"
             v-model="inputGroupName"
+            class="input"
             type="text"
             @blur="updateProfile"
-          />
+          >
           <span v-if="!isPC">{{
             TUITranslateService.t(
               `TUIGroup.仅限中文、字母、数字和下划线，2-20个字`
             )
           }}</span>
         </div>
-        <footer class="edit-h5-footer" v-if="!isPC">
-          <button class="btn" @click="updateProfile">
+        <footer
+          v-if="!isPC"
+          class="edit-h5-footer"
+        >
+          <button
+            class="btn"
+            @click="updateProfile"
+          >
             {{ TUITranslateService.t(`确认`) }}
           </button>
         </footer>
       </main>
     </div>
-    <p v-if="!isEdit || !isPC" @click="close">
+    <p
+      v-if="!isEdit || !isPC"
+      @click="close"
+    >
       <span>{{ groupProfile.name }}</span>
-      <Icon :file="editIcon" v-if="isAuthor" width="14px" height="14px"></Icon>
+      <Icon
+        v-if="isAuthor"
+        :file="editIcon"
+        width="14px"
+        height="14px"
+      />
     </p>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, nextTick, watch } from "../../../adapter-vue";
+import { watchEffect, ref, nextTick, watch } from '../../../adapter-vue';
 import {
   TUITranslateService,
   IGroupModel,
-} from "@tencentcloud/chat-uikit-engine";
-import Icon from "../../common/Icon.vue";
-import editIcon from "../../../assets/icon/edit.svg";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isPC, isUniFrameWork } from "../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import Icon from '../../common/Icon.vue';
+import editIcon from '../../../assets/icon/edit.svg';
+import { Toast, TOAST_TYPE } from '../../common/Toast/index';
+import { isPC } from '../../../utils/env';
 
 const props = defineProps({
   data: {
@@ -68,28 +91,28 @@ const props = defineProps({
 });
 
 const groupProfile = ref<IGroupModel>({});
-const inputGroupName = ref("");
+const inputGroupName = ref('');
 const isEdit = ref(false);
-const nameInputRef = ref(null);
+const nameInputRef = ref<HTMLInputElement>(null);
 
 watchEffect(() => {
   groupProfile.value = props.data;
 });
 
-const emit = defineEmits(["update"]);
+const emit = defineEmits(['update']);
 const updateProfile = () => {
   if (!inputGroupName.value) {
     Toast({
-      message: TUITranslateService.t("TUIGroup.群名称不能为空"),
+      message: TUITranslateService.t('TUIGroup.群名称不能为空'),
       type: TOAST_TYPE.ERROR,
     });
   } else {
     if (inputGroupName.value !== groupProfile.value.name) {
-      emit("update", { key: "name", value: inputGroupName.value });
+      emit('update', { key: 'name', value: inputGroupName.value });
       groupProfile.value.name = inputGroupName.value;
-      inputGroupName.value = "";
+      inputGroupName.value = '';
       Toast({
-        message: TUITranslateService.t("TUIGroup.群名称修改成功"),
+        message: TUITranslateService.t('TUIGroup.群名称修改成功'),
         type: TOAST_TYPE.SUCCESS,
       });
     }
@@ -107,24 +130,24 @@ const close = () => {
 };
 watch(
   () => isEdit.value,
-  (newVal: boolean, oldVal: boolean) => {
+  (newVal: boolean) => {
     if (newVal) {
       nextTick(() => {
-        nameInputRef.value.focus();
+        nameInputRef.value?.focus();
       });
     }
-  }
+  },
 );
 </script>
 
 <style lang="scss" scoped>
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
 
 .name {
   padding: 14px 20px;
   font-weight: 400;
   font-size: 14px;
-  color: #000000;
+  color: #000;
   display: flex;
   flex-direction: column;
 
@@ -149,7 +172,7 @@ watch(
     padding: 4px 16px;
     font-weight: 400;
     font-size: 14px;
-    color: #000000;
+    color: #000;
     opacity: 0.6;
   }
 }
@@ -170,7 +193,7 @@ watch(
   z-index: 1;
 
   main {
-    background: #ffffff;
+    background: #fff;
     flex: 1;
     padding: 18px;
     border-radius: 12px 12px 0 0;
@@ -189,7 +212,7 @@ watch(
         font-family: PingFangSC-Regular;
         font-weight: 400;
         font-size: 12px;
-        color: #888888;
+        color: #888;
         letter-spacing: 0;
         padding-top: 8px;
       }
@@ -222,7 +245,7 @@ watch(
       font-family: PingFangSC-Regular;
       font-weight: 400;
       font-size: 16px;
-      color: #ffffff;
+      color: #fff;
       letter-spacing: 0;
       line-height: 27px;
       padding: 8px 0;

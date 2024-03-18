@@ -1,2 +1,2 @@
-import SearchResultDefault from "./index.vue";
+import SearchResultDefault from './index.vue';
 export default SearchResultDefault;

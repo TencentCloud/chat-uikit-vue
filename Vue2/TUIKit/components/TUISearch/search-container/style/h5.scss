@@ -2,29 +2,34 @@
   width: 100%;
   height: 100%;
   overflow: hidden;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
+
   .tui-search-container-h5-main {
     width: 100%;
     height: 100%;
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    .tui-search-tabs{
+
+    .tui-search-tabs {
       .tui-search-tabs-item {
         cursor: none;
       }
     }
+
     .tui-search-time {
       background-color: #f4f4f4;
+
       .tui-search-time-item {
         cursor: none;
-        background-color: #ffffff;
+        background-color: #fff;
       }
+
       .tui-search-time-item-selected {
-        background-color: rgba(0, 122, 255, 0.2);
+        background-color: rgba(0,122,255,0.2);
       }
     }
   }

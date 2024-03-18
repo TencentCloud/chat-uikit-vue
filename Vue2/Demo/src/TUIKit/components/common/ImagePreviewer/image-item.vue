@@ -5,7 +5,7 @@
       transform: `scale(${props.zoom}) rotate(${props.rotate}deg)`,
     }"
     :src="props.src"
-  />
+  >
 </template>
 <script setup lang="ts">
 const props = defineProps({
@@ -19,7 +19,7 @@ const props = defineProps({
   },
   src: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 </script>

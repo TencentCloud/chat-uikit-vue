@@ -1,7 +1,10 @@
 <template>
-  <div class="message-bubble">
+  <div :class="containerClassNameList">
     <!-- todo 统一组件处理-->
-    <div class="message-bubble-main-content" :class="[message.flow === 'in' ? '' : 'reverse']">
+    <div
+      class="message-bubble-main-content"
+      :class="[message.flow === 'in' ? '' : 'reverse']"
+    >
       <Avatar
         useSkeletonAnimation
         :url="message.avatar || ''"
@@ -9,7 +12,7 @@
       <main class="message-body">
         <div
           v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
-          class="message-body-nickName"
+          class="message-body-nick-name"
         >
           {{ props.content.showName }}
         </div>
@@ -20,7 +23,7 @@
               'message-body-content',
               message.flow === 'out' ? 'content-out' : 'content-in',
               message.hasRiskContent && 'content-has-risk',
-              isNoPadding ? 'content-noPadding' : '',
+              isNoPadding ? 'content-no-padding' : '',
               isNoPadding && isBlink ? 'blink-shadow' : '',
               !isNoPadding && isBlink ? 'blink-content' : '',
             ]"
@@ -29,19 +32,21 @@
               <img
                 v-if="
                   (message.type === TYPES.MSG_IMAGE || message.type === TYPES.MSG_VIDEO) &&
-                  message.hasRiskContent
+                    message.hasRiskContent
                 "
                 :class="['message-risk-replace', !isPC && 'message-risk-replace-h5']"
                 :src="riskImageReplaceUrl"
-              />
+              >
               <template v-else>
-                <slot name="messageElement"></slot>
-                <slot name="TUIEmojiPlugin"></slot>
+                <slot name="messageElement" />
+                <slot name="TUIEmojiPlugin" />
               </template>
-
             </div>
             <!-- 敏感信息失败提示 -->
-            <div v-if="message.hasRiskContent" class="content-has-risk-tips">
+            <div
+              v-if="message.hasRiskContent"
+              class="content-has-risk-tips"
+            >
               {{ riskContentText }}
             </div>
           </div>
@@ -56,11 +61,11 @@
           <!-- 加载图标 -->
           <Icon
             v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
-            class="message-label loadingCircle"
+            class="message-label loading-circle"
             :file="loadingIcon"
             :width="'15px'"
             :height="'15px'"
-          ></Icon>
+          />
           <!-- 已读 & 未读 -->
           <ReadStatus
             class="message-label align-self-bottom"
@@ -71,36 +76,46 @@
       </main>
     </div>
     <!-- 消息附加区域 -->
-    <div class="message-bubble-extra-content" :class="message.flow === 'in' || 'reverse'">
+    <div
+      :class="{
+        'message-bubble-extra-content': true,
+        'reverse': message.flow === 'out',
+      }"
+    >
       <!-- 消息引用 -->
-      <MessageQuote :message="message" @blinkMessage="blinkMessage" @scrollTo="scrollTo" />
+      <MessageQuote
+        :message="message"
+        @blinkMessage="blinkMessage"
+        @scrollTo="scrollTo"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, toRefs } from "../../../../adapter-vue";
-import TUIChatEngine, { TUITranslateService, IMessageModel } from "@tencentcloud/chat-uikit-engine";
-import Icon from "../../../common/Icon.vue";
-import ReadStatus from "./read-status/index.vue";
-import MessageQuote from "./message-quote/index.vue";
-import Avatar from "../../../common/Avatar/index.vue";
-import loadingIcon from "../../../../assets/icon/loading.png";
-import { shallowCopyMessage } from "../../utils/utils";
-import { isPC } from "../../../../utils/env";
+import { computed, toRefs } from '../../../../adapter-vue';
+import TUIChatEngine, { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import Icon from '../../../common/Icon.vue';
+import ReadStatus from './read-status/index.vue';
+import MessageQuote from './message-quote/index.vue';
+import Avatar from '../../../common/Avatar/index.vue';
+import loadingIcon from '../../../../assets/icon/loading.png';
+import { shallowCopyMessage } from '../../utils/utils';
+import { isPC } from '../../../../utils/env';
 
 interface IProps {
   messageItem: IMessageModel;
   content?: any;
   blinkMessageIDList?: string[];
+  classNameList?: string[];
 }
 
 interface IEmits {
   (e: 'resendMessage'): void;
   (e: 'blinkMessage', messageID: string): void;
-  (e: 'setReadReciptPanelVisible', visible: boolean, message?: IMessageModel): void;
+  (e: 'setReadReceiptPanelVisible', visible: boolean, message?: IMessageModel): void;
   // 下面的方法是 uniapp 专属
-  (e: "scrollTo", scrollHeight: number): void;
+  (e: 'scrollTo', scrollHeight: number): void;
 }
 
 const emits = defineEmits<IEmits>();
@@ -109,10 +124,11 @@ const props = withDefaults(defineProps<IProps>(), {
   messageItem: () => ({} as IMessageModel),
   content: () => ({}),
   blinkMessageIDList: () => [],
+  classNameList: () => [],
 });
 
 const TYPES = TUIChatEngine.TYPES;
-const riskImageReplaceUrl = "https://web.sdk.qcloud.com/component/TUIKit/assets/has_risk_default.png";
+const riskImageReplaceUrl = 'https://web.sdk.qcloud.com/component/TUIKit/assets/has_risk_default.png';
 const needLoadingIconMessageType = [
   TYPES.MSG_LOCATION,
   TYPES.MSG_TEXT,
@@ -123,9 +139,13 @@ const needLoadingIconMessageType = [
 
 const { blinkMessageIDList, messageItem: message } = toRefs(props);
 
+const containerClassNameList = computed(() => {
+  return ['message-bubble', ...props.classNameList];
+});
+
 // 当表情删除时，reactionList 会更新对应表情中 totalUserCount
 const hasEmojiReaction = computed(() => {
-  return message.value?.reactionList.some((item: any) => item.totalUserCount !== 0) 
+  return message.value?.reactionList.some((item: any) => item.totalUserCount !== 0);
 });
 
 const isNoPadding = computed(() => {
@@ -133,12 +153,12 @@ const isNoPadding = computed(() => {
 });
 
 const riskContentText = computed<string>(() => {
-  let content = TUITranslateService.t("TUIChat.涉及敏感内容") + ", ";
-  if (message.value.flow === "out") {
-    content += TUITranslateService.t("TUIChat.发送失败");
+  let content = TUITranslateService.t('TUIChat.涉及敏感内容') + ', ';
+  if (message.value.flow === 'out') {
+    content += TUITranslateService.t('TUIChat.发送失败');
   } else {
     content += TUITranslateService.t(
-      message.value.type === TYPES.MSG_AUDIO ? "TUIChat.无法收听" : "TUIChat.无法查看"
+      message.value.type === TYPES.MSG_AUDIO ? 'TUIChat.无法收听' : 'TUIChat.无法查看',
     );
   }
   return content;
@@ -153,20 +173,20 @@ const isBlink = computed(() => {
 
 function resendMessage() {
   if (!message.value?.hasRiskContent) {
-    emits("resendMessage");
+    emits('resendMessage');
   }
 }
 
 function blinkMessage(messageID: string) {
-  emits("blinkMessage", messageID);
+  emits('blinkMessage', messageID);
 }
 
 function scrollTo(scrollHeight: number) {
-  emits("scrollTo", scrollHeight);
+  emits('scrollTo', scrollHeight);
 }
 
 function openReadUserPanel() {
-  emits("setReadReciptPanelVisible", true, message.value);
+  emits('setReadReceiptPanelVisible', true, message.value);
 }
 </script>
 
@@ -184,11 +204,11 @@ function openReadUserPanel() {
   flex-direction: column;
   padding: 0 20px 25px;
   user-select: none;
-  -webkit-touch-callout: none; /*系统默认菜单被禁用*/
-  -webkit-user-select: none; /*webkit浏览器*/
-  -khtml-user-select: none; /*早期浏览器*/
-  -moz-user-select: none;/*火狐*/
-  -ms-user-select: none; /*IE10*/
+  -webkit-touch-callout: none; /* 系统默认菜单被禁用 */
+  -webkit-user-select: none; /* webkit浏览器 */
+  -khtml-user-select: none; /* 早期浏览器 */
+  -moz-user-select: none;/* 火狐 */
+  -ms-user-select: none; /* IE10 */
   .message-bubble-main-content {
     display: flex;
 
@@ -208,24 +228,30 @@ function openReadUserPanel() {
       margin: 0 8px;
       max-width: calc(100% - 54px);
 
-      .message-body-nickName {
+      .message-body-nick-name {
         margin-bottom: 4px;
         font-size: 12px;
         color: #999;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .message-body-main {
         display: flex;
         flex-direction: row;
-        min-width: 0px;
+        min-width: 0;
         box-sizing: border-box;
+
         &-reverse {
           flex-direction: row-reverse;
         }
+
         .message-body-content {
           display: flex;
           flex-direction: column;
-          min-width: 0px;
+          min-width: 0;
           box-sizing: border-box;
           padding: 12px;
           font-size: 14px;
@@ -234,6 +260,7 @@ function openReadUserPanel() {
           word-wrap: break-word;
           word-break: break-all;
           position: relative;
+
           .content-main {
             box-sizing: border-box;
             display: flex;
@@ -250,10 +277,11 @@ function openReadUserPanel() {
               height: 130px;
             }
           }
+
           .content-has-risk-tips {
             font-size: 12px;
             color: #fa5151;
-            font-family: PingFang SC;
+            font-family: PingFangSC-Regular;
             margin-top: 5px;
             border-top: 1px solid #e5c7c7;
             padding-top: 5px;
@@ -262,22 +290,22 @@ function openReadUserPanel() {
 
       .content-in {
         background: #fbfbfb;
-        border-radius: 0px 10px 10px 10px;
+        border-radius: 0 10px 10px;
       }
 
       .content-out {
         background: #dceafd;
-        border-radius: 10px 0px 10px 10px;
+        border-radius: 10px 0 10px 10px;
       }
 
-      .content-noPadding {
-        padding: 0px;
+      .content-no-padding {
+        padding: 0;
         background: transparent;
         border-radius: 10px;
         overflow: hidden;
       }
 
-      .content-noPadding.content-has-risk {
+      .content-no-padding.content-has-risk {
         padding: 12px;
       }
 
@@ -286,25 +314,26 @@ function openReadUserPanel() {
       }
 
       .blink-shadow {
-        @keyframes shadowBlink {
+        @keyframes shadow-blink {
           50% {
-            box-shadow: rgba(255, 156, 25, 1) 0px 0px 10px 0px;
+            box-shadow: rgba(255, 156, 25, 1) 0 0 10px 0;
           }
         }
 
-        box-shadow: rgba(255, 156, 25, 0) 0px 0px 10px 0px;
-        animation: shadowBlink 1s linear 3;
+        box-shadow: rgba(255, 156, 25, 0) 0 0 10px 0;
+        animation: shadow-blink 1s linear 3;
       }
 
       .blink-content {
-        @keyframes referenceBlink {
+        @keyframes reference-blink {
           50% {
             background-color: #ff9c19;
           }
         }
 
-        animation: referenceBlink 1s linear 3;
+        animation: reference-blink 1s linear 3;
       }
+
     .message-label {
       align-self: flex-end;
       font-family: PingFangSC-Regular;
@@ -312,7 +341,7 @@ function openReadUserPanel() {
       color: #b6b8ba;
       word-break: keep-all;
       flex: 0 0 auto;
-      margin: 0px 8px;
+      margin: 0 8px;
 
       &.fail {
         width: 15px;
@@ -326,12 +355,12 @@ function openReadUserPanel() {
         cursor: pointer;
       }
 
-      &.loadingCircle {
+      &.loading-circle {
         opacity: 0;
-        animation: circleLoading 2s linear 1s infinite;
+        animation: circle-loading 2s linear 1s infinite;
       }
 
-      @keyframes circleLoading {
+      @keyframes circle-loading {
         0% {
           transform: rotate(0);
           opacity: 1;
@@ -343,6 +372,7 @@ function openReadUserPanel() {
         }
       }
     }
+
     .align-self-bottom {
       align-self: flex-end;
         }

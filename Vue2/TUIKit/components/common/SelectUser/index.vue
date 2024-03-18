@@ -22,12 +22,11 @@
   </Dialog>
 </template>
 <script lang="ts" setup>
-import { ref } from "../../../adapter-vue";
-import { isPC } from "../../../utils/env";
-import Dialog from "../Dialog/index.vue";
-import Transfer from "../Transfer/index.vue";
+import { isPC } from '../../../utils/env';
+import Dialog from '../Dialog/index.vue';
+import Transfer from '../Transfer/index.vue';
 
-const emits = defineEmits(["complete", "search", "getMore"]);
+const emits = defineEmits(['complete', 'search', 'getMore']);
 
 const props = defineProps({
   isRadio: {
@@ -44,18 +43,17 @@ const props = defineProps({
   },
   userList: {
     type: Array,
-    default: [],
+    default: () => ([]),
   },
   total: {
     type: Number,
     default: 0,
-  }
-})
+  },
+});
 
 const reset = () => {
   emits('complete', []);
 };
-
 
 const submit = (dataList: any) => {
   emits('complete', dataList);
@@ -63,10 +61,9 @@ const submit = (dataList: any) => {
 
 const handleSearchUser = (userID: string) => {
   emits('search', userID);
-}
+};
 
 const handleGetMore = () => {
   emits('getMore');
-}
-
+};
 </script>

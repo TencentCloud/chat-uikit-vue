@@ -7,12 +7,13 @@
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  background: url("https://web.sdk.qcloud.com/im/assets/images/login-background.png")
-    no-repeat;
-  background-color: #ffffff;
+  background: url("https://web.sdk.qcloud.com/im/assets/images/login-background.png") no-repeat;
+  background-color: #fff;
   background-size: cover;
   background-position-x: 128px;
   background-position-y: 77px;
+  user-select: none;
+
   &-header {
     &-content {
       font-style: normal;
@@ -21,14 +22,17 @@
       text-align: center;
     }
   }
+
   &-content {
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 12px 0;
+
     &-list {
       flex: 1;
       display: flex;
+
       &-item {
         width: 24px;
         height: 24px;
@@ -37,11 +41,13 @@
         padding: 4px 0;
         font-size: 12px;
         padding-right: 15px;
+
         &:last-child {
           padding-right: 0 !important;
         }
       }
     }
+
     &-text {
       box-sizing: border-box;
       width: 288px;
@@ -51,6 +57,7 @@
       border-radius: 2px;
       resize: none;
     }
+
     &-button {
       .btn {
         border: none;
@@ -59,13 +66,26 @@
         text-align: center;
         line-height: 24px;
         padding: 2px 46px;
+        font-weight: 400;
+        color: #fff;
+      }
+
+      .btn-valid {
+        background-color: #3370ff;
         cursor: pointer;
+      }
+
+      .btn-invalid{
+        background-color: rgb(160, 207, 255);
+        cursor: not-allowed;
       }
     }
   }
+
   &-adv {
     font-size: 12px;
     text-align: center;
+
     a {
       display: inline-block;
     }

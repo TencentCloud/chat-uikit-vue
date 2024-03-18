@@ -2,6 +2,7 @@
   height: 100%;
   top: 0;
   align-items: inherit;
+
   .dialog {
     &-main {
       border-radius: 0;
@@ -12,6 +13,7 @@
       width: 100%;
       min-height: 80px;
       min-width: 120px;
+
       &-content {
         flex: 1;
         min-width: 0;
@@ -22,19 +24,20 @@
         justify-content: center;
         align-items: center;
         margin-bottom: 0;
+
         &-uniapp {
           padding: 40px 0;
         }
       }
 
       &-footer {
-        border-top: 1px solid #DDDDDD;
+        border-top: 1px solid #DDD;
 
         .btn {
           flex: 1;
           margin: 0;
           background: none;
-          border-right: 1px solid #DDDDDD;
+          border-right: 1px solid #DDD;
 
           &-default {
             color: #FF584C;

@@ -16,20 +16,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from "../../../../adapter-vue";
+import { ref, onMounted, onUnmounted } from '../../../../adapter-vue';
 import {
   TUIStore,
   StoreName,
   IMessageModel,
   IConversationModel,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import Icon from "../../../common/Icon.vue";
-import doubleArrowIcon from "../../../../assets/icon/double-arrow.svg";
-import { getBoundingClientRect } from "@tencentcloud/universal-api";
+} from '@tencentcloud/chat-uikit-engine';
+import Icon from '../../../common/Icon.vue';
+import doubleArrowIcon from '../../../../assets/icon/double-arrow.svg';
+import { getBoundingClientRect } from '@tencentcloud/universal-api';
 
 interface IEmits {
-  (key: "scrollToLatestMessage"): void;
+  (key: 'scrollToLatestMessage'): void;
 }
 const emits = defineEmits<IEmits>();
 
@@ -71,13 +71,14 @@ function getLatestMessageTime(conversation: IConversationModel | undefined) {
 }
 
 // 消息列表向上的滚动高度大于一屏时，展示滚动到最新
-async function judgeScrollOverOneScreen(e: any) {
+async function judgeScrollOverOneScreen(e: Event) {
   if (e.target) {
     try {
       const { height } = await getBoundingClientRect(`#${(e.target as HTMLElement)?.id}`, 'messageList') || {};
       const scrollHeight = (e.target as HTMLElement)?.scrollHeight || (e.detail as HTMLElement)?.scrollHeight;
-      const scrollTop = (e.target as HTMLElement)?.scrollTop || (e.detail as HTMLElement)?.scrollTop;
-      if (height && scrollHeight && (scrollTop < scrollHeight - 2 * height)) {
+      const scrollTop = (e.target as HTMLElement)?.scrollTop || (e.detail as HTMLElement)?.scrollTop || 0;
+      // while scroll over one screen show this scroll button.
+      if (scrollHeight - scrollTop > 2 * height) {
         isScrollOverOneScreen.value = true;
         return;
       }
@@ -90,15 +91,15 @@ async function judgeScrollOverOneScreen(e: any) {
 
 // 载入最新的 messageSource
 function resetMessageSource() {
-  if (TUIStore.getData(StoreName.CHAT, "messageSource") !== undefined) {
-    TUIStore.update(StoreName.CHAT, "messageSource", undefined);
+  if (TUIStore.getData(StoreName.CHAT, 'messageSource') !== undefined) {
+    TUIStore.update(StoreName.CHAT, 'messageSource', undefined);
   }
 }
 
 // 滚动到消息列表最底部
 function scrollToMessageListBottom() {
   resetMessageSource();
-  emits("scrollToLatestMessage");
+  emits('scrollToLatestMessage');
 }
 
 defineExpose({
@@ -115,7 +116,7 @@ defineExpose({
   height: 28px;
   background: #fff;
   border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0%);
+  box-shadow: 0 4px 12px -5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: row;
   align-items: center;

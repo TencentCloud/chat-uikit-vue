@@ -1,30 +1,30 @@
 .group {
-  background: #FFFFFF;
+  background: #FFF;
 
   &-list {
     &-item {
-      background: #FFFFFF;
+      background: #FFF;
 
       label {
         font-family: PingFangSC-Regular;
         font-weight: 400;
-        color: #333333;
+        color: #333;
       }
     }
 
     input {
       border: 1px solid rgba(131, 137, 153, 0.40);
       font-weight: 400;
-      color: #333333;
+      color: #333;
     }
 
     &-edit {
-      background: #FFFFFF;
+      background: #FFF;
     }
   }
 
   &-profile-footer {
-    background: #FFFFFF;
+    background: #FFF;
   }
 
   &-h5 {
@@ -33,7 +33,7 @@
     &-list-item-introduction {
       font-family: PingFangSC-Regular;
       font-weight: 400;
-      color: #888888;
+      color: #888;
 
       a {
         color: #006EFF;
@@ -55,7 +55,7 @@
     &-header {
       .left {
         font-weight: 500;
-        color: #333333;
+        color: #333;
       }
     }
 
@@ -70,19 +70,19 @@
 }
 
 header {
-  background: #FFFFFF;
+  background: #FFF;
 
   h1 {
     font-family: PingFangSC-Medium;
     font-weight: 500;
-    color: #000000;
+    color: #000;
     letter-spacing: 0;
   }
 }
 
 .btn-default {
-  background: #FFFFFF;
-  border: 1px solid #DDDDDD;
+  background: #FFF;
+  border: 1px solid #DDD;
   font-family: PingFangSC-Medium;
   font-weight: 500;
   color: #828282;
@@ -93,12 +93,12 @@ header {
   border: 0 solid #2F80ED;
   font-family: PingFangSC-Regular;
   font-weight: 400;
-  color: #FFFFFF;
+  color: #FFF;
   letter-spacing: 0;
 
   &:disabled {
     background: #e8e8e9;
-    border: 1px solid #DDDDDD;
-    color: #FFFFFF;
+    border: 1px solid #DDD;
+    color: #FFF;
   }
 }

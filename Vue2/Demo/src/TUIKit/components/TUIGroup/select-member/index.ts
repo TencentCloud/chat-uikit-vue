@@ -1,3 +1,3 @@
-import SelectMember from "./index.vue";
+import SelectMember from './index.vue';
 
 export default SelectMember;

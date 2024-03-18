@@ -1,21 +1,27 @@
 <template>
   <div id="app">
-    <router-view :key="locale" :language="locale" @changeLanguage="changeLanguage" />
+    <router-view
+      :key="locale"
+      :language="locale"
+      @changeLanguage="changeLanguage"
+    />
+    <!-- <TUIRoomKit ref="TUIRoomRef" /> -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from "./TUIKit/adapter-vue";
-import { RouterView, useRouter } from "vue-router";
-import { TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { ref } from './TUIKit/adapter-vue';
+import { RouterView, useRouter } from 'vue-router';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+// import TUIRoomKit from './TUIKit/TUIRoom/index.vue';
 const router = useRouter();
-const locale = ref<string>("zh");
+const locale = ref<string>('zh');
 TUIStore.watch(StoreName.USER, {
   kickedOut: (value: string) => {
-    if (value && router.currentRoute.value.name !== "login") {
-      localStorage.removeItem("TUIKit-userInfo");
-      router.replace({ name: "login" });
+    if (value && router.currentRoute.value.name !== 'login') {
+      localStorage.removeItem('TUIKit-userInfo');
+      router.replace({ name: 'login' });
     }
-  }
+  },
 });
 function changeLanguage(language: string) {
   locale.value = language;

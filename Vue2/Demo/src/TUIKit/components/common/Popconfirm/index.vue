@@ -2,13 +2,20 @@
   <div
     v-if="_isShow"
     class="pop"
-    @click.stop.prevent="toggleView(clickType.OUTSIDE)">
+    @click.stop.prevent="toggleView(clickType.OUTSIDE)"
+  >
     <main
       class="pop-main"
       :class="[!isPC ? 'pop-main-h5' : '']"
-      @click.stop.prevent="toggleView(clickType.INSIDE)">
-      <header class="pop-main-header" v-if="isHeaderShow">
-        <h1 class="pop-main-title">{{ title }}</h1>
+      @click.stop.prevent="toggleView(clickType.INSIDE)"
+    >
+      <header
+        v-if="isHeaderShow"
+        class="pop-main-header"
+      >
+        <h1 class="pop-main-title">
+          {{ title }}
+        </h1>
       </header>
       <div
         class="pop-main-content"
@@ -17,20 +24,32 @@
         <slot />
       </div>
       <footer class="pop-main-footer">
-        <button v-if="isConfirmButtonShow" class="btn btn-confirm" @click="popConfirm()">{{ TUITranslateService.t(confirmButtonText) }}</button>
-        <button v-if="isCancelButtonShow" class="btn btn-cancel" @click="popCancel()">{{ TUITranslateService.t(cancelButtonText) }}</button>
+        <button
+          v-if="isConfirmButtonShow"
+          class="btn btn-confirm"
+          @click="popConfirm()"
+        >
+          {{ TUITranslateService.t(confirmButtonText) }}
+        </button>
+        <button
+          v-if="isCancelButtonShow"
+          class="btn btn-cancel"
+          @click="popCancel()"
+        >
+          {{ TUITranslateService.t(cancelButtonText) }}
+        </button>
       </footer>
     </main>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs, watchEffect } from "../../../adapter-vue";
+import { ref, toRefs, watchEffect } from '../../../adapter-vue';
 import {
   TUIGlobal,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import { isUniFrameWork } from "../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { isUniFrameWork } from '../../../utils/env';
 const props = withDefaults(
   defineProps<{
     isShow: boolean;
@@ -48,18 +67,18 @@ const props = withDefaults(
     isCancelButtonShow: true,
     confirmButtonText: '确定',
     cancelButtonText: '取消',
-  }
+  },
 );
 
 const { isShow } = toRefs(props);
 const clickType = {
   OUTSIDE: 'outside',
-  INSIDE: 'inside'
+  INSIDE: 'inside',
 };
-const isPC = ref(TUIGlobal.getPlatform() === "pc");
-const isH5 = ref(TUIGlobal.getPlatform() === "h5");
+const isPC = ref(TUIGlobal.getPlatform() === 'pc');
+const isH5 = ref(TUIGlobal.getPlatform() === 'h5');
 const _isShow = ref<boolean>(false);
-const emit = defineEmits(["update:show", "popConfirm"]);
+const emit = defineEmits(['update:show', 'popConfirm']);
 
 const toggleView = (type: string) => {
   if (type === clickType.OUTSIDE) {
@@ -71,21 +90,22 @@ watchEffect(() => {
 });
 function popCancel() {
   _isShow.value = !_isShow.value;
-  emit("update:show", _isShow.value);
-};
+  emit('update:show', _isShow.value);
+}
 
 function popConfirm() {
-  emit("popConfirm");
+  emit('popConfirm');
   popCancel();
-};
+}
 </script>
 <style lang="scss" scoped>
-$popBgColor: #fff;
-$popHeader: #333;
-$confirmBgColor: #006EFF;
-$confirmTextColor: #fff;
-$concelBgColor: #666;
-$contentColor: #333;
+$pop-bg-color: #fff;
+$pop-header: #333;
+$confirm-bg-color: #006EFF;
+$confirm-text-color: #fff;
+$concel-bg-color: #666;
+$content-color: #333;
+
 .pop {
   background: rgba(0, 0, 0, .3);
   position: fixed;
@@ -103,7 +123,8 @@ $contentColor: #333;
     border-radius: 10px;
     padding: 20px 30px;
     max-width: 380px;
-    background: $popBgColor;
+    background: $pop-bg-color;
+
     &-header {
       display: flex;
       justify-content: space-between;
@@ -111,7 +132,7 @@ $contentColor: #333;
       font-size: 16px;
       line-height: 30px;
       font-weight: 500;
-      color: $popHeader;
+      color: $pop-header;
     }
 
     &-title {
@@ -119,7 +140,7 @@ $contentColor: #333;
       line-height: 30px;
       font-family: PingFangSC-Medium;
       font-weight: 500;
-      color: $contentColor;
+      color: $content-color;
     }
 
     &-content {
@@ -129,7 +150,7 @@ $contentColor: #333;
       align-items: center;
       margin-bottom: 20px;
       font-weight: 400;
-      color: $contentColor;
+      color: $content-color;
     }
 
     &-footer {
@@ -138,6 +159,7 @@ $contentColor: #333;
     }
   }
 }
+
 .pop-main-h5 {
   min-width: 220px;
   max-width: 260px;
@@ -151,18 +173,16 @@ $contentColor: #333;
   font-size: 14px;
   text-align: center;
   line-height: 20px;
+
   &-cancel {
     // border: 1px solid #dddddd;
-    color: $concelBgColor;
+    color: $concel-bg-color;
   }
 
   &-confirm {
-    background: $confirmBgColor;
-    border: 1px solid $confirmBgColor;
-    color: $confirmTextColor;
+    background: $confirm-bg-color;
+    border: 1px solid $confirm-bg-color;
+    color: $confirm-text-color;
   }
 }
-
-
-
 </style>

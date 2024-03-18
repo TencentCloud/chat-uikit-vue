@@ -1,3 +1,3 @@
-import SearchMore from "./index.vue";
+import SearchMore from './index.vue';
 
 export default SearchMore;

@@ -2,26 +2,26 @@
   <div
     class="tui-loading"
     :style="{
-      width: width,
-      height: height,
-      border: `2px solid ${color}`,
+      width: props.width,
+      height: props.height,
+      border: `2px solid ${props.color}`,
       borderTopColor: 'transparent',
     }"
-  ></div>
+  />
 </template>
 <script setup lang="ts">
 const props = defineProps({
   width: {
     type: String,
-    default: "30px",
+    default: '30px',
   },
   height: {
     type: String,
-    default: "30px",
+    default: '30px',
   },
   color: {
     type: String,
-    default: "#D9D9D9",
+    default: '#D9D9D9',
   },
 });
 </script>
@@ -32,7 +32,6 @@ const props = defineProps({
   border: 2px solid #d9d9d9;
   border-top-color: transparent;
   border-radius: 100%;
-
   animation: circle infinite 0.75s linear;
 }
 
@@ -41,6 +40,7 @@ const props = defineProps({
   0% {
     transform: rotate(0);
   }
+
   100% {
     transform: rotate(360deg);
   }

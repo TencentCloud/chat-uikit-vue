@@ -1,78 +1,97 @@
 <template>
-  <main v-if="!isUniFrameWork" class="member">
+  <main
+    v-if="!isUniFrameWork"
+    class="member"
+  >
     <ul class="list">
-      <li class="list-item" v-for="(item, index) in memberList" :key="index">
-        <aside class="aside" @click="handleMemberProfileShow(item)">
+      <li
+        v-for="(item, index) in memberList"
+        :key="index"
+        class="list-item"
+      >
+        <aside
+          class="aside"
+          @click="handleMemberProfileShow(item)"
+        >
           <img
             class="avatar"
             :src="
               item.avatar ||
-              'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
             "
             onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-          />
+          >
           <span class="name">{{ item.nick || item.userID }}</span>
           <span>{{ handleRoleName(item) }}</span>
         </aside>
         <div @click="submit(item)">
           <Icon
-            :file="delIcon"
             v-if="item.role !== 'Owner' && isShowDeleteBtn"
+            :file="delIcon"
             :width="'16px'"
             :height="'16px'"
-          ></Icon>
+          />
         </div>
       </li>
       <li
-        class="list-item"
         v-if="memberList.length < totalMember"
+        class="list-item"
         @click="getMore"
       >
         {{ TUITranslateService.t(`TUIGroup.查看更多`) }}
       </li>
     </ul>
   </main>
-  <div v-else class="edit-h5">
-    <main class="main"> 
+  <div
+    v-else
+    class="edit-h5"
+  >
+    <main class="main">
       <header class="edit-h5-header">
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群成员`) }}</h1>
         </aside>
-        <span class="close" @click="close('member')">{{
+        <span
+          class="close"
+          @click="close('member')"
+        >{{
           TUITranslateService.t(`关闭`)
         }}</span>
       </header>
       <div class="member">
         <ul class="list list-uniapp">
           <li
-            class="list-item"
             v-for="(item, index) in memberList"
             :key="index"
+            class="list-item"
           >
-            <aside class="aside" @click="handleMemberProfileShow(item)">
+            <aside
+              class="aside"
+              @click="handleMemberProfileShow(item)"
+            >
               <img
                 class="avatar"
                 :src="
                   item.avatar ||
-                  'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                    'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                 "
                 onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-              />
+              >
               <span class="name">{{ item.nick || item.userID }}</span>
               <span>{{ handleRoleName(item) }}</span>
             </aside>
             <div @click="submit(item)">
               <Icon
-                :file="delIcon"
                 v-if="item.role !== 'Owner' && isShowDeleteBtn"
+                :file="delIcon"
                 :width="'16px'"
                 :height="'16px'"
-              ></Icon>
+              />
             </div>
           </li>
           <li
-            class="list-item"
             v-if="memberList.length < totalMember"
+            class="list-item"
             @click="getMore"
           >
             {{ TUITranslateService.t(`TUIGroup.查看更多`) }}
@@ -86,12 +105,12 @@
 <script lang="ts" setup>
 import TUIChatEngine, {
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import { watchEffect, ref } from "../../../adapter-vue";
-import Icon from "../../common/Icon.vue";
-import delIcon from "../../../assets/icon/del-icon.svg";
-import { IGroupSelfInfo, IGroupMember } from "../../../interface";
-import { isUniFrameWork } from "../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { watchEffect, ref } from '../../../adapter-vue';
+import Icon from '../../common/Icon.vue';
+import delIcon from '../../../assets/icon/del-icon.svg';
+import { IGroupSelfInfo, IGroupMember } from '../../../interface';
+import { isUniFrameWork } from '../../../utils/env';
 
 const props = defineProps({
   list: {
@@ -115,59 +134,59 @@ const props = defineProps({
 const totalMember = ref(0);
 const memberList = ref<Array<IGroupMember>>([]);
 const isShowDeleteBtn = ref(false);
-const self = ref<IGroupSelfInfo>({});
+const selfValue = ref<IGroupSelfInfo>({});
 
 watchEffect(() => {
   totalMember.value = props.total;
   isShowDeleteBtn.value = props.isShowDel;
   memberList.value = props.list as Array<IGroupMember>;
-  self.value = props.self;
+  selfValue.value = props.self;
 });
 
-const emits = defineEmits(["more", "del", "handleMemberProfileShow", "close"]);
+const emits = defineEmits(['more', 'del', 'handleMemberProfileShow', 'close']);
 
 const handleRoleName = (item: any) => {
-  let name = "";
+  let name = '';
   switch (item?.role) {
     case TUIChatEngine.TYPES.GRP_MBR_ROLE_ADMIN:
-      name = TUITranslateService.t("TUIGroup.管理员");
+      name = TUITranslateService.t('TUIGroup.管理员');
       break;
     case TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER:
-      name = TUITranslateService.t("TUIGroup.群主");
+      name = TUITranslateService.t('TUIGroup.群主');
       break;
   }
   if (name) {
     name = `(${name})`;
   }
-  if (item.userID === self.value.userID) {
-    name += ` (${TUITranslateService.t("TUIGroup.我")})`;
+  if (item.userID === selfValue.value.userID) {
+    name += ` (${TUITranslateService.t('TUIGroup.我')})`;
   }
   return name;
 };
 
 const getMore = () => {
-  emits("more");
+  emits('more');
 };
 
 const submit = (item: any) => {
-  emits("del", [item]);
+  emits('del', [item]);
 };
 
 const handleMemberProfileShow = (user: any) => {
-  emits("handleMemberProfileShow", user);
+  emits('handleMemberProfileShow', user);
 };
 
 const close = (tabName: string) => {
-  emits("close", tabName);
+  emits('close', tabName);
 };
 </script>
 
 <style lang="scss" scoped>
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
 
 .member {
   flex: 1;
-  background: #ffffff;
+  background: #fff;
 
   .list {
     display: flex;
@@ -184,7 +203,7 @@ const close = (tabName: string) => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #ffffff;
+      background: #fff;
       font-size: 14px;
       overflow: hidden;
       cursor: pointer;
@@ -192,6 +211,7 @@ const close = (tabName: string) => {
       &:hover {
         background: #f1f2f6;
       }
+
       .aside {
         display: flex;
         align-items: center;
@@ -202,7 +222,7 @@ const close = (tabName: string) => {
           margin-left: 8px;
           font-weight: 400;
           font-size: 14px;
-          color: #000000;
+          color: #000;
           flex: 1;
           overflow: hidden;
           white-space: nowrap;
@@ -229,8 +249,9 @@ const close = (tabName: string) => {
   display: flex;
   align-items: flex-end;
   z-index: 1;
+
   .main {
-    background: #ffffff;
+    background: #fff;
     flex: 1;
     padding: 18px;
     border-radius: 12px 12px 0 0;
@@ -265,7 +286,7 @@ const close = (tabName: string) => {
       font-family: PingFangSC-Regular;
       font-weight: 400;
       font-size: 16px;
-      color: #ffffff;
+      color: #fff;
       letter-spacing: 0;
       line-height: 27px;
       padding: 8px 0;

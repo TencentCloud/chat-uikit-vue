@@ -7,8 +7,9 @@
     display: flex;
     flex-direction: column;
     z-index: 1000;
-    background: #ffffff;
+    background: #fff;
   }
+
   &-global,
   &-conversation {
     width: 100%;
@@ -17,12 +18,15 @@
     flex: 1;
     flex-direction: column;
   }
+
   &-conversation {
     overflow: hidden;
   }
+
   &.tui-search-main-conversation {
     box-shadow: none;
   }
+
   .search-input,
   .search-container,
   .search-result {

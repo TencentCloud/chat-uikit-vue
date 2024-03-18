@@ -1,17 +1,17 @@
-import TUICore, { TUIConstants, ExtensionInfo } from "@tencentcloud/tui-core";
+import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
 import {
   TUIStore,
   StoreName,
   TUIGroupService,
-} from "@tencentcloud/chat-uikit-engine";
-import { TUIGlobal } from "@tencentcloud/universal-api";
-import settingSVG from "../../assets/icon/setting.svg";
-import { isUniFrameWork } from "../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { TUIGlobal } from '@tencentcloud/universal-api';
+import settingSVG from '../../assets/icon/setting.svg';
+import { isUniFrameWork } from '../../utils/env';
 
 export default class TUIGroupServer {
   static instance: TUIGroupServer;
-  private onCallParamsMap: Map<String, any>;
-  private onCallCallbackMap: Map<String, Function>;
+  private onCallParamsMap: Map<string, any>;
+  private onCallCallbackMap: Map<string, () => void>;
   public constants: typeof TUIConstants;
   constructor() {
     TUICore.registerService(TUIConstants.TUIGroup.SERVICE.NAME, this);
@@ -28,43 +28,43 @@ export default class TUIGroupServer {
     return TUIGroupServer.instance;
   }
 
-  public getOnCallParams(method: String): any {
+  public getOnCallParams(method: string): any {
     return this.onCallParamsMap.get(method);
   }
 
-  public getOnCallCallback(method: String): Function | undefined {
+  public getOnCallCallback(method: string): (() => void) | undefined {
     return this.onCallCallbackMap.get(method);
   }
 
-  public async onCall(method: String, params: any, callback: Function): Promise<void> {
+  public async onCall(method: string, params: any, callback: () => void): Promise<void> {
     this.onCallParamsMap.set(method, params);
     this.onCallCallbackMap.set(method, callback);
     switch (method) {
       case TUIConstants.TUIGroup.SERVICE.METHOD.CREATE_GROUP:
-        TUIStore.update(StoreName.GRP, "isShowCreateComponent", true);
+        TUIStore.update(StoreName.GRP, 'isShowCreateComponent', true);
         isUniFrameWork && TUIGlobal?.reLaunch({
-          url: "/TUIKit/components/TUIGroup/index",
+          url: '/TUIKit/components/TUIGroup/index',
         });
         break;
       case TUIConstants.TUIGroup.SERVICE.METHOD.OPEN_GROUP_MANAGEMENT:
         TUIGroupService.switchGroup(params.groupID);
-        TUIStore.update(StoreName.GRP, "isShowManageComponent", true);
+        TUIStore.update(StoreName.GRP, 'isShowManageComponent', true);
         isUniFrameWork && TUIGlobal?.navigateTo({
-          url: "/TUIKit/components/TUIGroup/index",
+          url: '/TUIKit/components/TUIGroup/index',
         });
         break;
       case TUIConstants.TUIGroup.SERVICE.METHOD.SELECT_GROUP_MEMBER:
         TUIGroupService.switchGroup(params.groupID);
-        TUIStore.update(StoreName.GRP, "isShowSelectComponent", true);
+        TUIStore.update(StoreName.GRP, 'isShowSelectComponent', true);
         isUniFrameWork && TUIGlobal?.navigateTo({
-          url: "/TUIKit/components/TUIGroup/index",
+          url: '/TUIKit/components/TUIGroup/index',
         });
-        break;      
+        break;
     }
   }
 
   public onGetExtension(extensionID: string, params: any): Array<ExtensionInfo> {
-    let list: Array<ExtensionInfo> = [];
+    const list: Array<ExtensionInfo> = [];
     switch (extensionID) {
       case TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID:
         if (!params?.filterManageGroup) {
@@ -75,8 +75,8 @@ export default class TUIGroupServer {
             data: {},
             listener: {
               onClicked: this.groupManage.bind(this),
-            }
-          })
+            },
+          });
         }
         break;
     }
@@ -90,7 +90,7 @@ export default class TUIGroupServer {
       params,
       callback: () => {
         isUniFrameWork && TUIGlobal?.navigateBack();
-      }
-    })
+      },
+    });
   }
 }

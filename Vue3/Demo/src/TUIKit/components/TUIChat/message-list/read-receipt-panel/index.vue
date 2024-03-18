@@ -1,7 +1,7 @@
 <template>
   <Overlay
     :bg-color="'transparent'"
-    @clickHandler="closeReadReciptPanel"
+    @clickHandler="closeReadReceiptPanel"
   >
     <div
       :class="{
@@ -11,13 +11,15 @@
       }"
     >
       <div class="header">
-        <div class="header-text">{{ TUITranslateService.t("TUIChat.消息详情") }}</div>
+        <div class="header-text">
+          {{ TUITranslateService.t("TUIChat.消息详情") }}
+        </div>
         <div class="header-close-icon">
           <Icon
             size="12px"
             hotAreaSize="8"
             :file="closeIcon"
-            @onClick="closeReadReciptPanel"
+            @onClick="closeReadReceiptPanel"
           />
         </div>
       </div>
@@ -80,7 +82,10 @@
             </div>
           </template>
         </template>
-        <div v-if="isFirstLoadFinished" class="fetch-more-container">
+        <div
+          v-if="isFirstLoadFinished"
+          class="fetch-more-container"
+        >
           <FetchMore
             :isFetching="isPullDownFetching"
             :isTerminateObserve="isStopFetchMore"
@@ -93,16 +98,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from "../../../../adapter-vue";
+import { ref, onMounted, watch, nextTick } from '../../../../adapter-vue';
 
-import { IMessageModel, TUIStore, TUIChatService, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import closeIcon from "../../../../assets/icon/icon-close.svg";
-import Icon from "../../../common/Icon.vue";
-import Overlay from "../../../common/Overlay/index.vue";
-import Avatar from "../../../common/Avatar/index.vue";
-import FetchMore from "../../../common/FetchMore/index.vue";
-import type { IGroupMessageReadMemberData, IMemberData, ITabInfo, TabName } from "./interface";
-import { isMobile } from "../../../../utils/env";
+import { IMessageModel, TUIStore, TUIChatService, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import closeIcon from '../../../../assets/icon/icon-close.svg';
+import Icon from '../../../common/Icon.vue';
+import Overlay from '../../../common/Overlay/index.vue';
+import Avatar from '../../../common/Avatar/index.vue';
+import FetchMore from '../../../common/FetchMore/index.vue';
+import type { IGroupMessageReadMemberData, IMemberData, ITabInfo, TabName } from './interface';
+import { isMobile } from '../../../../utils/env';
 
 type ReadType = 'unread' | 'read' | 'all';
 
@@ -111,7 +116,7 @@ interface IProps {
 }
 
 interface IEmits {
-  (ket: "setReadReciptPanelVisible", visible: boolean, message?: IMessageModel): void;
+  (key: 'setReadReceiptPanelVisible', visible: boolean, message?: IMessageModel): void;
 }
 
 const emits = defineEmits<IEmits>();
@@ -119,8 +124,8 @@ const props = withDefaults(defineProps<IProps>(), {
   message: () => ({}) as IMessageModel,
 });
 
-let lastUnreadCursor: string = "";
-let lastReadCursor: string = "";
+let lastUnreadCursor: string = '';
+let lastReadCursor: string = '';
 const tabNameList: TabName[] = ['unread', 'read'];
 const isListFetchCompleted: Record<TabName, boolean> = {
   unread: false,
@@ -170,7 +175,7 @@ async function fetchGroupMessageRecriptMemberListByType(readType: ReadType = 'al
       }
     }
   }
-  
+
   if (readType === 'all' || readType === 'read') {
     readResult = await TUIChatService.getGroupMessageReadMemberList({
       message,
@@ -192,11 +197,11 @@ async function fetchGroupMessageRecriptMemberListByType(readType: ReadType = 'al
   return {
     unreadResult: {
       count: totalUnreadCount,
-      ...unreadResult.data
+      ...unreadResult.data,
     },
     readResult: {
       count: totalReadCount,
-      ...readResult.data
+      ...readResult.data,
     },
   };
 }
@@ -211,13 +216,15 @@ async function pullDownFetchMoreData() {
     return;
   }
   isPullDownFetching.value = true;
-  const { unreadResult, readResult } = await fetchGroupMessageRecriptMemberListByType(currentTabName.value);
-  checkStopFetchMore();
-  try {
-    tabInfo.value.unread.memberList = tabInfo.value.unread.memberList.concat(unreadResult.unreadUserInfoList || []);
-    tabInfo.value.read.memberList = tabInfo.value.read.memberList.concat(readResult.readUserInfoList || []);
-  } finally {
-    isPullDownFetching.value = false;
+  if (currentTabName.value === 'unread' || currentTabName.value === 'read') {
+    const { unreadResult, readResult } = await fetchGroupMessageRecriptMemberListByType(currentTabName.value);
+    checkStopFetchMore();
+    try {
+      tabInfo.value.unread.memberList = tabInfo.value.unread.memberList.concat(unreadResult.unreadUserInfoList || []);
+      tabInfo.value.read.memberList = tabInfo.value.read.memberList.concat(readResult.readUserInfoList || []);
+    } finally {
+      isPullDownFetching.value = false;
+    }
   }
 }
 
@@ -227,8 +234,8 @@ async function pullDownFetchMoreData() {
  * @return {Promise<void>} A promise that resolves when the function has completed.
  */
 async function initAndRefetchReceiptInfomation(): Promise<void> {
-  lastUnreadCursor = "";
-  lastReadCursor = "";
+  lastUnreadCursor = '';
+  lastReadCursor = '';
   isStopFetchMore.value = false;
   isListFetchCompleted.unread = false;
   isListFetchCompleted.read = false;
@@ -243,7 +250,7 @@ async function initAndRefetchReceiptInfomation(): Promise<void> {
  * Checks if the fetch more operation should be stopped
  * by IntersetctionObserver.disconnect().
  *
- * @return {void} 
+ * @return {void}
  */
 function checkStopFetchMore(): void {
   if (isListFetchCompleted.read && isListFetchCompleted.unread) {
@@ -272,17 +279,17 @@ function resetTabInfo(tabName: TabName, count?: number, memberList?: IMemberData
 function generateInitalTabInfo(): ITabInfo {
   return {
     read: {
-      tabName: TUITranslateService.t("TUIChat.已读"),
+      tabName: TUITranslateService.t('TUIChat.已读'),
       count: undefined,
       memberList: [],
     },
     unread: {
-      tabName: TUITranslateService.t("TUIChat.未读"),
+      tabName: TUITranslateService.t('TUIChat.未读'),
       count: undefined,
       memberList: [],
     },
     close: {
-      tabName: TUITranslateService.t("TUIChat.关闭"),
+      tabName: TUITranslateService.t('TUIChat.关闭'),
       count: undefined,
       memberList: [],
     },
@@ -299,10 +306,10 @@ function toggleTabName(tabName: TabName): void {
   currentTabName.value = tabName;
 }
 
-function closeReadReciptPanel(): void {
+function closeReadReceiptPanel(): void {
   isPanelClose.value = true;
   setTimeout(() => {
-    emits("setReadReciptPanelVisible", false);
+    emits('setReadReceiptPanelVisible', false);
   }, 200);
 }
 </script>
@@ -418,6 +425,7 @@ function closeReadReciptPanel(): void {
 
 .read-receipt-panel-mobile {
   @extend .read-receipt-panel;
+
   box-shadow: none;
   width: 100vw;
   height: 100vh;

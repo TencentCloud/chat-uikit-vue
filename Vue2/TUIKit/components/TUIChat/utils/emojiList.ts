@@ -1,13 +1,13 @@
-import { IEmojiList } from "../../../interface";
-import { EMOJI_TYPE } from "../../../constant";
-import { emojiConfig } from "./emoji-config";
+import { IEmojiList } from '../../../interface';
+import { EMOJI_TYPE } from '../../../constant';
+import { emojiConfig } from './emoji-config';
 export const basicEmojiUrl = emojiConfig.emojiBaseUrl;
 export const basicEmojiMap = emojiConfig.emojiUrlMapping;
 export const basicEmojiList = emojiConfig.emojiNameMapping;
 export const basicEmojiKey = emojiConfig.emojiKeyMapping;
 export const bigEmojiUrl = 'https://web.sdk.qcloud.com/im/assets/face-elem/';
 
-export const bigEmojiList:Array<any> = [
+export const bigEmojiList: Array<any> = [
   {
     type: EMOJI_TYPE.BIG,
     index: 1,
@@ -37,7 +37,7 @@ export const emojiList: IEmojiList = [
     url: basicEmojiUrl,
     list: Object.keys(basicEmojiList),
   },
-  ...bigEmojiList
+  ...bigEmojiList,
 ];
 
 export const decodeTextMessage = (text: string) => {
@@ -47,7 +47,7 @@ export const decodeTextMessage = (text: string) => {
   const reg = /(\[.+?\])/g;
   let txt: string = text;
   if (reg.test(text)) {
-    txt = text.replace(reg, (match) => basicEmojiList[match] || match);
+    txt = text.replace(reg, match => basicEmojiList[match] || match);
   }
   return txt;
 };
@@ -60,8 +60,7 @@ export const transformEmojiValueToKey = (text: string) => {
   const reg = /(\[.+?\])/g;
   let txt: string = text;
   if (reg.test(text)) {
-    txt = text.replace(reg, (match) => basicEmojiKey[match] || match);
+    txt = text.replace(reg, match => basicEmojiKey[match] || match);
   }
   return txt;
 };
-

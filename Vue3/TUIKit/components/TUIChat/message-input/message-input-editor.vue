@@ -2,45 +2,48 @@
   <div
     :class="['message-input-editor-container', isH5 && 'message-input-editor-container-h5']"
   >
-    <div v-if="isMuted" class="message-input-mute">
+    <div
+      v-if="isMuted"
+      class="message-input-mute"
+    >
       {{ muteText }}
     </div>
     <div
       v-if="!isMuted && enableInput"
       ref="editorDom"
       class="message-input-editor-area"
+      :contenteditable="isH5"
       @keydown.enter="handleEnter"
       @drop="handleFileDrop"
       @paste="handleFilePaste"
       @input="handleH5Input"
       @blur="handleH5Blur"
       @focus="handleH5Focus"
-      :contenteditable="isH5"
-    ></div>
+    />
   </div>
 </template>
 <script setup lang="ts">
-import { toRefs, ref, onMounted, watch } from "../../../adapter-vue";
+import { toRefs, ref, onMounted, watch, onUnmounted } from '../../../adapter-vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,
   IConversationModel,
-} from "@tencentcloud/chat-uikit-engine";
-import { Editor, type JSONContent } from "@tiptap/core";
-import Document from "@tiptap/extension-document";
-import Paragraph from "@tiptap/extension-paragraph";
-import Placeholder from "@tiptap/extension-placeholder";
-import Text from "@tiptap/extension-text";
-import Mention from "@tiptap/extension-mention";
-import CustomImage from "./message-input-file";
-import type { ITipTapEditorContent } from "../../../interface";
-import MessageInputAtSuggestion from "./message-input-at/index";
-import { isH5, isPC } from "../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { Editor, type JSONContent } from '@tiptap/core';
+import Document from '@tiptap/extension-document';
+import Paragraph from '@tiptap/extension-paragraph';
+import Placeholder from '@tiptap/extension-placeholder';
+import Text from '@tiptap/extension-text';
+import Mention from '@tiptap/extension-mention';
+import CustomImage from './message-input-file';
+import type { ITipTapEditorContent } from '../../../interface';
+import MessageInputAtSuggestion from './message-input-at/index';
+import { isH5, isPC } from '../../../utils/env';
 
 const props = defineProps({
   placeholder: {
     type: String,
-    default: "this is placeholder",
+    default: 'this is placeholder',
   },
   replayOrReferenceMessage: {
     type: Object,
@@ -52,7 +55,7 @@ const props = defineProps({
   },
   muteText: {
     type: String,
-    default: "",
+    default: '',
   },
   enableInput: {
     type: Boolean,
@@ -71,20 +74,19 @@ const props = defineProps({
     default: true,
   },
 });
-const emits = defineEmits(["sendMessage", "onTyping", "onAt"]);
+
+const emits = defineEmits(['sendMessage', 'onTyping', 'onAt']);
 const { placeholder, enableAt, enableDragUpload, enableTyping } = toRefs(props);
 const inputContentEmpty = ref(true);
 const inputBlur = ref(true);
 const isC2C = ref(false);
 const allInsertedAtInfo = new Map<string, string>();
 const editorDom = ref();
-let editor: Editor = null;
+let editor: Editor | null = null;
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
-    isC2C.value = conversation?.type === TUIChatEngine.TYPES.CONV_C2C;
-  },
-});
+function onCurrentConversationUpdated(conversation: IConversationModel) {
+  isC2C.value = conversation?.type === TUIChatEngine.TYPES.CONV_C2C;
+}
 
 onMounted(() => {
   editor = isPC
@@ -95,12 +97,12 @@ onMounted(() => {
         Paragraph,
         Text,
         Placeholder.configure({
-          emptyEditorClass: "is-editor-empty",
+          emptyEditorClass: 'is-editor-empty',
           placeholder: placeholder.value,
         }),
         Mention.configure({
           HTMLAttributes: {
-            class: "mention",
+            class: 'mention',
           },
           suggestion: enableAt.value && (MessageInputAtSuggestion() as any),
         }),
@@ -108,7 +110,7 @@ onMounted(() => {
           inline: true,
           allowBase64: true,
           HTMLAttributes: {
-            class: "custom-image",
+            class: 'custom-image',
           },
         }),
       ],
@@ -127,30 +129,40 @@ onMounted(() => {
         }
       },
       onFocus() {
-        if (isH5 && document?.getElementById("app")?.style) {
+        if (isH5 && document?.getElementById('app')?.style) {
           // set app height when keyboard popup
           const keyboardHeight = document.body.scrollHeight - window.innerHeight;
           (
-            document.getElementById("app") as any
+            document.getElementById('app') as any
           ).style.marginBottom = `${keyboardHeight}px`;
           (
-            document.getElementById("app") as any
+            document.getElementById('app') as any
           ).style.height = `calc(100% - ${keyboardHeight}px)`;
         }
         if (!enableTyping.value || !isC2C.value) return;
         inputBlur.value = true;
       },
       onBlur() {
-        if (isH5 && document?.getElementById("app")?.style) {
+        if (isH5 && document?.getElementById('app')?.style) {
           // reset app height to normal
-          (document.getElementById("app") as any).style.marginBottom = ``;
-          (document.getElementById("app") as any).style.height = `100%`;
+          (document.getElementById('app') as any).style.marginBottom = ``;
+          (document.getElementById('app') as any).style.height = `100%`;
         }
         if (!enableTyping.value || !isC2C.value) return;
         inputBlur.value = true;
       },
     })
     : null;
+
+  TUIStore.watch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdated,
+  });
+});
+
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdated,
+  });
 });
 
 const handleEnter = (e: any) => {
@@ -161,16 +173,16 @@ const handleEnter = (e: any) => {
   e?.stopPropagation();
   if (e.keyCode === 13 && e.ctrlKey) {
     // ctrl + enter: warp
-    editor?.commands?.insertContent("<p></p>");
+    editor?.commands?.insertContent('<p></p>');
   } else if (e.keyCode === 13) {
     // enter only: send message
-    emits("sendMessage");
+    emits('sendMessage');
   }
 };
 
 const handleH5Input = (e: any) => {
   if (isH5) {
-    e.data === "@" && emits("onAt", true);
+    e.data === '@' && emits('onAt', true);
     inputContentEmpty.value = editorDom.value?.childNodes ? false : true;
   }
 };
@@ -187,9 +199,9 @@ const insertAt = (atInfo: { id: string; label: string }) => {
   if (!allInsertedAtInfo.has(atInfo.id)) {
     allInsertedAtInfo.set(atInfo.id, atInfo.label);
   }
-  const mentionText = document.createElement("span");
+  const mentionText = document.createElement('span');
   mentionText.innerHTML = atInfo.label;
-  mentionText.className = "mention";
+  mentionText.className = 'mention';
   editorDom.value?.appendChild(mentionText);
 };
 
@@ -201,7 +213,7 @@ const handleFileDrop = (e: any) => {
   e.preventDefault();
   e.stopPropagation();
   if (isPC) {
-    handleFileDropOrPaste(e, "drop");
+    handleFileDropOrPaste(e, 'drop');
   }
 };
 const handleFilePaste = (e: any) => {
@@ -211,39 +223,39 @@ const handleFilePaste = (e: any) => {
     // pc 端 支持富文本复制，走富文本复制上传解析
     e.preventDefault();
     e.stopPropagation();
-    handleFileDropOrPaste(e, "paste");
+    handleFileDropOrPaste(e, 'paste');
   }
 };
 
 const handleFileDropOrPaste = async (e: any, type: string) => {
-  if (!enableDragUpload?.value && type === "drop") {
+  if (!enableDragUpload?.value && type === 'drop') {
     return;
   }
   if (
-    (type === "drop" && e.dataTransfer) ||
-    (type === "paste" && e.clipboardData)
+    (type === 'drop' && e.dataTransfer)
+    || (type === 'paste' && e.clipboardData)
   ) {
-    const files =
-      type === "drop" ? e?.dataTransfer?.files : e?.clipboardData?.files;
+    const files
+      = type === 'drop' ? e?.dataTransfer?.files : e?.clipboardData?.files;
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
-      const isImage = file.type.startsWith("image/");
+      const isImage = file.type.startsWith('image/');
       const fileSrc = isImage
         ? URL.createObjectURL(file)
         : await drawFileCanvasToImageUrl(file);
       editor?.commands?.insertContent({
-        type: "custom-image",
+        type: 'custom-image',
         attrs: {
           src: fileSrc,
           alt: file?.name,
           title: file?.name,
-          class: isImage ? "normal" : "file",
+          class: isImage ? 'normal' : 'file',
         },
       });
       fileMap.set(fileSrc, file);
       if (i === files.length - 1) {
         setTimeout(() => {
-          editor?.commands?.focus("end");
+          editor?.commands?.focus('end');
           editor?.commands?.scrollIntoView();
         }, 10);
       }
@@ -260,8 +272,8 @@ const addImageProcess = (src: string, type: string) => {
     if (fileIconDomMap.has(type)) {
       resolve(fileIconDomMap.get(type));
     } else {
-      let img = new Image();
-      img.crossOrigin = "anonymous";
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         fileIconDomMap.set(type, img);
         resolve(img);
@@ -275,18 +287,18 @@ const addImageProcess = (src: string, type: string) => {
 // draw file tag canvas
 const drawFileCanvasToImageUrl = async (file: any) => {
   const { name, type } = file;
-  const canvas = document.createElement("canvas");
-  let width = 160;
-  let height = 50;
-  canvas.style.width = width + "px";
-  canvas.style.height = height + "px";
+  const canvas = document.createElement('canvas');
+  const width = 160;
+  const height = 50;
+  canvas.style.width = width + 'px';
+  canvas.style.height = height + 'px';
   // 设置内存中的实际大小（缩放以考虑额外的像素密度）
-  var scale = window.devicePixelRatio; // 在视网膜屏幕上更改为 1 以查看模糊
+  const scale = window.devicePixelRatio; // 在视网膜屏幕上更改为 1 以查看模糊
   canvas.width = Math.floor(width * scale);
   canvas.height = Math.floor(height * scale);
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
   if (!ctx) {
-    return "";
+    return '';
   }
   // 标准化坐标系以使用 css 像素
   ctx.scale(scale, scale);
@@ -303,30 +315,30 @@ const drawFileCanvasToImageUrl = async (file: any) => {
 };
 
 const handleFileIconForShow = (type: string) => {
-  const urlBase = "https://web.sdk.qcloud.com/component/TUIKit/assets/file-";
+  const urlBase = 'https://web.sdk.qcloud.com/component/TUIKit/assets/file-';
   const fileTypes = [
-    "image",
-    "pdf",
-    "text",
-    "ppt",
-    "presentation",
-    "sheet",
-    "zip",
-    "word",
-    "video",
-    "unknown",
+    'image',
+    'pdf',
+    'text',
+    'ppt',
+    'presentation',
+    'sheet',
+    'zip',
+    'word',
+    'video',
+    'unknown',
   ];
-  let url = "";
-  let iconType = "";
+  let url = '';
+  let iconType = '';
   fileTypes.forEach((typeName: string) => {
     if (type.includes(typeName)) {
-      url = urlBase + typeName + ".svg";
+      url = urlBase + typeName + '.svg';
       iconType = typeName;
     }
   });
   return {
-    iconSrc: url ? url : urlBase + "unknown.svg",
-    iconType: iconType ? iconType : "unknown",
+    iconSrc: url ? url : urlBase + 'unknown.svg',
+    iconType: iconType ? iconType : 'unknown',
   };
 };
 
@@ -335,11 +347,11 @@ const handleNameForShow = (value: string): string => {
   if (!value) {
     return value;
   }
-  let res = "";
+  let res = '';
   let length = 0;
   for (let i = 0; i < value?.length; i++) {
     if (length > 16) {
-      res += "...";
+      res += '...';
       break;
     }
     res += value[i];
@@ -361,15 +373,15 @@ function parsePCEditorContent(): Array<ITipTapEditorContent> {
   const content: Array<ITipTapEditorContent> = [];
   handleEditorContent(editorJSON, content);
   if (
-    content.length > 0 &&
-    content[content.length - 1] &&
-    content[content.length - 1]?.type === "text" &&
-    content[content.length - 1]?.payload?.text?.endsWith("\n")
+    content.length > 0
+    && content[content.length - 1]
+    && content[content.length - 1]?.type === 'text'
+    && content[content.length - 1]?.payload?.text?.endsWith('\n')
   ) {
     const text = content[content.length - 1].payload.text;
     content[content.length - 1].payload.text = text?.substring(
       0,
-      text.lastIndexOf("\n")
+      text.lastIndexOf('\n'),
     );
   }
   return content;
@@ -380,11 +392,11 @@ function handleEditorContent(root: JSONContent, content: Array<ITipTapEditorCont
     return;
   }
   if (
-    root.type !== "text" &&
-    root.type !== "custom-image" &&
-    root.type !== "mention"
+    root.type !== 'text'
+    && root.type !== 'custom-image'
+    && root.type !== 'mention'
   ) {
-    if (root.type === "paragraph") {
+    if (root.type === 'paragraph') {
       handleEditorNode(root, content);
     }
     if (root.content?.length) {
@@ -400,58 +412,58 @@ function handleEditorContent(root: JSONContent, content: Array<ITipTapEditorCont
 
 function handleEditorNode(node: JSONContent, content: Array<ITipTapEditorContent>) {
   // handle enter
-  if (node.type === "paragraph") {
+  if (node.type === 'paragraph') {
     if (
-      content.length > 0 &&
-      content[content.length - 1] &&
-      content[content.length - 1]?.type === "text"
+      content.length > 0
+      && content[content.length - 1]
+      && content[content.length - 1]?.type === 'text'
     ) {
-      content[content.length - 1].payload.text += "\n";
+      content[content.length - 1].payload.text += '\n';
     }
   } else if (
-    node.type === "text" ||
-    (node.type === "custom-image" && node?.attrs?.class === "emoji")
+    node.type === 'text'
+    || (node.type === 'custom-image' && node?.attrs?.class === 'emoji')
   ) {
     // 处理 text 和 emoji
-    const text = node.type === "text" ? node?.text : node?.attrs?.alt;
+    const text = node.type === 'text' ? node?.text : node?.attrs?.alt;
     if (
-      content.length > 0 &&
-      content[content.length - 1] &&
-      content[content.length - 1]?.type === "text"
+      content.length > 0
+      && content[content.length - 1]
+      && content[content.length - 1]?.type === 'text'
     ) {
       content[content.length - 1].payload.text += text;
     } else {
       content.push({
-        type: "text",
+        type: 'text',
         payload: { text: text },
       });
     }
   } else if (
-    node.type === "custom-image" &&
-    node?.attrs?.class === "normal"
+    node.type === 'custom-image'
+    && node?.attrs?.class === 'normal'
   ) {
     // 处理富文本图像
     content.push({
-      type: "image",
+      type: 'image',
       payload: { file: fileMap?.get(node?.attrs?.src) },
     });
-  } else if (node.type === "custom-image" && node?.attrs?.class === "file") {
+  } else if (node.type === 'custom-image' && node?.attrs?.class === 'file') {
     const file = fileMap?.get(node?.attrs?.src);
     content.push({
-      type: file?.type?.includes("video") ? "video" : "file",
+      type: file?.type?.includes('video') ? 'video' : 'file',
       payload: { file },
     });
-  } else if (node.type === "mention") {
-    const text = "@" + node?.attrs?.label + " ";
+  } else if (node.type === 'mention') {
+    const text = '@' + node?.attrs?.label + ' ';
     if (
-      content.length > 0 &&
-      content[content.length - 1] &&
-      content[content.length - 1]?.type === "text"
+      content.length > 0
+      && content[content.length - 1]
+      && content[content.length - 1]?.type === 'text'
     ) {
       content[content.length - 1].payload.text += text;
     } else {
       content.push({
-        type: "text",
+        type: 'text',
         payload: { text: text },
       });
     }
@@ -464,27 +476,34 @@ function handleEditorNode(node: JSONContent, content: Array<ITipTapEditorContent
 }
 
 function parseH5EditorContent() {
-  let root = editorDom.value;
-  let text: string = "";
-  let atUserList: Array<string> = [];
-  for (const child of root?.childNodes) {
-    if (
-      child.nodeName === "#text" ||
-      child.nodeName === "SPAN" ||
-      (child as HTMLElement).classList?.contains("custom-image-emoji") ||
-      (child as HTMLElement).classList?.contains("mention")
-    ) {
-      text += child.nodeValue || (child as any).alt || child.innerHTML;
+  const root = editorDom.value;
+  let text: string = '';
+  const atUserList: Array<string> = [];
+  try {
+    for (const child of root.childNodes) {
+      if (
+        child.nodeName === '#text'
+        || child.nodeName === 'SPAN'
+        || (child as HTMLElement).classList?.contains('custom-image-emoji')
+        || (child as HTMLElement).classList?.contains('mention')
+      ) {
+        text += child.nodeValue || (child as any).alt || child.innerHTML;
+      }
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
     }
   }
+
   allInsertedAtInfo?.forEach((value: string, key: string) => {
-    if (text?.includes("@" + value)) {
+    if (text.includes('@' + value)) {
       atUserList.push(key);
     }
   });
   return [
     {
-      type: "text",
+      type: 'text',
       payload: {
         text,
         atUserList,
@@ -496,22 +515,22 @@ function parseH5EditorContent() {
 const addEmoji = (emojiData: any) => {
   if (isPC) {
     editor?.commands?.insertContent({
-      type: "custom-image",
+      type: 'custom-image',
       attrs: {
         src: emojiData?.url,
         alt: emojiData?.emoji.key,
         title: emojiData?.emoji.key,
-        class: "emoji",
+        class: 'emoji',
       },
     });
   } else {
-    const emojiImgNode = document.createElement("img");
-    emojiImgNode?.setAttribute("src", emojiData?.url);
-    emojiImgNode?.setAttribute("class", "custom-image custom-image-emoji");
-    emojiImgNode?.setAttribute("alt", emojiData?.emoji.key);
-    emojiImgNode?.setAttribute("title", emojiData?.emoji.key);
-    emojiImgNode?.setAttribute("width", "20px");
-    emojiImgNode?.setAttribute("height", "20px");
+    const emojiImgNode = document.createElement('img');
+    emojiImgNode?.setAttribute('src', emojiData?.url);
+    emojiImgNode?.setAttribute('class', 'custom-image custom-image-emoji');
+    emojiImgNode?.setAttribute('alt', emojiData?.emoji.key);
+    emojiImgNode?.setAttribute('title', emojiData?.emoji.key);
+    emojiImgNode?.setAttribute('width', '20px');
+    emojiImgNode?.setAttribute('height', '20px');
     editorDom.value?.appendChild(emojiImgNode);
   }
   if (!isH5) {
@@ -525,16 +544,16 @@ const addEmoji = (emojiData: any) => {
 
 function placeCaretAtEnd(el: HTMLElement) {
   el.focus();
-  if (typeof window.getSelection !== "undefined"
-    && typeof document.createRange !== "undefined") {
-    let range = document.createRange();
+  if (typeof window.getSelection !== 'undefined'
+    && typeof document.createRange !== 'undefined') {
+    const range = document.createRange();
     range.selectNodeContents(el);
     range.collapse(false);
-    let sel = window.getSelection();
+    const sel = window.getSelection();
     sel?.removeAllRanges();
     sel?.addRange(range);
-  } else if (typeof document.body?.createTextRange !== "undefined") {
-    let textRange = document.body.createTextRange();
+  } else if (typeof document.body?.createTextRange !== 'undefined') {
+    const textRange = document.body.createTextRange();
     textRange.moveToElementText(el);
     textRange.collapse(false);
     textRange.select();
@@ -554,7 +573,7 @@ const resetEditor = () => {
     editor?.commands?.focus();
   } else {
     allInsertedAtInfo?.clear();
-    editorDom.value.innerHTML = "";
+    editorDom.value.innerHTML = '';
   }
 };
 
@@ -566,13 +585,13 @@ watch(
   () => [inputContentEmpty.value, inputBlur.value],
   (newVal: any, oldVal: any) => {
     if (newVal !== oldVal) {
-      emits("onTyping", inputContentEmpty.value, inputBlur.value);
+      emits('onTyping', inputContentEmpty.value, inputBlur.value);
     }
   },
   {
     immediate: true,
     deep: true,
-  }
+  },
 );
 
 defineExpose({
@@ -586,7 +605,7 @@ defineExpose({
 </script>
 
 <style scoped lang="scss">
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
 
 .message-input-editor {
   &-container {
@@ -595,7 +614,7 @@ defineExpose({
     display: flex;
     flex-direction: column;
     flex: 1;
-    padding: 3px 10px 10px 10px;
+    padding: 3px 10px 10px;
   }
 
   &-area {
@@ -612,7 +631,7 @@ defineExpose({
     box-sizing: border-box;
     flex: 1;
     display: flex;
-    color: #999999;
+    color: #999;
     font-size: 14px;
     justify-content: center;
     align-items: center;
@@ -625,7 +644,7 @@ defineExpose({
   height: auto;
   background: #f4f5f9;
   border-radius: 9.4px;
-  padding: 8px 0px 8px 10px;
+  padding: 8px 0 8px 10px;
   font-size: 16px !important;
   max-height: 86px;
   margin-right: 7px;
@@ -634,10 +653,6 @@ defineExpose({
   .message-input-editor-area {
     line-height: 20px;
     overflow: hidden;
-    -moz-hyphens: auto;
-    -ms-hyphens: auto;
-    -webkit-hyphens: auto;
-    -webkit-user-select: text;
     user-select: text;
     hyphens: auto;
     word-wrap: break-word;
@@ -647,6 +662,7 @@ defineExpose({
 }
 </style>
 <style lang="scss">
+/* stylelint-disable-next-line selector-class-pattern */
 .ProseMirror {
   min-height: 100%;
   height: fit-content;
@@ -659,7 +675,6 @@ defineExpose({
   div,
   ul,
   ol,
-  dl,
   dt,
   dd,
   li,
@@ -680,7 +695,6 @@ defineExpose({
     }
   }
 
-  -webkit-user-select: text;
   user-select: text;
 
   &-focused {
@@ -689,6 +703,7 @@ defineExpose({
   }
 
   img {
+    /* stylelint-disable-next-line selector-class-pattern */
     &.ProseMirror-selectednode {
       outline: 2px solid #68cef8;
     }
@@ -716,7 +731,7 @@ defineExpose({
       display: none;
     }
   }
-
+  /* stylelint-disable-next-line selector-class-pattern */
   .ProseMirror-selectednode {
     outline: 2px solid #68cef8;
     cursor: none;
@@ -724,7 +739,6 @@ defineExpose({
 
   p,
   [contenteditable] {
-    -webkit-user-select: text;
     user-select: text;
   }
 

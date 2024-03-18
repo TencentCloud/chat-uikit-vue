@@ -13,13 +13,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onUnmounted } from "../../../../../adapter-vue";
+import { computed, ref, onMounted, onUnmounted } from '../../../../../adapter-vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,
   IMessageModel,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
+} from '@tencentcloud/chat-uikit-engine';
 
 interface IProps {
   message: IMessageModel;
@@ -44,7 +44,7 @@ enum ReadState {
 
 const TYPES = TUIChatEngine.TYPES;
 // 用户级别的已读回执开关 优先级最高
-const isDisplayMessageReadReceipt = ref<boolean>(TUIStore.getData(StoreName.USER, "displayMessageReadReceipt"));
+const isDisplayMessageReadReceipt = ref<boolean>(TUIStore.getData(StoreName.USER, 'displayMessageReadReceipt'));
 
 onMounted(() => {
   TUIStore.watch(StoreName.USER, {
@@ -72,7 +72,7 @@ const isShowReadStatus = computed<boolean>(() => {
     hasRiskContent,
     conversationID,
     conversationType,
-    needReadReceipt = false
+    needReadReceipt = false,
   } = props.message;
 
   // 异步消息打击 消息已发出判断是否存在风险内容
@@ -89,19 +89,19 @@ const isShowReadStatus = computed<boolean>(() => {
   if (type === TYPES.MSG_CUSTOM) {
     const message = TUIStore.getMessageModel(ID);
     // 如果是信令消息 不展示阅读状态
-    if (message.getSignalingInfo() !== null) {
+    if (message?.getSignalingInfo() !== null) {
       return false;
     }
   }
-  
+
   // 未成功消息 接收消息 不展示阅读状态
-  if (flow !== "out" || status !== "success") {
+  if (flow !== 'out' || status !== 'success') {
     return false;
   }
-  
-  if (conversationType === "GROUP") {
+
+  if (conversationType === 'GROUP') {
     return needReadReceipt;
-  } else if (conversationType === "C2C") {
+  } else if (conversationType === 'C2C') {
     return true;
   }
   return false;
@@ -110,13 +110,13 @@ const isShowReadStatus = computed<boolean>(() => {
 const readState = computed<ReadState>(() => {
   const { conversationType, needReadReceipt = false, isPeerRead = false } = props.message;
   const { readCount = 0, unreadCount = 0, isPeerRead: isReceiptPeerRead = false } = props.message.readReceiptInfo;
-  if (conversationType === "C2C") {
+  if (conversationType === 'C2C') {
     if (needReadReceipt) {
       return isReceiptPeerRead ? ReadState.Read : ReadState.Unread;
     } else {
       return isPeerRead ? ReadState.Read : ReadState.Unread;
     }
-  } else if (conversationType === "GROUP") {
+  } else if (conversationType === 'GROUP') {
     if (needReadReceipt) {
       if (readCount === 0) {
         return ReadState.Unread;
@@ -136,15 +136,15 @@ const readStatusText = computed(() => {
   const { readCount = 0 } = props.message.readReceiptInfo;
   switch (readState.value) {
     case ReadState.Read:
-      return TUITranslateService.t("TUIChat.已读")
+      return TUITranslateService.t('TUIChat.已读');
     case ReadState.Unread:
-      return TUITranslateService.t("TUIChat.未读");
+      return TUITranslateService.t('TUIChat.未读');
     case ReadState.AllRead:
-      return TUITranslateService.t("TUIChat.全部已读");
+      return TUITranslateService.t('TUIChat.全部已读');
     case ReadState.PartiallyRead:
-      return `${readCount}${TUITranslateService.t("TUIChat.人已读")}`;
+      return `${readCount}${TUITranslateService.t('TUIChat.人已读')}`;
     default:
-      return "";
+      return '';
   }
 });
 
@@ -160,15 +160,15 @@ const isUseUnreadStyle = computed(() => {
 
 const isHoverFingerPointer = computed<boolean>(() => {
   return (
-    props.message.needReadReceipt &&
-    props.message.conversationType === "GROUP" &&
-    ( readState.value === ReadState.PartiallyRead || readState.value === ReadState.Unread )
+    props.message.needReadReceipt
+    && props.message.conversationType === 'GROUP'
+    && (readState.value === ReadState.PartiallyRead || readState.value === ReadState.Unread)
   );
 });
 
 function openReadUserPanel() {
   if (isHoverFingerPointer.value) {
-    emits("openReadUserPanel");
+    emits('openReadUserPanel');
   }
 }
 

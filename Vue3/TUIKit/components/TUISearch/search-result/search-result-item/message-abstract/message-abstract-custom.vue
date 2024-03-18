@@ -1,25 +1,51 @@
 <template>
   <!-- 自定义消息 keyword 关键词搜寻 description, 所以此处仅对几个需要展示高亮 description 类型的自定义消息进行解析 -->
-  <div :class="['message-abstract-custom']" @click.capture.stop>
+  <div
+    :class="['message-abstract-custom']"
+    @click.capture.stop
+  >
     <template v-if="businessID === CHAT_MSG_CUSTOM_TYPE.SERVICE">
       <div :class="['service']">
         <h1 :class="['service-header']">
           <label :class="['service-header-title']">{{ extensionJSON.title }}</label>
-          <a v-if="extensionJSON.hyperlinks_text" :class="['service-header-link', 'link']"
-            :href="extensionJSON.hyperlinks_text.value" target="view_window">
+          <a
+            v-if="extensionJSON.hyperlinks_text"
+            :class="['service-header-link', 'link']"
+            :href="extensionJSON.hyperlinks_text.value"
+            target="view_window"
+          >
             {{ extensionJSON.hyperlinks_text.key }}
           </a>
         </h1>
-        <ul :class="['service-list']" v-if="extensionJSON.item && extensionJSON.item.length > 0">
-          <li :class="['service-list-item']" v-for="(item, index) in extensionJSON.item" :key="index">
-            <a :class="['service-list-item-link', 'link']" v-if="isUrl(item.value)" :href="item.value"
-              target="view_window">{{ item.key }}</a>
-            <p :class="['service-list-item-key']" v-else>{{ item.key }}</p>
+        <ul
+          v-if="extensionJSON.item && extensionJSON.item.length > 0"
+          :class="['service-list']"
+        >
+          <li
+            v-for="(item, index) in extensionJSON.item"
+            :key="index"
+            :class="['service-list-item']"
+          >
+            <a
+              v-if="isUrl(item.value)"
+              :class="['service-list-item-link', 'link']"
+              :href="item.value"
+              target="view_window"
+            >{{ item.key }}</a>
+            <p
+              v-else
+              :class="['service-list-item-key']"
+            >
+              {{ item.key }}
+            </p>
           </li>
         </ul>
         <div :class="['service-description', 'description']">
-          <span v-for="(contentItem, index) in descriptionForShow" :key="index"
-            :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']">
+          <span
+            v-for="(contentItem, index) in descriptionForShow"
+            :key="index"
+            :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']"
+          >
             {{ contentItem.text }}
           </span>
         </div>
@@ -28,14 +54,27 @@
     <template v-else-if="businessID === CHAT_MSG_CUSTOM_TYPE.EVALUATE">
       <div class="evaluate">
         <div :class="['evaluate-description', 'description']">
-          <span v-for="(contentItem, index) in descriptionForShow" :key="index"
-            :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']">
+          <span
+            v-for="(contentItem, index) in descriptionForShow"
+            :key="index"
+            :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']"
+          >
             {{ contentItem.text }}
           </span>
         </div>
-        <ul class="evaluate-list" v-if="extensionJSON.score">
-          <li class="evaluate-list-item" v-for="(item, index) in Math.max(extensionJSON.score, 0)" :key="index">
-            <Icon :file="star" class="file-icon"></Icon>
+        <ul
+          v-if="extensionJSON.score"
+          class="evaluate-list"
+        >
+          <li
+            v-for="(item, index) in Math.max(extensionJSON.score, 0)"
+            :key="index"
+            class="evaluate-list-item"
+          >
+            <Icon
+              :file="star"
+              class="file-icon"
+            />
           </li>
         </ul>
         <article>{{ extensionJSON.comment }}</article>
@@ -43,12 +82,21 @@
     </template>
     <template v-else-if="businessID === CHAT_MSG_CUSTOM_TYPE.ORDER">
       <div class="order">
-        <img class="order-image" :src="extensionJSON.imageUrl" alt="" />
+        <img
+          class="order-image"
+          :src="extensionJSON.imageUrl"
+          alt=""
+        >
         <main class="order-main">
-          <h1 class="order-main-title">{{ extensionJSON.title }}</h1>
+          <h1 class="order-main-title">
+            {{ extensionJSON.title }}
+          </h1>
           <div :class="['order-main-description', 'description']">
-            <span v-for="(contentItem, index) in descriptionForShow" :key="index"
-              :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']">
+            <span
+              v-for="(contentItem, index) in descriptionForShow"
+              :key="index"
+              :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']"
+            >
               {{ contentItem.text }}
             </span>
           </div>
@@ -61,7 +109,11 @@
         <div :class="['text-link-description', 'description']">
           <p>{{ extensionJSON.text }}</p>
         </div>
-        <a :class="['link']" :href="extensionJSON.link" target="view_window">{{
+        <a
+          :class="['link']"
+          :href="extensionJSON.link"
+          target="view_window"
+        >{{
           TUITranslateService.t("message.custom.查看详情>>")
         }}</a>
       </div>
@@ -72,43 +124,41 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { ref, computed } from "../../../../../adapter-vue";
-import { CHAT_MSG_CUSTOM_TYPE } from "../../../../../constant";
-import { JSONToObject, isUrl } from "../../../../../utils/index";
-import Icon from "../../../../common/Icon.vue";
-import star from "../../../../../assets/icon/star-light.png";
-const props = defineProps({
-  contentText: {
-    type: Array,
-    default: [],
-  },
-  message: {
-    type: Object,
-    default: () => ({}),
-  },
-  messageContent: {
-    type: Object,
-    default: () => ({}),
-  },
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { ref, computed, withDefaults } from '../../../../../adapter-vue';
+import { CHAT_MSG_CUSTOM_TYPE } from '../../../../../constant';
+import { JSONToObject, isUrl } from '../../../../../utils/index';
+import Icon from '../../../../common/Icon.vue';
+import star from '../../../../../assets/icon/star-light.png';
+import { IHighlightContent } from '../../../type';
+import { ISearchResultListItem } from '../../../../../interface';
+interface IProps {
+  contentText: Array<IHighlightContent>;
+  message: IMessageModel | ISearchResultListItem;
+  messageContent: Record<string, unknown> | undefined;
+}
+const props = withDefaults(defineProps<IProps>(), {
+  contentText: () => ([]) as Array<IHighlightContent>,
+  message: () => ({}) as IMessageModel,
+  messageContent: () => ({}) as Record<string, unknown>,
 });
 
-const custom = ref<{ data?: String; description?: String; extension?: String }>(
-  props?.message?.payload
+const custom = ref<{ data?: string; description?: string; extension?: string }>(
+  (props?.message as IMessageModel)?.payload,
 );
-const extensionJSON = computed(() => JSONToObject(custom?.value?.data));
+const extensionJSON = computed(() => custom?.value?.data ? JSONToObject(custom.value.data) : custom?.value?.data);
 const businessID = computed(() => extensionJSON?.value?.businessID);
 const descriptionForShow = ref<Array<{ text: string; isHighlight: boolean }>>(props?.contentText);
-const defaultMessageContent = ref<string>(props?.messageContent?.custom || "[自定义消息]")
+const defaultMessageContent = ref<string>(props?.messageContent?.custom as string || '[自定义消息]');
 </script>
 <style scoped lang="scss">
-@import "../../../../../assets/styles/common.scss";
+@import "../../../../../assets/styles/common";
 
 .message-abstract-custom {
   .service {
     .service-header {
       font-size: 14px;
-      color: #000000;
+      color: #000;
     }
 
     .service-list {
@@ -120,12 +170,12 @@ const defaultMessageContent = ref<string>(props?.messageContent?.custom || "[自
 
   .evaluate {
     .evaluate-list {
-      padding: 5px 0px;
+      padding: 5px 0;
       display: flex;
       flex-direction: row;
 
       .evaluate-item {
-        padding: 0px 2px;
+        padding: 0 2px;
       }
     }
   }
@@ -138,22 +188,22 @@ const defaultMessageContent = ref<string>(props?.messageContent?.custom || "[自
 
       .order-main-title {
         font-size: 14px;
-        color: #000000;
+        color: #000;
       }
 
       .order-main-description {
-        font-family: PingFangSC-Regular;
+        font-family: PingFangSC-Regular, sans-serif;
         width: 145px;
         line-height: 17px;
         font-size: 14px;
-        color: #999999;
+        color: #999;
         letter-spacing: 0;
         margin-bottom: 6px;
         word-break: break-word;
       }
 
       .order-main-price {
-        font-family: PingFangSC-Regular;
+        font-family: PingFangSC-Regular, sans-serif;
         line-height: 25px;
         color: #ff7201;
       }
@@ -172,7 +222,7 @@ const defaultMessageContent = ref<string>(props?.messageContent?.custom || "[自
 
   .description {
     font-size: 14px;
-    color: #000000;
+    color: #000;
 
     .highlight {
       background-color: #007aff33;
@@ -180,7 +230,7 @@ const defaultMessageContent = ref<string>(props?.messageContent?.custom || "[自
 
     .normal {
       font-size: 14px;
-      color: #000000;
+      color: #000;
     }
   }
 }

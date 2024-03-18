@@ -9,13 +9,13 @@
   >
     <div :class="['file-upload', !isPC && 'file-upload-h5']">
       <input
+        ref="inputRef"
         title="文件"
         type="file"
         data-type="file"
         accept="*"
         @change="sendFileMessage"
-        ref="inputRef"
-      />
+      >
     </div>
   </ToolbarItemContainer>
 </template>
@@ -26,14 +26,12 @@ import {
   StoreName,
   IConversationModel,
   SendMessageParams,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref } from "../../../../adapter-vue";
-import ToolbarItemContainer from "../toolbar-item-container/index.vue";
-import fileIcon from "../../../../assets/icon/files.png";
-import { isPC, isUniFrameWork } from "../../../../utils/env";
-import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
-
-const emits = defineEmits(["close"]);
+} from '@tencentcloud/chat-uikit-engine';
+import { ref } from '../../../../adapter-vue';
+import ToolbarItemContainer from '../toolbar-item-container/index.vue';
+import fileIcon from '../../../../assets/icon/files.png';
+import { isPC, isUniFrameWork } from '../../../../utils/env';
+import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 
 const inputRef = ref();
 const currentConversation = ref<IConversationModel>();
@@ -59,8 +57,8 @@ const sendFileMessage = (e: any) => {
   }
   const options = {
     to:
-      currentConversation?.value?.groupProfile?.groupID ||
-      currentConversation?.value?.userProfile?.userID,
+      currentConversation?.value?.groupProfile?.groupID
+      || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
       file: e?.target,
@@ -68,9 +66,9 @@ const sendFileMessage = (e: any) => {
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   TUIChatService.sendFileMessage(options);
-  e.target.value = "";
+  e.target.value = '';
 };
 </script>
 <style lang="scss" scoped>
-@import url(../../../../assets/styles/common.scss);
+@import "../../../../assets/styles/common";
 </style>

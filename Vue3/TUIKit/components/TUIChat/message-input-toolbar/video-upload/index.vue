@@ -15,13 +15,13 @@
   >
     <div :class="['video-upload', !isPC && 'video-upload-h5']">
       <input
+        ref="inputRef"
         title="视频"
         type="file"
         data-type="video"
         accept="video/*"
         @change="sendVideoInWeb"
-        ref="inputRef"
-      />
+      >
     </div>
   </ToolbarItemContainer>
 </template>
@@ -32,15 +32,15 @@ import {
   StoreName,
   IConversationModel,
   SendMessageParams,
-} from "@tencentcloud/chat-uikit-engine";
-import { TUIGlobal } from "@tencentcloud/universal-api";
-import { ref } from "../../../../adapter-vue";
-import { isPC, isWeChat, isUniFrameWork } from "../../../../utils/env";
-import ToolbarItemContainer from "../toolbar-item-container/index.vue";
-import videoIcon from "../../../../assets/icon/video.png";
-import videoUniIcon from "../../../../assets/icon/video-uni.png";
-import cameraUniIcon from "../../../../assets/icon/camera-uni.png";
-import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
+} from '@tencentcloud/chat-uikit-engine';
+import { TUIGlobal } from '@tencentcloud/universal-api';
+import { ref } from '../../../../adapter-vue';
+import { isPC, isWeChat, isUniFrameWork } from '../../../../utils/env';
+import ToolbarItemContainer from '../toolbar-item-container/index.vue';
+import videoIcon from '../../../../assets/icon/video.png';
+import videoUniIcon from '../../../../assets/icon/video-uni.png';
+import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
+import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 
 const props = defineProps({
   // 视频源, 仅uniapp版本有效, web版本仅支持从文件中选择视频
@@ -48,11 +48,9 @@ const props = defineProps({
   // camera: 使用相机拍摄
   videoSourceType: {
     type: String,
-    default: "album",
+    default: 'album',
   },
 });
-
-const emits = defineEmits(["close"]);
 
 const inputRef = ref();
 const currentConversation = ref<IConversationModel>();
@@ -66,9 +64,9 @@ TUIStore.watch(StoreName.CONV, {
 const handleIcon = (): string => {
   if (isUniFrameWork) {
     switch (props.videoSourceType) {
-      case "album":
+      case 'album':
         return videoUniIcon;
-      case "camera":
+      case 'camera':
         return cameraUniIcon;
       default:
         return videoUniIcon;
@@ -79,10 +77,10 @@ const handleIcon = (): string => {
 };
 
 const handleTitle = (): string => {
-  if (isUniFrameWork && props.videoSourceType === "camera") {
-    return "录制";
+  if (isUniFrameWork && props.videoSourceType === 'camera') {
+    return '录制';
   } else {
-    return "视频";
+    return '视频';
   }
 };
 
@@ -93,7 +91,7 @@ const onIconClick = () => {
     if (isWeChat && TUIGlobal?.chooseMedia) {
       // 微信小程序从基础库 2.21.0 开始， wx.chooseVideo 停止维护，请使用 uni.chooseMedia 代替
       TUIGlobal?.chooseMedia({
-        mediaType: ["video"], // 视频
+        mediaType: ['video'], // 视频
         count: 1,
         sourceType: [props.videoSourceType], // album 从相册选视频，camera 使用相机拍摄
         maxDuration: 60, // 设置最长时间60s
@@ -121,7 +119,7 @@ const sendVideoInWeb = (e: any) => {
     return;
   }
   sendVideoMessage(e?.target);
-  e.target.value = "";
+  e.target.value = '';
 };
 
 const sendVideoMessage = (file: any) => {
@@ -130,8 +128,8 @@ const sendVideoMessage = (file: any) => {
   }
   const options = {
     to:
-      currentConversation?.value?.groupProfile?.groupID ||
-      currentConversation?.value?.userProfile?.userID,
+      currentConversation?.value?.groupProfile?.groupID
+      || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
       file,
@@ -141,6 +139,7 @@ const sendVideoMessage = (file: any) => {
   TUIChatService.sendVideoMessage(options);
 };
 </script>
+
 <style lang="scss" scoped>
-@import url(../../../../assets/styles/common.scss);
+@import "../../../../assets/styles/common";
 </style>

@@ -1,4 +1,4 @@
-.TUI-contact-list {
+.tui-contact-list {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -6,9 +6,11 @@
   height: 100%;
   overflow-y: auto;
   list-style: none;
+
   &-item {
     display: flex;
     flex-direction: column;
+
     &-header {
       display: flex;
       flex-direction: row;
@@ -17,15 +19,18 @@
       user-select: none;
       padding: 10px 15px;
       justify-content: space-between;
+
       &-left {
         display: flex;
         flex-direction: row;
         align-items: center;
       }
+
       &-right {
         display: flex;
         justify-content: center;
         align-items: center;
+
         &-unread {
           display: flex;
           min-width: 10px;
@@ -39,32 +44,38 @@
           background: red;
           align-items: center;
           justify-content: center;
-          color: #ffffff;
+          color: #fff;
         }
       }
     }
+
     &-main {
-      padding: 0 15px;
+      padding: 0 15px !important;
+
       &-item {
         padding: 5px 0;
       }
     }
   }
 }
-.TUI-contact-search-list {
+
+.tui-contact-search-list {
   padding: 0 15px;
+
   &-title {
     font-size: 14px;
-    color: #999999;
+    color: #999;
     border-bottom: 1px solid #f4f5f9;
   }
+
   &-item {
     padding: 5px 0;
   }
+
   &-default {
     padding: 20px;
     text-align: center;
     font-size: 14px;
-    color: #999999;
+    color: #999;
   }
 }

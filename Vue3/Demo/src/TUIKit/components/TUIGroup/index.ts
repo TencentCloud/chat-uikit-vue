@@ -1,5 +1,5 @@
-import TUIGroup from "./index.vue";
-import Server from "./server";
+import TUIGroup from './index.vue';
+import Server from './server';
 
 Server.getInstance();
 

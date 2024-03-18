@@ -5,21 +5,21 @@ import {
   TUITranslateService,
   IConversationModel,
   SendMessageParams,
-} from "@tencentcloud/chat-uikit-engine";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isEnabledMessageReadReceiptGlobal } from "../utils/utils";
-import { ITipTapEditorContent } from "../../../interface";
-import { enableSampleTaskStatus } from "../../../utils/enableSampleTaskStatus";
+} from '@tencentcloud/chat-uikit-engine';
+import { Toast, TOAST_TYPE } from '../../common/Toast/index';
+import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
+import { ITipTapEditorContent } from '../../../interface';
+import { enableSampleTaskStatus } from '../../../utils/enableSampleTaskStatus';
 
 export const sendMessageErrorCodeMap: Map<number, string> = new Map([
-  [3123, "文本包含本地审核拦截词"],
-  [4004, "图片消息失败,无效的图片格式"],
-  [4005, "文件消息失败,禁止发送违规封禁的文件"],
-  [7004, "文件不存在,请检查文件路径是否正确"],
-  [7005, "文件大小超出了限制,如果上传文件,最大限制是100MB"],
-  [8001, "消息长度超出限制,消息长度不要超过12K"],
-  [80001, "消息或者资料中文本存在敏感内容,发送失败"],
-  [80004, "消息中图片存在敏感内容,发送失败"],
+  [3123, '文本包含本地审核拦截词'],
+  [4004, '图片消息失败,无效的图片格式'],
+  [4005, '文件消息失败,禁止发送违规封禁的文件'],
+  [7004, '文件不存在,请检查文件路径是否正确'],
+  [7005, '文件大小超出了限制,如果上传文件,最大限制是100MB'],
+  [8001, '消息长度超出限制,消息长度不要超过12K'],
+  [80001, '消息或者资料中文本存在敏感内容,发送失败'],
+  [80004, '消息中图片存在敏感内容,发送失败'],
 ]);
 
 /**
@@ -29,11 +29,11 @@ export const sendMessageErrorCodeMap: Map<number, string> = new Map([
  */
 export const sendMessages = async (
   messageList: ITipTapEditorContent[],
-  currentConversation: IConversationModel
+  currentConversation: IConversationModel,
 ) => {
   // 有 messageJumping 的情况下，发送消息自动清空，回到底部
-  if (TUIStore.getData(StoreName.CHAT, "messageSource")) {
-    TUIStore.update(StoreName.CHAT, "messageSource", undefined);
+  if (TUIStore.getData(StoreName.CHAT, 'messageSource')) {
+    TUIStore.update(StoreName.CHAT, 'messageSource', undefined);
   }
   messageList?.forEach(async (content: ITipTapEditorContent) => {
     try {
@@ -44,9 +44,10 @@ export const sendMessages = async (
         needReadReceipt: isEnabledMessageReadReceiptGlobal(),
       };
       // handle message typing
+      let textMessageContent;
       switch (content?.type) {
-        case "text":
-          const textMessageContent = JSON.parse(JSON.stringify(content?.payload?.text));
+        case 'text':
+          textMessageContent = JSON.parse(JSON.stringify(content?.payload?.text));
           // 禁止发送空消息
           if (!textMessageContent) {
             break;
@@ -64,19 +65,19 @@ export const sendMessages = async (
             await TUIChatService?.sendTextMessage(options);
           }
           break;
-        case "image":
+        case 'image':
           options.payload = {
             file: content?.payload?.file,
           };
           await TUIChatService?.sendImageMessage(options);
           break;
-        case "video":
+        case 'video':
           options.payload = {
             file: content?.payload?.file,
           };
           await TUIChatService?.sendVideoMessage(options);
           break;
-        case "file":
+        case 'file':
           options.payload = {
             file: content?.payload?.file,
           };
@@ -85,7 +86,7 @@ export const sendMessages = async (
         default:
           break;
       }
-      enableSampleTaskStatus("sendMessage");
+      enableSampleTaskStatus('sendMessage');
     } catch (error: any) {
       Toast({
         message: sendMessageErrorCodeMap.get(error?.code)
@@ -94,8 +95,8 @@ export const sendMessages = async (
         type: TOAST_TYPE.ERROR,
       });
       // 如果消息发送失败，且该消息为引用消息，清除引用消息信息
-      if (TUIStore.getData(StoreName.CHAT, "quoteMessage")) {
-        TUIStore.update(StoreName.CHAT, "quoteMessage", {});
+      if (TUIStore.getData(StoreName.CHAT, 'quoteMessage')) {
+        TUIStore.update(StoreName.CHAT, 'quoteMessage', {});
       }
     }
   });

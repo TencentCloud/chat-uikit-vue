@@ -8,9 +8,9 @@
     <tbody class="tui-date-table-body">
       <tr class="tui-date-table-body-weeks">
         <th
-          class="tui-date-table-body-weeks-item"
           v-for="item in WEEKS"
           :key="item"
+          class="tui-date-table-body-weeks-item"
           :aria-label="item + ''"
           scope="col"
         >
@@ -18,9 +18,9 @@
         </th>
       </tr>
       <tr
-        class="tui-date-table-body-days"
         v-for="(row, rowKey) in rows"
         :key="rowKey"
+        class="tui-date-table-body-days"
       >
         <td
           v-for="(col, colKey) in row"
@@ -54,17 +54,17 @@ import {
   getCurrentInstance,
   nextTick,
   watch,
-} from "../../../adapter-vue";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import dayjs, { Dayjs } from "dayjs";
-import "dayjs/locale/zh-cn";
-import { DateCell, DateCellType } from "./date-picker";
-import { isPC } from "../../../utils/env";
+} from '../../../adapter-vue';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import dayjs, { Dayjs } from 'dayjs';
+import 'dayjs/locale/zh-cn';
+import { DateCell, DateCellType } from './date-picker';
+import { isPC } from '../../../utils/env';
 
 const props = defineProps({
   type: {
     type: String,
-    default: "range", // "single"/"range"
+    default: 'range', // "single"/"range"
   },
   currentPanelDate: {
     type: Dayjs,
@@ -86,13 +86,13 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["pick"]);
+const emit = defineEmits(['pick']);
 // vue 实例
 const instance = getCurrentInstance();
 // 面板行数
 const tableRows = ref<DateCell[][]>([[], [], [], [], [], []]);
 const currentPanelDateObject = ref<typeof Dayjs>(
-  dayjs(props.currentPanelDate || null)
+  dayjs(props.currentPanelDate || null),
 );
 const dateObject = ref<typeof Dayjs>(dayjs(props.date || null));
 const startDateObject = ref<typeof Dayjs>(dayjs(props.startDate || null));
@@ -104,13 +104,13 @@ const WEEKS_CONSTANT = computed(() => {
 
 // 表头数据
 const WEEKS = computed(() =>
-  WEEKS_CONSTANT.value.map((w: string) => w.substring(1))
+  WEEKS_CONSTANT.value.map((w: string) => w.substring(1)),
 );
 
 // 表格开始日期
-const startDate = computed(() => {
-  const startDayOfMonth = currentPanelDateObject.value?.startOf("month");
-  return startDayOfMonth?.subtract(startDayOfMonth?.day() || 7, "day");
+const startDateOnTable = computed(() => {
+  const startDayOfMonth = currentPanelDateObject.value?.startOf('month');
+  return startDayOfMonth?.subtract(startDayOfMonth?.day() || 7, 'day');
 });
 
 // 表格数据
@@ -119,7 +119,7 @@ const rows = computed(() => {
   const cols = WEEKS.value.length;
 
   // 当月第一天
-  const startOfMonth = currentPanelDateObject.value?.startOf("month");
+  const startOfMonth = currentPanelDateObject.value?.startOf('month');
   const startOfMonthDay = startOfMonth?.day() || 7; // day of this month first day
   const dateCountOfMonth = startOfMonth?.daysInMonth(); // total days of this month
 
@@ -127,33 +127,33 @@ const rows = computed(() => {
   // 循环填充表格，6行7列
   for (let row = 0; row < tableRows.value.length; row++) {
     for (let col = 0; col < cols; col++) {
-      const cellDate = startDate.value?.add(count, "day");
+      const cellDate = startDateOnTable.value?.add(count, 'day');
       const text = cellDate?.date();
       // 对于 type === "single", 选中传入日期
       // 对于 type === "range", 选中传入的开始与结束的日期
-      const isSelected =
-        props.type === "single" &&
-        cellDate?.format("YYYY-MM-DD") ===
-          dateObject.value?.format("YYYY-MM-DD");
-      const isSelectedStart =
-        props.type === "range" &&
-        cellDate?.format("YYYY-MM-DD") ===
-          startDateObject.value?.format("YYYY-MM-DD");
-      const isSelectedEnd =
-        props.type === "range" &&
-        cellDate?.format("YYYY-MM-DD") ===
-          endDateObject.value?.format("YYYY-MM-DD");
+      const isSelected
+        = props.type === 'single'
+        && cellDate?.format('YYYY-MM-DD')
+        === dateObject.value?.format('YYYY-MM-DD');
+      const isSelectedStart
+        = props.type === 'range'
+        && cellDate?.format('YYYY-MM-DD')
+        === startDateObject.value?.format('YYYY-MM-DD');
+      const isSelectedEnd
+        = props.type === 'range'
+        && cellDate?.format('YYYY-MM-DD')
+        === endDateObject.value?.format('YYYY-MM-DD');
       // 对于 type === "range", 是否在选择区间中
-      const isInRange =
-        cellDate?.isSameOrBefore(endDateObject.value, "day") &&
-        cellDate?.isSameOrAfter(startDateObject.value, "day");
-      let type: DateCellType = "normal";
+      const isInRange
+        = cellDate?.isSameOrBefore(endDateObject.value, 'day')
+        && cellDate?.isSameOrAfter(startDateObject.value, 'day');
+      let type: DateCellType = 'normal';
       if (count < startOfMonthDay) {
         // 上个月日期
-        type = "prev-month";
+        type = 'prev-month';
       } else if (count - startOfMonthDay >= dateCountOfMonth) {
         // 下个月日期
-        type = "next-month";
+        type = 'next-month';
       }
       rows_[row][col] = {
         type,
@@ -171,10 +171,10 @@ const rows = computed(() => {
 });
 
 const handlePick = (cell: DateCell) => {
-  if (cell?.type !== "normal") {
+  if (cell?.type !== 'normal') {
     return;
   }
-  emit("pick", cell);
+  emit('pick', cell);
 };
 
 watch(
@@ -191,29 +191,31 @@ watch(
   {
     deep: true,
     immediate: true,
-  }
+  },
 );
 </script>
 
 <style scoped lang="scss">
+/* stylelint-disable selector-class-pattern */
 .tui-date-table {
-  border-spacing: 0px;
-  -webkit-border-horizontal-spacing: 0px;
-  -webkit-border-vertical-spacing: 0px;
+  border-spacing: 0;
+  -webkit-border-horizontal-spacing: 0;
+  -webkit-border-vertical-spacing: 0;
   font-size: 12px;
   user-select: none;
   table-layout: fixed;
   width: 100%;
   box-sizing: border-box;
 
-  &:after,
-  &:before {
+  &::after,
+  &::before {
     box-sizing: border-box;
   }
 
   &-body {
     width: 100%;
-    background-color: #ffffff;
+    background-color: #fff;
+
     &-weeks,
     &-days {
       box-sizing: border-box;
@@ -228,33 +230,14 @@ watch(
       width: 100%;
 
       &-item {
-        color: #666666;
+        color: #666;
         font-size: 12px;
         font-weight: 400px;
       }
     }
 
     &-days {
-      color: #000000;
-
-      .prev-month,
-      .next-month {
-        color: #666666;
-        background-color: #ffffff;
-
-        .range {
-          color: #666666;
-          background-color: #ffffff;
-        }
-
-        .selected {
-          .tui-date-table-body-days-item-cell-text {
-            box-sizing: border-box;
-            color: #666666;
-            border: none;
-          }
-        }
-      }
+      color: #000;
 
       &-item {
         &-cell {
@@ -276,11 +259,13 @@ watch(
         }
 
         .selected {
+          border-radius: 12px;
+
           .tui-date-table-body-days-item-cell-text {
             box-sizing: border-box;
             color: #007aff;
             border: 1px solid #007aff;
-            background-color: #ffffff;
+            background-color: #fff;
           }
         }
 
@@ -288,9 +273,6 @@ watch(
           background-color: #007aff33;
         }
 
-        .selected {
-          border-radius: 12px;
-        }
         .selected-start {
           border-radius: 12px 0 0 12px;
         }
@@ -303,10 +285,32 @@ watch(
           border-radius: 12px;
         }
       }
+
+      .prev-month,
+      .next-month {
+        color: #666;
+        background-color: #fff;
+
+        .range {
+          color: #666;
+          background-color: #fff;
+        }
+
+        .selected {
+          .tui-date-table-body-days-item-cell-text {
+            box-sizing: border-box;
+            color: #666;
+            border: none;
+          }
+        }
+      }
+
     }
   }
 }
+
 .tui-date-table-h5 {
+  /* stylelint-disable-next-line no-descending-specificity */
   .tui-date-table-body-days-item-cell-text {
     cursor: none !important;
   }

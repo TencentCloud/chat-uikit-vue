@@ -11,13 +11,16 @@
     @mouseenter="setHoverStatus(true)"
     @mouseleave="setHoverStatus(false)"
   >
-    <div v-if="displayType === 'info' || displayType === 'bubble'" :class="[displayType]">
+    <div
+      v-if="displayType === 'info' || displayType === 'bubble'"
+      :class="[displayType]"
+    >
       <div :class="displayType + '-left'">
         <img
           :class="displayType + '-left-avatar'"
-          :src="avatarForShow"
+          :src="avatarForShow || ''"
           onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-        />
+        >
       </div>
       <div :class="[displayType + '-main']">
         <div :class="[displayType + '-main-name']">
@@ -29,22 +32,24 @@
             :content="contentForShow"
             :highlightType="displayType === 'info' ? 'font' : 'background'"
             :displayType="displayType"
-          >
-          </MessageAbstractText>
+          />
           <MessageAbstractFile
             v-else-if="listItem.type === TYPES.MSG_FILE"
             :contentText="contentForShow"
             :messageContent="listItemContent"
-          ></MessageAbstractFile>
-          <div v-else-if="listItem.type === TYPES.MSG_IMAGE"></div>
-          <div v-else-if="listItem.type === TYPES.MSG_VIDEO"></div>
+            :displayType="displayType"
+          />
+          <div v-else-if="listItem.type === TYPES.MSG_IMAGE" />
+          <div v-else-if="listItem.type === TYPES.MSG_VIDEO" />
           <MessageAbstractCustom
             v-else-if="listItem.type === TYPES.MSG_CUSTOM"
             :contentText="contentForShow"
             :message="listItem"
             :messageContent="listItemContent"
-          ></MessageAbstractCustom>
-          <div v-else>{{ getMessageAbstractType(listItem) }}</div>
+          />
+          <div v-else>
+            {{ getMessageAbstractType(listItem) }}
+          </div>
         </div>
       </div>
       <div :class="displayType + '-right'">
@@ -52,25 +57,32 @@
           {{ timeForShow }}
         </div>
         <div
-          :class="displayType + '-right-to'"
           v-if="displayType === 'bubble' && isHovering"
+          :class="displayType + '-right-to'"
           @click.stop="navigateToChatPosition"
         >
           {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
         </div>
       </div>
     </div>
-    <div v-else-if="displayType === 'file'" :class="[displayType]">
+    <div
+      v-else-if="displayType === 'file'"
+      :class="[displayType]"
+    >
       <div :class="[displayType + '-header']">
         <img
           :class="displayType + '-header-avatar'"
           :src="avatarForShow"
           onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-        />
+        >
         <div :class="[displayType + '-header-name']">
           {{ nameForShow }}
         </div>
-        <div :class="displayType + '-header-to'" v-if="isHovering" @click.stop="navigateToChatPosition">
+        <div
+          v-if="isHovering"
+          :class="displayType + '-header-to'"
+          @click.stop="navigateToChatPosition"
+        >
           {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
         </div>
         <div :class="displayType + '-header-time'">
@@ -81,11 +93,18 @@
         <MessageAbstractFile
           :contentText="contentForShow"
           :messageContent="listItemContent"
-        ></MessageAbstractFile>
+          displayType="bubble"
+        />
       </div>
     </div>
-    <div v-else-if="displayType === 'image'" :class="[displayType]">
-      <div class="image-container" @click.stop="navigateToChatPosition">
+    <div
+      v-else-if="displayType === 'image'"
+      :class="[displayType]"
+    >
+      <div
+        class="image-container"
+        @click.stop="navigateToChatPosition"
+      >
         <MessageAbstractImage
           v-if="listItem.type === TYPES.MSG_IMAGE"
           :messageContent="listItemContent"
@@ -94,7 +113,10 @@
           v-else-if="listItem.type === TYPES.MSG_VIDEO"
           :messageContent="listItemContent"
         />
-        <div v-if="isHovering" class="image-container-hover">
+        <div
+          v-if="isHovering"
+          class="image-container-hover"
+        >
           <div class="image-container-hover-text">
             {{ TUITranslateService.t("TUISearch.定位到聊天位置") }}
           </div>
@@ -104,85 +126,68 @@
   </div>
 </template>
 <script setup lang="ts">
-import TUIChatEngine, { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { ref, watchEffect } from "../../../../adapter-vue";
-import { isPC } from "../../../../utils/env";
+import TUIChatEngine, { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { ref, watchEffect, withDefaults } from '../../../../adapter-vue';
+import MessageAbstractText from './message-abstract/message-abstract-text.vue';
+import MessageAbstractFile from './message-abstract/message-abstract-file.vue';
+import MessageAbstractCustom from './message-abstract/message-abstract-custom.vue';
+import MessageAbstractImage from './message-abstract/message-abstract-image.vue';
+import MessageAbstractVideo from './message-abstract/message-abstract-video.vue';
 import {
   generateSearchResultShowName,
   generateSearchResultAvatar,
   generateSearchResultShowContent,
   generateSearchResultTime,
   enterConversation,
-} from "../../utils";
-import { messageTypeAbstractMap, searchResultItemDisplayType, searchMessageType } from "../../type";
-import MessageAbstractText from "./message-abstract/message-abstract-text.vue";
-import MessageAbstractFile from "./message-abstract/message-abstract-file.vue";
-import MessageAbstractCustom from "./message-abstract/message-abstract-custom.vue";
-import MessageAbstractImage from "./message-abstract/message-abstract-image.vue";
-import MessageAbstractVideo from "./message-abstract/message-abstract-video.vue";
-
-const props = defineProps({
-  listItem: {
-    type: Object,
-    default: () => ({}),
-  },
-  listItemContent: {
-    required: false,
-    type: Object,
-    default: () => ({}),
-  },
-  type: {
-    type: String,
-    default: "allMessage",
-    validator(value: string) {
-      return Object.values(searchMessageType).includes(value);
-    },
-  },
-  displayType: {
-    type: String,
-    default: "info", // "info": 正常信息流展示  "bubble": 消息气泡展示 "file": 文件列表类型展示 "image": 图片合集形式展示
-    validator(value: string) {
-      return Object.values(searchResultItemDisplayType).includes(value);
-    },
-    required: true,
-  },
-  keywordList: {
-    // 搜索匹配关键词，用来处理高亮展示
-    type: Array,
-    default: [],
-  },
+} from '../../utils';
+import { messageTypeAbstractMap, searchResultItemDisplayTypeValues, searchMessageTypeValues, IHighlightContent } from '../../type';
+import { ISearchResultListItem } from '../../../../interface';
+import { isPC } from '../../../../utils/env';
+interface IProps {
+  listItem: IMessageModel | ISearchResultListItem;
+  listItemContent?: Record<string, unknown>;
+  type: searchMessageTypeValues;
+  displayType: searchResultItemDisplayTypeValues;
+  keywordList: string[];
+}
+const props = withDefaults(defineProps<IProps>(), {
+  listItem: () => ({}) as IMessageModel | ISearchResultListItem,
+  listItemContent: () => ({}) as Record<string, unknown>,
+  type: 'allMessage',
+  displayType: 'info',
+  keywordList: () => ([]) as string[],
 });
 
-const emits = defineEmits(["showResultDetail", "navigateToChatPosition"]);
+const emits = defineEmits(['showResultDetail', 'navigateToChatPosition']);
 const TYPES = ref(TUIChatEngine.TYPES);
 
-const avatarForShow = ref<string>();
-const nameForShow = ref<string>();
-const contentForShow = ref<string>();
-const timeForShow = ref<string>();
+const avatarForShow = ref<string>('');
+const nameForShow = ref<string>('');
+const contentForShow = ref<Array<IHighlightContent>>([]);
+const timeForShow = ref<string>('');
 
-const isHovering = ref<boolean>();
+const isHovering = ref<boolean>(false);
 
 watchEffect(() => {
-  avatarForShow.value = generateSearchResultAvatar(props.listItem, props?.listItemContent);
+  avatarForShow.value = generateSearchResultAvatar(props.listItem);
   nameForShow.value = generateSearchResultShowName(props.listItem, props?.listItemContent);
   contentForShow.value = generateSearchResultShowContent(
     props.listItem,
     props.type,
     props.keywordList as Array<string>,
-    props?.displayType !== "bubble"
+    props?.displayType !== 'bubble',
   );
-  timeForShow.value = props?.listItem?.time
-    ? generateSearchResultTime(props?.listItem?.time * 1000)
-    : "";
+  timeForShow.value = (props.listItem as IMessageModel)?.time
+    ? generateSearchResultTime((props.listItem as IMessageModel)?.time * 1000)
+    : '';
 });
 
 const onResultItemClicked = () => {
-  if (props.type === "contact" || props.type === "group") {
-    enterConversation(props.listItem);
+  if (props.type === 'contact' || props.type === 'group') {
+    enterConversation(props.listItem as IMessageModel);
   } else {
-    if (props.displayType === "info" && !props?.listItem?.ID) {
-      emits("showResultDetail", true, props.type, props.listItem);
+    if (props.displayType === 'info' && !(props.listItem as IMessageModel)?.ID) {
+      emits('showResultDetail', true, props.type, props.listItem);
     } else {
       navigateToChatPosition();
     }
@@ -195,13 +200,13 @@ const setHoverStatus = (status: boolean) => {
 
 const navigateToChatPosition = () => {
   // 定位到指定位置
-  emits("navigateToChatPosition", props.listItem);
+  emits('navigateToChatPosition', props.listItem);
 };
 
-const getMessageAbstractType = (message: any) => {
+const getMessageAbstractType = (message: IMessageModel | ISearchResultListItem) => {
   return message?.type
     ? TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[message.type]}`)
-    : "";
+    : '';
 };
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

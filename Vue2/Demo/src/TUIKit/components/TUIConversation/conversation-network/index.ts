@@ -1,3 +1,3 @@
-import ConversationNetwork from "./index.vue";
+import ConversationNetwork from './index.vue';
 
 export default ConversationNetwork;

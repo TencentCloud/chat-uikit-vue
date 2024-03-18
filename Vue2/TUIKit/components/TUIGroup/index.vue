@@ -1,20 +1,20 @@
 <template>
-  <div :class="[(isShowCreateGroup || isShowManageGroup || isShowSelectMember) && 'TUI-group']">
-    <CreateGroup v-if="isShowCreateGroup"/>
-    <ManageGroup v-if="isShowManageGroup"/>
-    <SelectMember v-if="isShowSelectMember"/>
+  <div :class="[(isShowCreateGroup || isShowManageGroup || isShowSelectMember) && 'tui-group']">
+    <CreateGroup v-if="isShowCreateGroup" />
+    <ManageGroup v-if="isShowManageGroup" />
+    <SelectMember v-if="isShowSelectMember" />
   </div>
 </template>
 <script lang="ts" setup>
 import {
   TUIStore,
   StoreName,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref } from "../../adapter-vue";
+} from '@tencentcloud/chat-uikit-engine';
+import { ref } from '../../adapter-vue';
 
-import CreateGroup from "./create-group/index.vue";
-import ManageGroup from "./manage-group/index.vue";
-import SelectMember from "./select-member/index.vue";
+import CreateGroup from './create-group/index.vue';
+import ManageGroup from './manage-group/index.vue';
+import SelectMember from './select-member/index.vue';
 
 const isShowCreateGroup = ref(false);
 const isShowManageGroup = ref(false);
@@ -46,7 +46,7 @@ TUIStore.watch(StoreName.GRP, {
 
 </script>
 <style lang="scss" scoped>
-.TUI-group {
+.tui-group {
   width: 100%;
   height: 100%;
 }

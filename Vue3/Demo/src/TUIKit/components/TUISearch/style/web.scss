@@ -3,12 +3,14 @@
     width: 100%;
     height: fit-content;
   }
+
   &-main-conversation {
     width: 100%;
     height: 100%;
-    background: #ffffff;
-    box-shadow: 0 1px 10px 0 rgba(2, 16, 43, 0.15);
+    background: #fff;
+    box-shadow: 0 1px 10px 0 rgba(2,16,43,0.15);
   }
+
   .tui-search-global {
     &-header {
       display: flex;
@@ -17,6 +19,7 @@
       align-items: center;
     }
   }
+
   .tui-search-conversation {
     width: 100%;
     height: 100%;

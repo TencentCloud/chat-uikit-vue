@@ -1,54 +1,92 @@
 <template>
-  <main v-if="!isUniFrameWork" class="notification">
+  <main
+    v-if="!isUniFrameWork"
+    class="notification"
+  >
     <textarea
       v-if="isEdit"
       v-model="input"
       class="textarea"
       @keyup.enter="updateProfile"
-    ></textarea>
+    />
     <section v-else>
       <p v-if="!groupProfile.notification">
         {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
       </p>
-      <article v-else>{{ groupProfile.notification }}</article>
+      <article v-else>
+        {{ groupProfile.notification }}
+      </article>
     </section>
     <footer v-if="isAuthorNotification">
-      <button class="btn" v-if="isEdit" @click="updateProfile">
+      <button
+        v-if="isEdit"
+        class="btn"
+        @click="updateProfile"
+      >
         {{ TUITranslateService.t(`TUIGroup.发布`) }}
       </button>
-      <button class="btn" v-else @click="isEdit = !isEdit">
+      <button
+        v-else
+        class="btn"
+        @click="isEdit = !isEdit"
+      >
         {{ TUITranslateService.t(`TUIGroup.编辑`) }}
       </button>
     </footer>
   </main>
-  <div v-else class="edit-h5">
+  <div
+    v-else
+    class="edit-h5"
+  >
     <main class="edit-h5-main">
       <header class="edit-h5-header">
         <aside class="left">
           <h1>{{ TUITranslateService.t(`TUIGroup.群公告`) }}</h1>
         </aside>
-        <span class="close" @click="close('notification')">{{
+        <span
+          class="close"
+          @click="close('notification')"
+        >{{
           TUITranslateService.t(`关闭`)
         }}</span>
       </header>
       <div class="notification">
         <textarea
           v-if="isEdit"
-          :class="[isUniFrameWork ? 'uni-height' : '', 'textarea']"
           v-model="input"
+          :class="[isUniFrameWork ? 'uni-height' : '', 'textarea']"
           @keyup.enter="updateProfile"
-        ></textarea>
-        <section v-else class="row">
-          <p v-if="!groupProfile.notification" class="row-p">
+        />
+        <section
+          v-else
+          class="row"
+        >
+          <p
+            v-if="!groupProfile.notification"
+            class="row-p"
+          >
             {{ TUITranslateService.t(`TUIGroup.暂无公告`) }}
           </p>
-          <article v-else>{{ groupProfile.notification }}</article>
+          <article v-else>
+            {{ groupProfile.notification }}
+          </article>
         </section>
-        <footer v-if="isAuthorNotification" class="footer">
-          <button class="btn" v-if="isEdit" @click="updateProfile">
+        <footer
+          v-if="isAuthorNotification"
+          class="footer"
+        >
+          <button
+            v-if="isEdit"
+            class="btn"
+            @click="updateProfile"
+          >
             {{ TUITranslateService.t(`TUIGroup.发布`) }}
           </button>
-          <button class="btn" v-else @click="isEdit = !isEdit">
+          <button
+            v-else
+            class="btn"
+            @click="isEdit = !isEdit"
+          >
             {{ TUITranslateService.t(`TUIGroup.编辑`) }}
           </button>
         </footer>
@@ -58,14 +96,14 @@
 </template>
 
 <script lang="ts" setup>
-import { nextTick } from "../../../adapter-vue";
+import { nextTick } from '../../../adapter-vue';
 import {
   TUITranslateService,
   IGroupModel,
-} from "@tencentcloud/chat-uikit-engine";
-import { watchEffect, ref } from "../../../adapter-vue";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import { isUniFrameWork } from "../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { watchEffect, ref } from '../../../adapter-vue';
+import { Toast, TOAST_TYPE } from '../../common/Toast/index';
+import { isUniFrameWork } from '../../../utils/env';
 
 const props = defineProps({
   data: {
@@ -79,7 +117,7 @@ const props = defineProps({
 });
 
 const groupProfile = ref<IGroupModel>({});
-const input = ref("");
+const input = ref('');
 const isAuthorNotification = ref(false);
 const isEdit = ref(false);
 
@@ -89,33 +127,33 @@ watchEffect(() => {
   isAuthorNotification.value = props.isAuthor;
 });
 
-const emits = defineEmits(["update", "close"]);
+const emits = defineEmits(['update', 'close']);
 
 // 更新群资料
 const updateProfile = () => {
   if (input.value.length > 150) {
     Toast({
-      message: TUITranslateService.t("TUIGroup.群公告字数超出限制，最大长度为150"),
+      message: TUITranslateService.t('TUIGroup.群公告字数超出限制，最大长度为150'),
       type: TOAST_TYPE.ERROR,
     });
     return;
   }
   if (input.value && input.value !== groupProfile.value.notification) {
-    emits("update", { key: "notification", value: input.value });
+    emits('update', { key: 'notification', value: input.value });
     nextTick(() => {
-      input.value = "";
+      input.value = '';
     });
   }
   isEdit.value = !isEdit.value;
 };
 
 const close = (tabName: string) => {
-  emits("close", tabName);
+  emits('close', tabName);
 };
 </script>
 
 <style lang="scss" scoped>
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
 
 .notification {
   flex: 1;
@@ -161,13 +199,13 @@ const close = (tabName: string) => {
   padding: 4px 28px;
   font-weight: 400;
   font-size: 12px;
-  color: #ffffff;
+  color: #fff;
   line-height: 24px;
   border-radius: 4px;
 
   &-cancel {
-    background: #ffffff;
-    border: 1px solid #dddddd;
+    background: #fff;
+    border: 1px solid #ddd;
     color: #828282;
   }
 }
@@ -184,7 +222,7 @@ const close = (tabName: string) => {
   z-index: 1;
 
   .edit-h5-main {
-    background: #ffffff;
+    background: #fff;
     flex: 1;
     padding: 18px;
     border-radius: 12px 12px 0 0;
@@ -217,7 +255,7 @@ const close = (tabName: string) => {
       font-family: PingFangSC-Regular;
       font-weight: 400;
       font-size: 16px;
-      color: #ffffff;
+      color: #fff;
       letter-spacing: 0;
       line-height: 27px;
       padding: 8px 0;

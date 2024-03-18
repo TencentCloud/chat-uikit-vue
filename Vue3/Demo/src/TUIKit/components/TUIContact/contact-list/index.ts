@@ -1,4 +1,3 @@
-// import ContactList from "./index.vue";
-import ContactList from "./contact-list.vue";
+import ContactList from './index.vue';
 
 export default ContactList;

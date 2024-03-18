@@ -1,2 +1,2 @@
-import Loading from "./index.vue";
+import Loading from './index.vue';
 export default Loading;

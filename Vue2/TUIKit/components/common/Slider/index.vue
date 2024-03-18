@@ -4,12 +4,12 @@
     :class="[isSliderOpen && 'slider-open']"
     @click="toggleSlider"
   >
-    <span class="slider-block"></span>
+    <span class="slider-block" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect } from "../../../adapter-vue";
+import { ref, watchEffect } from '../../../adapter-vue';
 
 const props = defineProps({
   open: {
@@ -20,7 +20,7 @@ const props = defineProps({
 
 const isSliderOpen = ref(false);
 
-const emits = defineEmits(["change"]);
+const emits = defineEmits(['change']);
 
 watchEffect(() => {
   isSliderOpen.value = props.open;
@@ -28,12 +28,12 @@ watchEffect(() => {
 
 const toggleSlider = () => {
   isSliderOpen.value = !isSliderOpen.value;
-  emits("change", isSliderOpen.value);
+  emits('change', isSliderOpen.value);
 };
 </script>
 
 <style lang="scss" scoped>
-@import url("../../../assets/styles/common.scss");
+@import "../../../assets/styles/common";
 
 .slider {
   &-box {
@@ -56,7 +56,7 @@ const toggleSlider = () => {
     height: 16px;
     border-radius: 8px;
     margin: 0 2px;
-    background: #ffffff;
+    background: #fff;
     border: 0 solid rgba(0, 0, 0, 0.85);
     box-shadow: 0 2px 4px 0 #d1d1d1;
   }

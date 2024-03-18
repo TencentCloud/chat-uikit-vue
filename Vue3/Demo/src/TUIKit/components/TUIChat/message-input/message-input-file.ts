@@ -1,5 +1,5 @@
-import Image from '@tiptap/extension-image'
-import { mergeAttributes } from '@tiptap/core'
+import Image from '@tiptap/extension-image';
+import { mergeAttributes } from '@tiptap/core';
 
 export default Image.extend({
   name: 'custom-image',
@@ -11,23 +11,22 @@ export default Image.extend({
         default: 'image',
         rendered: false,
       },
-    }
+    };
   },
 
   addCommands() {
     return {
-      setImage: (options) => ({ tr, commands }) => {
+      setImage: options => ({ tr, commands }) => {
         if ((tr.selection as any)?.node?.type?.name == 'custom-image') {
-          return commands.updateAttributes('custom-image', options)
-        }
-        else {
+          return commands.updateAttributes('custom-image', options);
+        } else {
           return commands.insertContent({
             type: this.name,
-            attrs: options
-          })
+            attrs: options,
+          });
         }
       },
-    }
+    };
   },
 
   renderHTML({ node, HTMLAttributes }) {
@@ -35,9 +34,7 @@ export default Image.extend({
 
     return [
       'img',
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes)
-    ]
-  }
-})
-
-
+      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+    ];
+  },
+});

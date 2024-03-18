@@ -5,7 +5,8 @@
     :title="selectOptions.title"
     :userList="userList"
     @search="handleSearch"
-    @complete="handleSelectedResult"/>
+    @complete="handleSelectedResult"
+  />
 </template>
 <script lang="ts" setup>
 import {
@@ -13,12 +14,12 @@ import {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref, watchEffect } from "../../../adapter-vue";
-import { Toast, TOAST_TYPE } from "../../common/Toast/index";
-import TUICore from "@tencentcloud/tui-core";
-import SelectUser from "../../common/SelectUser/index.vue";
-import Server from "../server";
+} from '@tencentcloud/chat-uikit-engine';
+import { ref, watchEffect } from '../../../adapter-vue';
+import { Toast, TOAST_TYPE } from '../../common/Toast/index';
+import TUICore from '@tencentcloud/tui-core';
+import SelectUser from '../../common/SelectUser/index.vue';
+import Server from '../server';
 const TUIContactServer = Server.getInstance();
 const TUIConstants = TUIContactServer.constants;
 
@@ -39,7 +40,7 @@ const generateSearchServer = (isNeedSearch: any) => {
   } else {
     console.warn('请添加 TUISearch 组件');
   }
-}
+};
 
 watchEffect(() => {
   const params = TUIContactServer.getOnCallParams(TUIConstants.TUIContact.SERVICE.METHOD.SELECT_FRIEND);
@@ -53,29 +54,29 @@ watchEffect(() => {
     friendList.value = res.data.map((item: any) => item.profile);
     userList.value = friendList.value;
   }).catch((err: any) => {
-    console.warn("getFriendList error:", err);
-  })
-})
+    console.warn('getFriendList error:', err);
+  });
+});
 
 const handleSelectedResult = (memberList: Array<any>) => {
-  TUIStore.update(StoreName.CUSTOM, "isShowSelectFriendComponent", false);
+  TUIStore.update(StoreName.CUSTOM, 'isShowSelectFriendComponent', false);
   const callback = TUIContactServer.getOnCallCallback(TUIConstants.TUIContact.SERVICE.METHOD.SELECT_FRIEND);
   callback && callback(memberList);
 };
 
 const searchFail = () => {
   Toast({
-    message: TUITranslateService.t("TUIGroup.该用户不存在"),
-    type: TOAST_TYPE.ERROR
+    message: TUITranslateService.t('TUIGroup.该用户不存在'),
+    type: TOAST_TYPE.ERROR,
   });
   userList.value = [...friendList.value];
-}
+};
 
 const handleSearch = async (val: string) => {
   if (!val) {
     return userList.value = friendList.value;
   }
-  
+
   try {
     const imResponse: any = await TUISearchServer.value.searchUser(val);
     if (!imResponse.data[0]) {
@@ -83,7 +84,7 @@ const handleSearch = async (val: string) => {
     }
     userList.value = imResponse.data;
     const searchAllResult = friendList.value.filter((item: any) => item.userID === imResponse.data[0].userID);
-    friendList.value = searchAllResult.length ? friendList.value : [...friendList.value, ...userList.value ];
+    friendList.value = searchAllResult.length ? friendList.value : [...friendList.value, ...userList.value];
   } catch (error) {
     return searchFail();
   }

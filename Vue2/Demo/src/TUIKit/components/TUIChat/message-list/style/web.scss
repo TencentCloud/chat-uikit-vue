@@ -1,22 +1,24 @@
-.TUIChat {
+.tui-chat {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+
   &-main {
-    min-height: 0px;
+    min-height: 0;
     flex: 1;
     overflow: hidden;
     display: flex;
     flex-direction: column;
     position: relative;
-    .TUIChat-safe-tips {
+
+    .tui-chat-safe-tips {
       padding: 12px 20px;
       background-color: rgba(255, 149, 0, 0.1);
       color: #ff8c39;
       line-height: 18px;
-      font-family: "PingFang SC";
+      font-family: PingFangSC-Regular;
       font-style: normal;
       font-weight: 400;
       text-align: justify;
@@ -27,22 +29,25 @@
         float: right;
       }
     }
-    .TUIChat-application-tips {
+
+    .tui-chat-application-tips {
       text-align: center;
       width: 100%;
       background: #fce4d3;
       padding: 2px;
       font-size: 12px;
     }
+
     .application-tips-btn {
       color: #006eff;
       padding-left: 10px;
     }
-    .TUI-message-list {
+
+    .tui-message-list {
       flex: 1;
       height: 100%;
-      overflow-y: auto;
-      overflow-x: hidden;
+      overflow: hidden auto;
+
       .message-more {
         font-size: 14px;
         padding: 5px;
@@ -57,7 +62,7 @@
         width: 92px;
         height: 28px;
         padding: 0 5px;
-        background: #ffffff;
+        background: #fff;
         border: 1px solid #e0e0e0;
         box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.06);
         display: flex;
@@ -66,6 +71,7 @@
         justify-content: center;
         border-radius: 3px;
         cursor: pointer;
+
         &-text {
           font-family: PingFangSC-Regular;
           font-weight: 400;
@@ -77,11 +83,11 @@
         }
       }
 
-      .message-li:first-child {
-        margin-top: 5px;
-      }
-
       .message-li {
+        &:first-child {
+          margin-top: 5px;
+        }
+
         display: flex;
         padding: 0;
         flex-direction: column;
@@ -90,26 +96,31 @@
           display: flex;
           position: relative;
           flex-direction: column;
+
           .message-tool {
             z-index: 5;
             position: absolute;
             cursor: pointer;
             transform: translateY(-100%);
           }
+
           .message-tool-out {
             right: 30px;
             left: auto;
           }
+
           .message-tool-in {
             left: 30px;
             right: auto;
           }
+
           .message-tool-bottom {
             z-index: 5;
             bottom: 0;
             transform: translateY(100%);
           }
         }
+
         .message-label {
           max-width: 50px;
         }
@@ -147,7 +158,7 @@
     justify-content: flex-end;
     width: 100%;
     box-sizing: border-box;
-    padding: 10px 10px;
+    padding: 10px;
   }
 }
 

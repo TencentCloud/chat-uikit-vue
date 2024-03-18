@@ -1,40 +1,65 @@
 <template>
-  <div :class="[n('')]" @mouseup.stop>
+  <div
+    :class="[n('')]"
+    @mouseup.stop
+  >
     <div :class="[n('body')]">
       <div :class="[n('body-header')]">
         <div :class="[n('body-header-prev')]">
           <div
+            v-if="canYearLess"
             :class="[n('icon')]"
             @click="change('year', -1)"
-            v-if="canYearLess"
           >
-            <Icon :file="dLeftArrowIcon" :width="'12px'" :height="'12px'" />
+            <Icon
+              :file="dLeftArrowIcon"
+              :width="'12px'"
+              :height="'12px'"
+            />
           </div>
           <div
+            v-if="canMonthLess"
             :class="[n('icon')]"
             @click="change('month', -1)"
-            v-if="canMonthLess"
           >
-            <Icon :file="leftArrowIcon" :width="'10px'" :height="'10px'" />
+            <Icon
+              :file="leftArrowIcon"
+              :width="'10px'"
+              :height="'10px'"
+            />
           </div>
         </div>
         <div :class="[n('body-header-label')]">
-          <div :class="[n('body-header-label-item')]">{{ year }}</div>
+          <div :class="[n('body-header-label-item')]">
+            {{ year }}
+          </div>
           <div :class="[n('body-header-label-item')]">
             {{ TUITranslateService.t(`time.${month}`) }}
           </div>
         </div>
         <div :class="[n('body-header-next')]">
           <div
+            v-if="canMonthMore"
             :class="[n('icon')]"
             @click="change('month', 1)"
-            v-if="canMonthMore"
           >
-            <Icon :file="rightArrowIcon" :width="'10px'" :height="'10px'" />
+            <Icon
+              :file="rightArrowIcon"
+              :width="'10px'"
+              :height="'10px'"
+            />
           </div>
           <!-- todo: 此处催产品给个双箭头icon -->
-          <div :class="[n('icon')]" @click="change('year', 1)" v-if="canYearMore">
-            <Icon :file="dRightArrowIcon" :width="'12px'" :height="'12px'" />
+          <div
+            v-if="canYearMore"
+            :class="[n('icon')]"
+            @click="change('year', 1)"
+          >
+            <Icon
+              :file="dRightArrowIcon"
+              :width="'12px'"
+              :height="'12px'"
+            />
           </div>
         </div>
       </div>
@@ -53,22 +78,22 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onBeforeMount } from "../../../adapter-vue";
-import dayjs, { Dayjs, ManipulateType } from "dayjs";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { DateCell } from "./date-picker";
-import DateTable from "./date-table.vue";
-import Icon from "../Icon.vue";
-import leftArrowIcon from "../../../assets/icon/left-arrow.svg";
-import rightArrowIcon from "../../../assets/icon/right-arrow.svg";
-import dLeftArrowIcon from "../../../assets/icon/d-left-arrow.svg";
-import dRightArrowIcon from "../../../assets/icon/d-right-arrow.svg";
-import { isPC } from "../../../utils/env";
+import { computed, ref, onBeforeMount } from '../../../adapter-vue';
+import dayjs, { Dayjs, ManipulateType } from 'dayjs';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { DateCell } from './date-picker';
+import DateTable from './date-table.vue';
+import Icon from '../Icon.vue';
+import leftArrowIcon from '../../../assets/icon/left-arrow.svg';
+import rightArrowIcon from '../../../assets/icon/right-arrow.svg';
+import dLeftArrowIcon from '../../../assets/icon/d-left-arrow.svg';
+import dRightArrowIcon from '../../../assets/icon/d-right-arrow.svg';
+import { isPC } from '../../../utils/env';
 
 const props = defineProps({
   type: {
     type: String,
-    default: "range", // "single"/"range"
+    default: 'range', // "single"/"range"
   },
   // type 为 single 时特有属性
   date: {
@@ -86,7 +111,7 @@ const props = defineProps({
   },
   rangeType: {
     type: String,
-    default: "", // "left"/"right"
+    default: '', // "left"/"right"
   },
   currentOtherPanelValue: {
     type: Dayjs,
@@ -94,49 +119,49 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["pick", "change"]);
+const emit = defineEmits(['pick', 'change']);
 const n = (className: string) => {
   return className
     ? [
-        "tui-date-picker-panel-" + className,
-        !isPC && "tui-date-picker-panel-h5-" + className,
+        'tui-date-picker-panel-' + className,
+        !isPC && 'tui-date-picker-panel-h5-' + className,
       ]
-    : ["tui-date-picker-panel", !isPC && "tui-date-picker-panel-h5"];
+    : ['tui-date-picker-panel', !isPC && 'tui-date-picker-panel-h5'];
 };
 
 const currentPanelDate = ref<typeof Dayjs>();
-const year = computed(() => currentPanelDate.value?.get("year"));
-const month = computed(() => currentPanelDate.value?.format("MMMM"));
+const year = computed(() => currentPanelDate.value?.get('year'));
+const month = computed(() => currentPanelDate.value?.format('MMMM'));
 const canYearMore = computed(() => {
   const prevYearNumber = props.currentOtherPanelValue?.year() - 1;
   const prevYear = props.currentOtherPanelValue?.year(prevYearNumber);
   return (
-    props.rangeType === "right" ||
-    currentPanelDate.value?.isBefore(prevYear, "year")
+    props.rangeType === 'right'
+    || currentPanelDate.value?.isBefore(prevYear, 'year')
   );
 });
 const canMonthMore = computed(() => {
   const prevMonthNumber = props.currentOtherPanelValue?.month() - 1;
   const prevMonth = props.currentOtherPanelValue?.month(prevMonthNumber);
   return (
-    props.rangeType === "right" ||
-    currentPanelDate.value?.isBefore(prevMonth, "month")
+    props.rangeType === 'right'
+    || currentPanelDate.value?.isBefore(prevMonth, 'month')
   );
 });
 const canYearLess = computed(() => {
   const nextYearNumber = props.currentOtherPanelValue?.year() + 1;
   const nextYear = props.currentOtherPanelValue?.year(nextYearNumber);
   return (
-    props.rangeType === "left" ||
-    currentPanelDate.value?.isAfter(nextYear, "year")
+    props.rangeType === 'left'
+    || currentPanelDate.value?.isAfter(nextYear, 'year')
   );
 });
 const canMonthLess = computed(() => {
   const nextMonthNumber = props.currentOtherPanelValue?.month() + 1;
   const nextMonth = props.currentOtherPanelValue?.month(nextMonthNumber);
   return (
-    props.rangeType === "left" ||
-    currentPanelDate.value?.isAfter(nextMonth, "month")
+    props.rangeType === 'left'
+    || currentPanelDate.value?.isAfter(nextMonth, 'month')
   );
 });
 
@@ -167,7 +192,7 @@ const handleSingleDate = (): { date: typeof Dayjs } => {
 const handleRangeDate = (): { date: typeof Dayjs } => {
   // 计算左边
   switch (props.rangeType) {
-    case "left":
+    case 'left':
       if (props.startDate && dayjs.isDayjs(props.startDate)) {
         return {
           date: props?.startDate,
@@ -177,11 +202,11 @@ const handleRangeDate = (): { date: typeof Dayjs } => {
           date: dayjs(),
         };
       }
-    case "right":
+    case 'right':
       if (
-        props.endDate &&
-        dayjs.isDayjs(props.endDate) &&
-        props?.endDate?.isAfter(props.startDate, "month")
+        props.endDate
+        && dayjs.isDayjs(props.endDate)
+        && props?.endDate?.isAfter(props.startDate, 'month')
       ) {
         return {
           date: props?.endDate,
@@ -200,27 +225,27 @@ const handleRangeDate = (): { date: typeof Dayjs } => {
 };
 
 function handlePick(cell: DateCell) {
-  emit("pick", cell);
+  emit('pick', cell);
 }
 
 // 统一处理日期切换
 function change(type: typeof ManipulateType, num: number) {
   currentPanelDate.value = dayjs(currentPanelDate.value.toDate()).add(
     num,
-    type
+    type,
   );
-  emit("change", currentPanelDate.value);
+  emit('change', currentPanelDate.value);
 }
 
 onBeforeMount(() => {
   switch (props.type) {
-    case "single":
+    case 'single':
       currentPanelDate.value = handleSingleDate().date;
-      emit("change", currentPanelDate.value);
+      emit('change', currentPanelDate.value);
       break;
-    case "range":
+    case 'range':
       currentPanelDate.value = handleRangeDate().date;
-      emit("change", currentPanelDate.value);
+      emit('change', currentPanelDate.value);
       break;
   }
 });
@@ -230,10 +255,12 @@ onBeforeMount(() => {
 .tui-date-picker-panel {
   width: 200px;
   margin: 5px;
+
   &-body {
     width: 200px;
     display: flex;
     flex-direction: column;
+
     &-header {
       width: 100%;
       display: flex;
@@ -241,12 +268,14 @@ onBeforeMount(() => {
       height: 30px;
       padding: 0 5px;
       box-sizing: border-box;
+
       &-prev {
         display: flex;
         flex-direction: row;
         cursor: pointer;
         width: 24px;
       }
+
       &-label {
         flex: 1;
         display: flex;
@@ -255,12 +284,14 @@ onBeforeMount(() => {
         align-items: center;
         justify-content: center;
         user-select: none;
-        color: #666666;
+        color: #666;
+
         &-item {
           padding: 0 5px;
-          color: #666666;
+          color: #666;
         }
       }
+
       &-next {
         display: flex;
         flex-direction: row;
@@ -269,6 +300,7 @@ onBeforeMount(() => {
       }
     }
   }
+
   &-icon {
     display: flex;
     justify-content: center;

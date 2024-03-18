@@ -1,4 +1,5 @@
-import { IMessageModel } from "@tencentcloud/chat-uikit-engine";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { IConversationModel, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 
 export interface ITUIComponents {
   TUIChat?: any;
@@ -88,18 +89,18 @@ export type IGroupApplicationListItem = IGroupApplicationType & IGroupApplicatio
 export interface IFriendType {
   userID?: string;
   remark?: string;
-  groupList?: Array<any>;
+  groupList?: Array<unknown>;
   source?: string;
   wording?: string;
   profile?: IFriendProfile;
-  friendCustomFriend?: Array<Object>;
+  friendCustomFriend?: Array<object>;
 }
 
 export interface IFriendProfile {
   userID?: string;
   avatar?: string;
   nick?: string;
-  [propName: string]: any;
+  [propName: string]: unknown;
 }
 
 export interface IGroupMember {
@@ -110,7 +111,7 @@ export interface IGroupMember {
   joinTime?: number;
   nameCard?: string;
   muteUntil?: string;
-  memberCustomField?: Array<Object>;
+  memberCustomField?: Array<object>;
 }
 
 export interface IGroupSelfInfo {
@@ -119,30 +120,30 @@ export interface IGroupSelfInfo {
   joinTime?: number;
   nameCard?: string;
   userID?: string;
-  memberCustomField?: Array<Object>;
+  memberCustomField?: Array<object>;
 }
 
 export interface IUserProfile {
-  userID?: string;
-  nick?: string;
-  gender?: string;
-  birthday?: number;
-  location?: string;
-  selfSignature?: string;
-  allowType?: string;
-  language?: number;
-  avatar?: string;
-  messageSettings?: number;
-  adminForbidType?: string;
-  level?: number;
-  role?: number;
-  lastUpdatedTime?: number;
-  profileCustomField?: Array<Object>;
+  userID: string;
+  nick: string;
+  gender: string;
+  birthday: number;
+  location: string;
+  selfSignature: string;
+  allowType: string;
+  language: number;
+  avatar: string;
+  messageSettings: number;
+  adminForbidType: string;
+  level: number;
+  role: number;
+  lastUpdatedTime: number;
+  profileCustomField: Array<object>;
 }
 
 export interface IContactListItem {
   title: string;
-  list: Array<any>;
+  list: Array<unknown>;
   key: string;
   unreadCount?: number;
 }
@@ -180,20 +181,27 @@ export interface IContactInfoMoreItem {
   editable?: boolean; // 是否可以编辑
   editType?: string; // 编辑类型: "input"/"switch"/"textarea"
   editing?: boolean; // 当前编辑状态: true 为"正在编辑中"，false 为"非编辑状态"
-  editSubmitHandler?: Function; // 编辑提交回调Z
+  editSubmitHandler?: () => void; // 编辑提交回调Z
 }
 
 export interface IContactInfoButton {
   key: string;
   label: string; // button 内容
   type: string; // button 类型: "cancel"/"submit"
-  onClick: Function; // 点击 button 回调
+  onClick: () => void; // 点击 button 回调
+}
+
+export interface ISearchCloudMessageResult {
+  totalCount: number;
+  searchResultList: Array<ISearchResultListItem>;
+  cursor: string;
 }
 
 export interface ISearchResultListItem {
-  conversationID: string;
+  conversation: IConversationModel;
   messageCount: number;
   messageList: Array<IMessageModel>;
+  type?: string;
 }
 
 export interface IImageMessageContent {
@@ -223,6 +231,12 @@ export interface IAudioMessageContent {
   second: number;
 }
 
+export interface ICustomMessageContent {
+  showName: string;
+  custom: string;
+  businessID: string;
+}
+
 export interface IAudioContext {
   src: string | undefined;
   startTime: number;
@@ -239,7 +253,7 @@ export interface IAudioContext {
 }
 
 export interface ITipTapEditorContent {
-  type: "text" | "image" | "video" | "file";
+  type: 'text' | 'image' | 'video' | 'file';
   payload: {
     text?: string;
     file?: File;

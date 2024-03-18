@@ -1,39 +1,42 @@
 <template>
-  <ul class="TUI-contact-list" v-if="!contactSearchingStatus">
+  <ul
+    v-if="!contactSearchingStatus"
+    class="tui-contact-list"
+  >
     <li
-      class="TUI-contact-list-item"
       v-for="(contactListObj, key) in contactListMap"
       :key="key"
+      class="tui-contact-list-item"
     >
       <header
-        class="TUI-contact-list-item-header"
+        class="tui-contact-list-item-header"
         @click="toggleCurrentContactList(key)"
       >
-        <div class="TUI-contact-list-item-header-left">
+        <div class="tui-contact-list-item-header-left">
           <Icon
             :file="currentContactListKey === key ? downSVG : rightSVG"
             width="16px"
             height="16px"
-          ></Icon>
+          />
           <div>{{ TUITranslateService.t(`TUIContact.${contactListObj.title}`) }}</div>
         </div>
-        <div class="TUI-contact-list-item-header-right">
+        <div class="tui-contact-list-item-header-right">
           <span
-            class="TUI-contact-list-item-header-right-unread"
             v-if="contactListObj.unreadCount"
+            class="tui-contact-list-item-header-right-unread"
           >
             {{ contactListObj.unreadCount }}
           </span>
         </div>
       </header>
       <ul
-        class="TUI-contact-list-item-main"
         v-if="currentContactListKey === key"
+        class="tui-contact-list-item-main"
       >
         <li
           v-for="(contactListItem, contactListItemKey) in contactListObj.list"
           :key="contactListItemKey"
-          class="TUI-contact-list-item-main-item"
+          class="tui-contact-list-item-main-item"
           :class="['selected']"
           @click="selectItem(contactListItem)"
         >
@@ -47,27 +50,40 @@
       </ul>
     </li>
   </ul>
-  <ul class="TUI-contact-list" v-else>
+  <ul
+    v-else
+    class="tui-contact-list"
+  >
     <li
-      class="TUI-contact-list-item"
       v-for="(item, key) in contactSearchResult"
       :key="key"
+      class="tui-contact-list-item"
     >
-      <div class="TUI-contact-search-list" v-if="item.list[0]">
-        <div class="TUI-contact-search-list-title">
-          {{ TUITranslateService.t(`TUIContact.${item.label}`)}}
+      <div
+        v-if="item.list[0]"
+        class="tui-contact-search-list"
+      >
+        <div class="tui-contact-search-list-title">
+          {{ TUITranslateService.t(`TUIContact.${item.label}`) }}
         </div>
         <div
-          v-for="listItem in item.list"
-          class="TUI-contact-search-list-item"
+          v-for="(listItem, index) in item.list"
+          :key="index"
+          class="tui-contact-search-list-item"
           :class="['selected']"
           @click="selectItem(listItem)"
         >
-          <ContactListItem :item="listItem" :list="item.list" />
+          <ContactListItem
+            :item="listItem"
+            :list="item.list"
+          />
         </div>
       </div>
     </li>
-    <div class="TUI-contact-search-list-default" v-if="isContactSearchNoResult">
+    <div
+      v-if="isContactSearchNoResult"
+      class="tui-contact-search-list-default"
+    >
       {{ TUITranslateService.t("TUIContact.无搜索结果") }}
     </div>
   </ul>
@@ -82,43 +98,44 @@ import {
   Friend,
   FriendApplication,
   TUIUserService,
-} from "@tencentcloud/chat-uikit-engine";
-import TUICore, { TUIConstants } from "@tencentcloud/tui-core";
-import { ref, computed, onMounted, onUnmounted } from "../../../adapter-vue";
-import Icon from "../../common/Icon.vue";
-import downSVG from "../../../assets/icon/down-icon.svg";
-import rightSVG from "../../../assets/icon/right-icon.svg";
+} from '@tencentcloud/chat-uikit-engine';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
+import { ref, computed, onMounted, onUnmounted } from '../../../adapter-vue';
+import Icon from '../../common/Icon.vue';
+import downSVG from '../../../assets/icon/down-icon.svg';
+import rightSVG from '../../../assets/icon/right-icon.svg';
 import {
   IContactList,
   IContactSearchResult,
   IBlackListUserItem,
   IUserStatus,
   IUserStatusMap,
-} from "../../../interface";
-import ContactListItem from "./contact-list-item/index.vue";
+  IContactInfoType,
+} from '../../../interface';
+import ContactListItem from './contact-list-item/index.vue';
 
-const currentContactListKey = ref<string>("");
-const currentContactInfo = ref<any>({});
+const currentContactListKey = ref<keyof IContactList>('');
+const currentContactInfo = ref<IContactInfoType>({} as IContactInfoType);
 const contactListMap = ref<IContactList>({
   friendApplicationList: {
     key: 'friendApplicationList',
-    title: "新的联系人",
+    title: '新的联系人',
     list: [] as Array<FriendApplication>,
     unreadCount: 0,
   },
   blackList: {
     key: 'blackList',
-    title: "黑名单",
+    title: '黑名单',
     list: [] as Array<IBlackListUserItem>,
   },
   groupList: {
     key: 'groupList',
-    title: "我的群聊",
+    title: '我的群聊',
     list: [] as Array<IGroupModel>,
   },
   friendList: {
     key: 'friendList',
-    title: "我的好友",
+    title: '我的好友',
     list: [] as Array<Friend>,
   },
 });
@@ -129,8 +146,8 @@ const userOnlineStatusMap = ref<IUserStatusMap>();
 
 const isContactSearchNoResult = computed((): boolean => {
   return (
-    !contactSearchResult?.value?.user?.list[0] &&
-    !contactSearchResult?.value?.group?.list[0]
+    !contactSearchResult?.value?.user?.list[0]
+    && !contactSearchResult?.value?.group?.list[0]
   );
 });
 
@@ -188,45 +205,45 @@ onUnmounted(() => {
   });
 });
 
-function updateCurrentContactInfoFromList (list: Array<any>, type: string) {
+function updateCurrentContactInfoFromList(list: Array<IContactInfoType>, type: string) {
   if (
-    !currentContactInfo?.value?.userID &&
-    !currentContactInfo?.value?.groupID
+    !(currentContactInfo.value as Friend)?.userID
+    && !(currentContactInfo.value as IGroupModel)?.groupID
   ) {
     return;
   } else if (
-    currentContactInfo?.value?.groupID &&
-    (type === currentContactListKey.value || contactSearchingStatus.value)
+    (currentContactInfo.value as IGroupModel)?.groupID
+    && (type === currentContactListKey.value || contactSearchingStatus.value)
   ) {
     currentContactInfo.value = list?.find(
       (item: any) =>
-        item?.groupID && item?.groupID === currentContactInfo?.value?.groupID
-    );
-    TUIStore.update(StoreName.CUSTOM, "currentContactInfo", currentContactInfo.value);
+        item?.groupID && item?.groupID === (currentContactInfo.value as IGroupModel)?.groupID,
+    ) || {} as IContactInfoType;
+    TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
   } else if (
-    currentContactInfo?.value?.userID &&
-    (type === currentContactListKey.value || contactSearchingStatus.value)
+    (currentContactInfo.value as Friend)?.userID
+    && (type === currentContactListKey.value || contactSearchingStatus.value)
   ) {
     currentContactInfo.value = list?.find(
       (item: any) =>
-        item?.userID && item?.userID === currentContactInfo?.value?.userID
-    );
-    TUIStore.update(StoreName.CUSTOM, "currentContactInfo", currentContactInfo.value);
+        item?.userID && item?.userID === (currentContactInfo.value as Friend)?.userID,
+    ) || {} as IContactInfoType;
+    TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
   }
 }
 
-function toggleCurrentContactList(key: string) {
+function toggleCurrentContactList(key: keyof IContactList) {
   if (currentContactListKey.value === key) {
-    currentContactListKey.value = "";
-    currentContactInfo.value = {};
+    currentContactListKey.value = '';
+    currentContactInfo.value = {} as IContactInfoType;
     TUIStore.update(
       StoreName.CUSTOM,
-      "currentContactInfo",
-      currentContactInfo.value
+      'currentContactInfo',
+      currentContactInfo.value,
     );
   } else {
     currentContactListKey.value = key;
-    if (key === "friendApplicationList") {
+    if (key === 'friendApplicationList') {
       TUIFriendService.setFriendApplicationRead();
     }
   }
@@ -238,13 +255,13 @@ function selectItem(item: any) {
   // 对于 搜索列表 中 某结果，查看 contactInfo 详情前，需要对于“已在群组列表/已在好友列表” 的情况进行数据更新，已获得更详细的信息
   if (contactSearchingStatus.value) {
     let targetListItem;
-    if (currentContactInfo?.value?.userID) {
-      targetListItem = contactListMap?.value?.friendList?.list?.find(
-        (item: any) => item?.userID === currentContactInfo?.value?.userID
+    if ((currentContactInfo.value as Friend)?.userID) {
+      targetListItem = contactListMap.value?.friendList?.list?.find(
+        (item: IContactInfoType) => (item as Friend)?.userID === (currentContactInfo.value as Friend)?.userID,
       );
-    } else if (currentContactInfo?.value?.groupID) {
-      targetListItem = contactListMap?.value?.groupList?.list?.find(
-        (item: any) => item?.groupID === currentContactInfo?.value?.groupID
+    } else if ((currentContactInfo.value as IGroupModel)?.groupID) {
+      targetListItem = contactListMap.value?.groupList?.list?.find(
+        (item: IContactInfoType) => (item as IGroupModel)?.groupID === (currentContactInfo.value as IGroupModel)?.groupID,
       );
     }
     if (targetListItem) {
@@ -252,7 +269,7 @@ function selectItem(item: any) {
     }
   }
   // 更新数据
-  TUIStore.update(StoreName.CUSTOM, "currentContactInfo", currentContactInfo.value);
+  TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
 }
 
 function onDisplayOnlineStatusUpdated(status: boolean) {
@@ -273,7 +290,7 @@ function onCustomerServiceCommercialPluginUpdated(isEnabled: boolean) {
   /// 客户购买客服插件后 engine 通过商业化能力位更新将 enabledCustomerServicePlugin 设置为 true
   const contactListExtensionID = TUIConstants.TUIContact.EXTENSION.CONTACT_LIST.EXT_ID;
   const tuiContactExtensionList = TUICore.getExtensionList(contactListExtensionID);
-  
+
   const customerData = tuiContactExtensionList.find((extension: any) => {
     const { name, accountList = [] } = extension.data || {};
     return name === 'customer' && accountList.length > 0;
@@ -292,10 +309,10 @@ function onCustomerServiceCommercialPluginUpdated(isEnabled: boolean) {
               return {
                 ...item,
                 infoKeyList: [],
-                btnKeyList: ["enterC2CConversation"],
+                btnKeyList: ['enterC2CConversation'],
               };
             }),
-            key: "customerList",
+            key: 'customerList',
           };
           contactListMap.value = { ...contactListMap.value, customerList };
         }
@@ -306,12 +323,12 @@ function onCustomerServiceCommercialPluginUpdated(isEnabled: boolean) {
 
 function onGroupListUpdated(groupList: Array<IGroupModel>) {
   contactListMap.value.groupList.list = groupList;
-  updateCurrentContactInfoFromList(contactListMap.value.groupList.list, "groupList");
+  updateCurrentContactInfoFromList(contactListMap.value.groupList.list, 'groupList');
 }
 
 function onUserBlacklistUpdated(userBlacklist: Array<IBlackListUserItem>) {
   contactListMap.value.blackList.list = userBlacklist;
-  updateCurrentContactInfoFromList(contactListMap.value.blackList.list, "blackList");
+  updateCurrentContactInfoFromList(contactListMap.value.blackList.list, 'blackList');
 }
 
 function onFriendApplicationUnreadCountUpdated(friendApplicationUnreadCount: number) {
@@ -320,12 +337,12 @@ function onFriendApplicationUnreadCountUpdated(friendApplicationUnreadCount: num
 
 function onFriendListUpdated(friendList: Array<Friend>) {
   contactListMap.value.friendList.list = friendList;
-  updateCurrentContactInfoFromList(contactListMap.value.friendList.list, "friendList");
+  updateCurrentContactInfoFromList(contactListMap.value.friendList.list, 'friendList');
 }
 
 function onFriendApplicationListUpdated(friendApplicationList: Array<FriendApplication>) {
   contactListMap.value.friendApplicationList.list = friendApplicationList;
-  updateCurrentContactInfoFromList(contactListMap.value.friendApplicationList.list, "friendApplicationList");
+  updateCurrentContactInfoFromList(contactListMap.value.friendApplicationList.list, 'friendApplicationList');
 }
 
 function onCurrentContactSearchResultUpdated(searchResult: IContactSearchResult) {
@@ -334,9 +351,9 @@ function onCurrentContactSearchResultUpdated(searchResult: IContactSearchResult)
 
 function onCurrentContactSearchingStatusUpdated(searchingStatus: boolean) {
   contactSearchingStatus.value = searchingStatus;
-  currentContactInfo.value = {};
-  currentContactListKey.value = "";
-  TUIStore.update(StoreName.CUSTOM, "currentContactInfo", currentContactInfo.value);
+  currentContactInfo.value = {} as IContactInfoType;
+  currentContactListKey.value = '';
+  TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
 }
 </script>
 

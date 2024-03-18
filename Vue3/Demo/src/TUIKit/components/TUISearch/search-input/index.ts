@@ -1,2 +1,2 @@
-import SearchInput from "./index.vue";
+import SearchInput from './index.vue';
 export default SearchInput;

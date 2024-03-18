@@ -1,7 +1,7 @@
-@import '../../../../assets/styles/common.scss';
-@import './color.scss';
-@import './web.scss';
-@import './h5.scss';
+@import '../../../../assets/styles/common';
+@import './color';
+@import './web';
+@import './h5';
 
 
 .icon-close {
@@ -16,7 +16,8 @@
 .icon-close::after {
   content: "";
   position: absolute;
-  /*方便进行定位*/
+
+  /* 方便进行定位 */
   background-color: #8F959E;
   height: 16px;
   width: 2px;

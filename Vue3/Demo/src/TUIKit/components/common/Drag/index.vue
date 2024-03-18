@@ -13,7 +13,7 @@ import {
   watchEffect,
   getCurrentInstance,
   nextTick,
-} from "../../../adapter-vue";
+} from '../../../adapter-vue';
 const props = defineProps({
   show: {
     type: Boolean,
@@ -21,16 +21,16 @@ const props = defineProps({
   },
   domClassName: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 const data = reactive({
   show: false,
-  domClassName: "",
+  domClassName: '',
   startPosition: {
-    left: "",
-    top: "",
-    cssText: "",
+    left: '',
+    top: '',
+    cssText: '',
   },
 });
 
@@ -44,7 +44,7 @@ watchEffect(() => {
 onMounted(() => {
   let isDrag = false;
   let dragDom = document?.getElementsByClassName(
-    props.domClassName
+    props.domClassName,
   )[0] as HTMLElement;
   watch(
     () => data.show,
@@ -54,16 +54,16 @@ onMounted(() => {
       if (data.show === true) {
         nextTick(() => {
           dragDom = document?.getElementsByClassName(
-            props.domClassName
+            props.domClassName,
           )[0] as HTMLElement;
           if (!dragDom) return;
           dragDom.style.left = data.startPosition?.left;
           dragDom.style.top = data.startPosition?.top;
           dragDom.style.cssText = data.startPosition?.cssText;
-          dragDom.addEventListener("mousedown", mouseDown);
+          dragDom.addEventListener('mousedown', mouseDown);
         });
       }
-    }
+    },
   );
   const mouseDown = (e: MouseEvent) => {
     isDrag = true;
@@ -76,10 +76,10 @@ onMounted(() => {
         dragDom.style.top = `${e.clientY - Y}px`;
       }
     };
-    document.addEventListener("mousemove", throttle(move, 20), false);
-    document.addEventListener("mouseup", () => {
+    document.addEventListener('mousemove', throttle(move, 20), false);
+    document.addEventListener('mouseup', () => {
       isDrag = false;
-      document.removeEventListener("mousemove", move);
+      document.removeEventListener('mousemove', move);
     });
   };
 });
@@ -96,13 +96,13 @@ function throttle(fn: { (e: MouseEvent): void; apply?: any }, timer: number) {
 }
 
 const positionReset = () => {
-  let dragDom = document?.getElementsByClassName(
-    props.domClassName
+  const dragDom = document?.getElementsByClassName(
+    props.domClassName,
   )[0] as HTMLElement;
   data.startPosition = {
-    left: "",
-    top: "",
-    cssText: "",
+    left: '',
+    top: '',
+    cssText: '',
   };
   if (!dragDom) {
     return;
@@ -117,5 +117,5 @@ defineExpose({
 });
 </script>
 <style lang="scss" scoped>
-@import "../../../assets/styles/common.scss";
+@import "../../../assets/styles/common";
 </style>
