@@ -232,7 +232,7 @@ watch(
         position: absolute;
         bottom: 10px;
         left: 100%;
-        z-index: 2;
+        z-index: 9999;
         white-space: nowrap;
       }
     }

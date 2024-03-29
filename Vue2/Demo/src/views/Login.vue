@@ -8,18 +8,28 @@
     />
     <main class="login-main">
       <div class="login-main-content">
-        <div class="login-main-adv" :class="[locale === 'en' && 'small-txt']" v-if="isPC">
+        <div
+          v-if="isPC"
+          class="login-main-adv"
+          :class="[locale === 'en' && 'small-txt']"
+        >
           <p class="login-main-adv-introduce">
-            {{ TUITranslateService.t("Login.超10亿用户的信赖") }}<br />
+            {{ TUITranslateService.t("Login.超10亿用户的信赖") }}<br>
             {{ TUITranslateService.t("腾讯云") }}{{ TUITranslateService.t("即时通信") }}
           </p>
-          <a class="login-sale" @click="openDownloadLink(Link.adv)">
+          <a
+            class="login-sale"
+            @click="openDownloadLink(Link.adv)"
+          >
             <div>
               {{ TUITranslateService.t("Home.IM首购低至1折") }},
               {{ TUITranslateService.t("Home.续费9折起") }}!
               {{ TUITranslateService.t("Home.立即选购") }}
             </div>
-            <img class="icon icon-adv-arrow" src="../assets/icon/adv-arrow.svg" />
+            <img
+              class="icon icon-adv-arrow"
+              src="../assets/icon/adv-arrow.svg"
+            >
           </a>
         </div>
         <el-form
@@ -31,18 +41,23 @@
           class="login-form"
         >
           <div class="login-title">
-            <img src="../assets/image/logo.svg" alt="" />
+            <img
+              src="../assets/image/logo.svg"
+              alt=""
+            >
             <p>{{ TUITranslateService.t("Login.免费体验") }}</p>
           </div>
-          <el-form-item class="login-from-item" prop="userID">
+          <el-form-item
+            class="login-from-item"
+            prop="userID"
+          >
             <el-input
-              size="large"
               v-model="ruleForm.userID"
+              size="large"
               :placeholder="TUITranslateService.t('Login.请输入userID')"
               class="input-with-select"
               :disabled="isLogin"
-            >
-            </el-input>
+            />
           </el-form-item>
           <el-form-item prop="checked">
             <el-checkbox v-model="ruleForm.checked">
@@ -59,15 +74,29 @@
             </el-checkbox>
           </el-form-item>
           <el-form-item class="login-btn">
-            <button class="btn btn-primary" @click.prevent="submitForm(ruleFormRef)" v-if="isLogin">
+            <button
+              v-if="isLogin"
+              class="btn btn-primary"
+              @click.prevent="submitForm(ruleFormRef)"
+            >
               {{ TUITranslateService.t("Login.登录当前账号") }}
             </button>
-            <button class="btn btn-primary" @click.prevent="submitForm(ruleFormRef)" v-else>
+            <button
+              v-else
+              class="btn btn-primary"
+              @click.prevent="submitForm(ruleFormRef)"
+            >
               {{ TUITranslateService.t("Login.登录") }}
             </button>
           </el-form-item>
-          <el-form-item class="login-btn" v-if="isLogin">
-            <button class="btn" @click.prevent="exitLogin">
+          <el-form-item
+            v-if="isLogin"
+            class="login-btn"
+          >
+            <button
+              class="btn"
+              @click.prevent="exitLogin"
+            >
               {{ TUITranslateService.t("Login.切换其他账号") }}
             </button>
           </el-form-item>
@@ -75,53 +104,85 @@
             <a @click="openDownloadLink(Link.demo)">{{
               TUITranslateService.t(`Login.${Link.demo.label}`)
             }}</a>
-            <a @click="openDownloadLink(Link.im)" v-if="!isH5">{{
+            <a
+              v-if="!isH5"
+              @click="openDownloadLink(Link.im)"
+            >{{
               TUITranslateService.t(`Login.${Link.im.label}`)
             }}</a>
           </footer>
         </el-form>
       </div>
-      <div class="login-main-middle" v-if="isPC">
+      <div
+        v-if="isPC"
+        class="login-main-middle"
+      >
         <div class="login-main-middle-box">
           <AdvList :list="qrList">
             <template #item="{ data }">
-              <AdvListItem :item="data" @hoverEvent="openDownloadLink" />
+              <AdvListItem
+                :item="data"
+                @hoverEvent="openDownloadLink"
+              />
             </template>
           </AdvList>
         </div>
       </div>
-      <div class="login-main-footer" v-if="isPC">
+      <div
+        v-if="isPC"
+        class="login-main-footer"
+      >
         <div class="mask">
-          <p class="mask-top">{{ TUITranslateService.t("Login.一分钟") }}</p>
+          <p class="mask-top">
+            {{ TUITranslateService.t("Login.一分钟") }}
+          </p>
           <p class="mask-under">
             {{ TUITranslateService.t("Login.改2行代码，1分钟跑通demo") }}
           </p>
         </div>
         <div class="mask">
-          <p class="mask-top">10000+</p>
+          <p class="mask-top">
+            10000+
+          </p>
           <p class="mask-under">
             {{ TUITranslateService.t("Login.每月服务客户数超过10000家") }}
           </p>
         </div>
         <div class="mask">
-          <p class="mask-top">99.99%</p>
-          <p class="mask-under">{{ TUITranslateService.t("Login.消息收发成功率") }}</p>
+          <p class="mask-top">
+            99.99%
+          </p>
+          <p class="mask-under">
+            {{ TUITranslateService.t("Login.消息收发成功率") }}
+          </p>
         </div>
         <div class="mask">
-          <p class="mask-top">{{ TUITranslateService.t("Login.10亿") }}+</p>
+          <p class="mask-top">
+            {{ TUITranslateService.t("Login.10亿") }}+
+          </p>
           <p class="mask-under">
             {{ TUITranslateService.t("Login.每月活跃用户数超过10亿") }}
           </p>
         </div>
       </div>
     </main>
-    <footer class="login-footer" v-if="!isPC">
+    <footer
+      v-if="!isPC"
+      class="login-footer"
+    >
       <ul class="login-footer-list">
-        <li class="login-footer-list-item" v-for="(item, index) in Link.advList" :key="index">
+        <li
+          v-for="(item, index) in Link.advList"
+          :key="index"
+          class="login-footer-list-item"
+        >
           <a @click="openDownloadLink(item)">
             <aside>
               <h1>{{ TUITranslateService.t(`Home.${item.label}`) }}</h1>
-              <h1 v-if="item.subLabel" class="sub">
+              <h1
+                v-if="item.subLabel"
+                class="sub"
+              >
                 {{ TUITranslateService.t(`Home.${item.subLabel}`) }}
               </h1>
             </aside>
@@ -131,25 +192,35 @@
       </ul>
       <div class="login-footer-list-bottom">
         <div class="text-header">
-          <i></i>
+          <i />
           <span>{{ TUITranslateService.t(`Login.更多客户端体验`) }}</span>
-          <i></i>
+          <i />
         </div>
         <ul class="login-footer-list-bottom-image">
           <li
-            class="platform"
             v-for="(item, index) in mobileList"
             :key="index"
+            class="platform"
             @click="handleJump(item)"
           >
-            <img :src="item.link" alt="" />
+            <img
+              :src="item.link"
+              alt=""
+            >
           </li>
         </ul>
       </div>
     </footer>
-    <div class="mask" v-if="showMini" @click="showMini = false">
+    <div
+      v-if="showMini"
+      class="mask"
+      @click="showMini = false"
+    >
       <div class="mask-main">
-        <img src="https://web.sdk.qcloud.com//im/assets/images/mini.png" alt="" />
+        <img
+          src="https://web.sdk.qcloud.com//im/assets/images/mini.png"
+          alt=""
+        >
         <span>{{ TUITranslateService.t("Login.微信扫一扫，免费体验腾讯云 IM 小程序") }}</span>
         <span>{{ TUITranslateService.t("Login.或者截图至相册，切换微信扫一扫识别体验") }}</span>
       </div>
@@ -157,28 +228,28 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, withDefaults, defineProps, defineEmits, vueVersion } from "../TUIKit/adapter-vue";
-import { TUILogin } from "@tencentcloud/tui-core";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { SDKAppID, secretKey } from "../main";
-import router from "../router/index";
-import { Message } from "element-ui";
-import Header from "../components/Header.vue";
-import AdvList from "../components/AdvList.vue";
-import AdvListItem from "../components/AdvListItem.vue";
-import { Link, qrList, mobileList } from "../utils/link";
-import { genTestUserSig } from "../TUIKit";
-import { isPC, isH5 } from "../TUIKit/utils/env";
+import { ref, withDefaults, defineProps, defineEmits, vueVersion } from '../TUIKit/adapter-vue';
+import { TUILogin } from '@tencentcloud/tui-core';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { SDKAppID, secretKey } from '../main';
+import router from '../router/index';
+import { Message } from 'element-ui';
+import Header from '../components/Header.vue';
+import AdvList from '../components/AdvList.vue';
+import AdvListItem from '../components/AdvListItem.vue';
+import { Link, qrList, mobileList } from '../utils/link';
+import { genTestUserSig } from '../TUIKit';
+import { isPC, isH5 } from '../TUIKit/utils/env';
 
 const props = withDefaults(
   defineProps<{
     language: string;
   }>(),
   {
-    language: "zh",
-  }
+    language: 'zh',
+  },
 );
-const emits = defineEmits(["changeLanguage"]);
+const emits = defineEmits(['changeLanguage']);
 
 const locale = ref(props.language);
 const isLogin = ref(false);
@@ -189,7 +260,7 @@ const validateUserID = (rule: any, value: any, callback: any) => {
   if (!rule.required) {
     callback();
   } else if (!value) {
-    callback(new Error(TUITranslateService.t("Login.请输入userID")));
+    callback(new Error(TUITranslateService.t('Login.请输入userID')));
   } else {
     callback();
   }
@@ -197,7 +268,7 @@ const validateUserID = (rule: any, value: any, callback: any) => {
 
 const validateChecked = (rule: any, value: any, callback: any) => {
   if (!value) {
-    callback(new Error(TUITranslateService.t("Login.请先勾选用户协议")));
+    callback(new Error(TUITranslateService.t('Login.请先勾选用户协议')));
   } else {
     callback();
   }
@@ -205,20 +276,20 @@ const validateChecked = (rule: any, value: any, callback: any) => {
 
 const ruleForm = ref({
   checked: false,
-  userID: "",
+  userID: '',
 });
 
 const rules = ref({
-  checked: [{ required: true, validator: validateChecked, trigger: "change" }],
-  userID: [{ required: true, validator: validateUserID, trigger: "blur" }],
+  checked: [{ required: true, validator: validateChecked, trigger: 'change' }],
+  userID: [{ required: true, validator: validateUserID, trigger: 'blur' }],
 });
 
-if (localStorage.getItem("TUIKit-userInfo")) {
-  const storgeUserInfo = localStorage.getItem("TUIKit-userInfo") || "";
+if (localStorage.getItem('TUIKit-userInfo')) {
+  const storgeUserInfo = localStorage.getItem('TUIKit-userInfo') || '';
   const userInfo = JSON.parse(storgeUserInfo);
   if (new Date(userInfo?.expire) > new Date()) {
     isLogin.value = true;
-    ruleForm.value.userID = userInfo.userID || "";
+    ruleForm.value.userID = userInfo.userID || '';
   }
 }
 
@@ -245,7 +316,6 @@ const submitForm = (formEl: any) => {
         userID: ruleForm.value.userID,
         userSig: options.userSig,
         useUploadPlugin: true,
-        useProfanityFilterPlugin: true,
         framework: `vue${vueVersion}`,
       };
       login(loginInfo);
@@ -258,7 +328,7 @@ const submitForm = (formEl: any) => {
 const login = (loginInfo: any) => {
   TUILogin.login(loginInfo)
     .then((res: any) => {
-      router.push({ path: "home" });
+      router.push({ path: 'home' });
     })
     .catch((error: any) => {
       Message.error({
@@ -268,27 +338,27 @@ const login = (loginInfo: any) => {
 };
 
 const exitLogin = async () => {
-  localStorage.removeItem("TUIKit-userInfo");
-  ruleForm.value.userID = "";
+  localStorage.removeItem('TUIKit-userInfo');
+  ruleForm.value.userID = '';
   isLogin.value = false;
 };
 
 const handleJump = (item: any) => {
   switch (item.type) {
-    case "android":
+    case 'android':
       openFullPlatformLink(item.url);
       break;
-    case "iphone":
+    case 'iphone':
       openFullPlatformLink(item.url);
       break;
-    case "miniprogram":
+    case 'miniprogram':
       showMini.value = true;
       break;
   }
 };
 
 function changeLanguage(language: string) {
-  emits("changeLanguage", language);
+  emits('changeLanguage', language);
 }
 </script>
 

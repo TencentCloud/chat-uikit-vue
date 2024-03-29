@@ -1,7 +1,7 @@
 <template>
   <Overlay
-    :bg-color="'transparent'"
-    @clickHandler="closeReadReceiptPanel"
+    :useMask="false"
+    @onOverlayClick="closeReadReceiptPanel"
   >
     <div
       :class="{

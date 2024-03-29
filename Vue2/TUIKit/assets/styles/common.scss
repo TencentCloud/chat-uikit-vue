@@ -2,19 +2,24 @@ body,div,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,p{
   margin:0;
   padding:0;
   font-style:normal;
+
   /* font:12px/22px"\5B8B\4F53",Arial,Helvetica,sans-serif; */
 }
+
 ol,ul,li{
   list-style:none;
 }
+
 img{
   border:0;
   vertical-align:middle;
 }
+
 body{
-  color:#000000;
+  color:#000;
   background:#FFF;
 }
+
 .clear{
   clear:both;
   height:1px;
@@ -22,11 +27,13 @@ body{
   overflow:hidden;
   margin-top:-1px;
 }
+
 a{
-  color:#000000;
+  color:#000;
   text-decoration:none;
   cursor: pointer;
 }
+
 a:hover{
   text-decoration:none;
 }
@@ -34,12 +41,15 @@ a:hover{
 input, textarea {
   user-select: auto;
 }
+
 input:focus, input:active, textarea:focus, textarea:active {
   outline: none;
 }
+
 img{
   pointer-events:none;
 }
+
 .chat-aside {
   position: absolute;
   top: 50px;
@@ -47,6 +57,6 @@ img{
   box-sizing: border-box;
   width: 360px !important;
   border-radius: 8px 0 0 8px;
-  z-index: 2;
+  z-index: 9999;
   max-height: calc(100% - 50px);
 }

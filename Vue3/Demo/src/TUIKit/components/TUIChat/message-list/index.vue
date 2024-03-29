@@ -21,18 +21,11 @@
           {{ TUITranslateService.t("TUIChat.点此投诉") }}
         </a>
       </div>
-      <div
-        v-if="isGroup && groupApplicationCount > 0"
-        class="tui-chat-application-tips"
-        @click="toggleApplicationList()"
-      >
-        <span>
-          {{ groupApplicationCount }}{{ TUITranslateService.t("TUIChat.条入群申请") }}
-          <span class="application-tips-btn">
-            {{ TUITranslateService.t("TUIChat.点击处理") }}
-          </span>
-        </span>
-      </div>
+      <MessageGroupApplication
+        v-if="isGroup"
+        :key="props.groupID"
+        :groupID="props.groupID"
+      />
       <!-- 消息列表 -->
       <ul
         id="messageScrollList"
@@ -208,13 +201,6 @@
         :imageList="imageMessageList"
         @close="onImagePreviewerClose"
       />
-      <!-- 加群申请系统消息 -->
-      <MessageGroupSystem
-        v-if="showGroupApplication"
-        :groupID="groupID"
-        @toggleApplicationList="toggleApplicationList"
-        @handleGroupApplication="handleGroupApplication"
-      />
       <!-- 已读回执用户列表面板 -->
       <ReadReceiptPanel
         v-if="isShowReadUserStatusPanel"
@@ -233,14 +219,13 @@ import TUIChatEngine, {
   StoreName,
   TUITranslateService,
   TUIChatService,
-  TUIGroupService,
-  IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import { outsideClick, getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { TUIEmojiPlugin } from '@tencentcloud/tui-emoji-plugin';
 import throttle from 'lodash/throttle';
 import Link from './link';
+import MessageGroupApplication from './message-group-application/index.vue';
 import MessageText from './message-elements/message-text.vue';
 import MessageImage from './message-elements/message-image.vue';
 import MessageAudio from './message-elements/message-audio.vue';
@@ -258,15 +243,12 @@ import MessagePlugin from '../../../plugins/plugin-components/message-plugin.vue
 import ScrollButton from './scroll-button/index.vue';
 import ReadReceiptPanel from './read-receipt-panel/index.vue';
 import { isPluginMessage } from '../../../plugins/plugin-components/index';
-import MessageGroupSystem from './message-elements/message-group-system.vue';
 import Dialog from '../../common/Dialog/index.vue';
 import ImagePreviewer from '../../common/ImagePreviewer/index.vue';
 import ProgressMessage from '../../common/ProgressMessage/index.vue';
 import { emojiConfig } from '../utils/emoji-config';
 import { isPC, isH5 } from '../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal, shallowCopyMessage, isCreateGroupCustomMessage, deepCopy } from '../utils/utils';
-
-import { IGroupApplicationListItem } from '../../../interface';
 
 interface ScrollConfig {
   scrollToMessage?: IMessageModel;
@@ -296,22 +278,18 @@ const sentReceiptMessageIDSet = new Set<string>();
 const messageListRef = ref<HTMLElement>();
 const messageToolListRef = ref<Array<{ messageToolDom: HTMLElement }>>();
 // 上屏展示 messageList，不包含 isDeleted 为 true 的 message
-const messageList = ref<Array<IMessageModel>>();
+const messageList = ref<IMessageModel[]>();
 // 所有 messageList 序列，包含 isDeleted 为 true 的 message
-const allMessageList = ref<Array<IMessageModel>>();
+const allMessageList = ref<IMessageModel[]>();
 const isCompleted = ref(false);
 const currentConversationID = ref('');
 const currentLastMessage = ref<IMessageModel>();
-const currentLastMessageTime = ref<number>(0);
 const nextReqMessageID = ref();
 const toggleID = ref('');
 const TYPES = ref(TUIChatEngine.TYPES);
 const isLongpressing = ref(false);
-const groupApplicationCount = ref(0);
-const showGroupApplication = ref(false);
-const applicationUserIDList = ref<Array<string>>([]);
 const messageTarget = ref<IMessageModel>();
-const messageElementListRef = ref<Array<HTMLElement> | null>();
+const messageElementListRef = ref<HTMLElement[] | null>();
 const targetMessageDom = ref<HTMLElement | null>();
 const blinkMessageIDList = ref<string[]>([]);
 const scrollButtonInstanceRef = ref<InstanceType<typeof ScrollButton>>();
@@ -355,14 +333,8 @@ onMounted(() => {
     currentConversationID: onCurrentConversationIDUpdated,
   });
 
-  // 群未决消息列表
-  TUIStore.watch(StoreName.GRP, {
-    groupSystemNoticeList: onGroupSystemNoticeList,
-  });
-
-  // 群未决消息数量 | 关闭消息操作 popMenu
+  // 关闭消息操作 popMenu
   TUIStore.watch(StoreName.CUSTOM, {
-    groupApplicationCount: groupApplicationCountUpdated,
     isShowMessagePopMenu: isShowMessagePopMenuUpdated,
   });
 });
@@ -382,11 +354,11 @@ onUnmounted(() => {
 
   TUIStore.unwatch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,
-    currentConversation: onCurrentConversationUpdated,
   });
 
-  TUIStore.unwatch(StoreName.GRP, {
-    groupSystemNoticeList: onGroupSystemNoticeList,
+  // 关闭消息操作 popMenu
+  TUIStore.unwatch(StoreName.CUSTOM, {
+    isShowMessagePopMenu: isShowMessagePopMenuUpdated,
   });
 
   messageListRef.value?.removeEventListener('scroll', handelScrollListScroll);
@@ -396,7 +368,7 @@ onUnmounted(() => {
   observer = null;
 });
 
-async function onMessageListUpdated(list: Array<IMessageModel>) {
+async function onMessageListUpdated(list: IMessageModel[]) {
   observer?.disconnect();
   const oldLastMessage = currentLastMessage.value;
   let hasEmojiReaction = false;
@@ -428,6 +400,8 @@ async function onMessageListUpdated(list: Array<IMessageModel>) {
       scrollToOffset: { bottom: beforeHistoryGetScrollHeight.value },
     });
     beforeHistoryGetScrollHeight.value = 0;
+  } else if (scrollButtonInstanceRef.value?.isScrollButtonVisible && newLastMessage?.flow === 'in') {
+    return;
   } else if (
     newLastMessage?.ID
     && JSON.stringify(oldLastMessage) !== JSON.stringify(newLastMessage)
@@ -506,10 +480,6 @@ function isCompletedUpdated(flag: boolean) {
   isCompleted.value = flag;
 }
 
-function groupApplicationCountUpdated(count: number) {
-  groupApplicationCount.value = count;
-}
-
 function isShowMessagePopMenuUpdated(isShow: boolean) {
   if (!isShow) {
     toggleID.value = '';
@@ -524,64 +494,11 @@ const onCurrentConversationIDUpdated = (conversationID: string) => {
   if (!currentConversationID.value) {
     messageList.value = [];
   }
-  // 获取加群系统消息列表
-  TUIGroupService.getGroupApplicationList().then((res: any) => {
-    const applicationList = res.data.applicationList.filter(
-      (application: any) => application.groupID === props.groupID,
-    );
-    applicationUserIDList.value = applicationList.map((application: IGroupApplicationListItem) => {
-      return application.applicationType === 0 ? application.applicant : application.userID;
-    });
-    TUIStore.update(StoreName.CUSTOM, 'groupApplicationCount', applicationList.length);
-  });
 
   // 开启已读回执的状态 群聊缓存群类型
   if (isEnabledMessageReadReceiptGlobal()) {
     const { groupProfile } = TUIStore.getConversationModel(conversationID) || {};
     groupType = groupProfile?.type;
-  }
-};
-
-const onCurrentConversationUpdated = (conversation: IConversationModel) => {
-  currentLastMessageTime.value = conversation?.lastMessage?.lastTime || 0;
-};
-
-// operationType 操作类型 1: 有用户申请加群   23: 普通群成员邀请用户进群
-const onGroupSystemNoticeList = (list: Array<IMessageModel>) => {
-  const systemNoticeList = list.filter((message) => {
-    const { operationType } = message.payload;
-    return (operationType === 1 || operationType === 23) && message.to === props.groupID;
-  });
-
-  systemNoticeList.forEach((systemNotice) => {
-    const { operationType } = systemNotice.payload;
-    if (operationType === 1) {
-      const { operatorID } = systemNotice.payload;
-      if (!applicationUserIDList.value.includes(operatorID)) {
-        applicationUserIDList.value.push(operatorID);
-      }
-    }
-    if (operationType === 23) {
-      const { inviteeList } = systemNotice.payload;
-      inviteeList.forEach((invitee: string) => {
-        if (!applicationUserIDList.value.includes(invitee)) {
-          applicationUserIDList.value.push(invitee);
-        }
-      });
-    }
-  });
-  const applicationCount = applicationUserIDList.value.length;
-  TUIStore.update(StoreName.CUSTOM, 'groupApplicationCount', applicationCount);
-};
-
-const toggleApplicationList = () => {
-  showGroupApplication.value = !showGroupApplication.value;
-};
-
-const handleGroupApplication = (userID: string) => {
-  const index = applicationUserIDList.value.indexOf(userID);
-  if (index !== -1) {
-    applicationUserIDList.value.splice(index, 1);
   }
 };
 
@@ -607,6 +524,7 @@ const handleImagePreview = (message: IMessageModel) => {
   showImagePreview.value = true;
   currentImagePreview.value = message;
 };
+
 // 关闭图片预览
 const onImagePreviewerClose = () => {
   showImagePreview.value = false;
@@ -721,7 +639,11 @@ const handelScrollListScroll = throttle(function (e: Event) {
 }, 150, { leading: true });
 
 async function bindIntersectionObserver() {
-  if (messageList.value.length === 0) {
+  if (
+    !messageList.value
+    || !messageListRef.value
+    || messageList.value.length === 0
+  ) {
     return;
   }
 
@@ -796,6 +718,6 @@ function setReadReceiptPanelVisible(visible: boolean, message?: IMessageModel) {
 function closeChatPop() {
   toggleID.value = '';
 }
-
 </script>
+
 <style lang="scss" scoped src="./style/index.scss"></style>

@@ -31,7 +31,7 @@
       @error="avatarLoadFailed"
     >
     <div
-      v-if="useAvatarSkeletonAnimation"
+      v-if="useAvatarSkeletonAnimation && !isImgLoaded"
       :class="{
         placeholder: true,
         hidden: isImgLoaded,

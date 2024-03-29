@@ -35,7 +35,6 @@ import { TUILogin } from '@tencentcloud/tui-core';
 | TIMPush | any | 推送插件实例，uniapp 打包 app 时集成推送插件可用 |
 | pushConfig | object | 推送插件配置信息，uniapp 打包 app 时集成推送插件可用 |
 | useUploadPlugin | boolean | 是否使用上传插件， 默认 false |
-| useProfanityFilterPlugin | boolean | 是否使用本地审核插件，默认 false |
 | proxyServer | string | WebSocket 服务器代理地址 |
 | fileUploadProxy | string | 图片、视频、文件上传代理地址 |
 | fileDownloadProxy | string | 图片、视频、文件下载代理地址 |

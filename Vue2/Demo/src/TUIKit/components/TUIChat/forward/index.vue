@@ -1,5 +1,8 @@
 <template>
-  <Overlay v-if="isShowForwardPanel">
+  <Overlay
+    :visible="isShowForwardPanel"
+    :useMask="false"
+  >
     <Transfer
       :title="TUITranslateService.t('TUIChat.转发')"
       :isSearch="false"

@@ -1,8 +1,10 @@
+/* stylelint-disable */
 .TUIKit {
   display: flex;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  text-align: left;
   .TUIKit-navbar {
     background: #e8e8e9;
     overflow: hidden;
@@ -42,7 +44,7 @@
           max-width: 360px;
           max-height: calc(100% - 50px);
           border-radius: 8px 0 0 8px;
-          z-index: 2;
+          z-index: 9999;
         }
       }
     }
