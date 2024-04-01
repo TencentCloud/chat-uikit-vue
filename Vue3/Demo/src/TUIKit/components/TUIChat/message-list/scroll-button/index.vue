@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="isExistLastMessage || isScrollOverOneScreen"
+    v-if="isScrollButtonVisible"
     class="scroll-button"
     @click="scrollToMessageListBottom"
   >
@@ -10,13 +10,13 @@
       :file="doubleArrowIcon"
     />
     <div class="scroll-button-text">
-      {{ TUITranslateService.t("TUIChat.回到最新位置") }}
+      {{ scrollButtonContent }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from '../../../../adapter-vue';
+import { ref, onMounted, onUnmounted, computed, watch } from '../../../../adapter-vue';
 import {
   TUIStore,
   StoreName,
@@ -27,6 +27,7 @@ import {
 import Icon from '../../../common/Icon.vue';
 import doubleArrowIcon from '../../../../assets/icon/double-arrow.svg';
 import { getBoundingClientRect } from '@tencentcloud/universal-api';
+import { JSONToObject } from '../../../../utils';
 
 interface IEmits {
   (key: 'scrollToLatestMessage'): void;
@@ -34,29 +35,49 @@ interface IEmits {
 const emits = defineEmits<IEmits>();
 
 const messageList = ref<IMessageModel[]>([]);
+const currentConversationID = ref<string>('');
 const currentLastMessageTime = ref<number>(0);
+const newMessageCount = ref<number>(0);
 const isScrollOverOneScreen = ref<boolean>(false);
 const isExistLastMessage = ref<boolean>(false);
+const isScrollButtonVisible = ref<boolean>(false);
+const scrollButtonContent = computed(() =>
+  newMessageCount.value ? `${newMessageCount.value}${TUITranslateService.t('TUIChat.条新消息')}` : TUITranslateService.t('TUIChat.回到最新位置'),
+);
+
+watch(() => [isScrollOverOneScreen.value, isExistLastMessage.value],
+  () => {
+    isScrollButtonVisible.value = isScrollOverOneScreen.value || isExistLastMessage.value;
+    if (!isScrollButtonVisible.value) {
+      resetNewMessageCount();
+    }
+  },
+  { immediate: true },
+);
 
 onMounted(() => {
   TUIStore.watch(StoreName.CHAT, {
     messageList: onMessageListUpdated,
+    newMessageList: onNewMessageListUpdated,
   });
-
   TUIStore.watch(StoreName.CONV, {
-    currentConversation: getLatestMessageTime,
+    currentConversation: onCurrentConversationUpdated,
   });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CHAT, {
     messageList: onMessageListUpdated,
+    newMessageList: onNewMessageListUpdated,
   });
-
   TUIStore.unwatch(StoreName.CONV, {
-    currentConversation: getLatestMessageTime,
+    currentConversation: onCurrentConversationUpdated,
   });
 });
+
+function isTypingMessage(message: IMessageModel): boolean {
+  return JSONToObject(message.payload?.data)?.businessID === 'user_typing_status';
+}
 
 function onMessageListUpdated(newMessageList: Array<IMessageModel>) {
   messageList.value = newMessageList || [];
@@ -66,7 +87,21 @@ function onMessageListUpdated(newMessageList: Array<IMessageModel>) {
   );
 }
 
-function getLatestMessageTime(conversation: IConversationModel | undefined) {
+function onNewMessageListUpdated(newMessageList: Array<IMessageModel>) {
+  if (Array.isArray(newMessageList) && isScrollButtonVisible.value) {
+    newMessageList.forEach((message: IMessageModel) => {
+      if (message && message.conversationID === currentConversationID.value && !message.isDeleted && !message.isRevoked && !isTypingMessage(message)) {
+        newMessageCount.value += 1;
+      }
+    });
+  }
+}
+
+function onCurrentConversationUpdated(conversation: IConversationModel | undefined) {
+  if (conversation?.conversationID !== currentConversationID.value) {
+    resetNewMessageCount();
+  }
+  currentConversationID.value = conversation?.conversationID || '';
   currentLastMessageTime.value = conversation?.lastMessage?.lastTime || 0;
 }
 
@@ -96,14 +131,21 @@ function resetMessageSource() {
   }
 }
 
+// reset newMessageCount
+function resetNewMessageCount() {
+  newMessageCount.value = 0;
+}
+
 // 滚动到消息列表最底部
 function scrollToMessageListBottom() {
   resetMessageSource();
+  resetNewMessageCount();
   emits('scrollToLatestMessage');
 }
 
 defineExpose({
   judgeScrollOverOneScreen,
+  isScrollButtonVisible,
 });
 </script>
 

@@ -1,12 +1,13 @@
-import TUICore, { TUILogin, TUIConstants } from "@tencentcloud/tui-core";
-import TUIChatEngine, { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { TUIGlobal } from "@tencentcloud/universal-api";
-import { ITUIComponents, ITUIPlugins } from "./interface";
-import TUILocales from "./locales";
-import { isFunction, isObject } from "./utils";
-import { isApp } from "./utils/env";
-import CallkitPluginServer from "./plugins/extension-server/callkit";
+import TUICore, { TUILogin, TUIConstants } from '@tencentcloud/tui-core';
+import TUIChatEngine, { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUIGlobal } from '@tencentcloud/universal-api';
+import { ITUIComponents, ITUIPlugins } from './interface';
+import TUILocales from './locales';
+import { isFunction, isObject } from './utils';
+import { isApp } from './utils/env';
+import CallkitPluginServer from './plugins/extension-server/callkit';
 export default class TUIChatKit {
+  static isInitialized: boolean;
   public chat: any;
 
   public SDKAppID: number;
@@ -25,7 +26,7 @@ export default class TUIChatKit {
     TUICore.registerEvent(
       TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED,
       TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS,
-      this
+      this,
     );
   }
 
@@ -33,7 +34,7 @@ export default class TUIChatKit {
    * 监听 TUILogin.login 的成功通知
    * @param { TUIInitParam } params 初始化参数
    */
-  private onNotifyEvent(eventName: string, subKey: string) {
+  public onNotifyEvent(eventName: string, subKey: string) {
     if (eventName === TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED) {
       switch (subKey) {
         case TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS:
@@ -47,8 +48,13 @@ export default class TUIChatKit {
    * init 初始化
    */
   public init() {
+    // 向下兼容，新版本在 index.ts 中默认执行 init 操作
+    if (TUIChatKit.isInitialized) {
+      return;
+    }
+    TUIChatKit.isInitialized = true;
     // 原生插件 TUICallKit 存在时执行 call server
-    if(isApp) {
+    if (isApp) {
       new CallkitPluginServer();
     }
     // TUITranslateService init
@@ -58,7 +64,7 @@ export default class TUIChatKit {
     TUIGlobal.TUIComponents = this.TUIComponents;
     // TUIPlugins global install
     TUIGlobal.TUIPlugins = this.TUIPlugins;
-    console.warn("[TUIChatKit]: init success.");
+    console.warn('[TUIChatKit]: init success.');
   }
 
   /**
@@ -88,7 +94,7 @@ export default class TUIChatKit {
   public component(componentName: string, component: any, env?: any) {
     if (this?.TUIComponents?.componentName) {
       console.warn(
-        `[TUIChatKit]: ${this?.TUIComponents?.componentName} component has already been applied to target TUIChatEngine.`
+        `[TUIChatKit]: ${this?.TUIComponents?.componentName} component has already been applied to target TUIChatEngine.`,
       );
     } else {
       this.TUIComponents[componentName] = component;
@@ -109,7 +115,7 @@ export default class TUIChatKit {
    */
   public components(components: object, env?: any) {
     if (!components || !isObject(components)) {
-      console.warn("[TUIChatKit]: components is empty or not object.");
+      console.warn('[TUIChatKit]: components is empty or not object.');
     } else {
       Object?.keys(components)?.forEach((key: string) => {
         this.component(key, components[key as keyof typeof components], env);
@@ -128,13 +134,13 @@ export default class TUIChatKit {
   public use(TUIPluginName: string, TUIPlugin: any, options?: any) {
     if (!this.TUICore) {
       console.warn(
-        `[TUIChatKit]: Plugin ${this.TUIPlugins[TUIPluginName]} can't be used before init.`
+        `[TUIChatKit]: Plugin ${this.TUIPlugins[TUIPluginName]} can't be used before init.`,
       );
       return;
     }
     if (this.TUIPlugins[TUIPluginName]) {
       console.warn(
-        `[TUIChatKit]: Plugin ${this.TUIPlugins[TUIPluginName]} has already been applied to target TUIChatEngine.`
+        `[TUIChatKit]: Plugin ${this.TUIPlugins[TUIPluginName]} has already been applied to target TUIChatEngine.`,
       );
     } else if (TUIPlugin && isFunction(TUIPlugin?.plugin)) {
       this.TUIPlugins[TUIPluginName] = TUIPlugin;
@@ -144,10 +150,10 @@ export default class TUIChatKit {
       TUIPlugin(this, options);
     } else {
       console.warn(
-        '[TUIChatKit]: A plugin must either be a function or an object with an "plugin" ' +
-        "function." +
-        this.TUIPlugins[TUIPluginName] +
-        "does not comply with the above rules."
+        '[TUIChatKit]: A plugin must either be a function or an object with an "plugin" '
+        + 'function.'
+        + this.TUIPlugins[TUIPluginName]
+        + 'does not comply with the above rules.',
       );
     }
     return this.TUIChatEngine;

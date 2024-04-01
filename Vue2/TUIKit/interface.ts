@@ -23,15 +23,15 @@ export interface IEmojiListItem {
   type: string;
   index?: number;
   url: string;
-  list: Array<string>;
+  list: string[];
 }
 
-export type IEmojiList = Array<IEmojiListItem>;
+export type IEmojiList = any[];
 
 export interface ISendMessagePayload {
   text?: string;
   file?: any;
-  atUserList?: Array<string>;
+  atUserList?: string[];
 }
 
 export interface ISendMessageParams {
@@ -65,14 +65,14 @@ export interface ICustomMessagePayload {
   text?: string;
 }
 
-export interface IGroupApplicationType {
-  applicant?: string;
-  applicantNick?: string;
-  groupID?: string;
-  groupName?: string;
-  applicationType: number;
-  userID?: string;
-  note?: string;
+export interface IGroupApplication {
+  applicant: string;
+  applicantNick: string;
+  groupID: string;
+  groupName: string;
+  applicationType: 0 | 2; // 0 - group application, 2 - group invite
+  userID: string;
+  note: string;
   [propName: string]: any;
 }
 
@@ -84,16 +84,16 @@ export interface IGroupApplicationUserProfile {
   [propName: string]: any;
 }
 
-export type IGroupApplicationListItem = IGroupApplicationType & IGroupApplicationUserProfile;
+export type IGroupApplicationListItem = IGroupApplication;
 
 export interface IFriendType {
   userID?: string;
   remark?: string;
-  groupList?: Array<unknown>;
+  groupList?: any[];
   source?: string;
   wording?: string;
   profile?: IFriendProfile;
-  friendCustomFriend?: Array<object>;
+  friendCustomFriend?: Record<string, any>[];
 }
 
 export interface IFriendProfile {
@@ -111,7 +111,7 @@ export interface IGroupMember {
   joinTime?: number;
   nameCard?: string;
   muteUntil?: string;
-  memberCustomField?: Array<object>;
+  memberCustomField?: Record<string, any>[];
 }
 
 export interface IGroupSelfInfo {
@@ -120,7 +120,7 @@ export interface IGroupSelfInfo {
   joinTime?: number;
   nameCard?: string;
   userID?: string;
-  memberCustomField?: Array<object>;
+  memberCustomField?: Record<string, any>[];
 }
 
 export interface IUserProfile {
@@ -138,12 +138,12 @@ export interface IUserProfile {
   level: number;
   role: number;
   lastUpdatedTime: number;
-  profileCustomField: Array<object>;
+  profileCustomField: Record<string, any>[];
 }
 
 export interface IContactListItem {
   title: string;
-  list: Array<unknown>;
+  list: any[];
   key: string;
   unreadCount?: number;
 }
@@ -159,11 +159,11 @@ export interface IContactList {
 export interface IContactSearchResult {
   user: {
     label: string;
-    list: Array<any>;
+    list: any[];
   };
   group: {
     label: string;
-    list: Array<any>;
+    list: any[];
   };
 }
 
@@ -193,14 +193,14 @@ export interface IContactInfoButton {
 
 export interface ISearchCloudMessageResult {
   totalCount: number;
-  searchResultList: Array<ISearchResultListItem>;
+  searchResultList: ISearchResultListItem[];
   cursor: string;
 }
 
 export interface ISearchResultListItem {
   conversation: IConversationModel;
   messageCount: number;
-  messageList: Array<IMessageModel>;
+  messageList: IMessageModel[];
   type?: string;
 }
 
@@ -245,11 +245,11 @@ export interface IAudioContext {
   pause: () => void;
   stop: () => void;
   destroy: () => void;
-  onPlay: (callback: (...args: unknown[]) => void) => void;
-  onPause: (callback: (...args: unknown[]) => void) => void;
-  onStop: (callback: (...args: unknown[]) => void) => void;
-  onEnded: (callback: (...args: unknown[]) => void) => void;
-  onError: (callback: (...args: unknown[]) => void) => void;
+  onPlay: (callback: (...args: any[]) => void) => void;
+  onPause: (callback: (...args: any[]) => void) => void;
+  onStop: (callback: (...args: any[]) => void) => void;
+  onEnded: (callback: (...args: any[]) => void) => void;
+  onError: (callback: (...args: any[]) => void) => void;
 }
 
 export interface ITipTapEditorContent {

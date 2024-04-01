@@ -1,8 +1,7 @@
 <template>
   <Overlay
-    :bgColor="'transparent'"
-    @clickHandler="() => emits('closeConversationActionMenu')"
-    @touchHandler="() => emits('closeConversationActionMenu')"
+    :maskColor="'transparent'"
+    @onOverlayClick="() => emits('closeConversationActionMenu')"
   >
     <div
       id="conversation-actions-menu"
