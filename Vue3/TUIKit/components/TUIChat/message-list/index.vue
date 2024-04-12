@@ -159,7 +159,8 @@
               ref="messageToolListRef"
               :class="[
                 'message-tool',
-                item.flow === 'out' ? 'message-tool-out' : 'message-tool-in', isTopMessageDom ? 'message-tool-bottom' : ''
+                item.flow === 'out' ? 'message-tool-out' : 'message-tool-in',
+                isTopMessageDom ? 'message-tool-bottom' : ''
               ]"
               :messageItem="item"
             >

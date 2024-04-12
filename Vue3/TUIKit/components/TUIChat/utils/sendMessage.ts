@@ -47,41 +47,41 @@ export const sendMessages = async (
       let textMessageContent;
       switch (content?.type) {
         case 'text':
-          textMessageContent = JSON.parse(JSON.stringify(content?.payload?.text));
+          textMessageContent = JSON.parse(JSON.stringify(content.payload?.text));
           // 禁止发送空消息
           if (!textMessageContent) {
             break;
           }
-          if (content?.payload?.atUserList) {
+          if (content.payload?.atUserList) {
             options.payload = {
               text: textMessageContent,
-              atUserList: content?.payload?.atUserList,
+              atUserList: content.payload.atUserList,
             };
-            await TUIChatService?.sendTextAtMessage(options);
+            await TUIChatService.sendTextAtMessage(options);
           } else {
             options.payload = {
               text: textMessageContent,
             };
-            await TUIChatService?.sendTextMessage(options);
+            await TUIChatService.sendTextMessage(options);
           }
           break;
         case 'image':
           options.payload = {
-            file: content?.payload?.file,
+            file: content.payload?.file,
           };
-          await TUIChatService?.sendImageMessage(options);
+          await TUIChatService.sendImageMessage(options);
           break;
         case 'video':
           options.payload = {
-            file: content?.payload?.file,
+            file: content.payload?.file,
           };
-          await TUIChatService?.sendVideoMessage(options);
+          await TUIChatService.sendVideoMessage(options);
           break;
         case 'file':
           options.payload = {
-            file: content?.payload?.file,
+            file: content.payload?.file,
           };
-          await TUIChatService?.sendFileMessage(options);
+          await TUIChatService.sendFileMessage(options);
           break;
         default:
           break;

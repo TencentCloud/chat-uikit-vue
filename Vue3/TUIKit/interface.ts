@@ -93,7 +93,7 @@ export interface IFriendType {
   source?: string;
   wording?: string;
   profile?: IFriendProfile;
-  friendCustomFriend?: Record<string, any>[];
+  friendCustomFriend?: Array<Record<string, any>>;
 }
 
 export interface IFriendProfile {
@@ -111,7 +111,7 @@ export interface IGroupMember {
   joinTime?: number;
   nameCard?: string;
   muteUntil?: string;
-  memberCustomField?: Record<string, any>[];
+  memberCustomField?: Array<Record<string, any>>;
 }
 
 export interface IGroupSelfInfo {
@@ -120,7 +120,7 @@ export interface IGroupSelfInfo {
   joinTime?: number;
   nameCard?: string;
   userID?: string;
-  memberCustomField?: Record<string, any>[];
+  memberCustomField?: Array<Record<string, any>>;
 }
 
 export interface IUserProfile {
@@ -138,7 +138,7 @@ export interface IUserProfile {
   level: number;
   role: number;
   lastUpdatedTime: number;
-  profileCustomField: Record<string, any>[];
+  profileCustomField: Array<Record<string, any>>;
 }
 
 export interface IContactListItem {
@@ -267,4 +267,15 @@ export interface IUserStatus {
 }
 export interface IUserStatusMap {
   [userID: string]: IUserStatus;
+}
+
+export interface ITranslateInfo {
+  conversationID: string;
+  messageID: string;
+  visible: boolean;
+}
+
+export interface IChatResponese<T> {
+  code: string;
+  data: T;
 }

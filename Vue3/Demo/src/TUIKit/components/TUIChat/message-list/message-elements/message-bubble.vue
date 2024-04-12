@@ -76,14 +76,16 @@
       </main>
     </div>
     <!-- 消息附加区域 -->
-    <div
-      :class="{
-        'message-bubble-extra-content': true,
-        'reverse': message.flow === 'out',
-      }"
-    >
+    <div class="message-bubble-extra-content">
+      <!-- 消息翻译 -->
+      <MessageTranslate
+        :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
+        :message="message"
+      />
+
       <!-- 消息引用 -->
       <MessageQuote
+        :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
         :message="message"
         @blinkMessage="blinkMessage"
         @scrollTo="scrollTo"
@@ -99,6 +101,7 @@ import Icon from '../../../common/Icon.vue';
 import ReadStatus from './read-status/index.vue';
 import MessageQuote from './message-quote/index.vue';
 import Avatar from '../../../common/Avatar/index.vue';
+import MessageTranslate from './message-translate/index.vue';
 import loadingIcon from '../../../../assets/icon/loading.png';
 import { shallowCopyMessage } from '../../utils/utils';
 import { isPC } from '../../../../utils/env';
@@ -191,6 +194,10 @@ function openReadUserPanel() {
 </script>
 
 <style lang="scss" scoped>
+.flex-row {
+  display: flex;
+}
+
 .reverse {
   display: flex;
   flex-direction: row-reverse;
@@ -382,6 +389,8 @@ function openReadUserPanel() {
 
   .message-bubble-extra-content {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 </style>

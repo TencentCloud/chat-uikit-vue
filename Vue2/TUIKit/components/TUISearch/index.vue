@@ -159,9 +159,7 @@ function onCurrentSearchingStatusChange(value: ISearchingStatus) {
     }
     if (value?.searchType === 'global' && isUniFrameWork) {
       // hide tab bar in uni-app when global searching
-      try {
-        value.isSearching ? TUIGlobal?.hideTabBar() : TUIGlobal?.showTabBar();
-      } catch { /* empty */ }
+      value.isSearching ? TUIGlobal?.hideTabBar()?.catch(() => { /* ignore */ }) : TUIGlobal?.showTabBar()?.catch(() => { /* ignore */ });
     }
   }
 }

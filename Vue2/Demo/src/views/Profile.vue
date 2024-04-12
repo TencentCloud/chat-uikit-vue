@@ -151,6 +151,7 @@ import TUIChatEngine, {
   TUIUserService,
   TUIStore,
   StoreName,
+  TUIChatService,
 } from "@tencentcloud/chat-uikit-engine";
 import { TUILogin } from "@tencentcloud/tui-core";
 import { Toast, TOAST_TYPE } from "../TUIKit/components/common/Toast/index";
@@ -163,7 +164,8 @@ import selectedIcon from "../TUIKit/assets/icon/selected.svg";
 import { IUserProfile } from "../TUIKit/interface";
 import { isPC } from "../TUIKit/utils/env";
 import router from "../router/index";
-import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils"
+import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils";
+import { Translator } from "../TUIKit/components/TUIChat/utils/translation";
 
 const props = defineProps({
   displayType: {
@@ -287,16 +289,58 @@ const settingList = ref<{
         label: "开启",
         onClick() {
           switchUserLevelOnlineStatus(true);
-        }
+        },
       },
       userLevelOnlineStatusClose: {
         value: "userLevelOnlineStatusClose",
         label: "关闭",
         onClick() {
           switchUserLevelOnlineStatus(false);
-        }
+        },
+      },
+    },
+  },
+  translateLanguage: {
+    value: "translateLanguage",
+    label: "翻译语言",
+    selectedChild: "zh",
+    childrenShowType: "bottomPopup",
+    showChildren: false,
+    onClick(item: any) {
+      if (!isPC) {
+        item.showChildren = true;
       }
-    }
+    },
+    children: {
+      zh: {
+        value: "zh",
+        label: "zh",
+        onClick() {
+          switchTranslationTargetLanguage('zh');
+        },
+      },
+      en: {
+        value: "en",
+        label: "en",
+        onClick() {
+          switchTranslationTargetLanguage('en');
+        },
+      },
+      jp: {
+        value: "jp",
+        label: "jp",
+        onClick() {
+          switchTranslationTargetLanguage('jp');
+        },
+      },
+      kr: {
+        value: "kr",
+        label: "kr",
+        onClick() {
+          switchTranslationTargetLanguage('kr');
+        },
+      },
+    },
   },
   about: {
     value: "about",
@@ -418,6 +462,11 @@ onMounted(() => {
   TUIUserService.getUserProfile().then((res: any) => {
     userProfile.value = res.data;
   });
+  // get current target language when component mounted
+  const lang = TUIStore.getData(StoreName.USER, 'targetLanguage');
+  if (lang) {
+    settingList.value.translateLanguage.selectedChild = lang;
+  }
 });
 
 function switchEnableUserLevelReadReceipt(status: boolean) {
@@ -427,8 +476,14 @@ function switchEnableUserLevelReadReceipt(status: boolean) {
 function switchUserLevelOnlineStatus(status: boolean) {
   TUIUserService.switchUserStatus({ displayOnlineStatus: status });
 }
+
+function switchTranslationTargetLanguage(lang: string) {
+  Translator.clear();
+  TUIChatService.setTranslationLanguage(lang);
+  settingList.value.translateLanguage.selectedChild = lang;
+}
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/profile.scss";
+@import "../styles/profile";
 </style>

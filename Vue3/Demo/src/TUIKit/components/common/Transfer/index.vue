@@ -3,8 +3,14 @@
     class="transfer"
     :class="[!isPC ? 'transfer-h5' : '', isMobile ? 'transfer-h5-wechat' : '']"
   >
-    <header class="transfer-header transfer-h5-header" v-if="!isPC">
-      <div v-if="!props.isHiddenBackIcon" @click="cancel">
+    <header
+      v-if="!isPC"
+      class="transfer-header transfer-h5-header"
+    >
+      <div
+        v-if="!props.isHiddenBackIcon"
+        @click="cancel"
+      >
         <Icon
           class="icon"
           :file="backIcon"
@@ -13,7 +19,7 @@
         />
       </div>
       <span class="title">{{ transferTitle }}</span>
-      <span class="space"></span>
+      <span class="space" />
     </header>
     <main class="main">
       <div class="left">
@@ -23,43 +29,48 @@
             v-if="isPC && isTransferSearch"
             type="text"
             :value="searchValue"
-            @keyup.enter="handleInput" 
             :placeholder="TUITranslateService.t('component.请输入userID')"
             enterkeyhint="search"
-            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>
-          <!-- 非 PC 端触发 blur -->  
+            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
+            @keyup.enter="handleInput"
+          >
+          <!-- 非 PC 端触发 blur -->
           <input
             v-if="!isPC && isTransferSearch"
             type="text"
-            @blur="handleInput"
-            @confirm="handleInput"
             :placeholder="TUITranslateService.t('component.请输入userID')"
             enterkeyhint="search"
             :value="searchValue"
-            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"/>  
+            :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
+            @blur="handleInput"
+            @confirm="handleInput"
+          >
         </header>
         <main class="transfer-left-main">
           <ul class="transfer-list">
             <li
+              v-if="optional.length > 1 && !isRadio"
               class="transfer-list-item"
               @click="selectedAll"
-              v-if="optional.length > 1 && !isRadio"
             >
               <Icon
                 v-if="transferSelectedList.length === optional.length"
                 :file="selectedIcon"
                 :width="'18px'"
                 :height="'18px'"
-              ></Icon>
-              <i v-else class="icon-unselected"></i>
+              />
+              <i
+                v-else
+                class="icon-unselected"
+              />
               <span class="select-all">{{
                 TUITranslateService.t("component.全选")
               }}</span>
             </li>
             <li
-              class="transfer-list-item"
-              v-for="(item, index) in transferList"
+              v-for="item in transferList"
               :key="item.userID"
+              class="transfer-list-item"
               @click="selected(item)"
             >
               <Icon
@@ -68,33 +79,34 @@
                 :class="[item.isDisabled && 'disabled']"
                 :width="'18px'"
                 :height="'18px'"
-              ></Icon>
+              />
               <i
                 v-else
                 :class="[item.isDisabled && 'disabled', 'icon-unselected']"
-              ></i>
+              />
               <template v-if="!isTransferCustomItem">
                 <img
                   class="avatar"
                   :src="
                     item.avatar ||
-                    'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                      'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                   "
                   onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-                />
-                <span class="name">{{ item.nick || item.userID }}</span>
-                <span v-if="item.isDisabled"
-                  >（{{ TUITranslateService.t("component.已在群中") }}）</span
                 >
+                <span class="name">{{ item.nick || item.userID }}</span>
+                <span v-if="item.isDisabled">（{{ TUITranslateService.t("component.已在群中") }}）</span>
               </template>
               <template v-else>
-                <slot name="left" :data="item" />
+                <slot
+                  name="left"
+                  :data="item"
+                />
               </template>
             </li>
             <li
+              v-if="transferTotal > transferList.length"
               class="transfer-list-item more"
               @click="getMore"
-              v-if="transferTotal > transferList.length"
             >
               {{ TUITranslateService.t("component.查看更多") }}
             </li>
@@ -102,17 +114,28 @@
         </main>
       </div>
       <div class="right">
-        <header class="transfer-header" v-if="isPC">{{ transferTitle }}</header>
-        <ul class="transfer-list" v-if="resultShow">
-          <p class="transfer-text" v-if="transferSelectedList.length > 0 && isPC">
+        <header
+          v-if="isPC"
+          class="transfer-header"
+        >
+          {{ transferTitle }}
+        </header>
+        <ul
+          v-if="resultShow"
+          class="transfer-list"
+        >
+          <p
+            v-if="transferSelectedList.length > 0 && isPC"
+            class="transfer-text"
+          >
             {{ TUITranslateService.t("component.已选中")
             }}{{ transferSelectedList.length
             }}{{ TUITranslateService.t("component.人") }}
           </p>
           <li
-            class="transfer-list-item space-between"
             v-for="(item, index) in transferSelectedList"
             :key="index"
+            class="transfer-list-item space-between"
           >
             <aside class="transfer-list-item-content">
               <template v-if="!isTransferCustomItem">
@@ -120,23 +143,39 @@
                   class="avatar"
                   :src="
                     item.avatar ||
-                    'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
+                      'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
                   "
                   onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-                />
-                <span v-if="isPC" class="name">{{ item.nick || item.userID }}</span>
+                >
+                <span
+                  v-if="isPC"
+                  class="name"
+                >{{ item.nick || item.userID }}</span>
               </template>
               <template v-else>
-                <slot name="right" :data="item" />
+                <slot
+                  name="right"
+                  :data="item"
+                />
               </template>
             </aside>
-            <span @click="selected(item)" v-if="isPC">
-              <Icon :file="cancelIcon" :width="'18px'" :height="'18px'"></Icon>
+            <span
+              v-if="isPC"
+              @click="selected(item)"
+            >
+              <Icon
+                :file="cancelIcon"
+                :width="'18px'"
+                :height="'18px'"
+              />
             </span>
           </li>
         </ul>
         <footer class="transfer-right-footer">
-          <button class="btn btn-cancel" @click="cancel">
+          <button
+            class="btn btn-cancel"
+            @click="cancel"
+          >
             {{ TUITranslateService.t("component.取消") }}
           </button>
           <button
@@ -146,7 +185,11 @@
           >
             {{ TUITranslateService.t("component.完成") }}
           </button>
-          <button v-else class="btn btn-no" @click="submit">
+          <button
+            v-else
+            class="btn btn-no"
+            @click="submit"
+          >
             {{ TUITranslateService.t("component.完成") }}
           </button>
         </footer>
@@ -156,14 +199,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect, computed } from "../../../adapter-vue";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import { ITransferListItem } from "../../../interface";
-import Icon from "../Icon.vue";
-import selectedIcon from "../../../assets/icon/selected.svg";
-import backIcon from "../../../assets/icon/back.svg";
-import cancelIcon from "../../../assets/icon/cancel.svg";
-import { isPC, isUniFrameWork, isMobile } from "../../../utils/env";
+import { ref, watchEffect, computed } from '../../../adapter-vue';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { ITransferListItem } from '../../../interface';
+import Icon from '../Icon.vue';
+import selectedIcon from '../../../assets/icon/selected.svg';
+import backIcon from '../../../assets/icon/back.svg';
+import cancelIcon from '../../../assets/icon/cancel.svg';
+import { isPC, isUniFrameWork, isMobile } from '../../../utils/env';
 
 const props = defineProps({
   list: {
@@ -188,11 +231,11 @@ const props = defineProps({
   },
   title: {
     type: String,
-    default: "",
+    default: '',
   },
   type: {
     type: String,
-    default: "",
+    default: '',
   },
   resultShow: {
     type: Boolean,
@@ -205,55 +248,54 @@ const props = defineProps({
   isHiddenBackIcon: {
     type: Boolean,
     default: false,
-  }
+  },
 });
 
-const type = ref("");
-const transferList = ref<Array<ITransferListItem>>([]);
-const transferTotal = ref<Number>(0);
-const transferSelectedList = ref<Array<ITransferListItem>>([]);
+const transferList = ref<ITransferListItem[]>([]);
+const transferTotal = ref<number>(0);
+const transferSelectedList = ref<ITransferListItem[]>([]);
 const isTransferSearch = ref(true);
 const isTransferCustomItem = ref(false);
-const transferTitle = ref("");
-const searchValue = ref("");
+const transferTitle = ref('');
+const searchValue = ref('');
 
 watchEffect(() => {
   if (props.isCustomItem) {
     for (let index = 0; index < props.list.length; index++) {
       if (
-        (props.list[index] as any).conversationID.indexOf("@TIM#SYSTEM") > -1
+        (props.list[index] as any).conversationID.indexOf('@TIM#SYSTEM') > -1
       ) {
+        // eslint-disable-next-line vue/no-mutating-props
         props.list.splice(index, 1);
       }
-      transferList.value = props.list as Array<ITransferListItem>;
+      transferList.value = props.list as ITransferListItem[];
     }
   } else {
-    transferList.value = props.list as Array<ITransferListItem>;
+    transferList.value = props.list as ITransferListItem[];
   }
   transferTotal.value = props.total ? props.total : props.list.length;
   transferSelectedList.value = (props.selectedList && props.selectedList.length > 0 ? props.selectedList : transferSelectedList.value) as any;
   isTransferSearch.value = props.isSearch;
   isTransferCustomItem.value = props.isCustomItem;
   transferTitle.value = props.title;
-  type.value = props.type;
 });
 
-const emit = defineEmits(["search", "submit", "cancel", 'getMore']);
+const emit = defineEmits(['search', 'submit', 'cancel', 'getMore']);
 
 // 可选项
 const optional = computed(() =>
-  transferList.value.filter((item: any) => !item.isDisabled)
+  transferList.value.filter((item: any) => !item.isDisabled),
 );
 
 const handleInput = (e: any) => {
-  searchValue.value = e.target.value;
-  emit("search", e.target.value);
+  searchValue.value = e.target.value || e.detail.value;
+  emit('search', searchValue.value);
 };
 const selected = (item: any) => {
   if (item.isDisabled) {
     return;
   }
-  let list: Array<ITransferListItem> = transferSelectedList.value;
+  let list: ITransferListItem[] = transferSelectedList.value;
   const index: number = list.indexOf(item);
   if (index > -1) {
     return transferSelectedList.value.splice(index, 1);
@@ -274,20 +316,20 @@ const selectedAll = () => {
 };
 
 const submit = () => {
-  emit("submit", transferSelectedList.value);
+  emit('submit', transferSelectedList.value);
   // 针对小程序做的数据清空
-  searchValue.value = "";
+  searchValue.value = '';
 };
 
 const cancel = () => {
-  emit("cancel");
+  emit('cancel');
   // 针对小程序做的数据清空
-  searchValue.value = "";
+  searchValue.value = '';
 };
 
 const getMore = () => {
-  emit("getMore");
-}
+  emit('getMore');
+};
 </script>
 
 <style lang="scss" scoped src="./style/transfer.scss"></style>
