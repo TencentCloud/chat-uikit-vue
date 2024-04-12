@@ -35,5 +35,10 @@
   "消息阅读状态": "Message read status",
   "显示在线状态": "Display online status",
   "开启": "on",
-  "关闭": "off"
+  "关闭": "off",
+  "翻译语言": "Translate language",
+  "zh": "中文",
+  "en": "English",
+  "kr": "한국인",
+  "jp": "日本語"
 }
