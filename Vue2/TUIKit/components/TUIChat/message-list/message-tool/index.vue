@@ -45,11 +45,12 @@ import quoteIcon from '../../../../assets/icon/msg-quote.svg';
 import revokeIcon from '../../../../assets/icon/msg-revoke.svg';
 import forwardIcon from '../../../../assets/icon/msg-forward.svg';
 import translateIcon from '../../../../assets/icon/translate.svg';
+import convertText from '../../../../assets/icon/convertText_zh.svg';
 import { enableSampleTaskStatus } from '../../../../utils/enableSampleTaskStatus';
 import { copyText } from '../../utils/utils';
 import { decodeTextMessage } from '../../utils/emojiList';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
-import { ITranslateInfo } from '../../../../interface';
+import { ITranslateInfo, IConvertInfo } from '../../../../interface';
 
 interface IProps {
   messageItem: IMessageModel;
@@ -136,6 +137,17 @@ const actionItems = ref([
     },
     clickEvent: translateMessage,
   },
+  {
+    key: 'convert',
+    text: TUITranslateService.t('TUIChat.转文字'),
+    visible: false,
+    iconUrl: convertText,
+    renderCondition() {
+      if (!message.value) return false;
+      return message.value.status === 'success' && message.value.type === TYPES.MSG_AUDIO;
+    },
+    clickEvent: convertVoiceToText,
+  },
 ]);
 
 const message = ref<IMessageModel>();
@@ -143,13 +155,15 @@ const messageToolDom = ref<HTMLElement>();
 
 onMounted(() => {
   TUIStore.watch(StoreName.CHAT, {
-    translateTextInfo: onMessageTranslationIDUpdated,
+    translateTextInfo: onMessageTranslationInfoUpdated,
+    voiceToTextInfo: onMessageConvertInfoUpdated,
   });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CHAT, {
-    translateTextInfo: onMessageTranslationIDUpdated,
+    translateTextInfo: onMessageTranslationInfoUpdated,
+    voiceToTextInfo: onMessageConvertInfoUpdated,
   });
 });
 
@@ -240,22 +254,40 @@ function translateMessage() {
   const enable = TUIStore.getData(StoreName.APP, 'enabledTranslationPlugin');
   if (!enable) {
     Toast({
-      message: TUITranslateService.t('TUIChat.请购买翻译插件'),
+      message: TUITranslateService.t('TUIChat.请开通翻译功能'),
       type: TOAST_TYPE.WARNING,
     });
     return;
   }
 
   if (!message.value) return;
-  const idx = actionItems.value.findIndex(item => item.key === 'translate');
+  const index = actionItems.value.findIndex(item => item.key === 'translate');
   TUIStore.update(StoreName.CHAT, 'translateTextInfo', {
     conversationID: message.value.conversationID,
     messageID: message.value.ID,
-    visible: !actionItems.value[idx].visible,
+    visible: !actionItems.value[index].visible,
   });
 }
 
-function onMessageTranslationIDUpdated(info: Map<string, ITranslateInfo[]>) {
+function convertVoiceToText() {
+  const enable = TUIStore.getData(StoreName.APP, 'enabledVoiceToText');
+  if (!enable) {
+    Toast({
+      message: TUITranslateService.t('TUIChat.请开通语音转文字功能'),
+    });
+    return;
+  }
+
+  if (!message.value) return;
+  const index = actionItems.value.findIndex(item => item.key === 'convert');
+  TUIStore.update(StoreName.CHAT, 'voiceToTextInfo', {
+    conversationID: message.value.conversationID,
+    messageID: message.value.ID,
+    visible: !actionItems.value[index].visible,
+  });
+}
+
+function onMessageTranslationInfoUpdated(info: Map<string, ITranslateInfo[]>) {
   if (info === undefined) return;
   const translationInfoList = info.get(props.messageItem.conversationID) || [];
   const idx = actionItems.value.findIndex(item => item.key === 'translate');
@@ -268,6 +300,21 @@ function onMessageTranslationIDUpdated(info: Map<string, ITranslateInfo[]>) {
     }
   }
   actionItems.value[idx].text = TUITranslateService.t('TUIChat.翻译');
+}
+
+function onMessageConvertInfoUpdated(info: Map<string, IConvertInfo[]>) {
+  if (info === undefined) return;
+  const convertInfoList = info.get(props.messageItem.conversationID) || [];
+  const idx = actionItems.value.findIndex(item => item.key === 'convert');
+  for (let i = 0; i < convertInfoList.length; ++i) {
+    const { messageID, visible } = convertInfoList[i];
+    if (messageID === props.messageItem.ID) {
+      actionItems.value[idx].text = TUITranslateService.t(visible ? 'TUIChat.隐藏' : 'TUIChat.转文字');
+      actionItems.value[idx].visible = !!visible;
+      return;
+    }
+  }
+  actionItems.value[idx].text = TUITranslateService.t('TUIChat.转文字');
 }
 
 defineExpose({

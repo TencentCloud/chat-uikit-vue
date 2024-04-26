@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IConversationModel, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { IConversationModel, IGroupModel, IMessageModel, Friend, FriendApplication } from '@tencentcloud/chat-uikit-engine';
 
 export interface ITUIComponents {
   TUIChat?: any;
@@ -173,6 +173,8 @@ export interface IBlackListUserItem {
   avatar?: string;
 }
 
+export type IContactInfoType = Friend | FriendApplication | IGroupModel | IBlackListUserItem;
+
 export interface IContactInfoMoreItem {
   key: string;
   label: string;
@@ -270,6 +272,12 @@ export interface IUserStatusMap {
 }
 
 export interface ITranslateInfo {
+  conversationID: string;
+  messageID: string;
+  visible: boolean;
+}
+
+export interface IConvertInfo {
   conversationID: string;
   messageID: string;
   visible: boolean;

@@ -1,5 +1,5 @@
 <template>
-  <div class="tui-contact-list-card">
+  <div :class="['tui-contact-list-card', !isPC && 'tui-contact-list-card-h5']">
     <div class="tui-contact-list-card-left">
       <Avatar
         class="tui-contact-list-card-left-avatar"
@@ -7,7 +7,7 @@
         :url="generateAvatar(props.item)"
       />
       <div
-        v-if="props.displayOnlineStatus"
+        v-if="props.displayOnlineStatus && props.item"
         :class="{
           'online-status': true,
           'online-status-online': isOnline,
@@ -46,7 +46,7 @@
         <button
           v-else-if="showApplicationStatus.style === 'button'"
           class="tui-contact-list-card-right-application-button"
-          @click="showApplicationStatus.onClick"
+          @click.stop="showApplicationStatus.onClick"
         >
           {{ TUITranslateService.t(`TUIContact.${showApplicationStatus.label}`) }}
         </button>
@@ -55,33 +55,31 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, withDefaults, watch } from '../../../../adapter-vue';
+import { computed, withDefaults, inject, watch, ref, Ref } from '../../../../adapter-vue';
 import TUIChatEngine, {
   TUITranslateService,
   IGroupModel,
-  Friend,
   FriendApplication,
+  Friend,
 } from '@tencentcloud/chat-uikit-engine';
-import { IUserStatusMap, IContactInfoType } from '../../../../interface';
+import { IContactInfoType, IUserStatus } from '../../../../interface';
 import Avatar from '../../../common/Avatar/index.vue';
 import { generateAvatar, generateName, acceptFriendApplication } from '../../utils';
-// type IItemType = IGroupModel | Friend | FriendApplication | IBlackListUserItem;
+import { isPC } from '../../../../utils/env';
 
 const props = withDefaults(
   defineProps<{
     item: IContactInfoType;
-    list: Array<IContactInfoType>;
     displayOnlineStatus?: boolean;
-    userOnlineStatusMap?: IUserStatusMap | undefined;
   }>(),
   {
     item: () => ({} as IContactInfoType),
-    list: () => [] as Array<IContactInfoType>,
-    displayOnlineStatus: () => false,
-    userOnlineStatusMap: () => ({} as IUserStatusMap),
+    displayOnlineStatus: false,
   },
 );
+const userOnlineStatusMap = inject<Ref<Map<string, IUserStatus>>>('userOnlineStatusMap');
 const isOnline = ref<boolean>(false);
+
 const groupType = {
   [TUIChatEngine.TYPES.GRP_WORK]: 'Work',
   [TUIChatEngine.TYPES.GRP_AVCHATROOM]: 'AVChatRoom',
@@ -115,7 +113,6 @@ const showApplicationStatus = computed(() => {
   if (
     (props.item as FriendApplication)?.type === TUIChatEngine?.TYPES?.SNS_APPLICATION_SENT_BY_ME
   ) {
-    // 我发出的好友申请
     return {
       style: 'text',
       label: '等待验证',
@@ -123,7 +120,6 @@ const showApplicationStatus = computed(() => {
   } else if (
     (props.item as FriendApplication)?.type === TUIChatEngine?.TYPES?.SNS_APPLICATION_SENT_TO_ME
   ) {
-    // 我收到的好友申请
     return {
       style: 'button',
       label: '同意',
@@ -136,7 +132,7 @@ const showApplicationStatus = computed(() => {
 });
 
 watch(
-  () => props.userOnlineStatusMap,
+  () => userOnlineStatusMap?.value,
   () => {
     isOnline.value = getOnlineStatus();
   },
@@ -149,9 +145,9 @@ watch(
 function getOnlineStatus(): boolean {
   return !!(
     props.displayOnlineStatus
-    && props.userOnlineStatusMap
+    && userOnlineStatusMap?.value
     && (props.item as Friend)?.userID
-    && props.userOnlineStatusMap?.[(props.item as Friend).userID]?.statusType === TUIChatEngine.TYPES.USER_STATUS_ONLINE
+    && userOnlineStatusMap.value?.[(props.item as Friend).userID]?.statusType === TUIChatEngine.TYPES.USER_STATUS_ONLINE
   );
 }
 </script>
@@ -254,5 +250,9 @@ function getOnlineStatus(): boolean {
       }
     }
   }
+}
+
+.tui-contact-list-card-h5 {
+  cursor: none !important;
 }
 </style>

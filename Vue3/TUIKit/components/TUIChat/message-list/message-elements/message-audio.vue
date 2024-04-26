@@ -2,7 +2,7 @@
   <div
     class="message-audio"
     :class="[
-      !isPC && 'message-audio-h5',
+      isMobile && 'message-audio-h5',
       message.flow === 'out' && 'reserve',
       message.hasRiskContent && 'disable',
     ]"
@@ -34,7 +34,8 @@
 import { watchEffect, ref, onMounted, onUnmounted } from '../../../../adapter-vue';
 import Icon from '../../../common/Icon.vue';
 import audioIcon from '../../../../assets/icon/msg-audio.svg';
-import { isPC } from '../../../../utils/env';
+import { isMobile } from '../../../../utils/env';
+
 const props = defineProps({
   content: {
     type: Object,
@@ -112,13 +113,8 @@ $flow-out-bg-color: #dceafd;
   cursor: pointer;
   overflow: hidden;
 
-  &-h5 {
-    .time {
-      max-width: 200px;
-    }
-  }
-
   .time {
+    flex: 1 1 auto;
     max-width: 300px;
     text-align: start;
   }
@@ -134,6 +130,7 @@ $flow-out-bg-color: #dceafd;
 }
 
 .audio-icon-container {
+  flex: 0 0 auto;
   position: relative;
   margin: 0 7px 0 0;
   overflow: hidden;

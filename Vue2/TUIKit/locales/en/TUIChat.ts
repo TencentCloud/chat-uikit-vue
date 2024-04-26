@@ -95,6 +95,7 @@ const TUIChat = {
   '重新发送': 'Resend',
   '转发': 'Forward',
   '翻译': 'Translate',
+  '转文字': 'Convert',
   '隐藏': 'Hidden',
   '转发给': 'Forward to',
   '自定义': '[custom message]',
@@ -109,9 +110,12 @@ const TUIChat = {
   '继续上滑可取消': 'Continue to swipe to cancel',
   '松开手指 取消发送': 'Release to cancel',
   '此机型暂不支持复制功能': 'This model does not support the copy',
-  '请购买翻译插件': 'Please purchase the translation plugin',
+  '请开通翻译功能': 'Please open the translation feature',
+  '请开通语音转文字功能': 'Please open the convert feature',
   '翻译中': 'Translating',
+  '转换中': 'Converting',
   '由IM提供翻译支持': 'support by IM',
+  '所有人': 'All',
 };
 
 export default TUIChat;

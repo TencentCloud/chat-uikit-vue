@@ -7,14 +7,14 @@
         !isPC && 'tui-contact-search-h5-header',
         isSearching && 'tui-contact-searching-h5-header',
       ]"
-      @click="handleSearchingHeaderClicked"
+      @click="changeContactSearchingStatus(true)"
     >
       <div
         :class="[
           'tui-contact-search-header-icon',
           !isPC && 'tui-contact-search-h5-header-icon',
         ]"
-        @click.stop="handleSearchingIconClicked"
+        @click.stop="changeContactSearchingStatus(!isSearching)"
       >
         <Icon
           :file="isSearching ? backSVG : addSVG"
@@ -66,6 +66,7 @@ import {
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import { TUIGlobal } from '@tencentcloud/universal-api';
+import debounce from 'lodash/debounce';
 import { isPC } from '../../../utils/env';
 import Icon from '../../common/Icon.vue';
 import addSVG from '../../../assets/icon/add.svg';
@@ -87,15 +88,9 @@ const searchResult = ref<IContactSearchResult>({
   },
 });
 
-const handleSearchingHeaderClicked = () => {
-  if (!isSearching.value) {
-    isSearching.value = true;
-  }
-};
-
-const handleSearchingIconClicked = () => {
-  isSearching.value = !isSearching.value;
-};
+const changeContactSearchingStatus = debounce(function (status: boolean) {
+  isSearching.value = status;
+}, 200);
 
 const search = async () => {
   if (!searchValue.value) {

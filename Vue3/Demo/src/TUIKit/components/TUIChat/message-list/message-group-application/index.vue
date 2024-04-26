@@ -117,7 +117,7 @@ import Avatar from '../../../common/Avatar/index.vue';
 import Drawer from '../../../common/Drawer/index.vue';
 import closeIcon from '../../../../assets/icon/close-dark.svg';
 import { isPC, isMobile } from '../../../../utils/env';
-import { IGroupApplication, IUserProfile } from '../../../../interface';
+import { IGroupApplication, IUserProfile, IChatResponese } from '../../../../interface';
 
 interface IProps {
   groupID: string;
@@ -159,8 +159,8 @@ watch(() => customGroupApplicationList.value.length, (newVal, oldVal) => {
  * @return {Promise<IGroupApplication[]>} The list of group applications for the current group.
  */
 async function getCurrentGroupApplicationList(): Promise<IGroupApplication[]> {
-  const result = await TUIGroupService.getGroupApplicationList();
-  const currentGroupApplicationList: IGroupApplication[] = result.data.applicationList.filter(application => application.groupID === props.groupID);
+  const result: IChatResponese<{ applicationList: IGroupApplication[] }> = await TUIGroupService.getGroupApplicationList();
+  const currentGroupApplicationList = result.data.applicationList.filter(application => application.groupID === props.groupID);
   return currentGroupApplicationList;
 }
 
@@ -170,8 +170,11 @@ function toggleGroupApplicationDrawerShow() {
 
 async function generateCustomGroupApplicationList(): Promise<ICustomGroupApplication[]> {
   const applicationList = await getCurrentGroupApplicationList();
+  if (applicationList.length === 0) {
+    return [];
+  }
   const userIDList = applicationList.map(application => application.applicationType === 0 ? application.applicant : application.userID);
-  const { data: userProfileList } = await TUIUserService.getUserProfile({ userIDList }) as { data: IUserProfile[] };
+  const { data: userProfileList } = await TUIUserService.getUserProfile({ userIDList }) as IChatResponese<IUserProfile[]>;
   const mappingFromUserID2Profile: Record<string, IUserProfile> = {};
   userProfileList.forEach((profile: IUserProfile) => {
     mappingFromUserID2Profile[profile.userID] = profile;

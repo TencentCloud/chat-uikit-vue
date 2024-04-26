@@ -408,6 +408,11 @@ function closeReadReceiptPanel(): void {
         margin-left: 8px;
         line-height: 20px;
         flex: 0 1 auto;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        white-space: nowrap;
       }
 
       & + .read-status-member-container {
