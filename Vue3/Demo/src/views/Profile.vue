@@ -165,7 +165,7 @@ import { IUserProfile } from "../TUIKit/interface";
 import { isPC } from "../TUIKit/utils/env";
 import router from "../router/index";
 import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils";
-import { Translator } from "../TUIKit/components/TUIChat/utils/translation";
+import { translator } from "../TUIKit/components/TUIChat/utils/translation";
 
 const props = defineProps({
   displayType: {
@@ -225,21 +225,21 @@ const settingList = ref<{
         value: TUIChatEngine.TYPES.ALLOW_TYPE_ALLOW_ANY,
         label: "同意任何用户加好友",
         onClick: (item: any) => {
-          updateMyProfile({ allowType: item.value });
+          switchAllowType(item.value);
         }
       },
       [TUIChatEngine.TYPES.ALLOW_TYPE_NEED_CONFIRM]: {
         value: TUIChatEngine.TYPES.ALLOW_TYPE_NEED_CONFIRM,
         label: "需要验证",
         onClick: (item: any) => {
-          updateMyProfile({ allowType: item.value });
+          switchAllowType(item.value);
         }
       },
       [TUIChatEngine.TYPES.ALLOW_TYPE_DENY_ANY]: {
         value: TUIChatEngine.TYPES.ALLOW_TYPE_DENY_ANY,
         label: "拒绝任何人加好友",
         onClick: (item: any) => {
-          updateMyProfile({ allowType: item.value });
+          switchAllowType(item.value);
         }
       }
     }
@@ -470,21 +470,29 @@ onMounted(() => {
   }
 });
 
+function switchAllowType(value: string) {
+  updateMyProfile({ allowType: value });
+  settingList.value.allowType.showChildren = false;
+}
+
 function switchEnableUserLevelReadReceipt(status: boolean) {
   TUIStore.update(StoreName.USER, "displayMessageReadReceipt", status);
+  settingList.value.displayMessageReadReceipt.showChildren = false;
 }
 
 function switchUserLevelOnlineStatus(status: boolean) {
   TUIUserService.switchUserStatus({ displayOnlineStatus: status });
+  settingList.value.displayOnlineStatus.showChildren = false;
 }
 
 function switchTranslationTargetLanguage(lang: string) {
-  Translator.clear();
+  translator.clear();
   TUIChatService.setTranslationLanguage(lang);
   settingList.value.translateLanguage.selectedChild = lang;
+  settingList.value.translateLanguage.showChildren = false;
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/profile.scss";
+@import "../styles/profile";
 </style>

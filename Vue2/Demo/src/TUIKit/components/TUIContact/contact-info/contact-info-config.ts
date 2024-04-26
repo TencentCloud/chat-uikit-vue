@@ -1,3 +1,4 @@
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
 import {
   CONTACT_INFO_LABEL_POSITION,
   CONTACT_INFO_MORE_EDIT_TYPE,
@@ -60,6 +61,7 @@ export const contactMoreInfoConfig = {
         removeFromBlacklist(props?.contactInfoData?.userID);
       } else {
         addToBlacklist(props?.contactInfoData?.userID);
+        TUIStore.update(StoreName.CUSTOM, 'currentContactListKey', 'blackList');
       }
     },
   },
@@ -185,6 +187,7 @@ export const contactButtonConfig = {
     type: CONTACT_INFO_BUTTON_TYPE.SUBMIT,
     onClick: (props: { contactInfoData: any; [propsName: string]: any }) => {
       acceptFriendApplication(props?.contactInfoData?.userID);
+      TUIStore.update(StoreName.CUSTOM, 'currentContactListKey', 'friendList');
     },
   },
   refuseFriendApplication: {

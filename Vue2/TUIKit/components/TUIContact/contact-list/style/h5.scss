@@ -1,0 +1,12 @@
+.tui-contact-list-h5 {
+  .tui-contact-list-item {
+    .tui-contact-list-item-header {
+      cursor: none;
+    }
+
+    .tui-contact-list-item-header:active,
+    .tui-contact-list-item-main-item:active {
+      background-color: #eef0f3;
+    }
+  }
+}

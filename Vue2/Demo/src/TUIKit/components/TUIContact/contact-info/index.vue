@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="showContactInfo"
+    v-if="typeof contactInfoData === 'object' && Object.keys(contactInfoData).length"
     :class="['tui-contact-info', !isPC && 'tui-contact-info-h5']"
   >
     <div
@@ -28,9 +28,7 @@
         {{ TUITranslateService.t("TUIContact.添加好友/群聊") }}
       </div>
     </div>
-    <div
-      :class="['tui-contact-info-basic', !isPC && 'tui-contact-info-h5-basic']"
-    >
+    <div :class="['tui-contact-info-basic', !isPC && 'tui-contact-info-h5-basic']">
       <div
         :class="[
           'tui-contact-info-basic-text',
@@ -55,7 +53,7 @@
         >
           {{
             `${TUITranslateService.t(`TUIContact.${item.label}`)}:
-            ${item.data}`
+          ${item.data}`
           }}
         </div>
       </div>
@@ -188,7 +186,7 @@ import TUIChatEngine, {
   FriendApplication,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
-import { ref, computed } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted } from '../../../adapter-vue';
 import { isPC } from '../../../utils/env';
 
 import {
@@ -222,36 +220,32 @@ type IContactInfoType = IGroupModel | Friend | FriendApplication | IBlackListUse
 
 const emits = defineEmits(['switchConversation']);
 
-const contactInfoData = ref<IContactInfoType>();
+const contactInfoData = ref<IContactInfoType>({} as IContactInfoType);
 const contactInfoBasicList = ref<Array<{ label: string; data: string }>>([]);
-const contactInfoMoreList = ref<Array<IContactInfoMoreItem>>([]);
-const contactInfoButtonList = ref<Array<IContactInfoButton>>([]);
-const showContactInfo = computed((): boolean => {
-  for (const i in contactInfoData.value) {
-    return true;
-  }
-  return false;
-});
+const contactInfoMoreList = ref<IContactInfoMoreItem[]>([]);
+const contactInfoButtonList = ref<IContactInfoButton[]>([]);
 
 const setEditing = (item: any) => {
   item.editing = true;
 };
 
-// 是否为群组类型
 const isGroup = computed((): boolean =>
   (contactInfoData.value as IGroupModel)?.groupID ? true : false,
 );
-// 是否为申请类型
+
 const isApplication = computed((): boolean => {
   return isApplicationType(contactInfoData?.value);
 });
-// 是否为双向好友关系, 若为群组类型则一直保持false
+
+// is both friend, if is group type always false
 const isBothFriend = ref<boolean>(false);
-// 是否是群成员（包含普通成员、管理员、群主）
+
+// is group member, including ordinary member, admin, group owner
 const isGroupMember = computed((): boolean => {
   return (contactInfoData.value as IGroupModel)?.selfInfo?.userID ? true : false;
 });
-// 是否是黑名单用户, 若为群组类型则一直保持false
+
+// is in black list, if is group type always false
 const isInBlackList = computed((): boolean => {
   return (
     !isGroup.value
@@ -262,7 +256,25 @@ const isInBlackList = computed((): boolean => {
   );
 });
 
-const blackList = ref<Array<IBlackListUserItem>>([]);
+const blackList = ref<IBlackListUserItem[]>([]);
+
+onMounted(() => {
+  TUIStore.watch(StoreName.CUSTOM, {
+    currentContactInfo: onCurrentContactInfoUpdated,
+  });
+  TUIStore.watch(StoreName.USER, {
+    userBlacklist: onUserBlacklistUpdated,
+  });
+});
+
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CUSTOM, {
+    currentContactInfo: onCurrentContactInfoUpdated,
+  });
+  TUIStore.unwatch(StoreName.USER, {
+    userBlacklist: onUserBlacklistUpdated,
+  });
+});
 
 const resetContactInfoUIData = () => {
   contactInfoData.value = {} as IContactInfoType;
@@ -276,12 +288,6 @@ const resetContactSearchingUIData = () => {
   TUIStore.update(StoreName.CUSTOM, 'currentContactSearchingStatus', false);
   TUIGlobal?.closeSearching && TUIGlobal?.closeSearching();
 };
-
-TUIStore.watch(StoreName.USER, {
-  userBlacklist: (userBlacklist: Array<IBlackListUserItem>) => {
-    blackList.value = userBlacklist;
-  },
-});
 
 const onContactInfoEmitSubmit = (item: any) => {
   item.editSubmitHandler
@@ -304,15 +310,12 @@ const onContactInfoButtonClicked = (item: any) => {
     || item.key === 'enterC2CConversation'
   ) {
     emits('switchConversation', contactInfoData.value);
-    // 清空当前 contact 相关数据信息
     resetContactSearchingUIData();
   }
 };
 
 const generateMoreInfo = async () => {
-  // 非 好友申请类 信息展示
   if (!isApplication.value) {
-    // 非好友关系 / 非群成员 且 不在黑名单中 且 不是直播群，展示 申请加群/加好友验证信息 填写
     if (
       (!isGroup.value && !isBothFriend.value && !isInBlackList.value)
       || (isGroup.value
@@ -322,24 +325,17 @@ const generateMoreInfo = async () => {
       contactMoreInfoConfig.setWords.data = '';
       contactInfoMoreList.value.push(contactMoreInfoConfig.setWords);
     }
-    // 用户界面，展示 备注名 设置，包含：
-    // 1. 若为好友关系，直接修改好友相关资料
-    // 2. 若非好友关系，且非黑名单用户，提供 申请加好友备注信息 填写
     if (!isGroup.value && !isInBlackList.value) {
       contactMoreInfoConfig.setRemark.data
         = (contactInfoData.value as Friend)?.remark || '';
       contactMoreInfoConfig.setRemark.editing = false;
       contactInfoMoreList.value.push(contactMoreInfoConfig.setRemark);
     }
-    // 用户界面，展示 黑名单 设置，包含：
-    // 1. 若为好友关系，提供设置黑名单入口
-    // 2. 若已在黑名单中，提供接触黑名单入口
     if (!isGroup.value && (isBothFriend.value || isInBlackList.value)) {
       contactMoreInfoConfig.blackList.data = isInBlackList.value || false;
       contactInfoMoreList.value.push(contactMoreInfoConfig.blackList);
     }
   } else {
-    // 对方 好友请求/群聊申请
     contactMoreInfoConfig.displayWords.data
       = (contactInfoData.value as FriendApplication)?.wording || '';
     contactInfoMoreList.value.push(contactMoreInfoConfig.displayWords);
@@ -347,11 +343,9 @@ const generateMoreInfo = async () => {
 };
 
 const generateButton = () => {
-  // 黑名单用户，在解除黑名单前没有任何操作button
   if (isInBlackList.value) {
     return;
   }
-  // 非黑名单用户
   if (isApplication.value) {
     if (
       (contactInfoData.value as FriendApplication)?.type
@@ -366,7 +360,6 @@ const generateButton = () => {
     }
   } else {
     if (isGroup.value && isGroupMember.value) {
-      // 群聊信息页+是群成员
       switch ((contactInfoData.value as IGroupModel)?.selfInfo?.role) {
         case 'Owner':
           contactInfoButtonList?.value?.push(contactButtonConfig.dismissGroup);
@@ -379,13 +372,11 @@ const generateButton = () => {
         contactButtonConfig.enterGroupConversation,
       );
     } else if (!isGroup.value && isBothFriend.value) {
-      // 用户信息页+是好友关系
       contactInfoButtonList?.value?.push(contactButtonConfig.deleteFriend);
       contactInfoButtonList?.value?.push(
         contactButtonConfig.enterC2CConversation,
       );
     } else {
-      // 群聊信息页+不是群成员 / 用户信息页 + 非好友关系
       if (isGroup.value) {
         contactInfoButtonList?.value?.push(
           (contactInfoData.value as IGroupModel)?.type === TUIChatEngine?.TYPES?.GRP_AVCHATROOM
@@ -399,40 +390,40 @@ const generateButton = () => {
   }
 };
 
-// 总: 当前联系人信息页数据源获取
-TUIStore.watch(StoreName.CUSTOM, {
-  currentContactInfo: async (data: any) => {
-    // 去重
-    if (
-      contactInfoData.value
-      && data
-      && JSON.stringify(contactInfoData.value) === JSON.stringify(data)
-    ) {
-      return;
-    }
-    resetContactInfoUIData();
-    // deep clone
-    contactInfoData.value = deepCopy(data) || {};
-    if (!contactInfoData.value || Object.keys(contactInfoData.value)?.length === 0) {
-      return;
-    }
-    contactInfoBasicList.value = generateContactInfoBasic(
-      contactInfoData.value,
-    );
-    isBothFriend.value = await isFriend(contactInfoData.value);
-    generateMoreInfo();
-    generateButton();
-    if (data.infoKeyList) {
-      contactInfoMoreList.value = data.infoKeyList.map((key: string) => {
-        return (contactMoreInfoConfig as any)[key];
-      });
-    }
-    if (data.btnKeyList) {
-      contactInfoButtonList.value = data.btnKeyList.map((key: string) => {
-        return (contactButtonConfig as any)[key];
-      });
-    }
-  },
-});
+function onUserBlacklistUpdated(userBlacklist: IBlackListUserItem[]) {
+  blackList.value = userBlacklist;
+}
+
+async function onCurrentContactInfoUpdated(contactInfo: IContactInfoType) {
+  if (
+    contactInfoData.value
+    && contactInfo
+    && JSON.stringify(contactInfoData.value) === JSON.stringify(contactInfo)
+  ) {
+    return;
+  }
+  resetContactInfoUIData();
+  // deep clone
+  contactInfoData.value = deepCopy(contactInfo) || {};
+  if (!contactInfoData.value || Object.keys(contactInfoData.value)?.length === 0) {
+    return;
+  }
+  contactInfoBasicList.value = generateContactInfoBasic(
+    contactInfoData.value,
+  );
+  isBothFriend.value = await isFriend(contactInfoData.value);
+  generateMoreInfo();
+  generateButton();
+  if (contactInfo.infoKeyList) {
+    contactInfoMoreList.value = contactInfo.infoKeyList.map((key: string) => {
+      return (contactMoreInfoConfig as any)[key];
+    });
+  }
+  if (contactInfo.btnKeyList) {
+    contactInfoButtonList.value = contactInfo.btnKeyList.map((key: string) => {
+      return (contactButtonConfig as any)[key];
+    });
+  }
+}
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

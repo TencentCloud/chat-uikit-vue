@@ -75,15 +75,19 @@
         </div>
       </main>
     </div>
-    <!-- 消息附加区域 -->
+    <!-- message extra area -->
     <div class="message-bubble-extra-content">
-      <!-- 消息翻译 -->
+      <!-- extra: message translation -->
       <MessageTranslate
         :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
         :message="message"
       />
-
-      <!-- 消息引用 -->
+      <!-- extra: message convert voice to text -->
+      <MessageConvert
+        :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
+        :message="message"
+      />
+      <!-- extra: message quote -->
       <MessageQuote
         :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
         :message="message"
@@ -102,6 +106,7 @@ import ReadStatus from './read-status/index.vue';
 import MessageQuote from './message-quote/index.vue';
 import Avatar from '../../../common/Avatar/index.vue';
 import MessageTranslate from './message-translate/index.vue';
+import MessageConvert from './message-convert/index.vue';
 import loadingIcon from '../../../../assets/icon/loading.png';
 import { shallowCopyMessage } from '../../utils/utils';
 import { isPC } from '../../../../utils/env';
@@ -246,6 +251,7 @@ function openReadUserPanel() {
       }
 
       .message-body-main {
+        max-width: 100%;
         display: flex;
         flex-direction: row;
         min-width: 0;

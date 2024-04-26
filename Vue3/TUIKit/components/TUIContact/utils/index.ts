@@ -15,8 +15,7 @@ export const generateAvatar = (item: any): string => {
   return (
     item?.avatar
     || item?.profile?.avatar
-    || (item?.groupID
-    && 'https://web.sdk.qcloud.com/im/assets/images/Public.svg')
+    || (item?.groupID && 'https://web.sdk.qcloud.com/im/assets/images/Public.svg')
     || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
   );
 };
