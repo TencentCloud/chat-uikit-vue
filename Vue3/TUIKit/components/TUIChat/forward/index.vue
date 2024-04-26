@@ -84,7 +84,9 @@ function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): v
     selectedConversationList,
     [message],
     {
-      needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+      params: {
+        needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+      },
     } as any,
   ).catch((error: { message: string; code: number }) => {
     if (error.code === 80001) {

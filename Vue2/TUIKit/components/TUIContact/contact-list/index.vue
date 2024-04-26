@@ -1,7 +1,7 @@
 <template>
   <ul
     v-if="!contactSearchingStatus"
-    class="tui-contact-list"
+    :class="['tui-contact-list', !isPC && 'tui-contact-list-h5']"
   >
     <li
       v-for="(contactListObj, key) in contactListMap"
@@ -29,22 +29,17 @@
           </span>
         </div>
       </header>
-      <ul
-        v-if="currentContactListKey === key"
-        class="tui-contact-list-item-main"
-      >
+      <ul :class="['tui-contact-list-item-main', currentContactListKey === key ? '' : 'hidden']">
         <li
-          v-for="(contactListItem, contactListItemKey) in contactListObj.list"
-          :key="contactListItemKey"
+          v-for="contactListItem in contactListObj.list"
+          :key="contactListItem.renderKey"
           class="tui-contact-list-item-main-item"
           :class="['selected']"
           @click="selectItem(contactListItem)"
         >
           <ContactListItem
             :item="contactListItem"
-            :list="contactListObj.list"
-            :displayOnlineStatus="contactListObj.key === 'friendList' && displayOnlineStatus"
-            :userOnlineStatusMap="userOnlineStatusMap"
+            :displayOnlineStatus="displayOnlineStatus && key === 'friendList'"
           />
         </li>
       </ul>
@@ -75,7 +70,7 @@
         >
           <ContactListItem
             :item="listItem"
-            :list="item.list"
+            :displayOnlineStatus="false"
           />
         </div>
       </div>
@@ -100,7 +95,7 @@ import {
   TUIUserService,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
-import { ref, computed, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted, provide } from '../../../adapter-vue';
 import Icon from '../../common/Icon.vue';
 import downSVG from '../../../assets/icon/down-icon.svg';
 import rightSVG from '../../../assets/icon/right-icon.svg';
@@ -113,6 +108,7 @@ import {
   IContactInfoType,
 } from '../../../interface';
 import ContactListItem from './contact-list-item/index.vue';
+import { isPC } from '../../../utils/env';
 
 const currentContactListKey = ref<keyof IContactList>('');
 const currentContactInfo = ref<IContactInfoType>({} as IContactInfoType);
@@ -120,23 +116,23 @@ const contactListMap = ref<IContactList>({
   friendApplicationList: {
     key: 'friendApplicationList',
     title: '新的联系人',
-    list: [] as Array<FriendApplication>,
+    list: [] as FriendApplication[],
     unreadCount: 0,
   },
   blackList: {
     key: 'blackList',
     title: '黑名单',
-    list: [] as Array<IBlackListUserItem>,
+    list: [] as IBlackListUserItem[],
   },
   groupList: {
     key: 'groupList',
     title: '我的群聊',
-    list: [] as Array<IGroupModel>,
+    list: [] as IGroupModel[],
   },
   friendList: {
     key: 'friendList',
     title: '我的好友',
-    list: [] as Array<Friend>,
+    list: [] as Friend[],
   },
 });
 const contactSearchingStatus = ref<boolean>(false);
@@ -175,6 +171,8 @@ onMounted(() => {
   TUIStore.watch(StoreName.CUSTOM, {
     currentContactSearchingStatus: onCurrentContactSearchingStatusUpdated,
     currentContactSearchResult: onCurrentContactSearchResultUpdated,
+    currentContactListKey: onCurrentContactListKeyUpdated,
+    currentContactInfo: onCurrentContactInfoUpdated,
   });
 });
 
@@ -202,47 +200,20 @@ onUnmounted(() => {
   TUIStore.unwatch(StoreName.CUSTOM, {
     currentContactSearchingStatus: onCurrentContactSearchingStatusUpdated,
     currentContactSearchResult: onCurrentContactSearchResultUpdated,
+    currentContactListKey: onCurrentContactListKeyUpdated,
+    currentContactInfo: onCurrentContactInfoUpdated,
   });
 });
-
-function updateCurrentContactInfoFromList(list: Array<IContactInfoType>, type: string) {
-  if (
-    !(currentContactInfo.value as Friend)?.userID
-    && !(currentContactInfo.value as IGroupModel)?.groupID
-  ) {
-    return;
-  } else if (
-    (currentContactInfo.value as IGroupModel)?.groupID
-    && (type === currentContactListKey.value || contactSearchingStatus.value)
-  ) {
-    currentContactInfo.value = list?.find(
-      (item: any) =>
-        item?.groupID && item?.groupID === (currentContactInfo.value as IGroupModel)?.groupID,
-    ) || {} as IContactInfoType;
-    TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
-  } else if (
-    (currentContactInfo.value as Friend)?.userID
-    && (type === currentContactListKey.value || contactSearchingStatus.value)
-  ) {
-    currentContactInfo.value = list?.find(
-      (item: any) =>
-        item?.userID && item?.userID === (currentContactInfo.value as Friend)?.userID,
-    ) || {} as IContactInfoType;
-    TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
-  }
-}
 
 function toggleCurrentContactList(key: keyof IContactList) {
   if (currentContactListKey.value === key) {
     currentContactListKey.value = '';
     currentContactInfo.value = {} as IContactInfoType;
-    TUIStore.update(
-      StoreName.CUSTOM,
-      'currentContactInfo',
-      currentContactInfo.value,
-    );
+    TUIStore.update(StoreName.CUSTOM, 'currentContactListKey', '');
+    TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', {} as IContactInfoType);
   } else {
     currentContactListKey.value = key;
+    TUIStore.update(StoreName.CUSTOM, 'currentContactListKey', key);
     if (key === 'friendApplicationList') {
       TUIFriendService.setFriendApplicationRead();
     }
@@ -305,9 +276,10 @@ function onCustomerServiceCommercialPluginUpdated(isEnabled: boolean) {
         if (res.data.length > 0) {
           const customerList = {
             title: text,
-            list: res.data.map((item: any) => {
+            list: res.data.map((item: any, index: number) => {
               return {
                 ...item,
+                renderKey: generateRenderKey('customerList', item, index),
                 infoKeyList: [],
                 btnKeyList: ['enterC2CConversation'],
               };
@@ -317,32 +289,54 @@ function onCustomerServiceCommercialPluginUpdated(isEnabled: boolean) {
           contactListMap.value = { ...contactListMap.value, customerList };
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }
 }
 
-function onGroupListUpdated(groupList: Array<IGroupModel>) {
-  contactListMap.value.groupList.list = groupList;
-  updateCurrentContactInfoFromList(contactListMap.value.groupList.list, 'groupList');
+function onGroupListUpdated(groupList: IGroupModel[]) {
+  updateContactListMap('groupList', groupList);
 }
 
-function onUserBlacklistUpdated(userBlacklist: Array<IBlackListUserItem>) {
-  contactListMap.value.blackList.list = userBlacklist;
-  updateCurrentContactInfoFromList(contactListMap.value.blackList.list, 'blackList');
+function onUserBlacklistUpdated(userBlacklist: IBlackListUserItem[]) {
+  updateContactListMap('blackList', userBlacklist);
 }
 
 function onFriendApplicationUnreadCountUpdated(friendApplicationUnreadCount: number) {
   contactListMap.value.friendApplicationList.unreadCount = friendApplicationUnreadCount;
 }
 
-function onFriendListUpdated(friendList: Array<Friend>) {
-  contactListMap.value.friendList.list = friendList;
-  updateCurrentContactInfoFromList(contactListMap.value.friendList.list, 'friendList');
+function onFriendListUpdated(friendList: Friend[]) {
+  updateContactListMap('friendList', friendList);
 }
 
-function onFriendApplicationListUpdated(friendApplicationList: Array<FriendApplication>) {
-  contactListMap.value.friendApplicationList.list = friendApplicationList;
-  updateCurrentContactInfoFromList(contactListMap.value.friendApplicationList.list, 'friendApplicationList');
+function onFriendApplicationListUpdated(friendApplicationList: FriendApplication[]) {
+  updateContactListMap('friendApplicationList', friendApplicationList);
+}
+
+function updateContactListMap(key: keyof IContactList, list: IContactInfoType[]) {
+  contactListMap.value[key].list = list;
+  contactListMap.value[key].list.map((item: IContactInfoType, index: number) => item.renderKey = generateRenderKey(key, item, index));
+  updateCurrentContactInfoFromList(contactListMap.value[key].list, key);
+}
+
+function updateCurrentContactInfoFromList(list: IContactInfoType[], type: keyof IContactList) {
+  if (
+    !(currentContactInfo.value as Friend)?.userID
+    && !(currentContactInfo.value as IGroupModel)?.groupID
+  ) {
+    return;
+  }
+  if (type === currentContactListKey.value || contactSearchingStatus.value) {
+    currentContactInfo.value = list?.find(
+      (item: any) =>
+        (item?.groupID && item?.groupID === (currentContactInfo.value as IGroupModel)?.groupID) || (item?.userID && item?.userID === (currentContactInfo.value as Friend)?.userID),
+    ) || {} as IContactInfoType;
+    TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
+  }
+}
+
+function generateRenderKey(contactListMapKey: keyof IContactList, contactInfo: IContactInfoType, index: number) {
+  return `${contactListMapKey}-${(contactInfo as Friend).userID || (contactInfo as IGroupModel).groupID || ('index' + index)}`;
 }
 
 function onCurrentContactSearchResultUpdated(searchResult: IContactSearchResult) {
@@ -351,10 +345,19 @@ function onCurrentContactSearchResultUpdated(searchResult: IContactSearchResult)
 
 function onCurrentContactSearchingStatusUpdated(searchingStatus: boolean) {
   contactSearchingStatus.value = searchingStatus;
-  currentContactInfo.value = {} as IContactInfoType;
-  currentContactListKey.value = '';
-  TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
+  TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', {} as IContactInfoType);
+  TUIStore.update(StoreName.CUSTOM, 'currentContactListKey', '');
 }
+
+function onCurrentContactInfoUpdated(contactInfo: IContactInfoType) {
+  currentContactInfo.value = contactInfo;
+}
+
+function onCurrentContactListKeyUpdated(contactListKey: string) {
+  currentContactListKey.value = contactListKey;
+}
+
+provide('userOnlineStatusMap', userOnlineStatusMap);
 </script>
 
 <style lang="scss" scoped src="./style/index.scss"></style>

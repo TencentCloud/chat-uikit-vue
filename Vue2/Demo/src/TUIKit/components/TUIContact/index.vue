@@ -4,15 +4,12 @@
     v-else-if="isShowContactList"
     :class="['tui-contact', !isPC && 'tui-contact-h5']"
   >
-    <div
-      v-if="isShowContactListInH5"
-      :class="['tui-contact-left', !isPC && 'tui-contact-h5-left']"
-    >
+    <div :class="['tui-contact-left', !isPC && 'tui-contact-h5-left']">
       <ContactSearch />
       <ContactList :class="['tui-contact-left-list', !isPC && 'tui-contact-h5-left-list']" />
     </div>
     <div
-      v-if="isShowContactInfoInH5"
+      v-if="isShowContactInfo"
       :class="['tui-contact-right', !isPC && 'tui-contact-h5-right']"
     >
       <ContactInfo @switchConversation="switchConversation" />
@@ -44,8 +41,7 @@ const props = defineProps({
 const displayTypeRef = ref<string>(props.displayType || 'contactList');
 const isShowSelectFriend = ref(false);
 const isShowContactList = ref(true);
-const isShowContactListInH5 = ref(true);
-const isShowContactInfoInH5 = ref(true);
+const isShowContactInfo = ref(true);
 
 watchEffect(() => {
   isShowContactList.value = props?.displayType !== 'selectFriend';
@@ -54,7 +50,6 @@ watchEffect(() => {
 TUIStore.watch(StoreName.CUSTOM, {
   isShowSelectFriendComponent: (data: any) => {
     if (!isUniFrameWork && props?.displayType === 'selectFriend') {
-      // 原生 web & h5 单页面应用，displayType 为 selectFriend 时，才唤起 selectFriend
       isShowSelectFriend.value = data;
       isShowContactList.value = false;
       return;
@@ -63,31 +58,18 @@ TUIStore.watch(StoreName.CUSTOM, {
       isShowSelectFriend.value = true;
       if (isUniFrameWork) {
         displayTypeRef.value = 'selectFriend';
-        TUIGlobal?.hideTabBar()?.catch(() => { /* ignore */ });
+        TUIGlobal?.hideTabBar();
       }
     } else {
       isShowSelectFriend.value = false;
       if (isUniFrameWork) {
         displayTypeRef.value = props.displayType;
-        TUIGlobal?.showTabBar()?.catch(() => { /* ignore */ });
+        TUIGlobal?.showTabBar();
       }
     }
   },
-  currentContactInfo: (data: any) => {
-    if (isPC) {
-      isShowContactListInH5.value = true;
-      isShowContactInfoInH5.value = true;
-    } else if (!data || typeof data !== 'object' || Object.keys(data)?.length <= 0) {
-      // 判断 移动端 展示 contactList 还是 contactInfo
-      // contactInfo 不存在，展示contactList
-      isShowContactListInH5.value = true;
-      isShowContactInfoInH5.value = false;
-    } else {
-      // 判断 移动端 展示 contactList 还是 contactInfo
-      // contactInfo 存在，展示contactInfo
-      isShowContactListInH5.value = false;
-      isShowContactInfoInH5.value = true;
-    }
+  currentContactInfo: (contactInfo: any) => {
+    isShowContactInfo.value = isPC || (contactInfo && typeof contactInfo === 'object' && Object.keys(contactInfo)?.length > 0);
   },
 });
 
@@ -98,6 +80,7 @@ const switchConversation = (data: any) => {
   });
   emits('switchConversation', data);
 };
+
 </script>
 <style lang="scss" scoped>
 @import "../../assets/styles/common";
@@ -125,11 +108,18 @@ const switchConversation = (data: any) => {
 }
 
 .tui-contact-h5 {
+  position: relative;
+
   &-left,
   &-right {
     width: 100%;
     height: 100%;
     flex: 1;
+  }
+
+  &-right {
+    position: absolute;
+    z-index: 100;
   }
 
   &-left {

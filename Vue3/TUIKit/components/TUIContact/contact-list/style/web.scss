@@ -52,6 +52,10 @@
     &-main {
       padding: 0 15px !important;
 
+      &.hidden{
+        display: none;
+      }
+
       &-item {
         padding: 5px 0;
       }
@@ -60,7 +64,7 @@
 }
 
 .tui-contact-search-list {
-  padding: 0 15px;
+  padding: 0 15px !important;
 
   &-title {
     font-size: 14px;
