@@ -9,7 +9,7 @@ import TUIChatConfig from './config';
 
 export default class TUIChatServer {
   public currentConversationID: string = '';
-  public currentMessageList: Array<IMessageModel> = [];
+  public currentMessageList: IMessageModel[] = [];
 
   constructor() {
     // register service
@@ -22,7 +22,7 @@ export default class TUIChatServer {
     });
     // watch current conversation message list
     TUIStore.watch(StoreName.CHAT, {
-      messageList: (list: Array<IMessageModel>) => {
+      messageList: (list: IMessageModel[]) => {
         this.currentMessageList = list;
       },
     });

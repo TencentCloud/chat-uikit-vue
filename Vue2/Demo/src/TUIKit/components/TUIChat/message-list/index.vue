@@ -1,8 +1,9 @@
 <template>
   <div
     class="tui-chat"
-    :class="[!isPC ? 'tui-chat-h5' : '']"
+    :class="[isH5 ? 'tui-chat-h5' : '']"
   >
+    <!-- <JoinGroupCard v-if="isH5" /> -->
     <div
       id="tui-chat-main"
       class="tui-chat-main"
@@ -31,6 +32,7 @@
         id="messageScrollList"
         ref="messageListRef"
         class="tui-message-list"
+        @click="onMessageListBackgroundClick"
       >
         <p
           v-if="!isCompleted"
@@ -224,6 +226,7 @@ import TUIChatEngine, {
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import { outsideClick, getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { TUIEmojiPlugin } from '@tencentcloud/tui-emoji-plugin';
+// import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
 import throttle from 'lodash/throttle';
 import Link from './link';
 import MessageGroupApplication from './message-group-application/index.vue';
@@ -260,7 +263,12 @@ interface ScrollConfig {
   };
 }
 
-const emits = defineEmits(['handleEditor']);
+interface IEmits {
+  (key: 'closeInputToolBar'): void;
+  (key: 'handleEditor', message: IMessageModel, type: string): void;
+}
+
+const emits = defineEmits<IEmits>();
 const props = defineProps({
   groupID: {
     type: String,
@@ -719,6 +727,14 @@ function setReadReceiptPanelVisible(visible: boolean, message?: IMessageModel) {
 function closeChatPop() {
   toggleID.value = '';
 }
+
+function onMessageListBackgroundClick() {
+  emits('closeInputToolBar');
+}
+
+defineExpose({
+  scrollToLatestMessage,
+});
 </script>
 
 <style lang="scss" scoped src="./style/index.scss"></style>

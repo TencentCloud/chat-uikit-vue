@@ -67,6 +67,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from '../../../../adapter-vue';
 import {
   TUIChatService,
   TUIStore,
@@ -74,28 +75,33 @@ import {
   IConversationModel,
   SendMessageParams,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref } from '../../../../adapter-vue';
-import { emojiList, basicEmojiMap, basicEmojiList } from '../../utils/emojiList';
-import { IEmojiList, IEmojiListItem } from '../../../../interface';
-import { EMOJI_TYPE } from '.././../../../constant';
 import Icon from '../../../common/Icon.vue';
 import faceIcon from '../../../../assets/icon/face.png';
+import { EMOJI_TYPE } from '.././../../../constant';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
+import { IEmojiList, IEmojiListItem } from '../../../../interface';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
+import { emojiList, basicEmojiMap, basicEmojiList } from '../../utils/emojiList';
 
 const emits = defineEmits(['insertEmoji', 'onClose', 'sendMessage']);
 const list = ref<IEmojiList>(emojiList);
 const currentTabIndex = ref<number>(0);
 const currentTabItem = ref<IEmojiListItem>(list?.value[0]);
-const currentEmojiList = ref<Array<string>>(list?.value[0]?.list);
+const currentEmojiList = ref<string[]>(list?.value[0]?.list);
 const currentConversation = ref();
 const emojiPickerDialog = ref();
 const emojiPickerListRef = ref();
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversation: (conversation: IConversationModel) => {
-    currentConversation.value = conversation;
-  },
+onMounted(() => {
+  TUIStore.watch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdate,
+  });
+});
+
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdate,
+  });
 });
 
 const toggleEmojiTab = (index: number) => {
@@ -117,7 +123,11 @@ const select = (item: any, index: number) => {
   switch (currentTabItem?.value?.type) {
     case EMOJI_TYPE.BASIC:
       options.url = currentTabItem?.value?.url + basicEmojiMap[item];
-      emits('insertEmoji', options);
+      if (isUniFrameWork) {
+        uni.$emit('insert-emoji', options);
+      } else {
+        emits('insertEmoji', options);
+      }
       break;
     case EMOJI_TYPE.BIG:
       sendFaceMessage(index, currentTabItem.value);
@@ -146,8 +156,13 @@ const sendFaceMessage = (index: number, listItem: IEmojiListItem) => {
   TUIChatService.sendFaceMessage(options);
 };
 
-const sendMessage = () => {
-  emits('sendMessage');
-};
+function sendMessage() {
+  uni.$emit('send-message-in-emoji-picker');
+}
+
+function onCurrentConversationUpdate(conversation: IConversationModel) {
+  currentConversation.value = conversation;
+}
 </script>
+
 <style lang="scss" scoped src="./style/index.scss"></style>

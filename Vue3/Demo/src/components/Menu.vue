@@ -1,17 +1,47 @@
 <template>
   <div :class="['menu', isH5 && 'menu-h5']">
-    <div v-if="isPC" class="header header-border">
+    <div
+      v-if="isPC"
+      class="header header-border"
+    >
       <div class="header-tencent-cloud">
-        <img class="header-icon" src="../assets/image/txc-logo.svg" alt="" />
+        <img
+          class="header-icon"
+          src="../assets/image/txc-logo.svg"
+          alt=""
+        >
         <span class="header-name">{{ TUITranslateService.t("腾讯云") }}</span>
       </div>
-      <div class="header-im header-name">{{ TUITranslateService.t("即时通信IM") }}</div>
+      <div class="header-im header-name">
+        {{ TUITranslateService.t("即时通信IM") }}
+      </div>
     </div>
-    <div v-if="isH5" class="header header-guide">
-      <div class="header-name">{{ TUITranslateService.t("使用指引") }}</div>
-      <div class="header-close" @click="closeMenu">{{ TUITranslateService.t("关闭") }}</div>
+    <div
+      v-if="isH5"
+      class="header header-guide"
+    >
+      <div class="header-name">
+        {{ TUITranslateService.t("使用指引") }}
+      </div>
+      <div
+        class="header-close"
+        @click="closeMenu"
+      >
+        {{ TUITranslateService.t("关闭") }}
+      </div>
     </div>
     <div class="main">
+      <div class="task">
+        <div class="task-title">
+          {{ TUITranslateService.t(`Home.${TIMPushAdv.label}`) }}
+        </div>
+        <div class="task-list qr-box">
+          <img
+            class="qr-code"
+            :src="TIMPushAdv.url"
+          >
+        </div>
+      </div>
       <div class="task">
         <div class="task-title">
           {{ TUITranslateService.t("Home.建议体验功能") }}
@@ -36,9 +66,19 @@
           {{ TUITranslateService.t("Home.用UI组件快速集成") }}
         </div>
         <div class="step-list">
-          <div v-for="(step, index) in stepList" :key="step.label" class="step-list-item">
-            <div class="step-list-item-index">{{ index + 1 }}</div>
-            <a class="step-list-item-label" :href="step.url" target="_blank">{{
+          <div
+            v-for="(step, index) in stepList"
+            :key="step.label"
+            class="step-list-item"
+          >
+            <div class="step-list-item-index">
+              {{ index + 1 }}
+            </div>
+            <a
+              class="step-list-item-label"
+              :href="step.url"
+              target="_blank"
+            >{{
               TUITranslateService.t(`Home.${step.label}`)
             }}</a>
           </div>
@@ -48,9 +88,9 @@
     <div class="footer">
       <div class="footer-card-list">
         <div
-          class="footer-card"
           v-for="advItem in advList"
           :key="advItem.label"
+          class="footer-card"
           @click="openLink(advItem.url)"
         >
           <div class="footer-card-content">
@@ -67,19 +107,20 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, onMounted, ref, onUnmounted } from "../TUIKit/adapter-vue";
-import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
-import { Link } from "../utils/link";
-import { isPC, isH5 } from "../TUIKit/utils/env";
-import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils";
+import { defineEmits, onMounted, ref, onUnmounted } from '../TUIKit/adapter-vue';
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { Link } from '../utils/link';
+import { isPC, isH5 } from '../TUIKit/utils/env';
+import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
 
 interface ITasks {
   [propsName: string]: boolean;
 }
 
-const emits = defineEmits(["closeMenu"]);
+const emits = defineEmits(['closeMenu']);
 const stepList = Link.stepList;
 const advList = Link.advList;
+const TIMPushAdv = Link.TIMPush;
 const tasks = ref<ITasks>({
   sendMessage: false,
   revokeMessage: false,
@@ -89,42 +130,42 @@ const tasks = ref<ITasks>({
   dismissGroup: false,
   call: false,
   searchCloudMessage: false,
-  customerService: false
+  customerService: false,
 });
 
 const taskLabelMap = {
-  sendMessage: "发送一条消息",
-  revokeMessage: "撤回一条消息",
-  modifyNickName: "修改一次我的昵称",
-  groupChat: "发起一个群聊",
-  muteGroup: "开启一次群禁言",
-  dismissGroup: "解散一个群聊",
-  call: "发起一次通话",
-  searchCloudMessage: "搜索一次消息",
-  customerService: "进行一次客服会话"
+  sendMessage: '发送一条消息',
+  revokeMessage: '撤回一条消息',
+  modifyNickName: '修改一次我的昵称',
+  groupChat: '发起一个群聊',
+  muteGroup: '开启一次群禁言',
+  dismissGroup: '解散一个群聊',
+  call: '发起一次通话',
+  searchCloudMessage: '搜索一次消息',
+  customerService: '进行一次客服会话',
 };
 
 onMounted(() => {
   TUIStore.watch(StoreName.APP, {
-    tasks: setTasksValue
+    tasks: setTasksValue,
   });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.APP, {
-    tasks: setTasksValue
+    tasks: setTasksValue,
   });
 });
 
 function setTasksValue(tasksValue: ITasks) {
-  if (JSON.stringify(tasksValue) === "{}") {
+  if (JSON.stringify(tasksValue) === '{}') {
     return;
   }
   tasks.value = deepCopy(tasksValue);
 }
 
 function closeMenu() {
-  emits("closeMenu");
+  emits('closeMenu');
 }
 
 function openLink(url: string) {
@@ -143,18 +184,21 @@ function openLink(url: string) {
   align-items: center;
   justify-content: flex-start;
 }
+
 .menu {
   width: 300px;
   z-index: 100;
   background: rgb(255, 255, 255);
   box-shadow: 10px 20px 30px 0 rgba(56, 73, 90, 0.09);
-  padding: 0px 30px;
+  padding: 0 30px;
   user-select: none;
   overflow: auto;
+
   .header {
     width: 100%;
     flex-direction: row;
-    padding: 20px 0px;
+    padding: 20px 0;
+
     .header-tencent-cloud,
     .header-im {
       box-sizing: border-box;
@@ -163,13 +207,16 @@ function openLink(url: string) {
       align-items: center;
       justify-content: center;
     }
+
     .header-tencent-cloud {
       padding-right: 20px;
     }
+
     .header-im {
       padding-left: 20px;
       border-left: 1px solid rgb(221, 221, 221);
     }
+
     .header-name {
       font-size: 16px;
       font-weight: 500;
@@ -177,17 +224,21 @@ function openLink(url: string) {
       font-style: normal;
       font-family: PingFangSC-Regular;
     }
+
     .header-icon {
       width: 30px;
       margin-right: 7px;
     }
   }
+
   .header-border {
     border-bottom: 1px solid rgb(221, 221, 221);
   }
+
   .header-guide {
-    padding-bottom: 0px;
+    padding-bottom: 0;
     justify-content: space-between;
+
     .header-name {
       font-family: PingFangSC-Medium;
       font-weight: 500;
@@ -195,6 +246,7 @@ function openLink(url: string) {
       color: #000;
       line-height: 28px;
     }
+
     .header-close {
       font-family: PingFangSC-Regular;
       font-weight: 400;
@@ -202,16 +254,19 @@ function openLink(url: string) {
       font-size: 18px;
     }
   }
+
   .main {
     width: 100%;
     padding-bottom: 16px;
     font-size: 14px;
     font-family: PingFangSC-Regular;
     font-weight: 400;
+
     .task,
     .step {
       width: 100%;
     }
+
     .task-title,
     .step-title {
       padding: 20px 0;
@@ -219,6 +274,7 @@ function openLink(url: string) {
       font-family: PingFangSC-Medium;
       font-weight: 500;
     }
+
     .task-list-item,
     .step-list-item {
       box-sizing: border-box;
@@ -226,14 +282,18 @@ function openLink(url: string) {
       flex-direction: row;
       padding-bottom: 16px;
     }
+
     .task {
       padding-bottom: 14px;
       border-bottom: 1px solid rgb(221, 221, 221);
+
       .task-list-item {
         justify-content: space-between;
+
         .task-list-item-label {
           color: rgb(181, 181, 181);
         }
+
         .task-list-item-status {
           background-color: rgba(207, 215, 224);
           border-radius: 2px;
@@ -244,10 +304,12 @@ function openLink(url: string) {
           align-self: center;
         }
       }
+
       .task-list-item-done {
         .task-list-item-label {
           color: rgb(51, 51, 51);
         }
+
         .task-list-item-status {
           background-color: rgb(20, 122, 255);
         }
@@ -256,6 +318,7 @@ function openLink(url: string) {
 
     .step-list-item {
       justify-content: flex-start;
+
       .step-list-item-index {
         background: rgba(81, 94, 136, 0.04);
         border: 1px solid #d2d6dc;
@@ -269,6 +332,7 @@ function openLink(url: string) {
         font-size: 11.67px;
         margin-right: 10px;
       }
+
       .step-list-item-label {
         line-height: 22px;
         color: #147aff;
@@ -280,10 +344,12 @@ function openLink(url: string) {
     width: 100%;
     margin-top: auto;
     margin-bottom: 30px;
+
     .footer-card-list {
       box-sizing: border-box;
       display: flex;
       width: 100%;
+
       .footer-card {
         box-sizing: border-box;
         display: flex;
@@ -295,12 +361,14 @@ function openLink(url: string) {
         border-radius: 4px;
         background-image: url("../assets/image/adv-background.svg");
         background-size: cover;
+
         .footer-card-content {
           padding: 10px;
           font-size: 14px;
           font-weight: 500;
           line-height: 20px;
         }
+
         .footer-card-button {
           margin-right: 10px;
           padding: 1px 7px;
@@ -308,12 +376,24 @@ function openLink(url: string) {
           border-radius: 0.88rem;
           box-shadow: 0 0.19rem 0.25rem 0 rgba(255, 255, 255, 0.7),
             0 0.13rem 0.38rem 0 rgba(20, 122, 255, 0.55);
-          color: #ffffff;
+          color: #fff;
         }
       }
     }
   }
+
+  .qr-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .qr-code {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
 }
+
 .menu-h5 {
   flex: 1;
   border-radius: 12px 12px 0 0;
@@ -322,19 +402,22 @@ function openLink(url: string) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0px;
+  padding: 0;
+
   .header-guide {
     position: sticky;
     padding: 15px 30px;
   }
+
   .main {
     flex: 1;
     overflow: auto;
-    padding: 0px 30px;
+    padding: 0 30px;
   }
+
   .footer {
-    margin: 10px 0px;
-    padding: 0px 30px;
+    margin: 10px 0;
+    padding: 0 30px;
   }
 }
 </style>

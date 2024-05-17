@@ -116,6 +116,9 @@ const TUIChat = {
   '转换中': 'Converting',
   '由IM提供翻译支持': 'support by IM',
   '所有人': 'All',
+  '已达到表情回应上限数量': 'You have reached the max reaction limit',
+  '等': 'and others',
+  '人': 'users',
 };
 
 export default TUIChat;

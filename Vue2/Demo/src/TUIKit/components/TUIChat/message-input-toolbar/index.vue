@@ -15,9 +15,11 @@
     >
       <EmojiPicker
         v-if="!isUniFrameWork"
+        ref="emojiPickerRef"
         @insertEmoji="insertEmoji"
         @dialogShowInH5="dialogShowInH5"
         @dialogCloseInH5="dialogCloseInH5"
+        @changeToolbarDisplayType="(type) => emits('changeToolbarDisplayType', type)"
       />
       <ImageUpload
         v-if="isUniFrameWork"
@@ -76,7 +78,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted, watch } from '../../../adapter-vue';
 import TUIChatEngine, {
   IConversationModel,
   TUIStore,
@@ -94,15 +96,49 @@ import UserSelector from './user-selector/index.vue';
 import { isPC, isH5, isUniFrameWork } from '../../../utils/env';
 import TUIChatConfig from '../config';
 import { enableSampleTaskStatus } from '../../../utils/enableSampleTaskStatus';
+import { ToolbarDisplayType } from '../../../interface';
 
-const emits = defineEmits(['insertEmoji']);
-const h5Dialog = ref();
+interface IProps {
+  displayType: ToolbarDisplayType;
+}
+interface IEmits {
+  (e: 'scrollToLatestMessage'): void;
+  (e: 'changeToolbarDisplayType', type: ToolbarDisplayType): void;
+  (e: 'insertEmoji', emoji: any): void;
+}
+const props = withDefaults(defineProps<IProps>(), {
+  displayType: 'none',
+});
+
+const emits = defineEmits<IEmits>();
+const h5Dialog = ref<HTMLElement>();
 const currentConversation = ref<IConversationModel>();
 const isGroup = ref<boolean>(false);
 const selectorShowType = ref<string>('');
 const userSelectorRef = ref();
+const emojiPickerRef = ref<InstanceType<typeof EmojiPicker>>();
 const currentUserSelectorExtension = ref<ExtensionInfo>();
 const currentExtensionList = ref<ExtensionInfo[]>([]);
+
+onMounted(() => {
+  TUIStore.watch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdate,
+  });
+});
+
+onUnmounted(() => {
+  TUIStore.unwatch(StoreName.CONV, {
+    currentConversation: onCurrentConversationUpdate,
+  });
+});
+
+watch(() => props.displayType, (newValue) => {
+  if (newValue === 'none') {
+    emojiPickerRef.value?.closeEmojiPicker();
+  } else {
+    emits('scrollToLatestMessage');
+  }
+});
 
 const getExtensionList = (conversationID: string) => {
   if (!conversationID) {
@@ -135,28 +171,18 @@ const onCurrentConversationUpdate = (conversation: IConversationModel) => {
   }
 };
 
-TUIStore.watch(StoreName.CONV, {
-  currentConversation: onCurrentConversationUpdate,
-});
-
-onUnmounted(() => {
-  TUIStore.unwatch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdate,
-  });
-});
-
 // extensions
-const extensionList: Array<ExtensionInfo> = [
+const extensionList: ExtensionInfo[] = [
   ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID),
 ];
 
 // 按展示位置分类 extensionList （注意：仅 web 端 区分展示位置在 从 start 开始和 从 end 开始，在移动端不生效）
 const extensionListShowInStart = computed(
-  (): Array<ExtensionInfo> =>
+  (): ExtensionInfo[] =>
     isPC ? currentExtensionList.value.filter((extension: ExtensionInfo) => extension?.data?.name !== 'search') : currentExtensionList.value,
 );
 
-const extensionListShowInEnd = computed<Array<ExtensionInfo>>(() => {
+const extensionListShowInEnd = computed<ExtensionInfo[]>(() => {
   if (isPC) {
     const searchExtension = currentExtensionList.value.find(extension => extension?.data?.name === 'search');
     return searchExtension ? [searchExtension] : [];
@@ -217,14 +243,16 @@ const dialogShowInH5 = (dialogDom: any) => {
   if (!isH5) {
     return;
   }
-  h5Dialog?.value?.appendChild && h5Dialog?.value?.appendChild(dialogDom);
+  h5Dialog.value?.appendChild && h5Dialog.value?.appendChild(dialogDom);
 };
 
 const dialogCloseInH5 = (dialogDom: any) => {
   if (!isH5) {
     return;
   }
-  h5Dialog?.value?.removeChild && h5Dialog?.value?.removeChild(dialogDom);
+  if (dialogDom) {
+    h5Dialog.value?.removeChild && h5Dialog.value?.removeChild(dialogDom);
+  }
 };
 </script>
 <style lang="scss" scoped>

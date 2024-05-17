@@ -29,6 +29,7 @@ import Transfer from '../../common/Transfer/index.vue';
 import { Toast, TOAST_TYPE } from '../../../components/common/Toast';
 import { isUniFrameWork } from '../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
+import { createOfflinePushInfo } from '../utils/sendMessage';
 
 const isShowForwardPanel = ref(false);
 const customConversationList = ref();
@@ -80,6 +81,14 @@ function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): v
   });
   const singleForwardMessageID: string = TUIStore.getData(StoreName.CUSTOM, 'singleForwardMessageID');
   const message = TUIStore.getMessageModel(singleForwardMessageID);
+  const sendMessageOptions: any = {};
+  for (let i = 0; i < selectedConversationList.length; i++) {
+    const conversation = selectedConversationList[i];
+    const { conversationID } = conversation;
+    sendMessageOptions[conversationID] = {
+      offlinePushInfo: createOfflinePushInfo(conversation),
+    };
+  }
   TUIChatService.sendForwardMessage(
     selectedConversationList,
     [message],
@@ -87,7 +96,8 @@ function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): v
       params: {
         needReadReceipt: isEnabledMessageReadReceiptGlobal(),
       },
-    } as any,
+      ...sendMessageOptions,
+    },
   ).catch((error: { message: string; code: number }) => {
     if (error.code === 80001) {
       Toast({

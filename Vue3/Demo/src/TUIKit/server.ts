@@ -28,6 +28,9 @@ export default class TUIChatKit {
       TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS,
       this,
     );
+    // register translate and voiceToText service event tracking
+    TUICore.registerService(TUIConstants.TUITranslatePlugin.SERVICE.NAME, 1);
+    TUICore.registerService(TUIConstants.TUIVoiceToTextPlugin.SERVICE.NAME, 1);
   }
 
   /**

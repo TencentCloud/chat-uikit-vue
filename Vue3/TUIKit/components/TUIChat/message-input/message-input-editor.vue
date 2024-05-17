@@ -368,9 +368,9 @@ const getEditorContent = () => {
   return isPC ? parsePCEditorContent() : parseH5EditorContent();
 };
 
-function parsePCEditorContent(): Array<ITipTapEditorContent> {
+function parsePCEditorContent(): ITipTapEditorContent[] {
   const editorJSON = editor?.getJSON();
-  const content: Array<ITipTapEditorContent> = [];
+  const content: ITipTapEditorContent[] = [];
   handleEditorContent(editorJSON, content);
   if (
     content.length > 0
@@ -387,7 +387,7 @@ function parsePCEditorContent(): Array<ITipTapEditorContent> {
   return content;
 }
 
-function handleEditorContent(root: JSONContent, content: Array<ITipTapEditorContent>) {
+function handleEditorContent(root: JSONContent, content: ITipTapEditorContent[]) {
   if (!root || !root.type) {
     return;
   }
@@ -410,7 +410,7 @@ function handleEditorContent(root: JSONContent, content: Array<ITipTapEditorCont
   }
 }
 
-function handleEditorNode(node: JSONContent, content: Array<ITipTapEditorContent>) {
+function handleEditorNode(node: JSONContent, content: ITipTapEditorContent[]) {
   // handle enter
   if (node.type === 'paragraph') {
     if (
@@ -478,7 +478,7 @@ function handleEditorNode(node: JSONContent, content: Array<ITipTapEditorContent
 function parseH5EditorContent() {
   const root = editorDom.value;
   let text: string = '';
-  const atUserList: Array<string> = [];
+  const atUserList: string[] = [];
   try {
     for (const child of root.childNodes) {
       if (
@@ -536,29 +536,8 @@ const addEmoji = (emojiData: any) => {
   if (!isH5) {
     editor?.commands?.focus();
     editor?.commands?.scrollIntoView();
-  } else {
-    editorDom.value?.focus();
-    placeCaretAtEnd(editorDom.value);
   }
 };
-
-function placeCaretAtEnd(el: HTMLElement) {
-  el.focus();
-  if (typeof window.getSelection !== 'undefined'
-    && typeof document.createRange !== 'undefined') {
-    const range = document.createRange();
-    range.selectNodeContents(el);
-    range.collapse(false);
-    const sel = window.getSelection();
-    sel?.removeAllRanges();
-    sel?.addRange(range);
-  } else if (typeof document.body?.createTextRange !== 'undefined') {
-    const textRange = document.body.createTextRange();
-    textRange.moveToElementText(el);
-    textRange.collapse(false);
-    textRange.select();
-  }
-}
 
 const blur = () => {
   isPC ? editor?.commands?.blur() : editorDom.value?.blur();

@@ -10,7 +10,6 @@
     <div
       :class="[
         'toolbar-item-container-icon',
-        !isPC && 'toolbar-item-container-h5-icon',
         isUniFrameWork && 'toolbar-item-container-uni-icon',
       ]"
       @click="toggleToolbarItem"
@@ -103,8 +102,7 @@ const toggleToolbarItem = () => {
   if (!props.needDialog) {
     return;
   }
-  showDialog.value = true;
-  emits('onDialogShow', dialogRef);
+  toggleDialogDisplay(!showDialog.value);
 };
 
 const closeToolbarItem = () => {
@@ -113,6 +111,9 @@ const closeToolbarItem = () => {
 };
 
 const toggleDialogDisplay = (showStatus: boolean) => {
+  if (showDialog.value === showStatus) {
+    return;
+  }
   showDialog.value = showStatus;
   switch (showStatus) {
     case true:

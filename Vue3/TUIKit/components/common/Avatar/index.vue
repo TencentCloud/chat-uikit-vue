@@ -57,7 +57,7 @@ interface IEmits {
   (key: 'onError', e: Event): void;
 }
 
-const defaultAvatarUrl = 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png';
+const defaultAvatarUrl = ref('https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png');
 const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   // uniapp vue2 不支持在defineProps中使用常量

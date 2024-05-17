@@ -93,7 +93,7 @@ export interface IFriendType {
   source?: string;
   wording?: string;
   profile?: IFriendProfile;
-  friendCustomFriend?: Array<Record<string, any>>;
+  friendCustomFriend?: Record<string, any>[];
 }
 
 export interface IFriendProfile {
@@ -111,7 +111,7 @@ export interface IGroupMember {
   joinTime?: number;
   nameCard?: string;
   muteUntil?: string;
-  memberCustomField?: Array<Record<string, any>>;
+  memberCustomField?: Record<string, any>[];
 }
 
 export interface IGroupSelfInfo {
@@ -120,7 +120,7 @@ export interface IGroupSelfInfo {
   joinTime?: number;
   nameCard?: string;
   userID?: string;
-  memberCustomField?: Array<Record<string, any>>;
+  memberCustomField?: Record<string, any>[];
 }
 
 export interface IUserProfile {
@@ -138,7 +138,7 @@ export interface IUserProfile {
   level: number;
   role: number;
   lastUpdatedTime: number;
-  profileCustomField: Array<Record<string, any>>;
+  profileCustomField: Record<string, any>[];
 }
 
 export interface IContactListItem {
@@ -287,3 +287,7 @@ export interface IChatResponese<T> {
   code: string;
   data: T;
 }
+
+export type ToolbarDisplayType = 'emojiPicker' | 'tools' | 'none';
+
+export type InputDisplayType = 'editor' | 'audio';

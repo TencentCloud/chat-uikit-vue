@@ -1,11 +1,11 @@
 <template>
   <div
-    v-if="Boolean(quoteMessage) && props.currentFunction !== 'audio'"
-    :class="[
-      'input-quote-container',
-      !isPC && 'input-quote-container-h5',
-      isUniFrameWork && 'input-quote-container-uni'
-    ]"
+    v-if="Boolean(quoteMessage) && props.displayType !== 'audio'"
+    :class="{
+      'input-quote-content': true,
+      'input-quote-container-uni': isUniFrameWork,
+      'input-quote-container-h5': isH5,
+    }"
   >
     <div class="input-quote-content">
       <div class="max-one-line">
@@ -32,10 +32,17 @@ import TUIChatEngine, {
 } from '@tencentcloud/chat-uikit-engine';
 import Icon from '../../../common/Icon.vue';
 import closeIcon from '../../../../assets/icon/icon-close.svg';
-import { isPC, isUniFrameWork } from '../../../../utils/env';
+import { isH5, isUniFrameWork } from '../../../../utils/env';
 import { decodeTextMessage } from '../../utils/emojiList';
+import { InputDisplayType } from '../../../../interface';
 
-const props = defineProps(['currentFunction']);
+interface IProps {
+  displayType: InputDisplayType;
+}
+
+const props = withDefaults(defineProps<IProps>(), {
+  displayType: 'editor',
+});
 
 const TYPES = TUIChatEngine.TYPES;
 const quoteMessage = ref<IMessageModel>();
@@ -145,15 +152,15 @@ function onConversationIDUpdated() {
   @extend %common-container-style;
 }
 
-.input-quote-container-h5 {
-  @extend %common-container-style;
-
-  margin: 5px 0 0;
-}
-
 .input-quote-container-uni {
   @extend %common-container-style;
 
   margin: 5px 60px 0 30px;
+}
+
+.input-quote-container-h5 {
+  @extend %common-container-style;
+
+  margin: 5px 0 0;
 }
 </style>
