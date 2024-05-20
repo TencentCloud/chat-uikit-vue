@@ -4,7 +4,7 @@
 </template>
 <script setup lang="ts">
 import { IMessageModel } from '@tencentcloud/chat-uikit-engine';
-import { RoomMessageCard } from '../../../TUIRoom/extension/index';
+import { RoomMessageCard } from '@tencentcloud/roomkit-web-vue3';
 
 interface IProps {
   message: IMessageModel;

@@ -30,15 +30,17 @@
   overflow: auto;
 
   &-header {
-    padding: 20px;
+    padding: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
     &-content {
-      flex: 1;
+      margin-left: -20px;
       text-align: center;
       font-size: 16px;
+      line-height: 30px;
+      font-weight: 500;
     }
 
     &-left {

@@ -9,7 +9,10 @@
         useSkeletonAnimation
         :url="message.avatar || ''"
       />
-      <main class="message-body">
+      <main
+        class="message-body"
+        @click.stop
+      >
         <div
           v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
           class="message-body-nick-name"

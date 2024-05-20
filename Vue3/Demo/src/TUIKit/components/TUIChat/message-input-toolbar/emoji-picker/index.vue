@@ -3,7 +3,7 @@
     ref="container"
     :iconFile="faceIcon"
     title="表情"
-    @onIconClick="onIconClick"
+    @onDialogShow="onDialogShow"
     @onDialogClose="onDialogClose"
   >
     <EmojiPickerDialog
@@ -20,22 +20,24 @@ import {
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import { ref } from '../../../../adapter-vue';
-import { isH5 } from '../../../../utils/env';
-import ToolbarItemContainer from '../toolbar-item-container/index.vue';
-import EmojiPickerDialog from './emoji-picker-dialog.vue';
-
 import faceIcon from '../../../../assets/icon/face.png';
+import EmojiPickerDialog from './emoji-picker-dialog.vue';
+import ToolbarItemContainer from '../toolbar-item-container/index.vue';
+import { isH5 } from '../../../../utils/env';
+import { ToolbarDisplayType } from '../../../../interface';
 
-const emits = defineEmits([
-  'insertEmoji',
-  'dialogShowInH5',
-  'dialogCloseInH5',
-  'currentComponentID',
-  'toggleComponent',
-  'sendMessage',
-]);
+interface IEmits {
+  (e: 'sendMessage'): void;
+  (e: 'toggleComponent'): void;
+  (e: 'insertEmoji', emoji: any): void;
+  (e: 'dialogShowInH5', dialogRef: HTMLElement): void;
+  (e: 'dialogCloseInH5', dialogRef: HTMLElement): void;
+  (e: 'changeToolbarDisplayType', type: ToolbarDisplayType): void;
+}
+
+const emits = defineEmits<IEmits>();
 const currentConversation = ref();
-const container = ref();
+const container = ref<InstanceType<typeof ToolbarItemContainer>>();
 
 TUIStore.watch(StoreName.CONV, {
   currentConversation: (conversation: IConversationModel) => {
@@ -43,11 +45,11 @@ TUIStore.watch(StoreName.CONV, {
   },
 });
 
-const onIconClick = (dialogRef: any) => {
+const onDialogShow = (dialogRef: any) => {
   if (!isH5) {
-    emits('toggleComponent');
     return;
   }
+  emits('changeToolbarDisplayType', 'emojiPicker');
   emits('dialogShowInH5', dialogRef.value);
 };
 
@@ -55,6 +57,7 @@ const onDialogClose = (dialogRef: any) => {
   if (!isH5) {
     return;
   }
+  emits('changeToolbarDisplayType', 'none');
   emits('dialogCloseInH5', dialogRef.value);
 };
 
@@ -65,7 +68,11 @@ const sendMessage = () => {
   emits('sendMessage');
 };
 const onClose = () => {
-  container?.value?.toggleDialogDisplay(false);
+  container.value?.toggleDialogDisplay(false);
 };
+
+defineExpose({
+  closeEmojiPicker: onClose,
+});
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

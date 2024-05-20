@@ -1,4 +1,4 @@
-body,div,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,p{
+body, div, ul, ol, dt, dd, li, dl, h1, h2, h3, h4, p {
   margin:0;
   padding:0;
   font-style:normal;
@@ -6,21 +6,22 @@ body,div,ul,ol,dl,dt,dd,li,dl,h1,h2,h3,h4,p{
   /* font:12px/22px"\5B8B\4F53",Arial,Helvetica,sans-serif; */
 }
 
-ol,ul,li{
+ol, ul, li {
   list-style:none;
 }
 
-img{
+img {
   border:0;
   vertical-align:middle;
+  pointer-events:none;
 }
 
-body{
+body {
   color:#000;
   background:#FFF;
 }
 
-.clear{
+.clear {
   clear:both;
   height:1px;
   width:100%;
@@ -28,13 +29,13 @@ body{
   margin-top:-1px;
 }
 
-a{
+a {
   color:#000;
   text-decoration:none;
   cursor: pointer;
 }
 
-a:hover{
+a:hover {
   text-decoration:none;
 }
 
@@ -44,10 +45,6 @@ input, textarea {
 
 input:focus, input:active, textarea:focus, textarea:active {
   outline: none;
-}
-
-img{
-  pointer-events:none;
 }
 
 .chat-aside {

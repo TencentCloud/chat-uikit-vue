@@ -5,14 +5,14 @@
       :language="locale"
       @changeLanguage="changeLanguage"
     />
-    <!-- <TUIRoomKit ref="TUIRoomRef" /> -->
+    <!-- <ConferenceMainView displayMode="wake-up" /> -->
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from './TUIKit/adapter-vue';
 import { RouterView, useRouter } from 'vue-router';
 import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
-// import TUIRoomKit from './TUIKit/TUIRoom/index.vue';
+// import ConferenceMainView from '@tencentcloud/roomkit-web-vue3';
 const router = useRouter();
 const locale = ref<string>('zh');
 TUIStore.watch(StoreName.USER, {

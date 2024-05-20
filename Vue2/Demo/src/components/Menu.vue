@@ -14,6 +14,17 @@
     <div class="main">
       <div class="task">
         <div class="task-title">
+          {{ TUITranslateService.t(`Home.${TIMPushAdv.label}`) }}
+        </div>
+        <div class="task-list qr-box">
+          <img
+            class="qr-code"
+            :src="TIMPushAdv.url"
+          >
+        </div>
+      </div>
+      <div class="task">
+        <div class="task-title">
           {{ TUITranslateService.t("Home.建议体验功能") }}
         </div>
         <div class="task-list">
@@ -80,6 +91,7 @@ interface ITasks {
 const emits = defineEmits(["closeMenu"]);
 const stepList = Link.stepList;
 const advList = Link.advList;
+const TIMPushAdv = Link.TIMPush;
 const tasks = ref<ITasks>({
   sendMessage: false,
   revokeMessage: false,
@@ -143,18 +155,21 @@ function openLink(url: string) {
   align-items: center;
   justify-content: flex-start;
 }
+
 .menu {
   width: 300px;
   z-index: 100;
   background: rgb(255, 255, 255);
   box-shadow: 10px 20px 30px 0 rgba(56, 73, 90, 0.09);
-  padding: 0px 30px;
+  padding: 0 30px;
   user-select: none;
   overflow: auto;
+
   .header {
     width: 100%;
     flex-direction: row;
-    padding: 20px 0px;
+    padding: 20px 0;
+
     .header-tencent-cloud,
     .header-im {
       box-sizing: border-box;
@@ -163,13 +178,16 @@ function openLink(url: string) {
       align-items: center;
       justify-content: center;
     }
+
     .header-tencent-cloud {
       padding-right: 20px;
     }
+
     .header-im {
       padding-left: 20px;
       border-left: 1px solid rgb(221, 221, 221);
     }
+
     .header-name {
       font-size: 16px;
       font-weight: 500;
@@ -177,17 +195,21 @@ function openLink(url: string) {
       font-style: normal;
       font-family: PingFangSC-Regular;
     }
+
     .header-icon {
       width: 30px;
       margin-right: 7px;
     }
   }
+
   .header-border {
     border-bottom: 1px solid rgb(221, 221, 221);
   }
+
   .header-guide {
-    padding-bottom: 0px;
+    padding-bottom: 0;
     justify-content: space-between;
+
     .header-name {
       font-family: PingFangSC-Medium;
       font-weight: 500;
@@ -195,6 +217,7 @@ function openLink(url: string) {
       color: #000;
       line-height: 28px;
     }
+
     .header-close {
       font-family: PingFangSC-Regular;
       font-weight: 400;
@@ -202,16 +225,19 @@ function openLink(url: string) {
       font-size: 18px;
     }
   }
+
   .main {
     width: 100%;
     padding-bottom: 16px;
     font-size: 14px;
     font-family: PingFangSC-Regular;
     font-weight: 400;
+
     .task,
     .step {
       width: 100%;
     }
+
     .task-title,
     .step-title {
       padding: 20px 0;
@@ -219,6 +245,7 @@ function openLink(url: string) {
       font-family: PingFangSC-Medium;
       font-weight: 500;
     }
+
     .task-list-item,
     .step-list-item {
       box-sizing: border-box;
@@ -226,14 +253,18 @@ function openLink(url: string) {
       flex-direction: row;
       padding-bottom: 16px;
     }
+
     .task {
       padding-bottom: 14px;
       border-bottom: 1px solid rgb(221, 221, 221);
+
       .task-list-item {
         justify-content: space-between;
+
         .task-list-item-label {
           color: rgb(181, 181, 181);
         }
+
         .task-list-item-status {
           background-color: rgba(207, 215, 224);
           border-radius: 2px;
@@ -244,10 +275,12 @@ function openLink(url: string) {
           align-self: center;
         }
       }
+
       .task-list-item-done {
         .task-list-item-label {
           color: rgb(51, 51, 51);
         }
+
         .task-list-item-status {
           background-color: rgb(20, 122, 255);
         }
@@ -256,6 +289,7 @@ function openLink(url: string) {
 
     .step-list-item {
       justify-content: flex-start;
+
       .step-list-item-index {
         background: rgba(81, 94, 136, 0.04);
         border: 1px solid #d2d6dc;
@@ -269,6 +303,7 @@ function openLink(url: string) {
         font-size: 11.67px;
         margin-right: 10px;
       }
+
       .step-list-item-label {
         line-height: 22px;
         color: #147aff;
@@ -280,10 +315,12 @@ function openLink(url: string) {
     width: 100%;
     margin-top: auto;
     margin-bottom: 30px;
+
     .footer-card-list {
       box-sizing: border-box;
       display: flex;
       width: 100%;
+
       .footer-card {
         box-sizing: border-box;
         display: flex;
@@ -295,13 +332,14 @@ function openLink(url: string) {
         border-radius: 4px;
         background-image: url("../assets/image/adv-background.svg");
         background-size: cover;
-        
+
         .footer-card-content {
           padding: 10px;
           font-size: 14px;
           font-weight: 500;
           line-height: 20px;
         }
+
         .footer-card-button {
           margin-right: 10px;
           padding: 1px 7px;
@@ -309,12 +347,24 @@ function openLink(url: string) {
           border-radius: 0.88rem;
           box-shadow: 0 0.19rem 0.25rem 0 rgba(255, 255, 255, 0.7),
             0 0.13rem 0.38rem 0 rgba(20, 122, 255, 0.55);
-          color: #ffffff;
+          color: #fff;
         }
       }
     }
   }
+
+  .qr-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .qr-code {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
 }
+
 .menu-h5 {
   flex: 1;
   border-radius: 12px 12px 0 0;
@@ -323,19 +373,22 @@ function openLink(url: string) {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0px;
+  padding: 0;
+
   .header-guide {
     position: sticky;
     padding: 15px 30px;
   }
+
   .main {
     flex: 1;
     overflow: auto;
-    padding: 0px 30px;
+    padding: 0 30px;
   }
+
   .footer {
-    margin: 10px 0px;
-    padding: 0px 30px;
+    margin: 10px 0;
+    padding: 0 30px;
   }
 }
 </style>

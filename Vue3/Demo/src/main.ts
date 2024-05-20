@@ -11,14 +11,12 @@ import TUINotification from './TUIKit/components/TUINotification/index';
 import { locales } from './locales';
 // ------ 以下是 TUIRoom 相关依赖的引入，如果您不需要使用 TUIRoom，请删除以下代码 ------
 // import { createPinia } from 'pinia';
-// import RoomVueI18n from './TUIKit/TUIRoom/locales/index';
 // ----------------------------------------------------------------------------
 
 const app = createApp(App);
 app.use(router);
 // ------ 以下是 TUIRoom 相关依赖的引入，如果您不需要使用 TUIRoom，请删除以下代码 ------
 // app.use(createPinia());
-// app.use(RoomVueI18n);
 // ----------------------------------------------------------------------------
 app.mount('#app');
 

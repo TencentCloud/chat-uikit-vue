@@ -1,14 +1,19 @@
 <template>
   <div :class="['chat-header', !isPC && 'chat-header-h5']">
     <div
-      v-show="!isPC"
+      v-if="!isPC"
       :class="['chat-header-back', !isPC && 'chat-header-h5-back']"
       @click="closeChat(currentConversation.conversationID)"
     >
       <Icon :file="backSVG" />
     </div>
-    <div :class="['chat-header-content', !isPC && 'chat-header-h5-content']">
-      {{ currentConversationName }}
+    <div class="chat-header-container">
+      <div :class="['chat-header-content', !isPC && 'chat-header-h5-content']">
+        {{ currentConversationName }}
+      </div>
+      <div>
+        <!-- <JoinGroupCard v-if="isPC" /> -->
+      </div>
     </div>
     <div :class="['chat-header-setting', !isPC && 'chat-header-h5-setting']">
       <div
@@ -22,6 +27,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from '../../../adapter-vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,
@@ -29,7 +35,7 @@ import TUIChatEngine, {
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
-import { ref, onMounted, onUnmounted } from '../../../adapter-vue';
+// import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
 import Icon from '../../common/Icon.vue';
 import backSVG from '../../../assets/icon/back.svg';
 import { isPC } from '../../../utils/env';
@@ -94,20 +100,27 @@ function onTypingStatusUpdated(status: boolean) {
 </script>
 <style lang="scss" scoped>
 .chat-header {
-  width: 100%;
-  height: 100%;
   display: flex;
+  min-width: 0;
   flex-direction: row;
   align-items: center;
+  justify-content: space-between;
+
+  &-container {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
 
   &-content {
+    margin-right: 20px;
     flex: 1;
     font-size: 16px;
     line-height: 30px;
     font-family: PingFangSC-Medium;
     font-weight: 500;
     color: #000;
-    margin-right: 30%;
     letter-spacing: 0;
     overflow: hidden;
     white-space: nowrap;
@@ -134,7 +147,7 @@ function onTypingStatusUpdated(status: boolean) {
   }
 
   &-content{
-    margin: 0 20%;
+    margin: 0 20px;
     text-align: center;
   }
 }

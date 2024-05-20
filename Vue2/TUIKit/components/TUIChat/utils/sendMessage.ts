@@ -1,4 +1,4 @@
-import {
+import TUIChatEngine, {
   TUIChatService,
   TUIStore,
   StoreName,
@@ -21,6 +21,29 @@ export const sendMessageErrorCodeMap: Map<number, string> = new Map([
   [80001, '消息或者资料中文本存在敏感内容,发送失败'],
   [80004, '消息中图片存在敏感内容,发送失败'],
 ]);
+
+export const createOfflinePushInfo = (currentConversation: IConversationModel) => {
+  const androidInfo = {
+    sound: 'private_ring.mp3',
+    XiaoMiChannelID: 'high_custom_1',
+  };
+  const apnsInfo = {
+    sound: '01.caf',
+  };
+  const userInfo = TUIStore.getData(StoreName.USER, 'userProfile');
+  const entity = {
+    sender: currentConversation.type === TUIChatEngine.TYPES.CONV_GROUP ? currentConversation.groupProfile?.groupID : userInfo.userID,
+    nickName: userInfo.nick,
+    chatType: currentConversation.type === TUIChatEngine.TYPES.CONV_GROUP ? 2 : 1,
+    version: 1,
+    action: 1,
+  };
+  return {
+    androidInfo,
+    apnsInfo,
+    extension: JSON.stringify({ entity }),
+  };
+};
 
 /**
  * 该函数仅处理 Text TextAt Image Video File 五种消息类型
@@ -45,6 +68,9 @@ export const sendMessages = async (
       };
       // handle message typing
       let textMessageContent;
+      const sendMessageOptions: any = {
+        offlinePushInfo: createOfflinePushInfo(currentConversation),
+      };
       switch (content?.type) {
         case 'text':
           textMessageContent = JSON.parse(JSON.stringify(content.payload?.text));
@@ -57,31 +83,31 @@ export const sendMessages = async (
               text: textMessageContent,
               atUserList: content.payload.atUserList,
             };
-            await TUIChatService.sendTextAtMessage(options);
+            await TUIChatService.sendTextAtMessage(options, sendMessageOptions);
           } else {
             options.payload = {
               text: textMessageContent,
             };
-            await TUIChatService.sendTextMessage(options);
+            await TUIChatService.sendTextMessage(options, sendMessageOptions);
           }
           break;
         case 'image':
           options.payload = {
             file: content.payload?.file,
           };
-          await TUIChatService.sendImageMessage(options);
+          await TUIChatService.sendImageMessage(options, sendMessageOptions);
           break;
         case 'video':
           options.payload = {
             file: content.payload?.file,
           };
-          await TUIChatService.sendVideoMessage(options);
+          await TUIChatService.sendVideoMessage(options, sendMessageOptions);
           break;
         case 'file':
           options.payload = {
             file: content.payload?.file,
           };
-          await TUIChatService.sendFileMessage(options);
+          await TUIChatService.sendFileMessage(options, sendMessageOptions);
           break;
         default:
           break;

@@ -64,7 +64,7 @@ TUIStore.watch(StoreName.CUSTOM, {
       isShowSelectFriend.value = false;
       if (isUniFrameWork) {
         displayTypeRef.value = props.displayType;
-        TUIGlobal?.showTabBar();
+        TUIGlobal?.showTabBar()?.catch(() => { /* ignore */ });
       }
     }
   },

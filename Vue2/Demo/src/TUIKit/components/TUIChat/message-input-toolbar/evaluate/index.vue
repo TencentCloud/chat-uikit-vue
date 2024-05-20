@@ -111,6 +111,7 @@ import starLightIcon from '../../../../assets/icon/star-light.png';
 import { CHAT_MSG_CUSTOM_TYPE } from '../../../../constant';
 import { isPC, isH5, isUniFrameWork } from '../../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
+import { createOfflinePushInfo } from '../../utils/sendMessage';
 
 const props = defineProps({
   starTotal: {
@@ -189,7 +190,10 @@ const submitEvaluate = () => {
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   };
-  TUIChatService.sendCustomMessage(options as SendMessageParams);
+  const sendMessageOptions: any = {
+    offlinePushInfo: createOfflinePushInfo(currentConversation),
+  };
+  TUIChatService.sendCustomMessage(options as SendMessageParams, sendMessageOptions);
   // 提交后关闭 dialog
   // close dialog after submit evaluate
   container?.value?.toggleDialogDisplay(false);
