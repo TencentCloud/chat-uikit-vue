@@ -90,11 +90,11 @@ const emit = defineEmits(['pick', 'change']);
 const props = defineProps({
   type: {
     type: String,
-    default: 'range', // "single":单选, 暂不支持 / "range":区间选择
+    default: 'range', // "single" / "range"
   },
   rangeTableType: {
     type: String,
-    default: 'one', // "one": 在 一个 datePanel 之内选择区间（注意，移动端因屏幕较窄，仅支持在一个 datePanel 中进行选择） / "two": 在 两个 datePanel 之间选择区间
+    default: 'one', // "one"/ "two"
   },
   startPlaceholder: {
     type: String,
@@ -106,9 +106,9 @@ const props = defineProps({
   },
   popupPosition: {
     type: String,
-    default: 'bottom', // "top": 向上弹出 datePanel / "bottom": 向下弹出 datePanel
+    default: 'bottom', // "top" / "bottom"
   },
-  // 默认单选日期
+  // Default single-select date
   defaultSingleDate: {
     type: Dayjs,
     default: null,
@@ -132,8 +132,8 @@ const setDatePanelDisplay = (show: boolean) => {
   isDatePanelShow.value = show;
 };
 
-const n = (classNameList: Array<string>) => {
-  const resultClassList: Array<string> = [];
+const n = (classNameList: string[]) => {
+  const resultClassList: string[] = [];
   classNameList.forEach((className: string) => {
     if (className) {
       resultClassList.push('tui-date-picker-' + className);
@@ -154,7 +154,6 @@ const handlePick = (cell: DateCell) => {
       dateValue.value = cell.date;
       emit('change', cell);
       emit('pick', dateValue.value);
-      // 避免生硬直接关闭
       setTimeout(() => {
         setDatePanelDisplay(false);
       }, 300);
@@ -173,7 +172,6 @@ const handlePick = (cell: DateCell) => {
           startDate: startValue?.value?.startOf('date'),
           endDate: endValue?.value?.endOf('date'),
         });
-        // 避免生硬直接关闭
         setTimeout(() => {
           setDatePanelDisplay(false);
         }, 200);

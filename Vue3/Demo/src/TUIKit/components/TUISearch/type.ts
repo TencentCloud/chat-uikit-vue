@@ -2,8 +2,8 @@ import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
 
 export type SEARCH_TYPE = 'global' | 'conversation';
 
-// 消息搜索结果类型展示摘要
-// 不支持类型：
+// Message search result type display summary
+// Unsupported type:
 // TYPES.MSG_FACE / TYPES.MSG_GRP_TIP / TYPES.MSG_GRP_SYS_NOTICE
 export const messageTypeAbstractMap: Record<string, string> = {
   [TUIChatEngine.TYPES.MSG_TEXT]: '[文本]',
@@ -18,23 +18,23 @@ export const messageTypeAbstractMap: Record<string, string> = {
 };
 
 export const searchResultItemDisplayType = {
-  INFO: 'info', // 正常信息流展示
-  BUBBLE: 'bubble', // 消息气泡展示
-  FILE: 'file', // 文件列表类型展示
-  IMAGE: 'image', // 图片合集形式展示
+  INFO: 'info', // Normal information flow display
+  BUBBLE: 'bubble', // Message bubble display
+  FILE: 'file', // File list type display
+  IMAGE: 'image', // Picture collection display
 };
 
 export type searchResultItemDisplayTypeKeys = keyof typeof searchResultItemDisplayType;
 export type searchResultItemDisplayTypeValues = typeof searchResultItemDisplayType[searchResultItemDisplayTypeKeys];
 
 export const searchMessageType = {
-  // CONTACT: "contact", // 联系人搜索，暂不支持
-  // GROUP: "group", // 群组搜索，暂不支持
-  ALL_MESSAGE: 'allMessage', // 聊天记录-全部
-  TEXT_MESSAGE: 'textMessage', // 聊天记录-文本
-  IMAGE_MESSAGE: 'imageMessage', // 聊天记录-图片
-  FILE_MESSAGE: 'fileMessage', // 聊天记录-文件
-  OTHER_MESSAGE: 'otherMessage', // 聊天记录-其他
+  // CONTACT: "contact", // Contact search, not supported yet
+  // GROUP: "group", // Group search, not supported yet
+  ALL_MESSAGE: 'allMessage',
+  TEXT_MESSAGE: 'textMessage',
+  IMAGE_MESSAGE: 'imageMessage',
+  FILE_MESSAGE: 'fileMessage',
+  OTHER_MESSAGE: 'otherMessage',
 };
 
 export type searchMessageTypeKeys = keyof typeof searchMessageType;

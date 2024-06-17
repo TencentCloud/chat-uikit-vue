@@ -4,12 +4,11 @@
     :title="handleTitle()"
     :needDialog="false"
     :iconWidth="isUniFrameWork ? '32px' : '21px'"
-    :iconHeight="
-      isUniFrameWork
-        ? props.videoSourceType === 'album'
-          ? '20px'
-          : '25px'
-        : '18px'
+    :iconHeight="isUniFrameWork
+      ? props.videoSourceType === 'album'
+        ? '20px'
+        : '25px'
+      : '18px'
     "
     @onIconClick="onIconClick"
   >
@@ -43,9 +42,9 @@ import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 
 const props = defineProps({
-  // 视频源, 仅uniapp版本有效, web版本仅支持从文件中选择视频
-  // album: 从文件中选择
-  // camera: 使用相机拍摄
+  // Video source, only valid for uni-app version, web version only supports selecting videos from files
+  // album: Select from files
+  // camera: Take a video using the camera
   videoSourceType: {
     type: String,
     default: 'album',
@@ -85,25 +84,23 @@ const handleTitle = (): string => {
 };
 
 const onIconClick = () => {
-  // uniapp环境发送视频
+  // uni-app send video
   if (isUniFrameWork) {
-    // 增加 TUIGlobal.chooseMedia 条件限制，防御 uni 打包其他平台小程序时由于打包问题导致 isWeChat 为 true 出现运行时报错
     if (isWeChat && TUIGlobal?.chooseMedia) {
-      // 微信小程序从基础库 2.21.0 开始， wx.chooseVideo 停止维护，请使用 uni.chooseMedia 代替
       TUIGlobal?.chooseMedia({
-        mediaType: ['video'], // 视频
+        mediaType: ['video'],
         count: 1,
-        sourceType: [props.videoSourceType], // album 从相册选视频，camera 使用相机拍摄
-        maxDuration: 60, // 设置最长时间60s
+        sourceType: [props.videoSourceType],
+        maxDuration: 60,
         success: function (res: any) {
           sendVideoMessage(res);
         },
       });
     } else {
-      // uniapp h5/app 发送图片
       TUIGlobal?.chooseVideo({
         count: 1,
-        sourceType: [props.videoSourceType], // 从相册选择或使用相机拍摄
+        sourceType: [props.videoSourceType],
+        compressed: false,
         success: function (res: any) {
           sendVideoMessage(res);
         },

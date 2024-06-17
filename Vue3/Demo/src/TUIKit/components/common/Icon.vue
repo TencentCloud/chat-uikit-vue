@@ -1,6 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-  <!--本地 icon 资源, uniapp 打包到 app 仅支持标签 image, 打包小程序和 H5 均可支持标签 img -->
   <div
     :class="['common-icon-container', !isPC && 'common-icon-container-mobile']"
     :style="{

@@ -30,10 +30,10 @@ import ContactInfo from './contact-info/index.vue';
 const emits = defineEmits(['switchConversation']);
 
 const props = defineProps({
-  // web/h5 单页面应用展示形式，uniapp 请忽略
+  // web/h5 single page application display format, uniapp please ignore
   displayType: {
     type: String,
-    default: 'contactList', // "contactList" 关系链列表(默认) / "selectFriend" 好友选择列表
+    default: 'contactList', // "contactList" /  "selectFriend"
     require: false,
   },
 });

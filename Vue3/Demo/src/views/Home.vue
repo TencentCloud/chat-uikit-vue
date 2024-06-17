@@ -172,7 +172,6 @@ const isMinimized = ref<boolean>(false);
 const dragRef = ref<typeof Drag>();
 const isSettingShow = ref<boolean>(false);
 
-// changeLanguage: 语言切换
 function changeLanguage(language: string) {
   emits('changeLanguage', language);
 }
@@ -185,18 +184,18 @@ TUIStore.watch(StoreName.CONV, {
 function toggleMenu(value: boolean) {
   isMenuShow.value = value;
 }
-// beforeCalling: 通话前执行
+
 function beforeCalling() {
   isCalling.value = true;
   isMinimized.value = false;
   enableSampleTaskStatus('call');
 }
-// afterCalling: 通话后执行
+
 function afterCalling() {
   isCalling.value = false;
   isMinimized.value = false;
 }
-// onMinimized：音视频通话组件切换最小化状态时执行
+
 function onMinimized(oldMinimizedStatus: boolean, newMinimizedStatus: boolean) {
   isMinimized.value = newMinimizedStatus;
   dragRef?.value?.positionReset();

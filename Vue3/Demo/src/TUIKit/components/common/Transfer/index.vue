@@ -24,7 +24,7 @@
     <main class="main">
       <div class="left">
         <header class="transfer-header">
-          <!-- PC 端触发 @keyup.enter -->
+          <!-- PC triggers @keyup.enter -->
           <input
             v-if="isPC && isTransferSearch"
             type="text"
@@ -34,7 +34,7 @@
             :class="[isUniFrameWork ? 'left-uniapp-input' : '']"
             @keyup.enter="handleInput"
           >
-          <!-- 非 PC 端触发 blur -->
+          <!-- not PC triggers blur -->
           <input
             v-if="!isPC && isTransferSearch"
             type="text"
@@ -282,7 +282,6 @@ watchEffect(() => {
 
 const emit = defineEmits(['search', 'submit', 'cancel', 'getMore']);
 
-// 可选项
 const optional = computed(() =>
   transferList.value.filter((item: any) => !item.isDisabled),
 );
@@ -317,13 +316,11 @@ const selectedAll = () => {
 
 const submit = () => {
   emit('submit', transferSelectedList.value);
-  // 针对小程序做的数据清空
   searchValue.value = '';
 };
 
 const cancel = () => {
   emit('cancel');
-  // 针对小程序做的数据清空
   searchValue.value = '';
 };
 

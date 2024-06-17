@@ -1,5 +1,6 @@
 <template>
   <ToolbarItemContainer
+    ref="container"
     :iconFile="wordsIcon"
     title="常用语"
     :needBottomPopup="true"
@@ -7,7 +8,6 @@
     :iconHeight="isUniFrameWork ? '26px' : '20px'"
     @onDialogShow="onDialogShow"
     @onDialogClose="onDialogClose"
-    ref="container"
   >
     <div :class="['words', !isPC && 'words-h5']">
       <div :class="['words-header', !isPC && 'words-h5-header']">
@@ -24,9 +24,9 @@
       </div>
       <ul :class="['words-list', !isPC && 'words-h5-list']">
         <li
-          :class="['words-list-item', !isPC && 'words-h5-list-item']"
           v-for="(item, index) in wordsList"
           :key="index"
+          :class="['words-list-item', !isPC && 'words-h5-list-item']"
           @click="selectWord(item)"
         >
           {{ TUITranslateService.t(`Words.${item.value}`) }}
@@ -43,15 +43,15 @@ import {
   IConversationModel,
   SendMessageParams,
   TUIChatService,
-} from "@tencentcloud/chat-uikit-engine";
-import { ref } from "../../../../adapter-vue";
-import ToolbarItemContainer from "../toolbar-item-container/index.vue";
-import wordsIcon from "../../../../assets/icon/words.svg";
-import { wordsList } from "../../utils/wordsList";
-import { isEnabledMessageReadReceiptGlobal } from "../../utils/utils";
-import { isPC, isUniFrameWork } from "../../../../utils/env";
+} from '@tencentcloud/chat-uikit-engine';
+import { ref } from '../../../../adapter-vue';
+import ToolbarItemContainer from '../toolbar-item-container/index.vue';
+import wordsIcon from '../../../../assets/icon/words.svg';
+import { wordsList } from '../../utils/wordsList';
+import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
+import { isPC, isUniFrameWork } from '../../../../utils/env';
 
-const emits = defineEmits(["onDialogPopupShowOrHide"]);
+const emits = defineEmits(['onDialogPopupShowOrHide']);
 const currentConversation = ref<IConversationModel>();
 const container = ref();
 
@@ -64,8 +64,8 @@ TUIStore.watch(StoreName.CONV, {
 const selectWord = (item: any) => {
   const options = {
     to:
-      currentConversation?.value?.groupProfile?.groupID ||
-      currentConversation?.value?.userProfile?.userID,
+      currentConversation?.value?.groupProfile?.groupID
+      || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
       text: TUITranslateService.t(`Words.${item.value}`),
@@ -73,7 +73,6 @@ const selectWord = (item: any) => {
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
   TUIChatService.sendTextMessage(options);
-  // 提交后关闭 dialog
   // close dialog after submit evaluate
   container?.value?.toggleDialogDisplay(false);
 };
@@ -83,11 +82,11 @@ const closeDialog = () => {
 };
 
 const onDialogShow = () => {
-  emits("onDialogPopupShowOrHide", true);
+  emits('onDialogPopupShowOrHide', true);
 };
 
 const onDialogClose = () => {
-  emits("onDialogPopupShowOrHide", false);
+  emits('onDialogPopupShowOrHide', false);
 };
 </script>
 <style scoped lang="scss" src="./style/index.scss"></style>

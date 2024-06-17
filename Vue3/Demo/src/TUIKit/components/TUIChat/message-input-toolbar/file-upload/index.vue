@@ -44,7 +44,6 @@ TUIStore.watch(StoreName.CONV, {
 
 const onIconClick = () => {
   if (isUniFrameWork) {
-    // uniapp app 不支持选择文件发送
     return;
   } else {
     inputRef?.value?.click && inputRef?.value?.click();

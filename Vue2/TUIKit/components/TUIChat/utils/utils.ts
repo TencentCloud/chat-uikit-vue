@@ -84,12 +84,11 @@ export const isCreateGroupCustomMessage = (message: IMessageModel) => {
 };
 
 /**
- * displayMessageReadReceipt 用户级别控制展示消息阅读状态
- * 关闭后 你收发的消息均不带消息阅读状态
- * 你将无法看到对方是否已读 同时对方也无法看到他发送的消息你是否已读
+ * displayMessageReadReceipt: User-level control to display message read status
+ * After turning off, the messages you send and receive will not have message read status
+ * You will not be able to see whether the other party has read their messages, and they will also not be able to see whether you have read the messages they sent
  *
- * enabledMessageReadReceipt app级别是否开启已读回执
- *
+ * enabledMessageReadReceipt: App-level setting to enable read receipts
  * @return {boolean} - Returns a boolean value indicating if the message read receipt is enabled globally.
  */
 export function isEnabledMessageReadReceiptGlobal(): boolean {
@@ -104,10 +103,10 @@ export function shallowCopyMessage(message: IMessageModel) {
 export async function copyText(text: string) {
   const textString = text.toString();
   try {
-    // 优先采用异步 copy navigator.clipboard 方案
+    // Give priority to the asynchronous copy navigator.clipboard solution
     await navigator.clipboard.writeText(textString);
   } catch (err: any) {
-    // 不支持 navigator.clipboard 时，走兼容替代方案
+    // When navigator.clipboard is not supported, use a compatible alternative
     copyTextByDocumentExecCommand(textString);
   }
 }
@@ -149,5 +148,66 @@ function selectText(
     // firefox / chrome
     (textbox as any).setSelectionRange(startIndex, stopIndex);
     (textbox as any).focus();
+  }
+}
+
+// calculate timestamp
+export function calculateTimestamp(timestamp: number): string {
+  const todayZero = new Date().setHours(0, 0, 0, 0);
+  const thisYear = new Date(
+    new Date().getFullYear(),
+    0,
+    1,
+    0,
+    0,
+    0,
+    0,
+  ).getTime();
+  const target = new Date(timestamp);
+
+  const oneDay = 24 * 60 * 60 * 1000;
+  const oneWeek = 7 * oneDay;
+
+  const diff = todayZero - target.getTime();
+
+  function formatNum(num: number): string {
+    return num < 10 ? '0' + num : num.toString();
+  }
+
+  if (diff <= 0) {
+    // today, only display hour:minute
+    return `${formatNum(target.getHours())}:${formatNum(target.getMinutes())}`;
+  } else if (diff <= oneDay) {
+    // yesterday, display yesterday:hour:minute
+    return `${TUITranslateService.t('time.昨天')} ${formatNum(
+      target.getHours(),
+    )}:${formatNum(target.getMinutes())}`;
+  } else if (diff <= oneWeek - oneDay) {
+    // Within a week, display weekday hour:minute
+    const weekdays = [
+      '星期日',
+      '星期一',
+      '星期二',
+      '星期三',
+      '星期四',
+      '星期五',
+      '星期六',
+    ];
+    const weekday = weekdays[target.getDay()];
+    return `${TUITranslateService.t('time.' + weekday)} ${formatNum(
+      target.getHours(),
+    )}:${formatNum(target.getMinutes())}`;
+  } else if (target.getTime() >= thisYear) {
+    // Over a week, within this year, display mouth/day hour:minute
+    return `${target.getMonth() + 1}/${target.getDate()} ${formatNum(
+      target.getHours(),
+    )}:${formatNum(target.getMinutes())}`;
+  } else {
+    // Not within this year, display year/mouth/day hour:minute
+    return `${target.getFullYear()}/${
+      target.getMonth() + 1
+    }/${target.getDate()} ${formatNum(target.getHours())}:${formatNum(
+      target.getMinutes(),
+    )}`;
   }
 }

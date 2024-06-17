@@ -7,12 +7,14 @@
       v-if="!isUniFrameWork || currentTab ==='admin'"
       class="manage-header"
     >
-      <div @click="back">
-        <Icon :file="backSVG" />
-      </div>
+      <Icon
+        :file="backSVG"
+        @onClick="back"
+      />
       <div class="manage-header-content">
         {{ TUITranslateService.t(`TUIGroup.${TabName}`) }}
       </div>
+      <div />
     </header>
     <main
       v-if="!currentTab || (isUniFrameWork && currentTab != 'admin')"
@@ -423,7 +425,7 @@ const TabName = computed(() => {
 });
 
 const isAuthor = computed(() => {
-  // 判断是否是群主/管理员
+  // Determine whether the person is the group owner/administrator
   const userRole = currentGroup?.value?.selfInfo?.role;
 
   const isOwner = userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER;
@@ -611,7 +613,6 @@ const handleMemberProfileShow = (user: any) => {
 };
 
 const submit = (userList: any) => {
-  // 进行成员移除等等相关操作
   if (transferType.value === 'remove') {
     deletedUserList.value = userList;
     delDialogShow.value = !delDialogShow.value;
@@ -622,7 +623,6 @@ const submit = (userList: any) => {
 };
 
 const dismissGroup = async (group: any) => {
-  // 解散群组
   await TUIGroupService.dismissGroup(group.groupID);
   enableSampleTaskStatus('dismissGroup');
   Toast({
@@ -639,13 +639,12 @@ const clearGroupInfo = () => {
     });
   } else {
     handleCompleteManage();
-    // 回到chat default 页
     TUIConversationService.switchConversation();
   }
 };
 
 const setAllMuteTime = (value: boolean) => {
-  // 设置全体禁言时间
+  // Set up a muting time for all members
   updateProfile({ key: 'muteAllMembers', value });
   if (value) {
     enableSampleTaskStatus('muteGroup');

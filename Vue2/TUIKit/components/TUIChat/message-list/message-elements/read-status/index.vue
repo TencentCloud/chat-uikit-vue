@@ -43,7 +43,7 @@ enum ReadState {
 }
 
 const TYPES = TUIChatEngine.TYPES;
-// 用户级别的已读回执开关 优先级最高
+// User-level read receipt toggle has the highest priority.
 const isDisplayMessageReadReceipt = ref<boolean>(TUIStore.getData(StoreName.USER, 'displayMessageReadReceipt'));
 
 onMounted(() => {
@@ -60,7 +60,6 @@ onUnmounted(() => {
 
 const isShowReadStatus = computed<boolean>(() => {
   if (!isDisplayMessageReadReceipt.value) {
-    // 用户级已读回执开关关闭 不展示已读状态
     return false;
   }
 
@@ -75,26 +74,26 @@ const isShowReadStatus = computed<boolean>(() => {
     needReadReceipt = false,
   } = props.message;
 
-  // 异步消息打击 消息已发出判断是否存在风险内容
+  // Asynchronous message strike: Determine if there is risky content after the message has been sent
   if (hasRiskContent) {
     return false;
   }
 
   const { groupProfile } = TUIStore.getConversationModel(conversationID) || {};
-  // 直播群以及社群不展示已读状态
+  // AVCHATROOM and COMMUNITY chats do not display read status
   if (groupProfile?.type === TYPES.GRP_AVCHATROOM || groupProfile?.type === TYPES.GRP_COMMUNITY) {
     return false;
   }
 
   if (type === TYPES.MSG_CUSTOM) {
     const message = TUIStore.getMessageModel(ID);
-    // 如果是信令消息 不展示阅读状态
+    // If it is a signaling message, do not display the read status
     if (message?.getSignalingInfo() !== null) {
       return false;
     }
   }
 
-  // 未成功消息 接收消息 不展示阅读状态
+  // Unsuccessful message: Received messages do not display read status
   if (flow !== 'out' || status !== 'success') {
     return false;
   }

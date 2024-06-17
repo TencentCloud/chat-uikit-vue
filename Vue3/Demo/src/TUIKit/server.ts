@@ -2,10 +2,12 @@ import TUICore, { TUILogin, TUIConstants } from '@tencentcloud/tui-core';
 import TUIChatEngine, { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ITUIComponents, ITUIPlugins } from './interface';
-import TUILocales from './locales';
 import { isFunction, isObject } from './utils';
 import { isApp } from './utils/env';
 import CallkitPluginServer from './plugins/extension-server/callkit';
+// #ifndef MP-WEIXIN
+import TUILocales from './locales';
+// #endif
 export default class TUIChatKit {
   static isInitialized: boolean;
   public chat: any;
@@ -34,8 +36,7 @@ export default class TUIChatKit {
   }
 
   /**
-   * 监听 TUILogin.login 的成功通知
-   * @param { TUIInitParam } params 初始化参数
+   * Listen for the success notification of TUILogin.login
    */
   public onNotifyEvent(eventName: string, subKey: string) {
     if (eventName === TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED) {
@@ -48,21 +49,23 @@ export default class TUIChatKit {
   }
 
   /**
-   * init 初始化
+   * init
    */
   public init() {
-    // 向下兼容，新版本在 index.ts 中默认执行 init 操作
+    // Backward compatibility, the new version executes the init operation by default in index.ts
     if (TUIChatKit.isInitialized) {
       return;
     }
     TUIChatKit.isInitialized = true;
-    // 原生插件 TUICallKit 存在时执行 call server
+    // Execute call server when native plugin TUICallKit exists
     if (isApp) {
       new CallkitPluginServer();
     }
     // TUITranslateService init
+    // #ifndef MP-WEIXIN
     TUITranslateService.provideLanguages({ ...TUILocales });
     TUITranslateService.useI18n();
+    // #endif
     // TUIComponents global install
     TUIGlobal.TUIComponents = this.TUIComponents;
     // TUIPlugins global install
@@ -71,7 +74,7 @@ export default class TUIChatKit {
   }
 
   /**
-   * login 登录
+   * login
    */
   public login() {
     const { chat, SDKAppID, userID, userSig } = TUILogin.getContext();
@@ -87,12 +90,12 @@ export default class TUIChatKit {
   }
 
   /**
-   * 单个组件挂载
+   * Single component mounting
    *
-   * @param {string} componentName  挂载的组件名
-   * @param {any} component 挂载的组件
-   * @param {any=} env Vue2/Vue3环境
-   * @returns {TUICore} 挂载后的实例
+   * @param {string} componentName
+   * @param {any} component
+   * @param {any=} env
+   * @returns {TUICore} mounted instance
    */
   public component(componentName: string, component: any, env?: any) {
     if (this?.TUIComponents?.componentName) {
@@ -110,11 +113,11 @@ export default class TUIChatKit {
   }
 
   /**
-   * 组件列表挂载
+   * Component list mount
    *
-   * @param {object} components 挂载的组件列表
-   * @param {any=} env Vue2/Vue3环境
-   * @returns {TUICore} 挂载后的实例
+   * @param {object} components
+   * @param {any=} env: Vue2/Vue3 environment
+   * @returns {TUICore} mounted instance
    */
   public components(components: object, env?: any) {
     if (!components || !isObject(components)) {
@@ -128,11 +131,11 @@ export default class TUIChatKit {
   }
 
   /**
-   * 插件注入
+   * Plugin Injection
    *
-   * @param {any} TUIPlugin 需要挂载模块的服务
-   * @param {any} options 其他参数
-   * @returns {TUICore} 挂载后的实例
+   * @param {any} TUIPlugin
+   * @param {any} options
+   * @returns {TUICore} mounted instance
    */
   public use(TUIPluginName: string, TUIPlugin: any, options?: any) {
     if (!this.TUICore) {

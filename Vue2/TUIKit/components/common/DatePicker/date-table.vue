@@ -70,12 +70,12 @@ const props = defineProps({
     type: Dayjs,
     default: () => dayjs(),
   },
-  // type 为 single 时特有属性
+  // Unique attribute when type is single
   date: {
     type: Dayjs,
     default: null,
   },
-  // type 为 range 时特有属性
+  // Unique attribute when type is range
   startDate: {
     type: Dayjs,
     default: null,
@@ -87,9 +87,9 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['pick']);
-// vue 实例
+// vue instance
 const instance = getCurrentInstance();
-// 面板行数
+
 const tableRows = ref<DateCell[][]>([[], [], [], [], [], []]);
 const currentPanelDateObject = ref<typeof Dayjs>(
   dayjs(props.currentPanelDate || null),
@@ -102,35 +102,31 @@ const WEEKS_CONSTANT = computed(() => {
   return dayjs.weekdaysShort();
 });
 
-// 表头数据
 const WEEKS = computed(() =>
   WEEKS_CONSTANT.value.map((w: string) => w.substring(1)),
 );
 
-// 表格开始日期
 const startDateOnTable = computed(() => {
   const startDayOfMonth = currentPanelDateObject.value?.startOf('month');
   return startDayOfMonth?.subtract(startDayOfMonth?.day() || 7, 'day');
 });
 
-// 表格数据
+// Table data
 const rows = computed(() => {
   const rows_ = tableRows.value;
   const cols = WEEKS.value.length;
 
-  // 当月第一天
   const startOfMonth = currentPanelDateObject.value?.startOf('month');
   const startOfMonthDay = startOfMonth?.day() || 7; // day of this month first day
   const dateCountOfMonth = startOfMonth?.daysInMonth(); // total days of this month
 
   let count = 1;
-  // 循环填充表格，6行7列
   for (let row = 0; row < tableRows.value.length; row++) {
     for (let col = 0; col < cols; col++) {
       const cellDate = startDateOnTable.value?.add(count, 'day');
       const text = cellDate?.date();
-      // 对于 type === "single", 选中传入日期
-      // 对于 type === "range", 选中传入的开始与结束的日期
+      // For type === "single", select the entered date
+      // For type === "range", select the entered start and end dates
       const isSelected
         = props.type === 'single'
         && cellDate?.format('YYYY-MM-DD')
@@ -143,16 +139,16 @@ const rows = computed(() => {
         = props.type === 'range'
         && cellDate?.format('YYYY-MM-DD')
         === endDateObject.value?.format('YYYY-MM-DD');
-      // 对于 type === "range", 是否在选择区间中
+      // For type === "range", check if it is within the selected range.
       const isInRange
         = cellDate?.isSameOrBefore(endDateObject.value, 'day')
         && cellDate?.isSameOrAfter(startDateObject.value, 'day');
       let type: DateCellType = 'normal';
       if (count < startOfMonthDay) {
-        // 上个月日期
+        // Prev month's date
         type = 'prev-month';
       } else if (count - startOfMonthDay >= dateCountOfMonth) {
-        // 下个月日期
+        // Next month's date
         type = 'next-month';
       }
       rows_[row][col] = {
@@ -310,6 +306,7 @@ watch(
 }
 
 .tui-date-table-h5 {
+
   /* stylelint-disable-next-line no-descending-specificity */
   .tui-date-table-body-days-item-cell-text {
     cursor: none !important;

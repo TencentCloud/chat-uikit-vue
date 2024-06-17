@@ -1,5 +1,5 @@
 <template>
-  <!-- 本组件仅支持外部变更 prop value 改变切换switch状态，避免内部因异步问题出现 switchbar 显示状态与预期状态不符情况 -->
+  <!-- This component only supports external changes to prop value to change the switch state, to avoid the situation where the switchbar display state does not match the expected state due to internal asynchronous problems -->
   <div :class="['tui-switch', value ? 'tui-switch-checked' : 'tui-switch-no-checked']" />
 </template>
 <script setup lang="ts">

@@ -77,8 +77,8 @@ const props = defineProps({
     type: String,
     default: '20px',
   },
-  // 是否需要移动端底部弹窗对话框展示, 默认为false
-  // pc端无效
+  // Whether to display the bottom popup dialog on mobile devices
+  // Invalid on PC
   needBottomPopup: {
     type: Boolean,
     default: false,

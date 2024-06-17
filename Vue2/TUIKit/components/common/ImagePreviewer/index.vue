@@ -150,11 +150,11 @@ interface touchesPosition {
 
 const props = withDefaults(
   defineProps<{
-    imageList: Array<IMessageModel>;
+    imageList: IMessageModel[];
     currentImage: IMessageModel;
   }>(),
   {
-    imageList: () => ([] as Array<IMessageModel>),
+    imageList: () => ([] as IMessageModel[]),
     messageItem: () => ({} as IMessageModel),
   },
 );
@@ -379,12 +379,10 @@ const save = () => {
   }
   switch (getPlatform()) {
     case 'wechat':
-      // 获取用户的当前设置，获取相册权限
+      // Get the user's current settings and get the album permissions
       TUIGlobal.getSetting({
         success: (res: any) => {
-          // 如果没有相册权限
           if (!res?.authSetting['scope.writePhotosAlbum']) {
-            // 提前向用户发起授权请求
             TUIGlobal.authorize({
               scope: 'scope.writePhotosAlbum',
               success() {
@@ -396,7 +394,8 @@ const save = () => {
                   content: '是否进入权限管理，调整授权？',
                   success: (res: any) => {
                     if (res.confirm) {
-                      // 调起客户端小程序设置界面，返回用户设置的操作结果。（重新让用户授权）
+                      // Call up the client applet settings interface and return the operation results set by the user.
+                      // Ask the user to authorize again.
                       TUIGlobal.openSetting({
                         success: (res: any) => {
                           console.log(res.authSetting);
@@ -413,7 +412,7 @@ const save = () => {
               },
             });
           } else {
-            // 如果已有相册权限，直接进行保存到相册
+            // If you already have album permission, save directly to the album
             downloadImgInUni(imageSrc);
           }
         },
@@ -435,7 +434,6 @@ const save = () => {
 };
 
 const downloadImgInUni = (src: string) => {
-  // 下载图片文件
   TUIGlobal.showLoading({
     title: '大图提取中',
   });
@@ -481,7 +479,6 @@ const downloadImgInWeb = (src: string) => {
     });
     return;
   }
-  // 浏览器支持fetch则用blob下载，避免浏览器点击a标签，跳转到新页面预览的行为
   // If the browser supports fetch, use blob to download, so as to avoid the browser clicking the a tag and jumping to the preview of the new page
   if ((window as any).fetch) {
     fetch(src, option)

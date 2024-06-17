@@ -30,7 +30,7 @@ import Transfer from '../../../common/Transfer/index.vue';
 import { isPC } from '../../../../utils/env';
 
 const props = defineProps({
-  // 类型: voiceCall/groupCall/...
+  // type: voiceCall/groupCall/...
   type: {
     type: String,
     default: '',
@@ -47,8 +47,8 @@ const props = defineProps({
 const emits = defineEmits(['submit', 'cancel']);
 const show = ref<boolean>(false);
 const groupID = ref<string>('');
-const memberList = ref<Array<any>>([]);
-const searchMemberList = ref<Array<any>>([]);
+const memberList = ref<any[]>([]);
+const searchMemberList = ref<any[]>([]);
 const selfUserID = ref<string>('');
 const titleMap: any = {
   voiceCall: '发起群语音',
@@ -97,8 +97,8 @@ const search = (searchInfo: string) => {
   searchMemberList.value = results?.length ? results : memberList.value;
 };
 
-const submit = (selectedMemberList: Array<string>) => {
-  const userIDList: Array<string> = [];
+const submit = (selectedMemberList: string[]) => {
+  const userIDList: string[] = [];
   selectedMemberList?.forEach((user: any) => {
     user?.userID && userIDList.push(user.userID);
   });

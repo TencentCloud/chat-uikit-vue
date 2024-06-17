@@ -108,13 +108,11 @@ const props = withDefaults(
   },
 );
 const globalSearchRef = ref<HTMLElement | null>();
-// 当前会话
 const currentConversationID = ref<string>('');
-// 控制搜索状态
 const searchingStatus = ref<boolean>(false);
-// 是否展示指定会话内搜索: 与 TUIChat 交互，由 TUIChat MessageInputToolBar 中 "查看历史消息ICON" 控制
+// Whether to display the search in the chat
 const isShowInConversationSearch = ref<boolean>(isUniFrameWork);
-// 是否全屏搜索 - 移动端正在搜索时全屏搜索
+// Whether to search in full screen - Search in full screen when the mobile terminal is searching
 const isFullScreen = computed(
   () =>
     !isPC
@@ -139,7 +137,7 @@ const initSearchValue = (searchType: SEARCH_TYPE) => {
 
 function onCurrentConversationIDUpdate(conversationID: string) {
   if (!isUniFrameWork && currentConversationID.value !== conversationID) {
-    // pc端 单页面 切换会话，关闭搜索
+    // PC side single page switch session, close search
     closeInConversationSearch();
   }
   currentConversationID.value = conversationID;

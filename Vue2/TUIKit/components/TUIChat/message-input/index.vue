@@ -41,7 +41,7 @@ import MessageInputAt from './message-input-at/index.vue';
 import MessageInputButton from './message-input-button.vue';
 import MessageInputQuote from './message-input-quote/index.vue';
 import { sendMessages, sendTyping } from '../utils/sendMessage';
-import { transformEmojiValueToKey } from '../utils/emojiList';
+import { transformTextWithEmojiNamesToKeys } from '../emoji-config';
 import { isPC, isH5 } from '../../../utils/env';
 
 const props = defineProps({
@@ -99,7 +99,7 @@ const sendMessage = async () => {
   if (!_editorContentList || !currentConversation.value) return;
   const editorContentList = _editorContentList.map((editor: any) => {
     if (editor.type === 'text') {
-      editor.payload.text = transformEmojiValueToKey(editor.payload.text);
+      editor.payload.text = transformTextWithEmojiNamesToKeys(editor.payload.text);
     }
     return editor;
   });

@@ -60,7 +60,7 @@ interface IEmits {
 const defaultAvatarUrl = ref('https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png');
 const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
-  // uniapp vue2 不支持在defineProps中使用常量
+  // uniapp vue2 does not support constants in defineProps
   url: 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png',
   size: '36px',
   borderRadius: '5px',

@@ -79,7 +79,7 @@ function isTypingMessage(message: IMessageModel): boolean {
   return JSONToObject(message.payload?.data)?.businessID === 'user_typing_status';
 }
 
-function onMessageListUpdated(newMessageList: Array<IMessageModel>) {
+function onMessageListUpdated(newMessageList: IMessageModel[]) {
   messageList.value = newMessageList || [];
   const lastMessage = messageList.value?.[messageList.value?.length - 1];
   isExistLastMessage.value = !!(
@@ -87,7 +87,7 @@ function onMessageListUpdated(newMessageList: Array<IMessageModel>) {
   );
 }
 
-function onNewMessageListUpdated(newMessageList: Array<IMessageModel>) {
+function onNewMessageListUpdated(newMessageList: IMessageModel[]) {
   if (Array.isArray(newMessageList) && isScrollButtonVisible.value) {
     newMessageList.forEach((message: IMessageModel) => {
       if (message && message.conversationID === currentConversationID.value && !message.isDeleted && !message.isRevoked && !isTypingMessage(message)) {
@@ -105,7 +105,7 @@ function onCurrentConversationUpdated(conversation: IConversationModel | undefin
   currentLastMessageTime.value = conversation?.lastMessage?.lastTime || 0;
 }
 
-// 消息列表向上的滚动高度大于一屏时，展示滚动到最新
+// When the scroll height of the message list upwards is greater than one screen, show scrolling to the latest tips.
 async function judgeScrollOverOneScreen(e: Event) {
   if (e.target) {
     try {
@@ -124,7 +124,7 @@ async function judgeScrollOverOneScreen(e: Event) {
   }
 }
 
-// 载入最新的 messageSource
+// reset messageSource
 function resetMessageSource() {
   if (TUIStore.getData(StoreName.CHAT, 'messageSource') !== undefined) {
     TUIStore.update(StoreName.CHAT, 'messageSource', undefined);
@@ -136,7 +136,6 @@ function resetNewMessageCount() {
   newMessageCount.value = 0;
 }
 
-// 滚动到消息列表最底部
 function scrollToMessageListBottom() {
   resetMessageSource();
   resetNewMessageCount();

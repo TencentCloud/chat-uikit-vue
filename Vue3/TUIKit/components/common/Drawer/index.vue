@@ -2,6 +2,7 @@
   <Overlay
     ref="overlayDomInstanceRef"
     :visible="props.visible"
+    :useMask="props.useMask"
     :maskColor="props.overlayColor"
     :isFullScreen="props.isFullScreen"
     @onOverlayClick="onOverlayClick"
@@ -38,6 +39,7 @@ import Overlay from '../../common/Overlay/index.vue';
 interface IProps {
   visible: boolean;
   popDirection: 'top' | 'right' | 'bottom' | 'left';
+  useMask?: boolean;
   isFullScreen?: boolean | undefined;
   overlayColor?: string | undefined;
   drawerStyle?: {
@@ -55,6 +57,7 @@ interface IEmits {
 const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   visible: true,
+  useMask: true,
   isFullScreen: true,
   popDirection: 'bottom',
   drawerStyle: () => ({}),

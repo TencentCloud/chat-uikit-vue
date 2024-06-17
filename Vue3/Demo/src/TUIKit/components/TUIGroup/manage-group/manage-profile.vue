@@ -126,7 +126,6 @@ watch(
       userIDList: [props.userInfo.userID],
     });
     userInfoManager.value = res?.data[0];
-    // 这里需要确认是否是好友关系
     checkFriend();
   },
   {

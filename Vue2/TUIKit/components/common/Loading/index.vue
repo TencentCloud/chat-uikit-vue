@@ -35,7 +35,6 @@ const props = defineProps({
   animation: circle infinite 0.75s linear;
 }
 
-// 转转转动画
 @keyframes circle {
   0% {
     transform: rotate(0);

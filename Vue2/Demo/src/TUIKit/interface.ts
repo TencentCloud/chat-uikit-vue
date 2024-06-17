@@ -19,14 +19,14 @@ export interface ITUIPlugins {
   [propName: string]: any;
 }
 
-export interface IEmojiListItem {
+export interface IEmojiGroup {
   type: string;
-  index?: number;
+  emojiGroupID: number;
   url: string;
   list: string[];
 }
 
-export type IEmojiList = any[];
+export type IEmojiGroupList = IEmojiGroup[];
 
 export interface ISendMessagePayload {
   text?: string;
@@ -51,17 +51,17 @@ export interface ITransferListItem {
 
 export interface ICustomMessagePayload {
   businessID?: string;
-  // 评价类自定义消息相关字段
+  // Evaluation-related custom message fields
   score?: number;
   comment?: string;
-  // 订单类 & 超链接类 自定义消息共用字段
+  // Order & Hyperlink Class Custom Message Common Fields
   link?: string;
-  // 订单类自定义消息相关字段
+  // Order-related custom message fields
   imageUrl?: string;
   title?: string;
   description?: string;
   price?: string;
-  // 超链接类自定义消息相关字段
+  // Hyperlink custom message related fields
   text?: string;
 }
 
@@ -93,7 +93,7 @@ export interface IFriendType {
   source?: string;
   wording?: string;
   profile?: IFriendProfile;
-  friendCustomFriend?: Record<string, any>[];
+  friendCustomFriend?: Array<Record<string, any>>;
 }
 
 export interface IFriendProfile {
@@ -111,7 +111,7 @@ export interface IGroupMember {
   joinTime?: number;
   nameCard?: string;
   muteUntil?: string;
-  memberCustomField?: Record<string, any>[];
+  memberCustomField?: Array<Record<string, any>>;
 }
 
 export interface IGroupSelfInfo {
@@ -120,7 +120,7 @@ export interface IGroupSelfInfo {
   joinTime?: number;
   nameCard?: string;
   userID?: string;
-  memberCustomField?: Record<string, any>[];
+  memberCustomField?: Array<Record<string, any>>;
 }
 
 export interface IUserProfile {
@@ -138,7 +138,7 @@ export interface IUserProfile {
   level: number;
   role: number;
   lastUpdatedTime: number;
-  profileCustomField: Record<string, any>[];
+  profileCustomField: Array<Record<string, any>>;
 }
 
 export interface IContactListItem {
@@ -179,18 +179,18 @@ export interface IContactInfoMoreItem {
   key: string;
   label: string;
   data: any;
-  labelPosition?: string; // label 位置："left"/"top"
-  editable?: boolean; // 是否可以编辑
-  editType?: string; // 编辑类型: "input"/"switch"/"textarea"
-  editing?: boolean; // 当前编辑状态: true 为"正在编辑中"，false 为"非编辑状态"
-  editSubmitHandler?: () => void; // 编辑提交回调Z
+  labelPosition?: string; // label position："left"/"top"
+  editable?: boolean; // indicates whether it can be edited
+  editType?: string; // edit type: "input"/"switch"/"textarea"
+  editing?: boolean; // Current editing status: true: "Editing" / false:"Not editing"
+  editSubmitHandler?: () => void; // edit submit callback
 }
 
 export interface IContactInfoButton {
   key: string;
-  label: string; // button 内容
-  type: string; // button 类型: "cancel"/"submit"
-  onClick: () => void; // 点击 button 回调
+  label: string; // button label
+  type: string; // button type: "cancel"/"submit"
+  onClick: () => void; // button click callback
 }
 
 export interface ISearchCloudMessageResult {
@@ -214,11 +214,44 @@ export interface IImageMessageContent {
 }
 
 export interface IVideoMessageContent {
-  showName: string; // - 消息发送方名称
-  url: string; // - 视频播放链接
-  snapshotUrl: string; // - 视频封面图链接
-  snapshotWidth: number; // - 视频封面图宽度
-  snapshotHeight: number; // - 视频封面图高度
+  showName: string; // video message sender name
+  url: string; // video url
+  snapshotUrl: string; // video snapshot url
+  snapshotWidth: number; // video snapshot width
+  snapshotHeight: number; // video snapshot height
+}
+
+export interface ITextMessageContent {
+  text: string;
+}
+
+export interface IMergeMessageContent {
+  abstractList: string[];
+  compatibleText: string;
+  downloadKey: string;
+  layersOverLimit: boolean;
+  messageList: Array<{
+    avatar: string;
+    ID: string;
+    cloudCustomData: string;
+    from: string;
+    messageBody: Array<{
+      type: string;
+      payload: Record<string, any>;
+    }>;
+    messageReceiver: string;
+    messageRandom: number;
+    messageSender: string;
+    messageSequence: number;
+    messageTime: number;
+    nick: string;
+    receiverUserID: string;
+    time: number;
+  }>;
+  pbDownloadKey: string;
+  showName: string;
+  title: string;
+  version: number;
 }
 
 export interface IFileMessageContent {

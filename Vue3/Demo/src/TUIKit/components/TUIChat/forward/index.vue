@@ -10,7 +10,7 @@
       :list="customConversationList"
       :isHiddenBackIcon="isUniFrameWork"
       @cancel="closeForwardPanel"
-      @submit="onSubmit"
+      @submit="finishSelected"
     />
   </Overlay>
 </template>
@@ -22,7 +22,6 @@ import {
   StoreName,
   TUIChatService,
   TUITranslateService,
-  IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import Overlay from '../../common/Overlay/index.vue';
 import Transfer from '../../common/Transfer/index.vue';
@@ -31,98 +30,122 @@ import { isUniFrameWork } from '../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
 import { createOfflinePushInfo } from '../utils/sendMessage';
 
+interface IEmits {
+  (e: 'toggleMultipleSelectMode', visible?: boolean): void;
+}
+
+const emits = defineEmits<IEmits>();
+
+let selectedToForwardMessageIDList: string[] = [];
+let isMergeForward = false;
+
 const isShowForwardPanel = ref(false);
 const customConversationList = ref();
 
 onMounted(() => {
-  TUIStore.watch(StoreName.CONV, {
-    conversationList: onConversationListUpdated,
-  });
   TUIStore.watch(StoreName.CUSTOM, {
     singleForwardMessageID: onSingleForwardMessageIDUpdated,
+    multipleForwardMessageID: onMultipleForwardMessageIDUpdated,
   });
 });
 
 onUnmounted(() => {
-  // 组件卸载时需要清掉数据 否则小程序会自动打开
-  TUIStore.update(StoreName.CUSTOM, 'singleForwardMessageID', undefined);
-  TUIStore.unwatch(StoreName.CONV, {
-    conversationList: onConversationListUpdated,
-  });
   TUIStore.unwatch(StoreName.CUSTOM, {
     singleForwardMessageID: onSingleForwardMessageIDUpdated,
+    multipleForwardMessageID: onMultipleForwardMessageIDUpdated,
   });
+
+  // tuistore data must be cleared when closing the forward panel
+  clearStoreData();
 });
 
-function onSingleForwardMessageIDUpdated(messageID: string) {
+function onSingleForwardMessageIDUpdated(messageID: string | undefined) {
   if (typeof messageID !== 'undefined') {
+    isMergeForward = false;
+    selectedToForwardMessageIDList = [messageID];
     openForwardPanel();
   }
 }
 
-function closeForwardPanel(): void {
-  // ! 必须通过close函数关闭转发面板 singleForwardMessage必须清掉
+function onMultipleForwardMessageIDUpdated(params: { isMergeForward: boolean; messageIDList: string[] } | undefined) {
+  if (!params) {
+    return;
+  }
+  isMergeForward = false;
+  const {
+    isMergeForward: _isMergeForward,
+    messageIDList: selectedMessageIDList,
+  } = params || {};
+  if (selectedMessageIDList?.length > 0) {
+    isMergeForward = _isMergeForward;
+    selectedToForwardMessageIDList = selectedMessageIDList;
+    openForwardPanel();
+  } else {
+    Toast({
+      message: TUITranslateService.t('TUIChat.未选择消息'),
+      type: TOAST_TYPE.ERROR,
+    });
+  }
+}
+
+function clearStoreData() {
   TUIStore.update(StoreName.CUSTOM, 'singleForwardMessageID', undefined);
+  TUIStore.update(StoreName.CUSTOM, 'multipleForwardMessageID', undefined);
+}
+
+function closeForwardPanel(): void {
+  // tuistore data must be cleared when closing the forward panel
+  clearStoreData();
   isShowForwardPanel.value = false;
 }
 
 function openForwardPanel(): void {
+  getTransforRenderDataList();
   isShowForwardPanel.value = true;
 }
 
 function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): void {
-  /**
-   * 这里传递的是 coversationID
-   * 但为了实现 Transfer 的复用 这里用 userID 代替 ConversationID
-   */
-  const selectedConversationList = selectedConvIDWrapperList.map((convIDWrapper) => {
-    const { userID: conversationID } = convIDWrapper;
-    return TUIStore.getConversationModel(conversationID);
-  });
-  const singleForwardMessageID: string = TUIStore.getData(StoreName.CUSTOM, 'singleForwardMessageID');
-  const message = TUIStore.getMessageModel(singleForwardMessageID);
-  const sendMessageOptions: any = {};
-  for (let i = 0; i < selectedConversationList.length; i++) {
-    const conversation = selectedConversationList[i];
-    const { conversationID } = conversation;
-    sendMessageOptions[conversationID] = {
-      offlinePushInfo: createOfflinePushInfo(conversation),
-    };
-  }
-  TUIChatService.sendForwardMessage(
-    selectedConversationList,
-    [message],
-    {
-      params: {
-        needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+  if (selectedConvIDWrapperList?.length === 0) return;
+  // to reuse Transfer, so we have to get conversationModel by userID instead of ConversationID
+  const selectedConversationList = selectedConvIDWrapperList.map(IDWrapper => TUIStore.getConversationModel(IDWrapper.userID));
+  const unsentMessageQueue = selectedToForwardMessageIDList
+    .map(messageID => TUIStore.getMessageModel(messageID))
+    .sort((a, b) => a.time - b.time);
+  const forwardPromises = selectedConversationList.map((conversation) => {
+    return TUIChatService.sendForwardMessage(
+      [conversation],
+      unsentMessageQueue,
+      {
+        needMerge: isMergeForward,
+        offlinePushInfo: createOfflinePushInfo(conversation),
+        params: {
+          needReadReceipt: isEnabledMessageReadReceiptGlobal(),
+        },
       },
-      ...sendMessageOptions,
-    },
-  ).catch((error: { message: string; code: number }) => {
-    if (error.code === 80001) {
-      Toast({
-        message: TUITranslateService.t('内容包含敏感词汇'),
-        type: TOAST_TYPE.ERROR,
-      });
-    } else {
-      Toast({
-        message: error.message as string,
-        type: TOAST_TYPE.ERROR,
-      });
+    );
+  });
+  Promise.allSettled(forwardPromises).then((results) => {
+    for (const result of results) {
+      const { status } = result;
+      if (status === 'rejected') {
+        const errorMessage = result.reason.code === 80001 ? TUITranslateService.t('TUIChat.内容包含敏感词汇') : result.reason.message as string;
+        Toast({
+          message: errorMessage,
+          type: TOAST_TYPE.ERROR,
+        });
+        break;
+      }
     }
   });
   closeForwardPanel();
+  emits('toggleMultipleSelectMode', false);
 }
 
-function onSubmit(convIDWrapperList: Array<{ userID: string }>) {
-  if (convIDWrapperList?.length === 0) return;
-  finishSelected(convIDWrapperList);
-}
-
-function onConversationListUpdated(list: IConversationModel[]) {
-  customConversationList.value = list.map((conversation) => {
+function getTransforRenderDataList() {
+  const conversationList = TUIStore.getData(StoreName.CONV, 'conversationList');
+  customConversationList.value = conversationList.map((conversation) => {
     return {
-      // 为了实现Transfer的复用，这里用userID代替ConversationID
+      // To achieve reusability of Transfer, userID is used here instead of ConversationID
       userID: conversation.conversationID,
       nick: conversation.getShowName(),
       avatar: conversation.getAvatar(),

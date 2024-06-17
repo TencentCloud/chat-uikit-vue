@@ -1,20 +1,29 @@
 <template>
   <div
-    v-if="quoteContent"
+    v-if="hasQuoteContent"
     :class="{
       'reference-content': true,
       'reverse': message.flow === 'out',
     }"
     @click="scrollToOriginalMessage"
   >
-    <div class="max-double-line">
-      {{ quoteContent.messageSender }}: {{ decodeTextMessage(quoteContent.messageAbstract) }}
+    <div
+      v-if="isMessageRevoked"
+      class="revoked-text"
+    >
+      {{ TUITranslateService.t('TUIChat.引用内容已撤回') }}
+    </div>
+    <div
+      v-else
+      class="max-double-line"
+    >
+      {{ messageQuoteContent.messageSender }}: {{ transformTextWithKeysToEmojiNames(messageQuoteContent.messageAbstract) || TUITranslateService.t('TUIChat.聊天记录') }}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed } from '../../../../../adapter-vue';
+import { computed, ref, onMounted } from '../../../../../adapter-vue';
 import {
   TUIStore,
   StoreName,
@@ -25,7 +34,7 @@ import { getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-ap
 import { isUniFrameWork } from '../../../../../utils/env';
 import { Toast, TOAST_TYPE } from '../../../../../components/common/Toast/index';
 import type { ICloudCustomData, IQuoteContent } from './interface.ts';
-import { decodeTextMessage } from '../../../utils/emojiList';
+import { transformTextWithKeysToEmojiNames } from '../../../emoji-config';
 
 export interface IProps {
   message: IMessageModel;
@@ -42,26 +51,38 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 let selfAddValue = 0;
-let messageList: IMessageModel[] = [];
+const hasQuoteContent = ref(false);
+const messageQuoteContent = ref<IQuoteContent>({} as IQuoteContent);
 
-TUIStore.watch(StoreName.CHAT, {
-  messageList(list: IMessageModel[]) {
-    messageList = list;
-  },
-});
-
-const quoteContent = computed<IQuoteContent | undefined>(() => {
+const isMessageRevoked = computed<boolean>(() => {
   try {
     const cloudCustomData: ICloudCustomData = JSON.parse(props.message?.cloudCustomData || '{}');
-    return cloudCustomData.messageReply;
+    const quotedMessageModel = TUIStore.getMessageModel(cloudCustomData.messageReply.messageID);
+    return quotedMessageModel?.isRevoked;
   } catch (error) {
-    return undefined;
+    return true;
+  }
+});
+
+onMounted(() => {
+  try {
+    const cloudCustomData: ICloudCustomData = JSON.parse(props.message?.cloudCustomData || '{}');
+    hasQuoteContent.value = Boolean(cloudCustomData.messageReply);
+    if (hasQuoteContent.value) {
+      messageQuoteContent.value = cloudCustomData.messageReply;
+    }
+  } catch (error) {
+    hasQuoteContent.value = false;
   }
 });
 
 async function scrollToOriginalMessage() {
-  const originMessageID = quoteContent.value?.messageID;
-  const isOriginalMessageInScreen = messageList.some(msg => msg.ID === originMessageID);
+  if (isMessageRevoked.value) {
+    return;
+  }
+  const originMessageID = messageQuoteContent.value?.messageID;
+  const currentMessageList = TUIStore.getData(StoreName.CHAT, 'messageList');
+  const isOriginalMessageInScreen = currentMessageList.some(msg => msg.ID === originMessageID);
   if (originMessageID && isOriginalMessageInScreen) {
     try {
       const scrollViewRect = await getBoundingClientRect('#messageScrollList', 'messageList');
@@ -110,6 +131,10 @@ async function scrollToOriginalMessage() {
 .reverse.reference-content {
     margin-right: 44px;
     margin-left: auto;
+}
+
+.revoked-text {
+  color: #999;
 }
 
 .max-double-line {

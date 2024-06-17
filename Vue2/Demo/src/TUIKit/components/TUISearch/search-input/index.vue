@@ -74,7 +74,7 @@ const props = defineProps({
   },
   searchType: {
     type: String,
-    default: 'global', // "global":全局搜索, "conversation":会话内搜索
+    default: 'global', // "global" / "conversation"
     validator(value: string) {
       return ['global', 'conversation'].includes(value);
     },
@@ -113,7 +113,7 @@ onUnmounted(() => {
 });
 
 const search = () => {
-  // 避免重复搜索
+  // Avoid duplicate searches
   if (searchValueModel.value === currentSearchInputValue.value) {
     return;
   }

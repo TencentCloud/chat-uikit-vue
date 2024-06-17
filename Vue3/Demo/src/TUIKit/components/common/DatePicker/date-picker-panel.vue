@@ -49,7 +49,6 @@
               :height="'10px'"
             />
           </div>
-          <!-- todo: 此处催产品给个双箭头icon -->
           <div
             v-if="canYearMore"
             :class="[n('icon')]"
@@ -95,12 +94,12 @@ const props = defineProps({
     type: String,
     default: 'range', // "single"/"range"
   },
-  // type 为 single 时特有属性
+  // Unique attribute when type is single
   date: {
     type: Dayjs,
     default: () => dayjs(),
   },
-  // type 为 range 时特有属性
+  // Unique attribute when type is range
   startDate: {
     type: Dayjs,
     default: null,
@@ -165,17 +164,17 @@ const canMonthLess = computed(() => {
   );
 });
 
-// range 判断：
-// 前提，如果只有一个，那一定是start
-// 如果有startDate
-// left所在界面首次展示startDate所在month/year
-// 如果有startDate && endDate
-// 如果在同一个月
-// 均在left展示，right展示下一个月
-// 如果不在同个月
-// start在left展示，end在right展示
-// 即要判断start和end是否在同一个月
-// 如果都没有 left展示当前月 right展示下一个月
+// Range judgment:
+// Premise: If there is only one, it must be the start.
+// If there is a startDate:
+// When the left side of the interface first displays the month/year of the startDate.
+// If there is both a startDate and an endDate:
+// If they are in the same month:
+// Both are displayed on the left, and the next month is displayed on the right.
+// If they are not in the same month:
+// The start is displayed on the left, and the end is displayed on the right.
+// That is, to determine whether the start and end are in the same month.
+// If neither is present, the left displays the current month, and the right displays the next month.
 const handleSingleDate = (): { date: typeof Dayjs } => {
   if (props.date && dayjs(props.date)?.isValid()) {
     // props.date year and month
@@ -190,7 +189,6 @@ const handleSingleDate = (): { date: typeof Dayjs } => {
 };
 
 const handleRangeDate = (): { date: typeof Dayjs } => {
-  // 计算左边
   switch (props.rangeType) {
     case 'left':
       if (props.startDate && dayjs.isDayjs(props.startDate)) {
@@ -228,7 +226,6 @@ function handlePick(cell: DateCell) {
   emit('pick', cell);
 }
 
-// 统一处理日期切换
 function change(type: typeof ManipulateType, num: number) {
   currentPanelDate.value = dayjs(currentPanelDate.value.toDate()).add(
     num,

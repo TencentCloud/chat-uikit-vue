@@ -18,10 +18,9 @@ import { isUniFrameWork } from '../../utils/env';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 
 /**************************************
- * TUISearch 搜索逻辑
+ * TUISearch search logic
  **************************************/
 
-// 消息云端搜索
 export const searchCloudMessages = (
   params: SearchCloudMessagesParams,
 ): Promise<{ data: ISearchCloudMessageResult }> => {
@@ -39,9 +38,8 @@ export const searchCloudMessages = (
     });
 };
 
-// 联系人搜索
-export const searchFriends = (userIDList: Array<string>): Promise<Array<IFriendType>> => {
-  // 仅展示已存在好友关系的用户
+export const searchFriends = (userIDList: any[]): Promise<any[]> => {
+  // Only show users who are already friends
   return TUIFriendService.getFriendProfile({ userIDList })
     .then((imResponse) => {
       return imResponse;
@@ -57,15 +55,13 @@ export const searchFriends = (userIDList: Array<string>): Promise<Array<IFriendT
     });
 };
 
-// 搜索所有已加入群聊
-export const searchGroups = (groupIDList: Array<string>): Promise<Array<IGroupModel>> => {
-  // searchGroupList.value = [];
-  const promiseList: Array<Promise<IGroupModel>> = [];
+// Search all joined group chats
+export const searchGroups = (groupIDList: any[]): Promise<any[]> => {
+  const promiseList: any[] = [];
   groupIDList.forEach((groupID: string) => {
-    // todo: 此处需等待engine searchGroupByID 包裹好结果后，替换为 searchGroupByID 接口
     const promise = TUIGroupService.searchGroupByID(groupID)
       .then((imResponse) => {
-        // 仅展示已加入的群聊
+        // Only show joined group chats
         if (imResponse?.data?.group?.isJoinedGroup) {
           return imResponse?.data?.group;
         }
@@ -90,10 +86,10 @@ export const searchGroups = (groupIDList: Array<string>): Promise<Array<IGroupMo
 };
 
 /**************************************
- * TUISearch 交互逻辑
+ * TUISearch interaction logic
  **************************************/
-// 切换会话
-export const enterConversation = (item: { conversationID?: string;groupID?: string; userID?: string }) => {
+// switch conversation
+export const enterConversation = (item: { conversationID?: string; groupID?: string; userID?: string }) => {
   const conversationID
     = item?.conversationID || (item?.groupID ? `GROUP${item?.groupID}` : `C2C${item?.userID}`);
   TUIConversationService.switchConversation(conversationID)
@@ -121,9 +117,8 @@ export const enterConversation = (item: { conversationID?: string;groupID?: stri
 };
 
 /**************************************
- * TUISearch UI展示逻辑
+ * TUISearch UI display logic
  **************************************/
-// 解析搜索结果展示名称
 export const generateSearchResultShowName = (result: IMessageModel | ISearchResultListItem | IGroupModel | IFriendType | IUserProfile, resultContent: Record<string, string>): string => {
   if (!result) {
     return '';
@@ -138,7 +133,6 @@ export const generateSearchResultShowName = (result: IMessageModel | ISearchResu
     return (result as IFriendType).remark || (result as IUserProfile).nick || (result as IFriendType).userID || '';
   }
   if ((result as ISearchResultListItem).conversation?.conversationID) {
-    // 验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
     if (typeof (result as ISearchResultListItem).conversation.getShowName === 'function') {
       return (result as ISearchResultListItem).conversation.getShowName();
     } else {
@@ -148,7 +142,6 @@ export const generateSearchResultShowName = (result: IMessageModel | ISearchResu
   return '';
 };
 
-// 解析搜索结果展示头像
 export const generateSearchResultAvatar = (result: IMessageModel | ISearchResultListItem | IGroupModel | IFriendType | IUserProfile): string => {
   if (!result) {
     return '';
@@ -163,7 +156,6 @@ export const generateSearchResultAvatar = (result: IMessageModel | ISearchResult
     return (result as IUserProfile).avatar || 'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png';
   }
   if ((result as ISearchResultListItem)?.conversation?.conversationID) {
-    // 验证 uniapp 中 conversationModel 是否会失去原型导致解析失败
     if (typeof (result as ISearchResultListItem).conversation.getAvatar === 'function') {
       return (result as ISearchResultListItem).conversation?.getAvatar();
     } else {
@@ -173,13 +165,13 @@ export const generateSearchResultAvatar = (result: IMessageModel | ISearchResult
   return '';
 };
 
-// 解析搜索结果展示内容（包含对于关键词内容匹配高亮）
+// Generate the search results and display the content (including highlighting the keyword content matches)
 export const generateSearchResultShowContent = (
   result: IMessageModel | ISearchResultListItem | IGroupModel | IUserProfile,
   resultType: string,
-  keywordList: Array<string>,
-  isTypeShow = true, // 除文本消息以外类型消息是否需要类型前缀
-): Array<{ text: string; isHighlight: boolean }> => {
+  keywordList: any[],
+  isTypeShow = true,
+): any[] => {
   if ((result as IGroupModel)?.groupID) {
     return [
       { text: 'groupID: ', isHighlight: false },
@@ -194,17 +186,17 @@ export const generateSearchResultShowContent = (
   }
   if ((result as ISearchResultListItem)?.conversation || (result as IMessageModel)?.flow) {
     if ((result as ISearchResultListItem)?.messageCount === 1 || (result as IMessageModel)?.flow) {
-      // 单条消息摘要显示结果：
-      // 文本消息，显示消息内容+关键词高亮
-      // 文件类型消息，显示[文件]文件名+关键词高亮
-      // 自定义类型消息，显示[自定义消息]description+关键词高亮
-      // 其他类型消息，显示[消息类型]
+      // Single message summary display result:
+      // Text message, display message content + keyword highlight
+      // File type message, display [file] file name + keyword highlight
+      // Custom type message, display [custom message] description + keyword highlight
+      // Other types of messages, display [message type]
       const message: IMessageModel = (result as IMessageModel)?.flow
         ? (result as IMessageModel)
         : (result as ISearchResultListItem)?.messageList[0];
       const text
         = message?.payload?.text || message?.payload?.fileName || message?.payload?.description;
-      const abstract: Array<{ text: string; isHighlight: boolean }> = [];
+      const abstract: any[] = [];
       if ((result as IMessageModel)?.type !== TUIChatEngine.TYPES.MSG_TEXT && isTypeShow) {
         abstract.push({
           text: TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[(result as IMessageModel)?.type]}`),
@@ -219,8 +211,7 @@ export const generateSearchResultShowContent = (
           text: `${(result as ISearchResultListItem)?.messageCount}${TUITranslateService.t(
             'TUISearch.条相关',
           )}${TUITranslateService.t(
-            `TUISearch.${
-              resultType === 'allMessage' ? '结果' : searchMessageTypeList[resultType]?.label
+            `TUISearch.${resultType === 'allMessage' ? '结果' : searchMessageTypeList[resultType]?.label
             }`,
           )}`,
           isHighlight: false,
@@ -231,20 +222,20 @@ export const generateSearchResultShowContent = (
   return [];
 };
 
-// 解析搜索消息结果【高亮关键词】位置
+// Parse the search message results [highlight keywords] position
 export const generateMessageContentHighlight = (
   content: string,
-  keywordList: Array<string>,
-): Array<{ text: string; isHighlight: boolean }> => {
+  keywordList: any[],
+): any[] => {
   if (!content || !keywordList || !keywordList.length) {
     return [{ text: content || '', isHighlight: false }];
   }
-  //  获取所有 key 匹配的开始与结束位置
-  const matches: Array<Array<number>> = [];
+  // Get the start and end positions of all key matches
+  const matches: any[] = [];
   for (let i = 0; i < keywordList.length; i++) {
-    // 特殊字符转译
+    // Special character translation
     const substring = keywordList[i]?.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(substring, 'gi'); // 全局搜索并且忽略大小写
+    const regex = new RegExp(substring, 'gi'); // Global search and ignore case
     let match;
 
     while ((match = regex.exec(content)) !== null) {
@@ -253,15 +244,15 @@ export const generateMessageContentHighlight = (
       matches.push([start, end]);
     }
   }
-  // 合并重复范围结果, 并按照从小到达排列，比如 [[1,3],[2,4]]合并为[[1,4]]
+  // Merge repeated range results and arrange them in order of smallest arrival, for example, [[1,3],[2,4]] is merged into [[1,4]]
   const mergedRanges = [matches[0]];
   if (matches.length > 1) {
-    matches.sort((a: Array<number>, b: Array<number>) => a[0] - b[0]);
+    matches.sort((a: any[], b: any[]) => a[0] - b[0]);
     // const mergedRanges = [matches[0]];
     for (let i = 1; i < matches.length; i++) {
       const currentRange = matches[i];
       const lastMergedRange = mergedRanges[mergedRanges.length - 1];
-      // currentRange[0] - 1 是为了处理[[1,2],[3,4]]能合并为[[1,4]]的特殊情况
+      // currentRange[0] - 1 is to handle the special case where [[1,2],[3,4]] can be merged into [[1,4]]
       if (currentRange[0] - 1 <= lastMergedRange[1]) {
         lastMergedRange[1] = Math.max(lastMergedRange[1], currentRange[1]);
       } else {
@@ -272,8 +263,8 @@ export const generateMessageContentHighlight = (
   if (!mergedRanges[0]) {
     return [{ text: content, isHighlight: false }];
   }
-  // 根据高亮范围分割原内容字符串，增加highlight相关标识字段
-  const contentArray: Array<{ text: string; isHighlight: boolean }> = [];
+  // Split the original content string according to the highlight range and add highlight related identification fields
+  const contentArray: any[] = [];
   let start = 0;
   for (let i = 0; i < mergedRanges.length; i++) {
     const str1 = content.substring(start, mergedRanges[i][0]);
@@ -282,13 +273,12 @@ export const generateMessageContentHighlight = (
     str2 && contentArray.push({ text: str2, isHighlight: true });
     start = mergedRanges[i][1] + 1;
   }
-  // 添加结尾最后一段
+  // Add the last string
   const lastStr = content.substring(start);
   lastStr && contentArray.push({ text: lastStr, isHighlight: false });
   return contentArray;
 };
 
-// 计算时间戳函数
 // calculate timestamp
 export const generateSearchResultTime = (timestamp: number): string => {
   const todayZero = new Date().setHours(0, 0, 0, 0);
@@ -331,14 +321,14 @@ export const generateSearchResultTime = (timestamp: number): string => {
   }
 };
 
-// 计算日期函数
+// Calculated date functions
 export const generateSearchResultYMD = (timestamp: number): string => {
-  const date = new Date(timestamp * 1000); // 将时间戳转换为毫秒
-  const year = date.getFullYear(); // 获取年份
-  const month = ('0' + (date.getMonth() + 1)).slice(-2); // 获取月份，并补零
-  const day = ('0' + date.getDate()).slice(-2); // 获取日期，并补零
+  const date = new Date(timestamp * 1000); // Convert timestamp to milliseconds
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
 
-  return `${year}-${month}-${day}`; // 返回年月日格式的字符串
+  return `${year}-${month}-${day}`; // Returns a string in year-month-day format
 };
 
 export const debounce = <F extends (...args: any[]) => void>(func: F, waitFor: number) => {

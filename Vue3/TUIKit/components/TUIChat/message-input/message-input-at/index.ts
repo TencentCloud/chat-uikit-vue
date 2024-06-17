@@ -33,7 +33,7 @@ TUIStore.watch(StoreName.CONV, {
       if (currentConversationID?.startsWith('GROUP')) {
         isGroup = true;
       } else {
-        // c2c 清空所有 @ 内容
+        // c2c chat clear all content within @
         isGroup = false;
         memberList = [];
         allMemberList = [];
@@ -44,7 +44,7 @@ TUIStore.watch(StoreName.CONV, {
 });
 
 TUIStore.watch(StoreName.CUSTOM, {
-  memberList: (list: Array<any>) => {
+  memberList: (list: any[]) => {
     if (isGroup && Array.isArray(list)) {
       memberList = list;
       allMemberList = [all, ...memberList];

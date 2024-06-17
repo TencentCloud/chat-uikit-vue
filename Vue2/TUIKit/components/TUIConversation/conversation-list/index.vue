@@ -137,7 +137,7 @@ const actionsMenuPosition = ref<{
   left: undefined,
   conversationHeight: undefined,
 });
-const displayOnlineStatus = ref(false); // 在线状态 默认关闭
+const displayOnlineStatus = ref(false);
 const userOnlineStatusMap = ref<IUserStatusMap>();
 
 let lastestOpenActionsMenuTime: number | null = null;
@@ -149,7 +149,6 @@ onMounted(() => {
     currentConversation: onCurrentConversationUpdated,
   });
 
-  // 初始状态
   TUIStore.watch(StoreName.USER, {
     displayOnlineStatus: onDisplayOnlineStatusUpdated,
     userStatusList: onUserStatusListUpdated,
@@ -167,7 +166,6 @@ onUnmounted(() => {
     currentConversation: onCurrentConversationUpdated,
   });
 
-  // 初始状态
   TUIStore.unwatch(StoreName.USER, {
     displayOnlineStatus: onDisplayOnlineStatusUpdated,
     userStatusList: onUserStatusListUpdated,
@@ -199,7 +197,7 @@ const showConversationActionMenu = (
 };
 
 const closeConversationActionMenu = () => {
-  // 防止连续触发overlay的tap事件
+  // Prevent continuous triggering of overlay tap events
   if (
     lastestOpenActionsMenuTime
     && Date.now() - lastestOpenActionsMenuTime > 300
@@ -218,7 +216,7 @@ const getActionsMenuPosition = (event: Event, index: number) => {
     query.select(`#convlistitem-${index}`).boundingClientRect((data) => {
       if (data) {
         actionsMenuPosition.value = {
-          // uni-h5的uni-page-head不被认为是视窗中的成员，因此手动上head的高度
+          // The uni-page-head of uni-h5 is not considered a member of the viewport, so the height of the head is manually increased.
           top: data.bottom + (isH5 ? 44 : 0),
           // @ts-expect-error in uniapp event has touches property
           left: event.touches[0].pageX,
@@ -228,7 +226,6 @@ const getActionsMenuPosition = (event: Event, index: number) => {
       }
     }).exec();
   } else {
-    // 处理Vue原生
     const rect = ((event.currentTarget || event.target) as HTMLElement)?.getBoundingClientRect() || {};
     if (rect) {
       actionsMenuPosition.value = {
@@ -291,7 +288,7 @@ function onUserStatusListUpdated(list: Map<string, IUserStatus>) {
     );
   }
 }
-// 暴露给父组件，当监听到滑动事件时关闭actionsMenu
+// Expose to the parent component and close actionsMenu when a sliding event is detected
 defineExpose({ closeChildren: closeConversationActionMenu });
 </script>
 

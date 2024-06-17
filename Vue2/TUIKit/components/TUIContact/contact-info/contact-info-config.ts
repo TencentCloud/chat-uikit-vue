@@ -19,7 +19,7 @@ import {
 } from '../utils/index';
 
 export const contactMoreInfoConfig = {
-  // 设置好友备注
+  // set friends' remark
   setRemark: {
     key: 'setRemark',
     label: '备注名',
@@ -43,7 +43,7 @@ export const contactMoreInfoConfig = {
       }
     },
   },
-  // 黑名单
+  // blocked list
   blackList: {
     key: 'blackList',
     label: '加入黑名单',
@@ -65,7 +65,7 @@ export const contactMoreInfoConfig = {
       }
     },
   },
-  // 填写验证信息（申请方）
+  // Fill in verification words (applicant)
   setWords: {
     key: 'setWords',
     label: '请填写验证信息',
@@ -75,7 +75,7 @@ export const contactMoreInfoConfig = {
     editType: CONTACT_INFO_MORE_EDIT_TYPE.TEXTAREA,
     editing: true,
   },
-  // 展示验证信息（申请接收方）
+  // Display verification words (application recipient)
   displayWords: {
     key: 'displayWords',
     label: '验证信息',

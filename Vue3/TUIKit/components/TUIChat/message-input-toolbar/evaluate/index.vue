@@ -169,7 +169,7 @@ const selectStar = (starIndex?: any) => {
 };
 
 const submitEvaluate = () => {
-  // 评价消息，星星数和文本必须有一个才可以提交
+  // The evaluate message must have at least one star or comment to be submitted.
   if (currentStarIndex.value < 0 && !comment.value.length) {
     return;
   }
@@ -194,7 +194,6 @@ const submitEvaluate = () => {
     offlinePushInfo: createOfflinePushInfo(currentConversation),
   };
   TUIChatService.sendCustomMessage(options as SendMessageParams, sendMessageOptions);
-  // 提交后关闭 dialog
   // close dialog after submit evaluate
   container?.value?.toggleDialogDisplay(false);
 };

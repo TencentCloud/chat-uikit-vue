@@ -48,7 +48,7 @@ import { isPC, isUniFrameWork } from '../../../utils/env';
 const props = defineProps({
   searchType: {
     type: String,
-    default: 'global', // "global":全局搜索, "conversation":会话内搜索
+    default: 'global', // "global" / "conversation"
     validator(value: string) {
       return ['global', 'conversation'].includes(value);
     },
@@ -66,7 +66,7 @@ const toggleMore = () => {
     });
   }
 };
-const extensionList = ref<Array<ExtensionInfo>>([]);
+const extensionList = ref<ExtensionInfo[]>([]);
 
 const handleMenu = (item: ExtensionInfo) => {
   const { listener = { onClicked: () => { } } } = item;

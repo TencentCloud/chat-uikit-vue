@@ -1,13 +1,13 @@
 <template>
   <div class="message-plugin">
-    <!-- 以下为以messageTip形式展示 -->
+    <!-- The following is displayed in the form of messageTip -->
     <div
       v-if="props.showStyle === 'tip'"
       class="message-plugin-tip"
     >
       <slot name="messageTip" />
     </div>
-    <!-- 以下为以messageBubble形式展示 -->
+    <!-- The following is displayed in the form of messageBubble -->
     <div
       v-else-if="props.showStyle === 'bubble'"
       class="message-plugin-bubble-content"
@@ -24,14 +24,14 @@
         :classNameList="props.bubbleClassNameList"
         @resendMessage="resendMessage(messageModel)"
       >
-        <!-- web message-bubble 为具名插槽, content 区域 slotName 为 messageElement-->
+        <!-- web message-bubble is a named slot, content area slotName is messageElement -->
         <template #messageElement>
           <slot
             v-if="!isUniFrameWork"
             name="messageBubble"
           />
         </template>
-        <!-- uni-app message-bubble 为匿名插槽, 无 slotName -->
+        <!-- uni-app message-bubble is an anonymous slot, no slotName -->
         <slot
           v-if="isUniFrameWork"
           name="messageBubble"
@@ -64,7 +64,7 @@ const props = withDefaults(defineProps<IProps>(), {
 const emits = defineEmits(['resendMessage', 'handleToggleMessageItem', 'handleH5LongPress']);
 const messageModel = computed(() => TUIStore.getMessageModel(props.message?.ID));
 
-// 以下为messageTool等外部交互使用，无需特殊处理，勿动
+// The following is for external interaction such as messageTool, no special processing is required, do not change
 const resendMessage = (message: IMessageModel) => {
   emits('resendMessage', message);
 };

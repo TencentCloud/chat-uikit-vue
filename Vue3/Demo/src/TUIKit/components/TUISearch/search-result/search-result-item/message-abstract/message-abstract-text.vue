@@ -11,22 +11,22 @@
       :key="index"
       :class="[(contentItem && contentItem.isHighlight) ? 'highlight' : 'normal']"
     >
-      {{ decodeTextMessage(contentItem.text) }}
+      {{ transformTextWithKeysToEmojiNames(contentItem.text) }}
     </span>
   </div>
 </template>
 <script setup lang="ts">
 import { ref, withDefaults } from '../../../../../adapter-vue';
-import { decodeTextMessage } from '../../../../TUIChat/utils/emojiList';
+import { transformTextWithKeysToEmojiNames } from '../../../../TUIChat/emoji-config';
 import { IHighlightContent } from '../../../type';
 
 interface IProps {
-  content: Array<IHighlightContent>;
+  content: IHighlightContent[];
   highlightType: 'font' | 'background';
   displayType: 'info' | 'bubble';
 }
 const props = withDefaults(defineProps<IProps>(), {
-  content: () => ([]) as Array<IHighlightContent>,
+  content: () => ([]) as IHighlightContent[],
   highlightType: 'font',
   displayType: 'info',
 });

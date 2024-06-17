@@ -47,9 +47,9 @@ import MessagePluginLayout from './message-plugin-layout.vue';
 import MessageCallGroup from './message-call/message-call-group.vue';
 import MessageCallC2C from './message-call/message-call-c2c.vue';
 import MessageCustomerService from './message-customer/message-customer-service.vue';
-// 未集成 TUIRoom 时，请引入以下路径
+// If TUIRoom is not integrated, please introduce the following path
 import MessageRoom from './message-room/message-room-default.vue';
-// 集成 TUIRoom 后，请注释以上路径，放开以下路径引入
+// After integrating TUIRoom, please comment the above path and open the following path to import
 // import MessageRoom from './message-room/message-room.vue';
 
 interface IProps {
@@ -66,7 +66,7 @@ const emits = defineEmits(['resendMessage', 'handleToggleMessageItem', 'handleH5
 const messageModel = computed(() => TUIStore.getMessageModel(props.message.ID));
 const messageSignalingInfo = computed(() => messageModel?.value?.getSignalingInfo());
 const messageCustomContent = computed(() => messageModel?.value?.getMessageContent());
-// 需要展示 ui 的判断逻辑
+
 const pluginMessageType = computed<{ pluginType: string; showStyle: string }>(() => {
   let typeObj = { pluginType: '', showStyle: '' };
   if (isCallMessage(messageModel.value)) {
@@ -89,7 +89,7 @@ const pluginMessageType = computed<{ pluginType: string; showStyle: string }>(()
   return typeObj;
 });
 
-// 以下为messageTool等外部交互使用，无需特殊处理，勿动
+// The following are for external interaction such as messageTool, no special processing is required, please do not touch
 const resendMessage = (message: IMessageModel) => {
   emits('resendMessage', message);
 };

@@ -10,6 +10,7 @@ import time from './time';
 
 import Words from './words';
 import Evaluate from './evaluate';
+import Emoji from './emoji';
 
 const messages = {
   en: {
@@ -30,6 +31,7 @@ const messages = {
     Evaluate,
     Words,
     TUISearch,
+    Emoji,
   },
 };
 

@@ -33,13 +33,13 @@ export default class TUIChatServer {
     switch (method) {
       case TUIConstants.TUIChat.SERVICE.METHOD.UPDATE_MESSAGE_LIST:
         message = params.message;
-        // 两种上屏情况
-        // 1. 如果 call 消息 conversationID 为 currentConversation,
-        //    需要借助 UPDATE_MESSAGE_LIST 更新 engine 中 TUIStore 的 messageList 进行上屏
-        //    （因为此时无法获得自己发送的消息）
-        // 2. 如果 call 消息 conversationID 不是 currentConversation,
-        //    下次切换到 call 消息所在会话时， getMessageList 可以获得 所有自己发送的 call 消息
-        //    无需此处处理
+        // Two screen-up situations
+        // 1. If the call message conversationID is currentConversation,
+        // You need to use UPDATE_MESSAGE_LIST to update the messageList of TUIStore in the engine to display it on the screen
+        // (because you cannot get the messages you sent at this time)
+        // 2. If the call message conversationID is not currentConversation,
+        // The next time you switch to the conversation where the call message is located, getMessageList can get all the call messages you sent
+        // No need to process here
         if (message?.conversationID === this.currentConversationID) {
           const messageList = [...this.currentMessageList, message];
           TUIStore.update(StoreName.CHAT, 'messageList', messageList);

@@ -1,102 +1,119 @@
 <template>
   <div :class="containerClassNameList">
-    <!-- todo 统一组件处理-->
+    <!-- multiple select radio -->
+    <RadioSelect
+      v-if="props.isMultipleSelectMode"
+      class="multiple-select-radio"
+      :isSelected="isMultipleSelected"
+      @onChange="toggleMultipleSelect"
+    />
     <div
-      class="message-bubble-main-content"
-      :class="[message.flow === 'in' ? '' : 'reverse']"
+      :class="{
+        'control-reverse': message.flow === 'out'
+      }"
     >
-      <Avatar
-        useSkeletonAnimation
-        :url="message.avatar || ''"
-      />
-      <main
-        class="message-body"
-        @click.stop
-      >
+      <!-- message-bubble-container -->
+      <div class="message-bubble-content">
         <div
-          v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
-          class="message-body-nick-name"
+          class="message-bubble-main-content"
+          :class="[message.flow === 'in' ? '' : 'reverse']"
         >
-          {{ props.content.showName }}
-        </div>
-        <div :class="['message-body-main', message.flow === 'out' && 'message-body-main-reverse']">
-          <div
-            :class="[
-              'blink',
-              'message-body-content',
-              message.flow === 'out' ? 'content-out' : 'content-in',
-              message.hasRiskContent && 'content-has-risk',
-              isNoPadding ? 'content-no-padding' : '',
-              isNoPadding && isBlink ? 'blink-shadow' : '',
-              !isNoPadding && isBlink ? 'blink-content' : '',
-            ]"
+          <Avatar
+            useSkeletonAnimation
+            :url="message.avatar || ''"
+          />
+          <main
+            class="message-body"
+            @click.stop
           >
-            <div class="content-main">
-              <img
-                v-if="
-                  (message.type === TYPES.MSG_IMAGE || message.type === TYPES.MSG_VIDEO) &&
-                    message.hasRiskContent
-                "
-                :class="['message-risk-replace', !isPC && 'message-risk-replace-h5']"
-                :src="riskImageReplaceUrl"
-              >
-              <template v-else>
-                <slot name="messageElement" />
-                <slot name="TUIEmojiPlugin" />
-              </template>
-            </div>
-            <!-- 敏感信息失败提示 -->
             <div
-              v-if="message.hasRiskContent"
-              class="content-has-risk-tips"
+              v-if="message.flow === 'in' && message.conversationType === 'GROUP'"
+              class="message-body-nick-name"
             >
-              {{ riskContentText }}
+              {{ props.content.showName }}
             </div>
-          </div>
-          <!-- 发送失败 -->
-          <div
-            v-if="message.status === 'fail' || message.hasRiskContent"
-            class="message-label fail"
-            @click="resendMessage()"
-          >
-            !
-          </div>
-          <!-- 加载图标 -->
-          <Icon
-            v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
-            class="message-label loading-circle"
-            :file="loadingIcon"
-            :width="'15px'"
-            :height="'15px'"
+            <div :class="['message-body-main', message.flow === 'out' && 'message-body-main-reverse']">
+              <div
+                :class="[
+                  'blink',
+                  'message-body-content',
+                  message.flow === 'out' ? 'content-out' : 'content-in',
+                  message.hasRiskContent && 'content-has-risk',
+                  isNoPadding ? 'content-no-padding' : '',
+                  isNoPadding && isBlink ? 'blink-shadow' : '',
+                  !isNoPadding && isBlink ? 'blink-content' : '',
+                ]"
+              >
+                <div class="content-main">
+                  <img
+                    v-if="
+                      (message.type === TYPES.MSG_IMAGE || message.type === TYPES.MSG_VIDEO) &&
+                        message.hasRiskContent
+                    "
+                    :class="['message-risk-replace', !isPC && 'message-risk-replace-h5']"
+                    :src="riskImageReplaceUrl"
+                  >
+                  <template v-else>
+                    <slot name="messageElement" />
+                    <slot name="TUIEmojiPlugin" />
+                  </template>
+                </div>
+                <!-- Risk Content Tips -->
+                <div
+                  v-if="message.hasRiskContent"
+                  class="content-has-risk-tips"
+                >
+                  {{ riskContentText }}
+                </div>
+              </div>
+              <!-- Send Fail Icon -->
+              <div
+                v-if="message.status === 'fail' || message.hasRiskContent"
+                class="message-label fail"
+                @click="resendMessage()"
+              >
+                !
+              </div>
+              <!-- Loading Icon -->
+              <Icon
+                v-if="message.status === 'unSend' && needLoadingIconMessageType.includes(message.type)"
+                class="message-label loading-circle"
+                :file="loadingIcon"
+                :width="'15px'"
+                :height="'15px'"
+              />
+              <!-- Read & Unread -->
+              <ReadStatus
+                class="message-label align-self-bottom"
+                :message="shallowCopyMessage(message)"
+                @openReadUserPanel="openReadUserPanel"
+              />
+            </div>
+          </main>
+        </div>
+        <!-- message extra area -->
+        <div
+          class="message-bubble-extra-content"
+        >
+          <!-- extra: message translation -->
+          <MessageTranslate
+            :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
+            :message="message"
           />
-          <!-- 已读 & 未读 -->
-          <ReadStatus
-            class="message-label align-self-bottom"
-            :message="shallowCopyMessage(message)"
-            @openReadUserPanel="openReadUserPanel"
+          <!-- extra: message convert voice to text -->
+          <MessageConvert
+            :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
+            :message="message"
+          />
+          <!-- extra: message quote -->
+          <MessageQuote
+            :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
+            :message="message"
+            @blinkMessage="blinkMessage"
+            @scrollTo="scrollTo"
           />
         </div>
-      </main>
-    </div>
-    <!-- message extra area -->
-    <div class="message-bubble-extra-content">
-      <!-- extra: message translation -->
-      <MessageTranslate
-        :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
-        :message="message"
-      />
-      <!-- extra: message convert voice to text -->
-      <MessageConvert
-        :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
-        :message="message"
-      />
-      <!-- extra: message quote -->
-      <MessageQuote
-        :class="message.flow === 'out' ? 'reverse' : 'flex-row'"
-        :message="message"
-        @blinkMessage="blinkMessage"
-        @scrollTo="scrollTo"
-      />
+      </div>
     </div>
   </div>
 </template>
@@ -110,6 +127,7 @@ import MessageQuote from './message-quote/index.vue';
 import Avatar from '../../../common/Avatar/index.vue';
 import MessageTranslate from './message-translate/index.vue';
 import MessageConvert from './message-convert/index.vue';
+import RadioSelect from '../../../common/RadioSelect/index.vue';
 import loadingIcon from '../../../../assets/icon/loading.png';
 import { shallowCopyMessage } from '../../utils/utils';
 import { isPC } from '../../../../utils/env';
@@ -117,15 +135,18 @@ import { isPC } from '../../../../utils/env';
 interface IProps {
   messageItem: IMessageModel;
   content?: any;
-  blinkMessageIDList?: string[];
   classNameList?: string[];
+  blinkMessageIDList?: string[];
+  isMultipleSelectMode?: boolean;
+  multipleSelectedMessageIDList?: string[];
 }
 
 interface IEmits {
   (e: 'resendMessage'): void;
   (e: 'blinkMessage', messageID: string): void;
   (e: 'setReadReceiptPanelVisible', visible: boolean, message?: IMessageModel): void;
-  // 下面的方法是 uniapp 专属
+  (e: 'changeSelectMessageIDList', options: { type: 'add' | 'remove' | 'clearAll'; messageID: string }): void;
+  // Only for uniapp
   (e: 'scrollTo', scrollHeight: number): void;
 }
 
@@ -136,6 +157,8 @@ const props = withDefaults(defineProps<IProps>(), {
   content: () => ({}),
   blinkMessageIDList: () => [],
   classNameList: () => [],
+  isMultipleSelectMode: false,
+  multipleSelectedMessageIDList: () => [],
 });
 
 const TYPES = TUIChatEngine.TYPES;
@@ -150,17 +173,25 @@ const needLoadingIconMessageType = [
 
 const { blinkMessageIDList, messageItem: message } = toRefs(props);
 
-const containerClassNameList = computed(() => {
-  return ['message-bubble', ...props.classNameList];
+const isMultipleSelected = computed<boolean>(() => {
+  return props.multipleSelectedMessageIDList.includes(message.value.ID);
 });
 
-// 当表情删除时，reactionList 会更新对应表情中 totalUserCount
+const containerClassNameList = computed(() => {
+  return [
+    'message-bubble',
+    isMultipleSelected.value ? 'multiple-selected' : '',
+    ...props.classNameList,
+  ];
+});
+
+// When an emoji is deleted, the `reactionList` will update the corresponding emoji's `totalUserCount`.
 const hasEmojiReaction = computed(() => {
   return message.value?.reactionList.some((item: any) => item.totalUserCount !== 0);
 });
 
 const isNoPadding = computed(() => {
-  return !hasEmojiReaction.value && [TYPES.MSG_IMAGE, TYPES.MSG_VIDEO].includes(message.value.type);
+  return !hasEmojiReaction.value && [TYPES.MSG_IMAGE, TYPES.MSG_VIDEO, TYPES.MSG_MERGER].includes(message.value.type);
 });
 
 const riskContentText = computed<string>(() => {
@@ -182,6 +213,13 @@ const isBlink = computed(() => {
   return false;
 });
 
+function toggleMultipleSelect(isSelected: boolean) {
+  emits('changeSelectMessageIDList', {
+    type: isSelected ? 'add' : 'remove',
+    messageID: message.value.ID,
+  });
+}
+
 function resendMessage() {
   if (!message.value?.hasRiskContent) {
     emits('resendMessage');
@@ -202,30 +240,41 @@ function openReadUserPanel() {
 </script>
 
 <style lang="scss" scoped>
-.flex-row {
+* {
   display: flex;
-}
-
-.reverse {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
+  flex-direction: column;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .message-bubble {
-  width: 100%;
-  box-sizing: border-box;
+  padding: 10px 15px;
   display: flex;
-  flex-direction: column;
-  padding: 0 20px 25px;
+  flex-direction: row;
   user-select: none;
-  -webkit-touch-callout: none; /* 系统默认菜单被禁用 */
-  -webkit-user-select: none; /* webkit浏览器 */
-  -khtml-user-select: none; /* 早期浏览器 */
-  -moz-user-select: none;/* 火狐 */
-  -ms-user-select: none; /* IE10 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  &.multiple-selected {
+    background-color: #f0f0f0;
+  }
+
+  .multiple-select-radio {
+    margin-right: 12px;
+    flex: 0 0 auto;
+  }
+
+  .control-reverse {
+    flex: 1 1 auto;
+    flex-direction: row-reverse;
+  }
+
   .message-bubble-main-content {
     display: flex;
+    flex-direction: row;
 
     .message-avatar {
       display: block;
@@ -241,9 +290,9 @@ function openReadUserPanel() {
       flex-direction: column;
       align-items: flex-start;
       margin: 0 8px;
-      max-width: calc(100% - 54px);
 
       .message-body-nick-name {
+        display: block;
         margin-bottom: 4px;
         font-size: 12px;
         color: #999;
@@ -394,6 +443,12 @@ function openReadUserPanel() {
         }
       }
     }
+  }
+
+  .reverse {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
   }
 
   .message-bubble-extra-content {

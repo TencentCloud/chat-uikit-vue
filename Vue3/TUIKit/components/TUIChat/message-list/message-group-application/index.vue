@@ -214,7 +214,6 @@ onMounted(() => {
     groupApplicationCount.value = applicationList.length;
   });
 
-  // 群未决消息列表
   TUIStore.watch(StoreName.GRP, {
     groupSystemNoticeList: onGroupSystemNoticeListUpdated,
   });

@@ -222,8 +222,8 @@ function toggleCurrentContactList(key: keyof IContactList) {
 
 function selectItem(item: any) {
   currentContactInfo.value = item;
-  // 单独处理：
-  // 对于 搜索列表 中 某结果，查看 contactInfo 详情前，需要对于“已在群组列表/已在好友列表” 的情况进行数据更新，已获得更详细的信息
+  // For a result in the search list, before viewing the contactInfo details,
+  // it is necessary to update the data for the "already in the group list/already in the friend list" situation to obtain more detailed information
   if (contactSearchingStatus.value) {
     let targetListItem;
     if ((currentContactInfo.value as Friend)?.userID) {
@@ -239,7 +239,6 @@ function selectItem(item: any) {
       currentContactInfo.value = targetListItem;
     }
   }
-  // 更新数据
   TUIStore.update(StoreName.CUSTOM, 'currentContactInfo', currentContactInfo.value);
 }
 
@@ -258,7 +257,8 @@ function onCustomerServiceCommercialPluginUpdated(isEnabled: boolean) {
     return;
   }
 
-  /// 客户购买客服插件后 engine 通过商业化能力位更新将 enabledCustomerServicePlugin 设置为 true
+  // After the customer purchases the customer service plug-in,
+  // the engine updates the enabledCustomerServicePlugin to true through the commercial capability bit.
   const contactListExtensionID = TUIConstants.TUIContact.EXTENSION.CONTACT_LIST.EXT_ID;
   const tuiContactExtensionList = TUICore.getExtensionList(contactListExtensionID);
 
