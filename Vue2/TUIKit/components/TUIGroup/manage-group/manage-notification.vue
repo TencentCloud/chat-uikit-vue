@@ -129,7 +129,6 @@ watchEffect(() => {
 
 const emits = defineEmits(['update', 'close']);
 
-// 更新群资料
 const updateProfile = () => {
   if (input.value.length > 150) {
     Toast({

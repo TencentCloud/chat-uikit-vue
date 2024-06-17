@@ -68,6 +68,15 @@ const callAgain = () => {
       params: {
         userIDList: [userID],
         type: callInfo?.value?.type,
+        callParams: {
+          // doc: https://cloud.tencent.com/document/product/269/105713
+          offlinePushInfo: {
+            title: 'call',
+            description: 'you have a call',
+            androidSound: 'private_ring',
+            iOSSound: '01.caf',
+          },
+        },
       },
     });
   }

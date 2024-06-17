@@ -10,7 +10,6 @@ import TUIChatEngine, {
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 
-// 解析 用户头像/群头像
 export const generateAvatar = (item: any): string => {
   return (
     item?.avatar
@@ -20,7 +19,6 @@ export const generateAvatar = (item: any): string => {
   );
 };
 
-// 解析 用户名称/群名称
 export const generateName = (item: any): string => {
   return (
     item?.remark
@@ -33,7 +31,6 @@ export const generateName = (item: any): string => {
   );
 };
 
-// 解析 信息界面 用户名称/群名称
 export const generateContactInfoName = (item: any): string => {
   return (
     item?.name
@@ -45,12 +42,12 @@ export const generateContactInfoName = (item: any): string => {
   );
 };
 
-// 解析 contactInfo 模块 基础信息展示内容
-// 群信息展示: 群ID 群类型
-// 用户信息展示: 用户ID 个性签名
+// Parse the basic information display content of the contactInfo module
+// Group information display: group ID group type
+// User information display: user ID personal signature
 export const generateContactInfoBasic = (
   contactInfo: any,
-): Array<{ label: string; data: string }> => {
+): any[] => {
   const res = [
     {
       label: contactInfo?.groupID ? '群ID' : 'ID',
@@ -66,7 +63,6 @@ export const generateContactInfoBasic = (
   return res;
 };
 
-// 判断是否为申请
 export const isApplicationType = (info: any) => {
   return (
     info?.type === TUIChatEngine?.TYPES?.SNS_APPLICATION_SENT_TO_ME
@@ -74,8 +70,6 @@ export const isApplicationType = (info: any) => {
   );
 };
 
-// 好友相关
-// 判断是否为双向好友关系
 export const isFriend = (info: any): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     if (info?.groupID || !info?.userID) {
@@ -92,19 +86,19 @@ export const isFriend = (info: any): Promise<boolean> => {
     })
       .then((res: any) => {
         switch (res?.data?.successUserIDList[0]?.relation) {
-          // 无好友关系：A 的好友表中没有 B，B 的好友表中也没有 A
+          // No friend relationship: A does not have B in his friend list, and B does not have A in his friend list
           case TUIChatEngine.TYPES.SNS_TYPE_NO_RELATION:
             resolve(false);
             break;
-          // 单项好友：A 的好友表中有 B，但 B 的好友表中没有 A
+          // Single-item friend: A has B in his friend list, but B does not have A in his friend list
           case TUIChatEngine.TYPES.SNS_TYPE_A_WITH_B:
             resolve(false);
             break;
-          // 单项好友：A 的好友表中没有 B，但 B 的好友表中有 A
+          // Single-item friend: A does not have B in his friend list, but B has A in his friend list
           case TUIChatEngine.TYPES.SNS_TYPE_B_WITH_A:
             resolve(false);
             break;
-          // 双向好友关系
+          // Two-way friendship
           case TUIChatEngine.TYPES.SNS_TYPE_BOTH_WAY:
             resolve(true);
             break;
@@ -120,7 +114,7 @@ export const isFriend = (info: any): Promise<boolean> => {
   });
 };
 
-// 修改好友备注 / change friend‘s remark
+// Change friend‘s remark
 export const updateFriendRemark = (userID: string, remark: string) => {
   // eslint-disable-next-line no-control-regex
   if (remark?.replace(/[^\u0000-\u00ff]/g, 'aa')?.length > 96) {
@@ -149,7 +143,7 @@ export const updateFriendRemark = (userID: string, remark: string) => {
     });
 };
 
-// 删除某个好友 / delete one friend
+// Delete one friend
 export const deleteFriend = (userID: string) => {
   TUIFriendService.deleteFriend({
     userIDList: [userID],
@@ -178,7 +172,7 @@ export const deleteFriend = (userID: string) => {
     });
 };
 
-// 添加好友 / add friend
+// Add friend
 export const addFriend = (params: AddFriendParams) => {
   TUIFriendService.addFriend(params)
     .then(() => {
@@ -196,8 +190,7 @@ export const addFriend = (params: AddFriendParams) => {
     });
 };
 
-// 进入会话 / enter conversation
-// todo：后续抽离为切换会话服务
+// Enter conversation
 export const enterConversation = (item: any) => {
   const conversationID = item?.groupID
     ? `GROUP${item?.groupID}`
@@ -213,7 +206,7 @@ export const enterConversation = (item: any) => {
   );
 };
 
-// 同意好友申请 / accept friend application
+// Accept friend application
 export const acceptFriendApplication = (userID: string) => {
   TUIFriendService.acceptFriendApplication({
     userID,
@@ -234,7 +227,7 @@ export const acceptFriendApplication = (userID: string) => {
     });
 };
 
-// 拒绝好友申请 / refuse friend application
+// Refuse friend application
 export const refuseFriendApplication = (userID: string) => {
   TUIFriendService.refuseFriendApplication(userID)
     .then(() => {
@@ -252,9 +245,7 @@ export const refuseFriendApplication = (userID: string) => {
     });
 };
 
-// 群组相关
-// todo: 后续抽离为 TUIGroup/server 中以 extension 形式提供
-// 解散群聊 / dismiss group
+// Dismiss group
 export const dismissGroup = (groupID: string) => {
   TUIGroupService.dismissGroup(groupID)
     .then(() => {
@@ -262,10 +253,6 @@ export const dismissGroup = (groupID: string) => {
         message: TUITranslateService.t('TUIContact.解散群聊成功'),
         type: TOAST_TYPE.SUCCESS,
       });
-      // 解散群聊后特殊情况：
-      // 如果当前为 TUIContact 搜索状态，即 currentContactSearchingStatus === true
-      // 且当前打开的为 搜索结果 中的 群聊信息界面
-      // 需要更新搜索结果相关更新数据
       TUIGlobal?.updateContactSearch && TUIGlobal?.updateContactSearch();
     })
     .catch((error: any) => {
@@ -277,7 +264,7 @@ export const dismissGroup = (groupID: string) => {
     });
 };
 
-// 退出群聊 / quit group
+// Quit group
 export const quitGroup = (groupID: string) => {
   TUIGroupService.quitGroup(groupID)
     .then(() => {
@@ -295,7 +282,7 @@ export const quitGroup = (groupID: string) => {
     });
 };
 
-// 申请加入群聊 / join group
+// Join group
 export const joinGroup = (groupID: string, applyMessage?: string) => {
   TUIGroupService.joinGroup({
     groupID,
@@ -303,20 +290,19 @@ export const joinGroup = (groupID: string, applyMessage?: string) => {
   } as JoinGroupParams)
     .then((imResponse: { data: { status?: string } }) => {
       switch (imResponse?.data?.status) {
-        case TUIChatEngine.TYPES.JOIN_STATUS_WAIT_APPROVAL: // 等待管理员同意
+        case TUIChatEngine.TYPES.JOIN_STATUS_WAIT_APPROVAL: // Wait for administrator approval
           Toast({
             message: TUITranslateService.t('TUIContact.等待管理员同意'),
             type: TOAST_TYPE.SUCCESS,
           });
           break;
-        case TUIChatEngine.TYPES.JOIN_STATUS_SUCCESS: // 加群成功
-          // todo: 切换到群聊所在chat界面
+        case TUIChatEngine.TYPES.JOIN_STATUS_SUCCESS: // Join group successfully
           Toast({
             message: TUITranslateService.t('TUIContact.加群成功'),
             type: TOAST_TYPE.SUCCESS,
           });
           break;
-        case TUIChatEngine.TYPES.JOIN_STATUS_ALREADY_IN_GROUP: // 已经在群中
+        case TUIChatEngine.TYPES.JOIN_STATUS_ALREADY_IN_GROUP: // Already in the group
           Toast({
             message: TUITranslateService.t('TUIContact.您已是群成员'),
             type: TOAST_TYPE.SUCCESS,
@@ -335,8 +321,7 @@ export const joinGroup = (groupID: string, applyMessage?: string) => {
     });
 };
 
-// 以下为黑名单相关逻辑
-// 加入黑名单
+// Add to blacklist
 export const addToBlacklist = (userID: string, successCallBack?: () => void) => {
   TUIUserService.addToBlacklist({
     userIDList: [userID],
@@ -352,7 +337,8 @@ export const addToBlacklist = (userID: string, successCallBack?: () => void) => 
       });
     });
 };
-// 移除黑名单
+
+// Remove from Blacklist
 export const removeFromBlacklist = (
   userID: string,
   successCallBack?: () => void,

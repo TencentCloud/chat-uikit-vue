@@ -10,6 +10,7 @@ import time from './time';
 
 import Words from './words';
 import Evaluate from './evaluate';
+import Emoji from './emoji';
 
 const messages = {
   zh_cn: {
@@ -18,8 +19,8 @@ const messages = {
     系统通知: '系统通知',
     关闭: '关闭',
     确定: '确定',
-    开始时间: "开始时间",
-    结束时间: "结束时间",
+    开始时间: '开始时间',
+    结束时间: '结束时间',
     TUIChat,
     TUIConversation,
     TUIGroup,
@@ -30,6 +31,7 @@ const messages = {
     Evaluate,
     Words,
     TUISearch,
+    Emoji,
   },
 };
 

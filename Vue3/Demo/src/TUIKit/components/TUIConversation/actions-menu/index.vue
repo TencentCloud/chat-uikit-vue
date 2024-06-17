@@ -120,7 +120,7 @@ const deleteConversationDialogTitle = computed(() => {
     : props.selectedConversation?.type === TUIChatEngine.TYPES.CONV_GROUP ? 'TUIConversation.删除后，将清空该群聊的消息记录' : '';
 });
 function checkExceedBounds() {
-  // 组件初始渲染时，执行并自检边界有没有超出屏幕，在nextTick中处理。
+  // When the component is initially rendered, it executes and self-checks whether the boundary exceeds the screen, and handles it in nextTick.
   nextTick(() => {
     if (isUniFrameWork) {
       // check exceed bounds
@@ -148,9 +148,9 @@ function checkExceedBounds() {
         })
         .exec();
     } else {
-      // 处理原生Vue菜单低于屏幕的情况
+      // Handling the situation where the native Vue menu is lower than the screen
       const rect = actionsMenuDomRef.value?.getBoundingClientRect();
-      // PC端根据鼠标点击的位置设置actionsMenu的位置，否则使用默认值167px
+      // The PC side sets the position of actionsMenu according to the position of the mouse click, otherwise the default value of 167px is used
       if (isPC && typeof props.actionsMenuPosition.left !== 'undefined') {
         _actionsMenuPosition.value.left = props.actionsMenuPosition.left;
       }

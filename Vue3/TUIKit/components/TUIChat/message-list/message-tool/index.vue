@@ -18,8 +18,7 @@
         >
           <Icon
             :file="item.iconUrl"
-            width="15px"
-            height="15px"
+            :size="'15px'"
           />
           <span class="list-item-text">{{ item.text }}</span>
         </div>
@@ -45,18 +44,26 @@ import quoteIcon from '../../../../assets/icon/msg-quote.svg';
 import revokeIcon from '../../../../assets/icon/msg-revoke.svg';
 import forwardIcon from '../../../../assets/icon/msg-forward.svg';
 import translateIcon from '../../../../assets/icon/translate.svg';
+import multipleSelectIcon from '../../../../assets/icon/multiple-select.svg';
 import convertText from '../../../../assets/icon/convertText_zh.svg';
 import { enableSampleTaskStatus } from '../../../../utils/enableSampleTaskStatus';
 import { copyText } from '../../utils/utils';
-import { decodeTextMessage } from '../../utils/emojiList';
+import { transformTextWithKeysToEmojiNames } from '../../emoji-config';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
 import { ITranslateInfo, IConvertInfo } from '../../../../interface';
 
 interface IProps {
   messageItem: IMessageModel;
+  isMultipleSelectMode: boolean;
 }
 
+interface IEmits {
+  (key: 'toggleMultipleSelectMode'): void;
+}
+
+const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
+  isMultipleSelectMode: false,
   messageItem: () => ({}) as IMessageModel,
 });
 
@@ -148,6 +155,16 @@ const actionItems = ref([
     },
     clickEvent: convertVoiceToText,
   },
+  {
+    key: 'multi-select',
+    text: TUITranslateService.t('TUIChat.多选'),
+    iconUrl: multipleSelectIcon,
+    renderCondition() {
+      if (!message.value) return false;
+      return message.value.status === 'success';
+    },
+    clickEvent: multipleSelectMessage,
+  },
 ]);
 
 const message = ref<IMessageModel>();
@@ -181,7 +198,7 @@ const isAllActionItemInvalid = computed(() => {
 });
 
 function getFunction(index: number) {
-  // 兼容 vue2 小程序的写法 不允许动态绑定
+  // Compatible with Vue2 and WeChat Mini Program syntax, dynamic binding is not allowed.
   actionItems.value[index].clickEvent();
 }
 
@@ -203,7 +220,6 @@ function openMessage() {
 
 function revokeMessage() {
   if (!message.value) return;
-  // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.value.ID);
   messageModel
     .revokeMessage()
@@ -211,7 +227,6 @@ function revokeMessage() {
       enableSampleTaskStatus('revokeMessage');
     })
     .catch((error: any) => {
-      // 调用异常时业务侧可以通过 promise.catch 捕获异常进行错误处理
       if (error.code === 20016) {
         const message = TUITranslateService.t('TUIChat.已过撤回时限');
         Toast({
@@ -224,13 +239,12 @@ function revokeMessage() {
 
 function deleteMessage() {
   if (!message.value) return;
-  // 获取 messageModel
   const messageModel = TUIStore.getMessageModel(message.value.ID);
   messageModel.deleteMessage();
 }
 
 async function copyMessage() {
-  const text = decodeTextMessage(message.value?.payload?.text);
+  const text = transformTextWithKeysToEmojiNames(message.value?.payload?.text);
   if (isUniFrameWork) {
     TUIGlobal?.setClipboardData({
       data: text,
@@ -285,6 +299,10 @@ function convertVoiceToText() {
     messageID: message.value.ID,
     visible: !actionItems.value[index].visible,
   });
+}
+
+function multipleSelectMessage() {
+  emits('toggleMultipleSelectMode');
 }
 
 function onMessageTranslationInfoUpdated(info: Map<string, ITranslateInfo[]>) {

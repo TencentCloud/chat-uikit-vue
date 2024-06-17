@@ -2,3 +2,10 @@
 @import "./color";
 @import "./web";
 @import "./h5";
+
+:not(not) {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+}

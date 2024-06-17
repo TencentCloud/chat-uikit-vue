@@ -19,7 +19,7 @@
         <img
           v-if="currentTabItem.type === EMOJI_TYPE.BASIC"
           class="emoji"
-          :src="currentTabItem.url + basicEmojiMap[childrenItem]"
+          :src="currentTabItem.url + BASIC_EMOJI_URL_MAPPING[childrenItem]"
         >
         <img
           v-else-if="currentTabItem.type === EMOJI_TYPE.BIG"
@@ -28,7 +28,7 @@
         >
         <img
           v-else
-          class="emoji-custom"
+          class="emoji-custom emoji-big"
           :src="currentTabItem.url + childrenItem"
         >
       </li>
@@ -52,7 +52,7 @@
         >
         <img
           v-else
-          class="icon-custom"
+          class="icon-custom icon-big"
           :src="item.url + item.list[0]"
         >
       </li>
@@ -79,14 +79,14 @@ import Icon from '../../../common/Icon.vue';
 import faceIcon from '../../../../assets/icon/face.png';
 import { EMOJI_TYPE } from '.././../../../constant';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
-import { IEmojiList, IEmojiListItem } from '../../../../interface';
+import { IEmojiGroupList, IEmojiGroup } from '../../../../interface';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
-import { emojiList, basicEmojiMap, basicEmojiList } from '../../utils/emojiList';
+import { EMOJI_GROUP_LIST, BASIC_EMOJI_URL_MAPPING, convertKeyToEmojiName } from '../../emoji-config';
 
 const emits = defineEmits(['insertEmoji', 'onClose', 'sendMessage']);
-const list = ref<IEmojiList>(emojiList);
+const list = ref<IEmojiGroupList>(EMOJI_GROUP_LIST);
 const currentTabIndex = ref<number>(0);
-const currentTabItem = ref<IEmojiListItem>(list?.value[0]);
+const currentTabItem = ref<IEmojiGroup>(list?.value[0]);
 const currentEmojiList = ref<string[]>(list?.value[0]?.list);
 const currentConversation = ref();
 const emojiPickerDialog = ref();
@@ -108,8 +108,7 @@ const toggleEmojiTab = (index: number) => {
   currentTabIndex.value = index;
   currentTabItem.value = list?.value[index];
   currentEmojiList.value = list?.value[index]?.list;
-  // 滚动条回滚到顶部
-  // 原生 web & h5
+  // web & h5 side scroll to top
   if (!isUniFrameWork) {
     emojiPickerListRef?.value && (emojiPickerListRef.value.scrollTop = 0);
   }
@@ -117,12 +116,12 @@ const toggleEmojiTab = (index: number) => {
 
 const select = (item: any, index: number) => {
   const options: any = {
-    emoji: { key: item, name: basicEmojiList[item] },
+    emoji: { key: item, name: convertKeyToEmojiName(item) },
     type: currentTabItem?.value?.type,
   };
   switch (currentTabItem?.value?.type) {
     case EMOJI_TYPE.BASIC:
-      options.url = currentTabItem?.value?.url + basicEmojiMap[item];
+      options.url = currentTabItem?.value?.url + BASIC_EMOJI_URL_MAPPING[item];
       if (isUniFrameWork) {
         uni.$emit('insert-emoji', options);
       } else {
@@ -141,14 +140,14 @@ const select = (item: any, index: number) => {
   isPC && emits('onClose');
 };
 
-const sendFaceMessage = (index: number, listItem: IEmojiListItem) => {
+const sendFaceMessage = (index: number, listItem: IEmojiGroup) => {
   const options = {
     to:
       currentConversation?.value?.groupProfile?.groupID
       || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
     payload: {
-      index: listItem.index,
+      index: listItem.emojiGroupID,
       data: listItem.list[index],
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),

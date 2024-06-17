@@ -107,7 +107,7 @@ $flow-in-bg-color: #fbfbfb;
 $flow-out-bg-color: #dceafd;
 
 .message-audio {
-  box-sizing: border-box;
+  flex-direction: row;
   display: flex;
   flex: 0 0 auto;
   cursor: pointer;

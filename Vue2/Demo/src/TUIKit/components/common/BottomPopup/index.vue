@@ -67,48 +67,47 @@ import { outsideClick } from '@tencentcloud/universal-api';
 import { isPC, isH5, isUniFrameWork } from '../../../utils/env';
 
 const props = defineProps({
-  // 是否展示 底部弹出对话框
+  // Whether to display the bottom pop-up dialog box
   show: {
     type: Boolean,
     default: false,
   },
-  // 是否需要遮罩层，默认为true
+  // Whether a mask layer is required, the default is true
   modal: {
     type: Boolean,
     default: true,
   },
-  // 弹出框内容区域高度(不包含遮罩), 默认为 fit-content
+  // Popup box content area height (excluding mask), default is fit-content
   height: {
     type: String,
     default: 'fit-content',
   },
-  // 是否可以通过点击外部关闭弹出对话框, 默认为true
-  // uniapp 仅支持点击蒙版关闭弹出对话框
+  // Whether the pop-up dialog box can be closed by clicking outside, the default is true
+  // uniapp only supports closing the pop-up dialog box by clicking the mask
   closeByClickOutside: {
     type: Boolean,
     default: true,
   },
-  // 上边框两角圆角角度，默认为 0px，即默认为直角
+  // The rounded angle of the top border corners is 0px by default, i.e. right angle by default
   borderRadius: {
     type: String,
     default: '0px',
   },
-  // title 标题文本
   title: {
     type: String,
     default: '',
   },
-  // 是否展示顶部关闭按钮, 默认不展示
+  // Whether to display the top close button, not displayed by default
   showHeaderCloseButton: {
     type: Boolean,
     default: false,
   },
-  // 是否展示底部提交按钮，默认不展示
+  // Whether to display the submit button at the bottom, not displayed by default
   showFooterSubmitButton: {
     type: Boolean,
     default: false,
   },
-  // 底部提交按钮文案，仅 showFooterSubmitButton 为 true 时有效
+  // Bottom submit button text, only valid when showFooterSubmitButton is true
   submitButtonContent: {
     type: String,
     default: () => TUITranslateService.t('确定'),
@@ -128,7 +127,7 @@ watch(
       case true:
         emits('onOpen', dialogRef);
         nextTick(() => {
-          // web h5 下生效
+          // Effective under web h5
           if (isH5 && !isUniFrameWork) {
             if (props.closeByClickOutside) {
               outsideClick.listen({

@@ -40,9 +40,9 @@ import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 
 const props = defineProps({
-  // 图片源, 仅uniapp版本有效, web版本仅支持从相册中选择图片
-  // album: 从相册中选择
-  // camera: 使用相机拍摄
+  // Image source: only valid for uni-app version, web version only supports selecting images from the album.
+  // album: Select from album
+  // camera: Take a photo using the camera
   imageSourceType: {
     type: String,
     default: 'album',
@@ -83,25 +83,23 @@ const imageToolbarForShow = computed((): { icon: string; title: string } => {
 });
 
 const onIconClick = () => {
-  // uniapp 环境 发送图片
+  // uni-app send image
   if (isUniFrameWork) {
-    // 增加 TUIGlobal.chooseMedia 条件限制，防御 uni 打包其他平台小程序时由于打包问题导致 isWeChat 为 true 出现运行时报错
     if (isWeChat && TUIGlobal?.chooseMedia) {
-      // 微信小程序从基础库 2.21.0 开始， wx.chooseImage 停止维护，请使用 uni.chooseMedia 代替
       TUIGlobal?.chooseMedia({
         count: 1,
-        mediaType: ['image'], // 图片
-        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
-        sourceType: [props.imageSourceType], // 从相册选择或使用相机拍摄
+        mediaType: ['image'],
+        sizeType: ['original', 'compressed'],
+        sourceType: [props.imageSourceType], // Use camera or select from album.
         success: function (res: any) {
           sendImageMessage(res);
         },
       });
     } else {
-      // uniapp h5/app 发送图片
+      // uni-app H5/App send image
       TUIGlobal?.chooseImage({
         count: 1,
-        sourceType: [props.imageSourceType], // 从相册选择或使用相机拍摄
+        sourceType: [props.imageSourceType], // Use camera or select from album.
         success: function (res) {
           sendImageMessage(res);
         },
@@ -136,7 +134,6 @@ const sendImageMessage = (files: any) => {
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
-  // todo: 需要处理uniapp文件没有宽高的变形问题，需要linda看看
   TUIChatService.sendImageMessage(options);
 };
 </script>

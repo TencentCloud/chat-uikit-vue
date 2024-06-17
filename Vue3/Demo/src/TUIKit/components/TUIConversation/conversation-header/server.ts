@@ -10,7 +10,7 @@ export interface IMenuItem {
   text: string;
   data: {
     name: string;
-    children?: Array<IMenuItem>;
+    children?: any[];
   };
   listener?: {
     onClicked: (...args: any[]) => void;
@@ -27,7 +27,7 @@ export default class ConversationHeaderServer {
     return ConversationHeaderServer.instance;
   }
 
-  public getMenu(): Array<IMenuItem> {
+  public getMenu(): any[] {
     const list = this.generateMenuList();
     if (!isPC && list.length > 0) {
       return [{
@@ -41,7 +41,7 @@ export default class ConversationHeaderServer {
     return list;
   }
 
-  private generateMenuList(): Array<IMenuItem> {
+  private generateMenuList(): any[] {
     const list = [
       {
         icon: C2C,
@@ -68,7 +68,7 @@ export default class ConversationHeaderServer {
   }
 
   private createConversation(item: IMenuItem) {
-    // 创建会话，通过 TUICore.callService 通知 conversationServer
+    // Create a conversation and notify conversationServer via TUICore.callService
     TUICore.callService({
       serviceName: TUIConstants.TUIConversation.SERVICE.NAME,
       method: TUIConstants.TUIConversation.SERVICE.METHOD.CREATE_CONVERSATION,

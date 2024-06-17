@@ -1,6 +1,6 @@
 <template>
   <Overlay
-    :useMask="false"
+    :maskColor="'transparent'"
     @onOverlayClick="closeReadReceiptPanel"
   >
     <div
@@ -148,7 +148,6 @@ onMounted(async () => {
 });
 
 watch(
-  // uniapp下监听不到数据变化
   () => props.message.readReceiptInfo.readCount,
   () => {
     initAndRefetchReceiptInfomation();
@@ -208,10 +207,10 @@ async function fetchGroupMessageRecriptMemberListByType(readType: ReadType = 'al
 
 async function pullDownFetchMoreData() {
   /**
-   * 使用 isPullDownFetching 控制 FetchMore 组件的状态
-   * 顺便同时做 uniapp 下的 intersectionObserver 的加锁
-   * 因为 uniapp 下 没有 isIntersecting 无法判断被观察的元素进入还是退出观察区
-   */
+   * Use isPullDownFetching to control the state of the FetchMore component
+   * Also, implement locking for intersectionObserver under uniapp
+   * Because there is no isIntersecting in uniapp, it is impossible to determine whether the observed element has entered or exited the observation area
+  */
   if (isListFetchCompleted[currentTabName.value] || isPullDownFetching.value) {
     return;
   }

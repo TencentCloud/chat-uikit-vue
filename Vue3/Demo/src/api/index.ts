@@ -1,16 +1,15 @@
 import axios from 'axios';
 import qs from 'qs';
-const baseURL = 'https://demos.trtc.tencent-cloud.com'; // 国内
-// const baseURL = 'https://demos3w.trtc.tencent-cloud.com'; // 国际
-const ENV = 'prod'; // prod: 生产 dev: 测试
+const baseURL = 'https://demos.trtc.tencent-cloud.com';
+// const baseURL = 'https://demos3w.trtc.tencent-cloud.com';
+const ENV = 'prod';
 
 const instance = axios.create({
   baseURL: `${baseURL}/${ENV}`,
   headers: { 'content-type': 'application/x-www-form-urlencoded' },
 });
 
-
-export async function getSmsVerifyCode(data: { appId: any; }) {
+export async function getSmsVerifyCode(data: { appId: any }) {
   const options = buildOptions(data, '/base/v1/auth_users/user_verify_by_picture', 'GET');
   return instance(options);
 }
@@ -25,12 +24,12 @@ export async function loginSystemByToken(data: any) {
   return instance(options);
 }
 
-export  async function cancellation(data:any) {
+export async function cancellation(data: any) {
   const options = buildOptions(data, '/base/v1/auth_users/user_delete');
-  return  instance(options);
+  return instance(options);
 }
-function buildOptions(data:any, url:string, method?:string) {
-  const options:any = {
+function buildOptions(data: any, url: string, method?: string) {
+  const options: any = {
     method: method || 'POST',
     url,
   };

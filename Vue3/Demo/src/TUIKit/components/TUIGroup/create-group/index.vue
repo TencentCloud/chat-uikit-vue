@@ -86,7 +86,7 @@
             </li>
           </ul>
         </ul>
-        <!-- 修改群名称 -->
+        <!-- Edit Group Name -->
         <div
           v-else
           class="group-list group-list-edit"

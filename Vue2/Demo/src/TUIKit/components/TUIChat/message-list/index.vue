@@ -9,7 +9,7 @@
       class="tui-chat-main"
       @click="closeChatPop"
     >
-      <!-- 安全提示 -->
+      <!-- Safe Tips -->
       <div class="tui-chat-safe-tips">
         <span>
           {{
@@ -27,7 +27,7 @@
         :key="props.groupID"
         :groupID="props.groupID"
       />
-      <!-- 消息列表 -->
+      <!-- Message List -->
       <ul
         id="messageScrollList"
         ref="messageListRef"
@@ -48,7 +48,6 @@
           ref="messageElementListRef"
           class="message-li"
         >
-          <!-- 消息时间组件 -->
           <MessageTimestamp
             :currTime="item.time"
             :prevTime="index > 0 ? messageList[index - 1].time : 0"
@@ -76,6 +75,9 @@
             />
             <div
               v-else
+              :class="{
+                'message-event-bind-div': true,
+              }"
               @longpress="handleToggleMessageItem($event, item, true)"
               @click.prevent.right="handleToggleMessageItemForPC($event, item)"
               @touchstart="handleH5LongPress($event, item, 'touchstart')"
@@ -83,11 +85,14 @@
               @mouseover="handleH5LongPress($event, item, 'touchend')"
             >
               <MessageBubble
-                :messageItem="JSON.parse(JSON.stringify(item))"
                 :content="item.getMessageContent()"
                 :blinkMessageIDList="blinkMessageIDList"
-                @resendMessage="resendMessage(item)"
+                :isMultipleSelectMode="isMultipleSelectMode"
+                :messageItem="JSON.parse(JSON.stringify(item))"
+                :multipleSelectedMessageIDList="multipleSelectedMessageIDList"
                 @blinkMessage="blinkMessage"
+                @resendMessage="resendMessage(item)"
+                @changeSelectMessageIDList="changeSelectMessageIDList"
                 @setReadReceiptPanelVisible="setReadReceiptPanelVisible"
               >
                 <template #messageElement>
@@ -96,7 +101,7 @@
                     :content="item.getMessageContent()"
                   />
                   <ProgressMessage
-                    v-if="item.type === TYPES.MSG_IMAGE"
+                    v-else-if="item.type === TYPES.MSG_IMAGE"
                     :content="item.getMessageContent()"
                     :messageItem="item"
                   >
@@ -107,7 +112,7 @@
                     />
                   </ProgressMessage>
                   <ProgressMessage
-                    v-if="item.type === TYPES.MSG_VIDEO"
+                    v-else-if="item.type === TYPES.MSG_VIDEO"
                     :content="item.getMessageContent()"
                     :messageItem="item"
                   >
@@ -117,12 +122,12 @@
                     />
                   </ProgressMessage>
                   <MessageAudio
-                    v-if="item.type === TYPES.MSG_AUDIO"
+                    v-else-if="item.type === TYPES.MSG_AUDIO"
                     :content="item.getMessageContent()"
                     :messageItem="item"
                   />
                   <ProgressMessage
-                    v-if="item.type === TYPES.MSG_FILE"
+                    v-else-if="item.type === TYPES.MSG_FILE"
                     :content="item.getMessageContent()"
                     :messageItem="item"
                   >
@@ -131,17 +136,21 @@
                       :messageItem="item"
                     />
                   </ProgressMessage>
+                  <MessageRecord
+                    v-else-if="item.type === TYPES.MSG_MERGER"
+                    :renderData="item.payload"
+                    :messageItem="item"
+                  />
                   <MessageFace
-                    v-if="item.type === TYPES.MSG_FACE"
+                    v-else-if="item.type === TYPES.MSG_FACE"
                     :content="item.getMessageContent()"
-                    :isPC="isPC"
                   />
                   <MessageLocation
-                    v-if="item.type === TYPES.MSG_LOCATION"
+                    v-else-if="item.type === TYPES.MSG_LOCATION"
                     :content="item.getMessageContent()"
                   />
                   <MessageCustom
-                    v-if="item.type === TYPES.MSG_CUSTOM"
+                    v-else-if="item.type === TYPES.MSG_CUSTOM"
                     :content="item.getMessageContent()"
                     :messageItem="item"
                   />
@@ -156,17 +165,20 @@
                 </template>
               </MessageBubble>
             </div>
+            <!-- message tool -->
             <MessageTool
               v-if="item.ID === toggleID"
               ref="messageToolListRef"
-              :class="[
-                'message-tool',
-                item.flow === 'out' ? 'message-tool-out' : 'message-tool-in',
-                isTopMessageDom ? 'message-tool-bottom' : ''
-              ]"
+              :class="{
+                'message-tool': true,
+                'message-tool-out': item.flow === 'out',
+                'message-tool-in': item.flow === 'in',
+                'message-tool-bottom': isTopMessageDom
+              }"
               :messageItem="item"
+              :isMultipleSelectMode="isMultipleSelectMode"
+              @toggleMultipleSelectMode="() => emits('toggleMultipleSelectMode')"
             >
-              <!-- 必须加 template, 否则不生效 -->
               <template #TUIEmojiPlugin>
                 <TUIEmojiPlugin
                   v-if="isShowEmojiPlugin"
@@ -178,7 +190,6 @@
           </div>
         </li>
       </ul>
-      <!-- 滚动按钮 -->
       <ScrollButton
         ref="scrollButtonInstanceRef"
         @scrollToLatestMessage="scrollToLatestMessage"
@@ -197,14 +208,12 @@
           {{ TUITranslateService.t("TUIChat.确认重发该消息？") }}
         </p>
       </Dialog>
-      <!-- 图片预览 -->
       <ImagePreviewer
         v-if="showImagePreview"
         :currentImage="currentImagePreview"
         :imageList="imageMessageList"
         @close="onImagePreviewerClose"
       />
-      <!-- 已读回执用户列表面板 -->
       <ReadReceiptPanel
         v-if="isShowReadUserStatusPanel"
         :message="Object.assign({}, readStatusMessage)"
@@ -215,7 +224,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, computed, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, nextTick, computed, onMounted, onUnmounted, watch } from '../../../adapter-vue';
 import TUIChatEngine, {
   IMessageModel,
   TUIStore,
@@ -233,6 +242,7 @@ import MessageGroupApplication from './message-group-application/index.vue';
 import MessageText from './message-elements/message-text.vue';
 import MessageImage from './message-elements/message-image.vue';
 import MessageAudio from './message-elements/message-audio.vue';
+import MessageRecord from './message-elements/message-record/index.vue';
 import MessageFile from './message-elements/message-file.vue';
 import MessageFace from './message-elements/message-face.vue';
 import MessageCustom from './message-elements/message-custom.vue';
@@ -250,7 +260,7 @@ import { isPluginMessage } from '../../../plugins/plugin-components/index';
 import Dialog from '../../common/Dialog/index.vue';
 import ImagePreviewer from '../../common/ImagePreviewer/index.vue';
 import ProgressMessage from '../../common/ProgressMessage/index.vue';
-import { emojiConfig } from '../utils/emoji-config';
+import { emojiConfig } from '../emoji-config';
 import { isPC, isH5 } from '../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal, shallowCopyMessage, isCreateGroupCustomMessage, deepCopy } from '../utils/utils';
 
@@ -263,33 +273,36 @@ interface ScrollConfig {
   };
 }
 
+interface IProps {
+  isGroup: boolean;
+  groupID: string;
+  isMultipleSelectMode: boolean;
+}
+
 interface IEmits {
   (key: 'closeInputToolBar'): void;
+  (key: 'toggleMultipleSelectMode'): void;
   (key: 'handleEditor', message: IMessageModel, type: string): void;
 }
 
 const emits = defineEmits<IEmits>();
-const props = defineProps({
-  groupID: {
-    type: String,
-    default: '',
-  },
-  isGroup: {
-    type: Boolean,
-    default: false,
-  },
+const props = withDefaults(defineProps<IProps>(), {
+  isGroup: false,
+  groupID: '',
+  isMultipleSelectMode: false,
 });
-// 表情回应相关
-const enabledEmojiPlugin = TUIStore.getData(StoreName.APP, 'enabledEmojiPlugin');
 let observer: IntersectionObserver | null = null;
 let groupType: string | undefined;
+const enabledEmojiPlugin = TUIStore.getData(StoreName.APP, 'enabledEmojiPlugin');
 const sentReceiptMessageIDSet = new Set<string>();
+
 const messageListRef = ref<HTMLElement>();
 const messageToolListRef = ref<Array<{ messageToolDom: HTMLElement }>>();
-// 上屏展示 messageList，不包含 isDeleted 为 true 的 message
+// The messageList displayed on the screen, not including messages where isDeleted is true
 const messageList = ref<IMessageModel[]>();
-// 所有 messageList 序列，包含 isDeleted 为 true 的 message
+// All messageList, including messages where isDeleted is true
 const allMessageList = ref<IMessageModel[]>();
+const multipleSelectedMessageIDList = ref<string[]>([]);
 const isCompleted = ref(false);
 const currentConversationID = ref('');
 const currentLastMessage = ref<IMessageModel>();
@@ -307,7 +320,7 @@ const readStatusMessage = ref<IMessageModel>();
 const beforeHistoryGetScrollHeight = ref<number>(0);
 const isTopMessageDom = ref<boolean>(false);
 
-// 图片预览相关
+// image preview
 const showImagePreview = ref(false);
 const currentImagePreview = ref<IMessageModel>();
 const imageMessageList = computed(() =>
@@ -316,7 +329,7 @@ const imageMessageList = computed(() =>
   }),
 );
 
-// 消息重发 Dialog
+// resend message dialog
 const reSendDialogShow = ref(false);
 const resendMessageData = ref();
 
@@ -328,32 +341,26 @@ const isShowEmojiPlugin = computed(() => {
     return item.text === 'TUIEmojiPlugin';
   });
 });
-// 事件监听
 onMounted(() => {
-  // 消息 messageList
   TUIStore.watch(StoreName.CHAT, {
     messageList: onMessageListUpdated,
     messageSource: onMessageSourceUpdated,
     isCompleted: isCompletedUpdated,
   });
 
-  // 当前 ConversationID
   TUIStore.watch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,
   });
 
-  // 关闭消息操作 popMenu
   TUIStore.watch(StoreName.CUSTOM, {
     isShowMessagePopMenu: isShowMessagePopMenuUpdated,
   });
 });
 
-// 绑定监听滚动事件 展示scroll-button
 onMounted(() => {
   messageListRef.value?.addEventListener('scroll', handelScrollListScroll);
 });
 
-// 取消监听
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CHAT, {
     messageList: onMessageListUpdated,
@@ -365,7 +372,6 @@ onUnmounted(() => {
     currentConversationID: onCurrentConversationIDUpdated,
   });
 
-  // 关闭消息操作 popMenu
   TUIStore.unwatch(StoreName.CUSTOM, {
     isShowMessagePopMenu: isShowMessagePopMenuUpdated,
   });
@@ -466,10 +472,10 @@ async function scrollToPosition(config: ScrollConfig = {}): Promise<void> {
 }
 
 async function onMessageSourceUpdated(message: IMessageModel) {
-  // messageSource change 有两种情况
-  // 1. messageSource change -> 未命中缓存 -> messageList change,
-  // 2. messageSource change -> 命中缓存 -> messageList not change
-  // 只有第二种情况需要在此处监听时增加 scrollToTarget
+  // messageSource change has two cases
+  // 1. messageSource change -> cache miss -> messageList change,
+  // 2. messageSource change -> cache hit -> messageList not change
+  // Only the second case needs to add scrollToTarget when listening here
   messageTarget.value = message;
   if (messageTarget.value) {
     if (
@@ -495,29 +501,23 @@ function isShowMessagePopMenuUpdated(isShow: boolean) {
   }
 }
 
-// 监听回调函数
 const onCurrentConversationIDUpdated = (conversationID: string) => {
   currentConversationID.value = conversationID;
-  // 增加清空 messageList 条件，当前无正在开启会话时才清空
-  // 避免 H5 二次打开相同会话（已有 messageList 缓存）下，onCurrentConversationIDUpdated 晚与 onMessageListUpdated 触发导致消息被清空
   if (!currentConversationID.value) {
     messageList.value = [];
   }
-
-  // 开启已读回执的状态 群聊缓存群类型
   if (isEnabledMessageReadReceiptGlobal()) {
     const { groupProfile } = TUIStore.getConversationModel(conversationID) || {};
     groupType = groupProfile?.type;
   }
 };
 
-// 获取历史消息
 const getHistoryMessageList = () => {
   TUIChatService.getMessageList().then((res: any) => {
     const { nextReqMessageID: ID } = res.data;
     nextReqMessageID.value = ID;
   });
-  // 获取历史消息后，保持滚动条在原来位置
+  // After getting the historical messages, keep the scroll bar in the original position
   beforeHistoryGetScrollHeight.value = messageListRef.value?.scrollHeight;
 };
 
@@ -525,7 +525,6 @@ const openComplaintLink = (type: any) => {
   window.open(type.url);
 };
 
-// 图片预览
 const handleImagePreview = (message: IMessageModel) => {
   if (showImagePreview.value || currentImagePreview.value || isLongpressing.value) {
     return;
@@ -534,14 +533,16 @@ const handleImagePreview = (message: IMessageModel) => {
   currentImagePreview.value = message;
 };
 
-// 关闭图片预览
 const onImagePreviewerClose = () => {
   showImagePreview.value = false;
   currentImagePreview.value = null;
 };
 
-// 消息操作
+// toggle message
 const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = false) => {
+  if (props.isMultipleSelectMode) {
+    return;
+  }
   if (isLongpress) {
     isLongpressing.value = true;
   }
@@ -550,6 +551,9 @@ const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = f
 };
 
 const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => {
+  if (props.isMultipleSelectMode) {
+    return;
+  }
   if (isPC) {
     toggleID.value = message.ID;
     targetMessageDom.value = messageElementListRef.value?.find((dom: HTMLElement) => dom?.id === `tui-${message.ID}`);
@@ -566,12 +570,10 @@ const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => 
   }
 };
 
-// 判断 chat 可视区域顶部的 message 元素
 function filterTopMessageDom(toggleMessageElement: any) {
-  // 获取元素
   const chatElement = document.getElementById('tui-chat-main');
-  const safeTop = 160; // 防止被安全提示遮挡
-  const messageElementRect = toggleMessageElement.getBoundingClientRect(); // 当前 message 距离可视窗口的信息
+  const safeTop = 160;
+  const messageElementRect = toggleMessageElement.getBoundingClientRect();
   const ChatElementRect = chatElement.getBoundingClientRect();
   isTopMessageDom.value = messageElementRect.top - ChatElementRect.top < safeTop ? true : false;
 }
@@ -579,6 +581,9 @@ function filterTopMessageDom(toggleMessageElement: any) {
 // h5 long press
 let timer: number;
 const handleH5LongPress = (e: any, message: IMessageModel, type: string) => {
+  if (props.isMultipleSelectMode) {
+    return;
+  }
   if (!isH5) return;
   function longPressHandler() {
     clearTimeout(timer);
@@ -603,12 +608,11 @@ const handleH5LongPress = (e: any, message: IMessageModel, type: string) => {
   }
 };
 
-// 消息撤回后，编辑消息
+// re-edit message
 const handleEdit = (message: IMessageModel) => {
   emits('handleEditor', message, 'reedit');
 };
 
-// 重发消息
 const resendMessage = (message: IMessageModel) => {
   reSendDialogShow.value = true;
   resendMessageData.value = message;
@@ -634,7 +638,6 @@ function blinkMessage(messageID: string): Promise<void> {
   });
 }
 
-// 滚动到最新消息
 async function scrollToLatestMessage() {
   const { scrollHeight } = await getScrollInfo('#messageScrollList');
   const { height } = await getBoundingClientRect('#messageScrollList');
@@ -657,7 +660,7 @@ async function bindIntersectionObserver() {
   }
 
   if (groupType === TYPES.value.GRP_AVCHATROOM || groupType === TYPES.value.GRP_COMMUNITY) {
-    // 直播群以及社群不进行消息的已读回执监听
+    // AVCHATROOM and COMMUNITY chats do not monitor read receipts for messages.
     return;
   }
 
@@ -732,9 +735,50 @@ function onMessageListBackgroundClick() {
   emits('closeInputToolBar');
 }
 
+watch(() => props.isMultipleSelectMode, (newValue) => {
+  if (!newValue) {
+    changeSelectMessageIDList({
+      type: 'clearAll',
+      messageID: '',
+    });
+  }
+});
+
+function changeSelectMessageIDList({ type, messageID }: { type: 'add' | 'remove' | 'clearAll'; messageID: string }) {
+  // TODO need to delete this
+  if (type === 'clearAll') {
+    multipleSelectedMessageIDList.value = [];
+  } else if (type === 'add' && !multipleSelectedMessageIDList.value.includes(messageID)) {
+    multipleSelectedMessageIDList.value.push(messageID);
+  } else if (type === 'remove') {
+    multipleSelectedMessageIDList.value = multipleSelectedMessageIDList.value.filter(id => id !== messageID);
+  }
+}
+
+function mergeForwardMessage() {
+  TUIStore.update(StoreName.CUSTOM, 'multipleForwardMessageID', {
+    isMergeForward: true,
+    messageIDList: multipleSelectedMessageIDList.value,
+  });
+}
+
+function oneByOneForwardMessage() {
+  TUIStore.update(StoreName.CUSTOM, 'multipleForwardMessageID', {
+    isMergeForward: false,
+    messageIDList: multipleSelectedMessageIDList.value,
+  });
+}
+
 defineExpose({
+  oneByOneForwardMessage,
+  mergeForwardMessage,
   scrollToLatestMessage,
 });
 </script>
 
 <style lang="scss" scoped src="./style/index.scss"></style>
+<style>
+.row-reverse {
+  flex-direction: row-reverse;
+}
+</style>

@@ -36,7 +36,7 @@ class TUINotification implements ITUINotification {
 
   private static instance: TUINotification | null = null;
 
-  // private constructor 实现单例模式
+  // private constructor implementing the Singleton Pattern
   private constructor(params?: INotificationConstructorParams) {
     this.setConfiguration(params);
   }

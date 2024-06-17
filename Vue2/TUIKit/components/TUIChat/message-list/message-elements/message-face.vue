@@ -1,38 +1,39 @@
 <template>
   <div
-    ref="skeleton"
     class="message-image"
   >
-    <!-- todo 统一组件处理-->
     <img
+      mode="aspectFit"
       class="message-image"
-      :src="data.url"
+      :src="url"
     >
   </div>
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, nextTick } from '../../../../adapter-vue';
+import { ref, onMounted } from '../../../../adapter-vue';
+import { CUSTOM_BIG_EMOJI_URL } from '../../emoji-config';
+
 const props = defineProps({
   content: {
     type: Object,
     default: () => ({}),
   },
-  isPC: {
-    type: Boolean,
-    default: false,
-  },
 });
-const data = ref();
-const skeleton: any = ref();
-watchEffect(() => {
-  data.value = props.content;
-  if (!data.value) return;
-  nextTick(() => {
-    // todo 大小显示
-  });
+
+const url = ref(props.content.url);
+
+onMounted(() => {
+  if (props.content.type === 'custom') {
+    if (!CUSTOM_BIG_EMOJI_URL) {
+      console.warn('CUSTOM_BIG_EMOJI_URL is required for custom emoji, please check your CUSTOM_BIG_EMOJI_URL.');
+    } else {
+      url.value = CUSTOM_BIG_EMOJI_URL + props.content.name;
+    }
+  }
 });
 </script>
+
 <style lang="scss" scoped>
 @import "../../../../assets/styles/common";
 

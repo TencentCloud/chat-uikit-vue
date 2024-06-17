@@ -22,7 +22,7 @@ export const sendMessageErrorCodeMap: Map<number, string> = new Map([
   [80004, '消息中图片存在敏感内容,发送失败'],
 ]);
 
-export const createOfflinePushInfo = (currentConversation: IConversationModel) => {
+export const createOfflinePushInfo = (conversation: IConversationModel) => {
   const androidInfo = {
     sound: 'private_ring.mp3',
     XiaoMiChannelID: 'high_custom_1',
@@ -32,9 +32,9 @@ export const createOfflinePushInfo = (currentConversation: IConversationModel) =
   };
   const userInfo = TUIStore.getData(StoreName.USER, 'userProfile');
   const entity = {
-    sender: currentConversation.type === TUIChatEngine.TYPES.CONV_GROUP ? currentConversation.groupProfile?.groupID : userInfo.userID,
+    sender: conversation.type === TUIChatEngine.TYPES.CONV_GROUP ? conversation.groupProfile?.groupID : userInfo.userID,
     nickName: userInfo.nick,
-    chatType: currentConversation.type === TUIChatEngine.TYPES.CONV_GROUP ? 2 : 1,
+    chatType: conversation.type === TUIChatEngine.TYPES.CONV_GROUP ? 2 : 1,
     version: 1,
     action: 1,
   };
@@ -46,7 +46,7 @@ export const createOfflinePushInfo = (currentConversation: IConversationModel) =
 };
 
 /**
- * 该函数仅处理 Text TextAt Image Video File 五种消息类型
+ * This function only processes five message types: Text/TextAt/Image/Video/File
  * @param messageList
  * @param currentConversation
  */
@@ -54,7 +54,7 @@ export const sendMessages = async (
   messageList: ITipTapEditorContent[],
   currentConversation: IConversationModel,
 ) => {
-  // 有 messageJumping 的情况下，发送消息自动清空，回到底部
+  // In case of messageJumping, the sent message is automatically cleared and returns to the bottom
   if (TUIStore.getData(StoreName.CHAT, 'messageSource')) {
     TUIStore.update(StoreName.CHAT, 'messageSource', undefined);
   }
@@ -74,7 +74,7 @@ export const sendMessages = async (
       switch (content?.type) {
         case 'text':
           textMessageContent = JSON.parse(JSON.stringify(content.payload?.text));
-          // 禁止发送空消息
+          // Do not send empty messages
           if (!textMessageContent) {
             break;
           }
@@ -120,7 +120,7 @@ export const sendMessages = async (
           : error?.message,
         type: TOAST_TYPE.ERROR,
       });
-      // 如果消息发送失败，且该消息为引用消息，清除引用消息信息
+      // If the message fails to be sent and the message is a reference message, clear the reference message information
       if (TUIStore.getData(StoreName.CHAT, 'quoteMessage')) {
         TUIStore.update(StoreName.CHAT, 'quoteMessage', {});
       }

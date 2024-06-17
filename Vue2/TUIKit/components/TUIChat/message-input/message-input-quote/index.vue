@@ -2,7 +2,7 @@
   <div
     v-if="Boolean(quoteMessage) && props.displayType !== 'audio'"
     :class="{
-      'input-quote-content': true,
+      'input-quote-container': true,
       'input-quote-container-uni': isUniFrameWork,
       'input-quote-container-h5': isH5,
     }"
@@ -33,11 +33,11 @@ import TUIChatEngine, {
 import Icon from '../../../common/Icon.vue';
 import closeIcon from '../../../../assets/icon/icon-close.svg';
 import { isH5, isUniFrameWork } from '../../../../utils/env';
-import { decodeTextMessage } from '../../utils/emojiList';
+import { transformTextWithKeysToEmojiNames } from '../../emoji-config';
 import { InputDisplayType } from '../../../../interface';
 
 interface IProps {
-  displayType: InputDisplayType;
+  displayType?: InputDisplayType;
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -71,7 +71,7 @@ const quoteContentText = computed(() => {
   let _quoteContentText;
   switch (quoteMessage.value?.type) {
     case TYPES.MSG_TEXT:
-      _quoteContentText = decodeTextMessage(quoteMessage.value.payload?.text);
+      _quoteContentText = transformTextWithKeysToEmojiNames(quoteMessage.value.payload?.text);
       break;
     case TYPES.MSG_IMAGE:
       _quoteContentText = TUITranslateService.t('TUIChat.图片');
@@ -90,6 +90,9 @@ const quoteContentText = computed(() => {
       break;
     case TYPES.MSG_FACE:
       _quoteContentText = TUITranslateService.t('TUIChat.表情');
+      break;
+    case TYPES.MSG_MERGER:
+      _quoteContentText = TUITranslateService.t('TUIChat.聊天记录');
       break;
     default:
       _quoteContentText = TUITranslateService.t('TUIChat.消息');

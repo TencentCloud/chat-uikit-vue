@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="['message-input-editor-container', isH5 && 'message-input-editor-container-h5']"
-  >
+  <div :class="['message-input-editor-container', isH5 && 'message-input-editor-container-h5']">
     <div
       v-if="isMuted"
       class="message-input-mute"
@@ -205,11 +203,10 @@ const insertAt = (atInfo: { id: string; label: string }) => {
   editorDom.value?.appendChild(mentionText);
 };
 
-// fileMap 存储 fileURL 与 fileObject 的映射
+// fileMap stores the mapping between fileURL and fileObject
 const fileMap = new Map<string, any>();
 const handleFileDrop = (e: any) => {
-  // pc 端 支持富文本拖拽上传
-  // 移动端 不支持
+  // Only the PC version supports drag and drop upload of rich text
   e.preventDefault();
   e.stopPropagation();
   if (isPC) {
@@ -217,10 +214,9 @@ const handleFileDrop = (e: any) => {
   }
 };
 const handleFilePaste = (e: any) => {
-  // pc 端 屏蔽原生复制，支持富文本复制，走富文本复制上传解析
-  // 移动端，仅支持文本复制，走默认复制解析
+  // In the PC version, disable native copy and support rich text copy, and go through rich text copy upload parsing
+  // In the mobile version, only text copy is supported, and default copy parsing is used
   if (isPC) {
-    // pc 端 支持富文本复制，走富文本复制上传解析
     e.preventDefault();
     e.stopPropagation();
     handleFileDropOrPaste(e, 'paste');
@@ -263,9 +259,11 @@ const handleFileDropOrPaste = async (e: any, type: string) => {
   }
 };
 
-// create file icon image
-// 为了避免重复创建拥有相同icon图标的img dom，将之前已有类型进行记录
-// 记录格式为 map<icon type，img dom>
+/**
+ * create file icon image
+ * To avoid creating img dom with the same icon repeatedly, record the previous type of icon that has been created.
+ * The format of the record is map<icon type, img dom>.
+*/
 const fileIconDomMap = new Map<string, HTMLImageElement>();
 const addImageProcess = (src: string, type: string) => {
   return new Promise((resolve, reject) => {
@@ -292,15 +290,15 @@ const drawFileCanvasToImageUrl = async (file: any) => {
   const height = 50;
   canvas.style.width = width + 'px';
   canvas.style.height = height + 'px';
-  // 设置内存中的实际大小（缩放以考虑额外的像素密度）
-  const scale = window.devicePixelRatio; // 在视网膜屏幕上更改为 1 以查看模糊
+  // Set the actual size in memory (scaled to account for additional pixel density)
+  const scale = window.devicePixelRatio; // Change to 1 to view blurry on a retina screen
   canvas.width = Math.floor(width * scale);
   canvas.height = Math.floor(height * scale);
   const ctx = canvas.getContext('2d');
   if (!ctx) {
     return '';
   }
-  // 标准化坐标系以使用 css 像素
+  // To use CSS pixels, normalize the coordinate system
   ctx.scale(scale, scale);
   // draw icon
   const { iconSrc, iconType } = handleFileIconForShow(type);
@@ -342,7 +340,6 @@ const handleFileIconForShow = (type: string) => {
   };
 };
 
-// 获取字符串的实际占位长度（字母or符号:1，其他（主要是中文):）
 const handleNameForShow = (value: string): string => {
   if (!value) {
     return value;
@@ -424,7 +421,7 @@ function handleEditorNode(node: JSONContent, content: ITipTapEditorContent[]) {
     node.type === 'text'
     || (node.type === 'custom-image' && node?.attrs?.class === 'emoji')
   ) {
-    // 处理 text 和 emoji
+    // Process text and emojis
     const text = node.type === 'text' ? node?.text : node?.attrs?.alt;
     if (
       content.length > 0
@@ -442,7 +439,7 @@ function handleEditorNode(node: JSONContent, content: ITipTapEditorContent[]) {
     node.type === 'custom-image'
     && node?.attrs?.class === 'normal'
   ) {
-    // 处理富文本图像
+    // Process rich text images
     content.push({
       type: 'image',
       payload: { file: fileMap?.get(node?.attrs?.src) },
@@ -682,6 +679,7 @@ defineExpose({
   }
 
   img {
+
     /* stylelint-disable-next-line selector-class-pattern */
     &.ProseMirror-selectednode {
       outline: 2px solid #68cef8;
@@ -710,6 +708,7 @@ defineExpose({
       display: none;
     }
   }
+
   /* stylelint-disable-next-line selector-class-pattern */
   .ProseMirror-selectednode {
     outline: 2px solid #68cef8;

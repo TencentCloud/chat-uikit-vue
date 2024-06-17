@@ -11,9 +11,8 @@
       @click="toggleVideoPreviewer"
     >
       <img
-        v-if="
-          (props.messageItem.progress > 0 && props.messageItem.progress < 1 && poster) ||
-            (!isPC && poster)
+        v-if="(props.messageItem.progress > 0 && props.messageItem.progress < 1 && poster) ||
+          (!isPC && poster)
         "
         class="message-img"
         :class="[isWidth ? 'is-width' : 'is-height']"
@@ -143,31 +142,32 @@ watch(() => props.messageItem.status, (newVal: string, oldVal: string) => {
 });
 
 function toggleVideoPreviewer() {
-  // 视频上传过程中不支持全屏播放
+  // Video upload process does not support full-screen playback.
   if (props.messageItem.progress > 0 && props.messageItem.progress < 1) {
     return;
   }
   isShow.value = !isShow.value;
 }
 
-// h5 部分浏览器（safari / wx）video标签 封面为空 在视频未上传完成前的封面展示需要单独进行处理截取
+// For H5, some browsers (Safari/WeChat) have an issue where the cover image of the<video>` tag is empty before the video is fully uploaded.
+//  A separate processing and clipping method is required to display the cover image before the video upload is complete.
 function getVideoBase64(url: string) {
   return new Promise((resolve) => {
     let dataURL = '';
     const video = document.createElement('video');
-    video.setAttribute('crossOrigin', 'anonymous'); // 处理跨域
+    video.setAttribute('crossOrigin', 'anonymous');
     video.setAttribute('src', url);
     video.setAttribute('preload', 'auto');
     video.addEventListener(
       'loadeddata',
       function () {
         const canvas = document.createElement('canvas'),
-          width = video.videoWidth, // canvas的尺寸和图片一样
+          width = video.videoWidth,
           height = video.videoHeight;
         canvas.width = width;
         canvas.height = height;
-        (canvas as any).getContext('2d').drawImage(video, 0, 0, width, height); // 绘制canvas
-        dataURL = canvas.toDataURL('image/jpeg'); // 转换为base64
+        (canvas as any).getContext('2d').drawImage(video, 0, 0, width, height);
+        dataURL = canvas.toDataURL('image/jpeg');
         posterWidth.value = width;
         posterHeight.value = height;
         resolve(dataURL);

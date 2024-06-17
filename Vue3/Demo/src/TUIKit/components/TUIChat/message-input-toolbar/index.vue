@@ -148,7 +148,7 @@ const getExtensionList = (conversationID: string) => {
   const options: any = {
     chatType,
   };
-  // 向下兼容，callkit 没有chatType 判断时，使用 filterVoice、filterVideo 过滤
+  // Backward compatibility: When callkit does not have chatType judgment, use filterVoice and filterVideo to filter
   if (chatType === 'customerService') {
     options.filterVoice = true;
     options.filterVideo = true;
@@ -176,7 +176,6 @@ const extensionList: ExtensionInfo[] = [
   ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID),
 ];
 
-// 按展示位置分类 extensionList （注意：仅 web 端 区分展示位置在 从 start 开始和 从 end 开始，在移动端不生效）
 const extensionListShowInStart = computed(
   (): ExtensionInfo[] =>
     isPC ? currentExtensionList.value.filter((extension: ExtensionInfo) => extension?.data?.name !== 'search') : currentExtensionList.value,

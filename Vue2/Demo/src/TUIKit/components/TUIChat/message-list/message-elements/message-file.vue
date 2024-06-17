@@ -33,7 +33,6 @@ const props = withDefaults(
   },
 );
 
-// todo: 区分 web 和 uniapp
 const download = () => {
   if (props.messageItem.hasRiskContent) {
     return;
@@ -44,7 +43,6 @@ const download = () => {
       'Content-Type': 'application/x-www-form-urlencoded',
     }),
   } as RequestInit;
-  // 浏览器支持fetch则用blob下载，避免浏览器点击a标签，跳转到新页面预览的行为
   // If the browser supports fetch, use blob to download, so as to avoid the browser clicking the a tag and jumping to the preview of the new page
   if ((window as any)?.fetch) {
     fetch(props.content.url, option)

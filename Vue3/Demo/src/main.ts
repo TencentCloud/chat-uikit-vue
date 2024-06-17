@@ -9,13 +9,13 @@ import {
 } from '@tencentcloud/chat-uikit-engine';
 import TUINotification from './TUIKit/components/TUINotification/index';
 import { locales } from './locales';
-// ------ 以下是 TUIRoom 相关依赖的引入，如果您不需要使用 TUIRoom，请删除以下代码 ------
+// ------ The following is the introduction of TUIRoom related dependencies. If you do not need to use TUIRoom, please delete the following code ------
 // import { createPinia } from 'pinia';
 // ----------------------------------------------------------------------------
 
 const app = createApp(App);
 app.use(router);
-// ------ 以下是 TUIRoom 相关依赖的引入，如果您不需要使用 TUIRoom，请删除以下代码 ------
+// ------ The following is the introduction of TUIRoom related dependencies. If you do not need to use TUIRoom, please delete the following code ------
 // app.use(createPinia());
 // ----------------------------------------------------------------------------
 app.mount('#app');

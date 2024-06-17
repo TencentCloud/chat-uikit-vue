@@ -81,7 +81,7 @@ const navbarList = [
 ];
 
 const props = defineProps({
-  // 部署生产环境时不需要通过 props 传入 SDKAppID、userID、userSig
+  // When deploying a production environment, you do not need to pass in SDKAppID, userID, and userSig through props.
   // eslint-disable-next-line vue/prop-name-casing
   SDKAppID: {
     type: Number,
@@ -101,22 +101,21 @@ const props = defineProps({
   conversationID: {
     type: String,
     default: '',
-    required: false, // 独立集成 Chat 时需要传 conversationID
+    required: false, // When integrating Chat independently, you need to pass the conversationID
   },
 });
 
 onMounted(() => {
-  // 监听当前会话 ID
   TUIStore.watch(StoreName.CONV, {
     currentConversationID: (id: string) => {
       currentConversationID.value = id;
     },
   });
 
-  // 默认登录逻辑
+  // Default login logic
   login();
 
-  // H5 环境下修改 CallKit 样式
+  // Modify CallKit style in H5 environment
   modifyCallKitStyle();
 });
 
@@ -130,7 +129,7 @@ function login() {
       useUploadPlugin: true,
       framework,
     }).then(() => {
-      // 独立集成 Chat 时执行以下代码
+      // Execute the following code when integrating Chat independently
       if (conversationID.startsWith('C2C') || conversationID.startsWith('GROUP')) {
         TUIConversationService.switchConversation(conversationID);
       }

@@ -158,7 +158,7 @@ watch(
     immediate: true,
   },
 );
-// 全局公共方法
+
 TUIGlobal.updateContactSearch = search;
 TUIGlobal.closeSearching = () => {
   isSearching.value = false;

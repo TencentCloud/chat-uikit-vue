@@ -1,4 +1,4 @@
-<!-- 拖拽组件，仅适用于 web&h5 -->
+<!-- Drag and drop component, only applicable to web&h5 -->
 <template>
   <div>
     <slot />

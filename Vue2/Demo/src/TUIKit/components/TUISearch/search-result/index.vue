@@ -152,7 +152,7 @@
             />
           </div>
         </template>
-        <!-- 会话内搜索-文件/图片视频类消息，需要按照时间合集展示 -->
+        <!-- Search within a conversation - messages such as files, pictures, and videos need to be displayed in groups according to time -->
         <template v-else>
           <div
             v-for="group in searchConversationResultGroupByDate"
@@ -230,7 +230,7 @@ import { ISearchCloudMessageResult, ISearchResultListItem } from '../../../inter
 const props = defineProps({
   searchType: {
     type: String,
-    default: 'global', // "global":全局搜索, "conversation":会话内搜索
+    default: 'global', // "global" / "conversation"
     validator(value: string) {
       return ['global', 'conversation'].includes(value);
     },
@@ -238,14 +238,14 @@ const props = defineProps({
 });
 
 // search params
-const keywordList = ref<Array<string>>([]);
-const messageTypeList = ref<string | Array<string>>(
-  searchMessageTypeDefault[props.searchType as SEARCH_TYPE]?.value as Array<string>,
+const keywordList = ref<string[]>([]);
+const messageTypeList = ref<string | string[]>(
+  searchMessageTypeDefault[props.searchType as SEARCH_TYPE]?.value as string[],
 );
 const timePosition = ref<number>(0);
 const timePeriod = ref<number>(0);
-// 通过空格分割整串输入后，按照“与”关系搜索
-// 比如: 输入"111 222", 搜索既有 111 又有 222 的消息, 同时也包含到严格搜索“111 222”的消息情况
+// Search by "and" after splitting the whole string by space
+// For example: enter "111 222", search for messages with both 111 and 222, and also include messages that strictly search for "111 222"
 const keywordListMatchType = ref<string>('and');
 
 // current search tab key
@@ -253,22 +253,22 @@ const currentSearchTabKey = ref<string>(
   searchMessageTypeDefault[props.searchType as SEARCH_TYPE]?.key,
 );
 
-// search results all（所有会话搜索结果)
+// search results all
 const searchResult = ref<{
-  [propsName: string]: { key: string; label: string; list: Array<ISearchResultListItem>; cursor: string | null };
+  [propsName: string]: { key: string; label: string; list: ISearchResultListItem[]; cursor: string | null };
 }>({});
-const searchAllMessageList = ref<Array<ISearchResultListItem>>([]);
+const searchAllMessageList = ref<ISearchResultListItem[]>([]);
 const searchAllMessageTotalCount = ref<number>(0);
 
-// search results detail（具体某个会话的搜索结果）
+// search results detail
 const currentSearchConversationID = ref<string>('');
 const searchConversationResult = ref<ISearchCloudMessageResult>();
-const searchConversationMessageList = ref<Array<IMessageModel>>([]);
+const searchConversationMessageList = ref<IMessageModel[]>([]);
 const searchConversationMessageTotalCount = ref<number>();
 
-// 文件消息/图片视频消息的搜索结果，按时间线分组
+// search results for file messages/image and video messages, grouped by timeline
 const searchConversationResultGroupByDate = ref<
-  Array<{ date: string; list: Array<IMessageModel> }>
+  Array<{ date: string; list: IMessageModel[] }>
 >([]);
 
 // ui display control
@@ -280,7 +280,6 @@ const isSearchDefaultShow = computed((): boolean => {
     return false;
   }
   if (props.searchType === 'global') {
-    // 未搜索 / 有结果
     if (!keywordList?.value?.length || Object?.keys(searchResult.value)?.length) {
       return false;
     } else {
@@ -301,7 +300,6 @@ function onCurrentConversationIDUpdate(id: string) {
 
 function onCurrentSearchInputValueUpdate(obj: ISearchInputValue) {
   if (obj?.searchType === props?.searchType) {
-    // 根据空格模糊搜索结果
     keywordList.value = obj?.value ? obj.value.trim().split(/\s+/) : [];
   }
 }
@@ -360,7 +358,6 @@ const setMessageSearchResultList = (option?: { conversationID?: string | undefin
     .then((res: { data: ISearchCloudMessageResult }) => {
       enableSampleTaskStatus('searchCloudMessage');
       if (!option?.conversationID) {
-      // 全部会话搜索结果
         option?.cursor
           ? (searchAllMessageList.value = [
               ...searchAllMessageList.value,
@@ -388,17 +385,14 @@ const setMessageSearchResultList = (option?: { conversationID?: string | undefin
           delete searchResult?.value[key];
         }
       } else {
-      // 指定会话搜索结果
         searchConversationResult.value = res?.data;
         option?.cursor
           ? (searchConversationMessageList.value = [
               ...searchConversationMessageList.value,
-              ...(res?.data?.searchResultList[0]?.messageList as Array<IMessageModel>),
+              ...(res?.data?.searchResultList[0]?.messageList as IMessageModel[]),
             ])
           : (searchConversationMessageList.value = res?.data?.searchResultList[0]?.messageList);
-        // todo: 此处为 后台 totalCount 不准确的规避方案，待后台修复后请改为 res?.data?.totalCount
         searchConversationMessageTotalCount.value = res?.data?.totalCount;
-        // 计算时间戳展示位置（仅会话内搜索 文件/图片 类型需要）
         if (
           props?.searchType === 'conversation'
           && (currentSearchTabKey.value === 'fileMessage'
@@ -431,26 +425,21 @@ watch(
     if (newValue === oldValue) {
       return;
     }
-    // 全局搜索必须有关键词，会话内搜索可以没有关键词
+    // Global search must have keywords, but search in conversation can be without keywords
     if (!keywordList?.value?.length && props?.searchType === 'global') {
       resetSearchResult();
       return;
     }
     isLoading.value = true;
     if (props.searchType === 'conversation') {
-      // 会话内搜索
       resetSearchResult();
       setMessageSearchResultList({
         conversationID: currentSearchConversationID.value,
       });
     } else {
-      // 全局搜索
       if (oldValue && oldValue[1] === 'all' && newValue && newValue[1] === 'allMessage') {
-        // 从【全部结果-聊天记录】分类中 点击某条结果，直接跳转到【聊天记录】tab，并且打开相关会话内搜索结果 情况, isResultDetailShow 保持为true
-        // 不重新搜索
         searchResult?.value['allMessage']?.list
         && (searchResult.value['allMessage'].list = searchAllMessageList?.value);
-        // 清除非聊天记录类型的其他搜索结果
         Object?.keys(searchResult?.value)?.forEach((key: string) => {
           if (key !== 'allMessage') {
             delete searchResult?.value[key];
@@ -459,7 +448,6 @@ watch(
         isLoading.value = false;
         return;
       } else {
-        // 其余情况，恢复 isResultDetailShow.value 为 false，并且重新搜索
         isResultDetailShow.value = false;
         resetSearchResult();
       }
@@ -469,15 +457,15 @@ watch(
   { immediate: true },
 );
 
-const getMoreResult = (result: { key: string; label: string; list: Array<ISearchResultListItem>; cursor: string | null }) => {
+const getMoreResult = (result: { key: string; label: string; list: ISearchResultListItem[]; cursor: string | null }) => {
   if (currentSearchTabKey.value === 'all') {
-    // 此时查看更多：切换到相应结果对应的result，展示其类型全量搜索结果
+    // View more at this time: Switch to the result corresponding to the corresponding result to display the full search results of its type
     TUIStore.update(StoreName.SEARCH, 'currentSearchMessageType', {
       value: searchMessageTypeList[result.key],
       searchType: props.searchType,
     });
   } else {
-    // 在某一单类结果下查看更多：根据 cursor 作为搜索起始位置，拉取下一部分结果
+    // View more results for a single category: Use the cursor as the search start position to pull the next part of the results
     setMessageSearchResultList({ cursor: result?.cursor || undefined });
   }
 };
@@ -507,7 +495,7 @@ const showResultDetail = (isShow: boolean, targetType?: string, targetResult?: I
   }
 };
 
-const generateListItemClass = (item: ISearchResultListItem): Array<string> => {
+const generateListItemClass = (item: ISearchResultListItem): string[] => {
   return currentSearchConversationID.value === item?.conversation?.conversationID
     ? ['list-item', 'list-item-selected']
     : ['list-item'];
@@ -526,9 +514,9 @@ const generateResultItemDisplayType = (): string => {
 };
 
 const groupResultListByDate = (
-  messageList: Array<IMessageModel>,
-): Array<{ date: string; list: Array<IMessageModel> }> => {
-  const result: Array<{ date: string; list: Array<IMessageModel> }> = [];
+  messageList: IMessageModel[],
+): Array<{ date: string; list: IMessageModel[] }> => {
+  const result: Array<{ date: string; list: IMessageModel[] }> = [];
   if (!messageList?.length) {
     return result;
   } else if (messageList?.length === 1) {
@@ -551,12 +539,12 @@ const groupResultListByDate = (
 
 const navigateToChatPosition = (message: IMessageModel) => {
   if (props.searchType === 'global') {
-    // 全局搜索，关闭 search container
+    // Global search, close the search container
     TUIStore.update(StoreName.SEARCH, 'currentSearchingStatus', {
       isSearching: false,
       searchType: props.searchType,
     });
-    // 切换会话
+    // switch conversation
     TUIConversationService.switchConversation(message?.conversationID).then(() => {
       TUIStore.update(StoreName.CHAT, 'messageSource', message);
       isUniFrameWork && TUIGlobal?.navigateTo({
@@ -564,7 +552,7 @@ const navigateToChatPosition = (message: IMessageModel) => {
       });
     });
   } else if (props.searchType === 'conversation') {
-    // 会话内搜索，关闭 search container
+    // Search in conversation, close the search container
     TUIStore.update(StoreName.SEARCH, 'isShowInConversationSearch', false);
     TUIStore.update(StoreName.CHAT, 'messageSource', message);
     isUniFrameWork && TUIGlobal?.navigateBack();

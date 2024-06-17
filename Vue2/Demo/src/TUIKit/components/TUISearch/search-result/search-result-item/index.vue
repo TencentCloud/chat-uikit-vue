@@ -1,4 +1,4 @@
-<!-- 用于展示【联系人】/【群组】/【全部会话】搜索结果，是用户/群组/会话维度的展示 -->
+<!-- Used to display the search results of [Contacts]/[Groups]/[All Conversations], which is a display of user/group/conversation dimensions -->
 <template>
   <div
     :class="[
@@ -163,7 +163,7 @@ const TYPES = ref(TUIChatEngine.TYPES);
 
 const avatarForShow = ref<string>('');
 const nameForShow = ref<string>('');
-const contentForShow = ref<Array<IHighlightContent>>([]);
+const contentForShow = ref<IHighlightContent[]>([]);
 const timeForShow = ref<string>('');
 
 const isHovering = ref<boolean>(false);
@@ -174,7 +174,7 @@ watchEffect(() => {
   contentForShow.value = generateSearchResultShowContent(
     props.listItem,
     props.type,
-    props.keywordList as Array<string>,
+    props.keywordList as string[],
     props?.displayType !== 'bubble',
   );
   timeForShow.value = (props.listItem as IMessageModel)?.time
@@ -199,7 +199,6 @@ const setHoverStatus = (status: boolean) => {
 };
 
 const navigateToChatPosition = () => {
-  // 定位到指定位置
   emits('navigateToChatPosition', props.listItem);
 };
 

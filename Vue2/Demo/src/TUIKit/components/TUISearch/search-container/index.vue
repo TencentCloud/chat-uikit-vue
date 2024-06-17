@@ -134,12 +134,12 @@ import { SEARCH_TYPE, ISearchMessageTime, ISearchMessageType, ISearchTimeTab, IS
 
 const props = defineProps({
   popupPosition: {
-    type: String, // 分为底部弹出和侧边弹出两种形式:"bottom"/"aside"
+    type: String, // "bottom" / "aside"
     default: 'bottom',
   },
   searchType: {
     type: String,
-    default: 'global', // "global":全局搜索, "conversation":会话内搜索
+    default: 'global', // "global" / "conversation"
     validator(value: string) {
       return ['global', 'conversation'].includes(value);
     },
@@ -200,7 +200,6 @@ const selectSearchType = (item: ISearchTypeTab) => {
 };
 
 const selectSearchTime = (item: ISearchTimeTab) => {
-  // 去除选日期情况触发 selectAllTime
   if (isDatePickerShow.value && item.key === 'all') {
     isDatePickerShow.value = false;
   } else {

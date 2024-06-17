@@ -119,6 +119,13 @@ const TUIChat = {
   '已达到表情回应上限数量': 'You have reached the max reaction limit',
   '等': 'and others',
   '人': 'users',
+  '返回': 'Back',
+  '关闭': 'Close',
+  '多选': 'Select',
+  '合并转发': 'Combine Forward',
+  '逐条转发': 'One-By-One Forward',
+  '未选择消息': 'No message selected',
+  '引用内容已撤回': 'The quoted message has been withdrawn',
 };
 
 export default TUIChat;

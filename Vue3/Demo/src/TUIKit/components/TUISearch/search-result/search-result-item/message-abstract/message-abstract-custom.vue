@@ -1,5 +1,5 @@
 <template>
-  <!-- 自定义消息 keyword 关键词搜寻 description, 所以此处仅对几个需要展示高亮 description 类型的自定义消息进行解析 -->
+  <!-- Custom message keyword keyword search description, so here only a few custom messages that need to display highlighted description type are parsed -->
   <div
     :class="['message-abstract-custom']"
     @click.capture.stop
@@ -133,12 +133,12 @@ import star from '../../../../../assets/icon/star-light.png';
 import { IHighlightContent } from '../../../type';
 import { ISearchResultListItem } from '../../../../../interface';
 interface IProps {
-  contentText: Array<IHighlightContent>;
+  contentText: IHighlightContent[];
   message: IMessageModel | ISearchResultListItem;
   messageContent: Record<string, unknown> | undefined;
 }
 const props = withDefaults(defineProps<IProps>(), {
-  contentText: () => ([]) as Array<IHighlightContent>,
+  contentText: () => ([]) as IHighlightContent[],
   message: () => ({}) as IMessageModel,
   messageContent: () => ({}) as Record<string, unknown>,
 });

@@ -46,9 +46,9 @@ const messageEdit = () => {
 
 .revoke {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   color: #999;
-  width: 100%;
   font-size: 12px;
   margin-bottom: 10px;
 
