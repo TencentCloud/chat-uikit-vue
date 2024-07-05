@@ -278,7 +278,6 @@ import TUIChatEngine, {
   IGroupModel,
   TUIConversationService,
   IConversationModel,
-  IGroupMember,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal, outsideClick } from '@tencentcloud/universal-api';
 import MaskLayer from '../../common/MaskLayer/index.vue';
@@ -296,6 +295,7 @@ import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 import { isPC, isUniFrameWork } from '../../../utils/env';
 import Server from '../server';
 import { enableSampleTaskStatus } from '../../../utils/enableSampleTaskStatus';
+import { IFriendProfile, IGroupMember, IUserProfile } from '../../../interface';
 
 const TUIGroupServer = Server.getInstance();
 const TUIConstants = TUIGroupServer.constants;
@@ -312,15 +312,16 @@ const props = defineProps({
 });
 
 const manageRef = ref<any>(undefined);
+// type 'profile' | 'member' | 'notification' | 'admin' | ''
 const currentTab = ref('');
 const editLableName = ref('');
 const transferType = ref('');
 const mask = ref(false);
 const currentGroupID = ref('');
 const userInfo = ref({
-  list: [] as Array<typeof IGroupMember>,
+  list: [] as Array<IGroupMember>,
 });
-const currentMember = ref<typeof IGroupMember>({});
+const currentMember = ref<IGroupMember>({});
 const typeName = ref({
   [TUIChatEngine.TYPES.GRP_WORK]: '好友工作群',
   [TUIChatEngine.TYPES.GRP_PUBLIC]: '陌生人社交群',
@@ -332,17 +333,17 @@ const typeName = ref({
   [TUIChatEngine.TYPES.JOIN_OPTIONS_DISABLE_APPLY]: '禁止加群',
 });
 const member = ref({
-  admin: [] as Array<typeof IGroupMember>,
-  member: [] as Array<typeof IGroupMember>,
-  muteMember: [] as Array<typeof IGroupMember>,
+  admin: [] as Array<IGroupMember>,
+  member: [] as Array<IGroupMember>,
+  muteMember: [] as Array<IGroupMember>,
 });
-const transferList = ref<Array<typeof IGroupMember>>([]);
+const transferList = ref<Array<IGroupMember>>([]);
 const transferTitle = ref('');
 const isSearch = ref(false);
 const isRadio = ref(false);
 const selectedList = ref([]);
 const delDialogShow = ref(false);
-const groupMemberList = ref<Array<typeof IGroupMember>>([]);
+const groupMemberList = ref<Array<IGroupMember>>([]);
 const deletedUserList = ref([]);
 const currentGroup = ref<IGroupModel>();
 const currentSelfRole = ref('');
@@ -366,7 +367,7 @@ TUIStore.watch(StoreName.GRP, {
       currentSelfRole.value = currentGroup.value?.selfInfo?.role;
     }
   },
-  currentGroupMemberList: (memberList: Array<typeof IGroupMember>) => {
+  currentGroupMemberList: (memberList: Array<IGroupMember>) => {
     groupMemberList.value = memberList;
     member.value = {
       admin: [],
@@ -503,10 +504,14 @@ const cancel = () => {
 
 const toggleMask = async (type?: string) => {
   selectedList.value = [];
+  let memberUserIDList: string[] = [];
   switch (type) {
     case 'add':
       isRadio.value = false;
-      transferList.value = await friendList();
+      memberUserIDList = [...member.value.admin, ...member.value.member].map((item: IUserProfile) => item.userID);
+      transferList.value = (await friendList()).filter((item: IFriendProfile) => {
+        return item.userID && memberUserIDList.indexOf(item.userID) < 0;
+      });
       transferTitle.value = '添加成员';
       break;
     case 'remove':

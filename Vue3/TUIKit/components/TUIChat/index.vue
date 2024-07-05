@@ -17,6 +17,7 @@
             !isPC && 'tui-chat-H5-header',
             isUniFrameWork && 'tui-chat-uniapp-header',
           ]"
+          :headerExtensionList="headerExtensionList"
           @closeChat="closeChat"
         />
         <Forward @toggleMultipleSelectMode="toggleMultipleSelectMode" />
@@ -67,11 +68,11 @@
       </div>
       <!-- Group Management -->
       <div
-        v-if="isUniFrameWork && isGroup && groupManageExt"
+        v-if="isUniFrameWork && isGroup && headerExtensionList.length > 0"
         class="group-profile"
         @click="handleGroup"
       >
-        {{ groupManageExt.text }}
+        {{ headerExtensionList[0].text }}
       </div>
     </div>
   </div>
@@ -84,7 +85,6 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   IMessageModel,
-  IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
 import ChatHeader from './chat-header/index.vue';
@@ -99,24 +99,24 @@ import TUIChatConfig from './config';
 
 const emits = defineEmits(['closeChat']);
 
-const groupID = ref('');
+const groupID = ref(undefined);
 const isGroup = ref(false);
 const currentConversationID = ref();
 const isMultipleSelectMode = ref(false);
 const inputToolbarDisplayType = ref<ToolbarDisplayType>('none');
 const messageInputRef = ref();
 const messageListRef = ref<InstanceType<typeof MessageList>>();
-const groupManageExt = ref<ExtensionInfo | undefined>(undefined);
+const headerExtensionList = ref<ExtensionInfo[]>([]);
 
 onMounted(() => {
   TUIStore.watch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdate,
+    currentConversationID: onCurrentConversationIDUpdate,
   });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdate,
+    currentConversationID: onCurrentConversationIDUpdate,
   });
   reset();
 });
@@ -158,7 +158,7 @@ const handleEditor = (message: IMessageModel, type: string) => {
 };
 
 const handleGroup = () => {
-  groupManageExt.value.listener.onClicked({ groupID: groupID.value });
+  headerExtensionList.value[0].listener.onClicked({ groupID: groupID.value });
 };
 
 function changeToolbarDisplayType(type: ToolbarDisplayType) {
@@ -184,41 +184,36 @@ function oneByOneForwardMessage() {
   messageListRef.value?.oneByOneForwardMessage();
 }
 
-function onCurrentConversationUpdate(conversation: IConversationModel) {
-  if (currentConversationID.value === conversation?.conversationID) {
+function onCurrentConversationIDUpdate(conversationID: string) {
+  if (currentConversationID.value === conversationID) {
     return;
   }
+
+  isGroup.value = false;
+  let conversationType = TUIChatEngine.TYPES.CONV_C2C;
+  if (conversationID.startsWith(TUIChatEngine.TYPES.CONV_GROUP)) {
+    conversationType = TUIChatEngine.TYPES.CONV_GROUP;
+    isGroup.value = true;
+    groupID.value = conversationID.replace(TUIChatEngine.TYPES.CONV_GROUP, '');
+  }
+
+  headerExtensionList.value = [];
+  currentConversationID.value = conversationID;
   isMultipleSelectMode.value = false;
-  // Each time you switch conversations in TUIChat, you need to initialize chatType
-  TUIChatConfig.setChatType(conversation?.type);
+  // Initialize chatType
+  TUIChatConfig.setChatType(conversationType);
+  // While converstaion change success, notify callkit and roomkit、or other components.
+  TUICore.notifyEvent(TUIConstants.TUIChat.EVENT.CHAT_STATE_CHANGED, TUIConstants.TUIChat.EVENT_SUB_KEY.CHAT_OPENED, { groupID: groupID.value });
   // The TUICustomerServicePlugin plugin determines if the current conversation is a customer service conversation, then sets chatType and activates the conversation.
   TUICore.callService({
     serviceName: TUIConstants.TUICustomerServicePlugin.SERVICE.NAME,
     method: TUIConstants.TUICustomerServicePlugin.SERVICE.METHOD.ACTIVE_CONVERSATION,
-    params: { conversationID: conversation?.conversationID },
+    params: { conversationID: conversationID },
   });
-  currentConversationID.value = conversation?.conversationID;
-  isGroup.value = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
-  if (TUICore.getService(TUIConstants.TUICalling.SERVICE.NAME)) {
-    // while chat converstaion changed, notify callkit current conversation type, c2c or group
-    TUICore.notifyEvent(
-      TUIConstants.TUIChat.EVENT.CHAT_STATE_CHANGED,
-      TUIConstants.TUIChat.EVENT_SUB_KEY.CHAT_OPENED,
-      {
-        groupID: conversation?.groupProfile?.groupID,
-      },
-    );
+  // Get chat header extensions
+  if (TUIChatConfig.getChatType() === TUIConstants.TUIChat.TYPE.GROUP) {
+    headerExtensionList.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID);
   }
-  if (isUniFrameWork && isGroup.value && groupID.value !== conversation?.groupProfile?.groupID) {
-    const extList = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, {
-      filterManageGroup: !isGroup.value,
-    });
-    groupManageExt.value = extList[0];
-  }
-  if (isUniFrameWork && !isGroup.value) {
-    groupManageExt.value = undefined;
-  }
-  groupID.value = conversation?.groupProfile?.groupID;
 }
 </script>
 

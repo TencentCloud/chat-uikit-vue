@@ -1,11 +1,13 @@
 <template>
-  <div class="name">
+  <div class="group-name">
     <label>{{ TUITranslateService.t(`TUIGroup.群名称`) }}</label>
     <div
       v-if="isEdit"
-      :class="[!isPC ? 'edit-h5' : '']"
+      :class="{
+        'edit-h5': isMobile,
+      }"
     >
-      <main>
+      <main class="edit-h5-main">
         <header
           v-if="!isPC"
           class="edit-h5-header"
@@ -20,7 +22,7 @@
           </aside>
           <span
             class="close"
-            @click="close"
+            @click="toggleEditStatus"
           >{{
             TUITranslateService.t(`关闭`)
           }}</span>
@@ -34,7 +36,10 @@
             type="text"
             @blur="updateProfile"
           >
-          <span v-if="!isPC">{{
+          <span
+            v-if="!isPC"
+            class="tip"
+          >{{
             TUITranslateService.t(
               `TUIGroup.仅限中文、字母、数字和下划线，2-20个字`
             )
@@ -55,11 +60,13 @@
     </div>
     <p
       v-if="!isEdit || !isPC"
-      @click="close"
+      class="name"
+      @click="toggleEditStatus"
     >
       <span>{{ groupProfile.name }}</span>
       <Icon
         v-if="isAuthor"
+        class="icon"
         :file="editIcon"
         width="14px"
         height="14px"
@@ -77,7 +84,7 @@ import {
 import Icon from '../../common/Icon.vue';
 import editIcon from '../../../assets/icon/edit.svg';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
-import { isPC } from '../../../utils/env';
+import { isMobile, isPC } from '../../../utils/env';
 
 const props = defineProps({
   data: {
@@ -116,11 +123,11 @@ const updateProfile = () => {
         type: TOAST_TYPE.SUCCESS,
       });
     }
-    close();
+    toggleEditStatus();
   }
 };
 
-const close = () => {
+const toggleEditStatus = () => {
   if (props.isAuthor) {
     isEdit.value = !isEdit.value;
   }
@@ -128,6 +135,7 @@ const close = () => {
     inputGroupName.value = groupProfile.value.name;
   }
 };
+
 watch(
   () => isEdit.value,
   (newVal: boolean) => {
@@ -143,7 +151,7 @@ watch(
 <style lang="scss" scoped>
 @import "../../../assets/styles/common";
 
-.name {
+.group-name {
   padding: 14px 20px;
   font-weight: 400;
   font-size: 14px;
@@ -151,8 +159,8 @@ watch(
   display: flex;
   flex-direction: column;
 
-  p {
-    opacity: 0.6;
+  .name {
+    color: #999;
     display: flex;
     align-items: center;
 
@@ -192,7 +200,7 @@ watch(
   align-items: flex-end;
   z-index: 1;
 
-  main {
+  .edit-h5-main {
     background: #fff;
     flex: 1;
     padding: 18px;
@@ -208,12 +216,9 @@ watch(
         padding: 10px 12px;
       }
 
-      span {
-        font-family: PingFangSC-Regular;
-        font-weight: 400;
+      .tip {
         font-size: 12px;
         color: #888;
-        letter-spacing: 0;
         padding-top: 8px;
       }
     }

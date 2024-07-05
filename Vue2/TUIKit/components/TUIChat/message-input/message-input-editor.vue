@@ -1,5 +1,7 @@
 <template>
-  <div :class="['message-input-editor-container', isH5 && 'message-input-editor-container-h5']">
+  <div
+    :class="['message-input-editor-container', isH5 && 'message-input-editor-container-h5']"
+  >
     <div
       v-if="isMuted"
       class="message-input-mute"
@@ -12,8 +14,8 @@
       class="message-input-editor-area"
       :contenteditable="isH5"
       @keydown.enter="handleEnter"
-      @drop="handleFileDrop"
-      @paste="handleFilePaste"
+      @drop="handlePCFileDrop"
+      @paste="handlePaste"
       @input="handleH5Input"
       @blur="handleH5Blur"
       @focus="handleH5Focus"
@@ -22,21 +24,23 @@
 </template>
 <script setup lang="ts">
 import { toRefs, ref, onMounted, watch, onUnmounted } from '../../../adapter-vue';
-import TUIChatEngine, {
+import {
   TUIStore,
   StoreName,
-  IConversationModel,
+  IMessageModel,
 } from '@tencentcloud/chat-uikit-engine';
-import { Editor, type JSONContent } from '@tiptap/core';
+import { Editor, JSONContent } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
 import Text from '@tiptap/extension-text';
 import Mention from '@tiptap/extension-mention';
 import CustomImage from './message-input-file';
-import type { ITipTapEditorContent } from '../../../interface';
+import { ITipTapEditorContent } from '../../../interface';
 import MessageInputAtSuggestion from './message-input-at/index';
+import { parseTextToRenderArray } from '../emoji-config';
 import { isH5, isPC } from '../../../utils/env';
+import DraftManager from '../utils/conversationDraft';
 
 const props = defineProps({
   placeholder: {
@@ -75,15 +79,35 @@ const props = defineProps({
 
 const emits = defineEmits(['sendMessage', 'onTyping', 'onAt']);
 const { placeholder, enableAt, enableDragUpload, enableTyping } = toRefs(props);
-const inputContentEmpty = ref(true);
-const inputBlur = ref(true);
-const isC2C = ref(false);
-const allInsertedAtInfo = new Map<string, string>();
+const isEditorEmpty = ref<boolean>(true);
+const isEditorBlur = ref<boolean>(true);
+const isC2C = ref<boolean>(false);
+const currentConversationID = ref<string>('');
+const currentQuoteMessage = ref<{ message: IMessageModel; type: string }>();
 const editorDom = ref();
 let editor: Editor | null = null;
+const fileMap = new Map<string, any>();
 
-function onCurrentConversationUpdated(conversation: IConversationModel) {
-  isC2C.value = conversation?.type === TUIChatEngine.TYPES.CONV_C2C;
+function onCurrentConversationIDUpdated(conversationID: string) {
+  if (currentConversationID.value !== conversationID) {
+    if (currentConversationID.value) {
+      DraftManager.setStore(
+        currentConversationID.value,
+        getEditorHTML(),
+        DraftManager.generateAbstract(getEditorContent()),
+        currentQuoteMessage.value,
+      );
+    }
+    resetEditor();
+    if (conversationID) {
+      DraftManager.getStore(conversationID, setEditorContent);
+    }
+  }
+  currentConversationID.value = conversationID;
+}
+
+function onQuoteMessageUpdated(options?: { message: IMessageModel; type: string }) {
+  currentQuoteMessage.value = options;
 }
 
 onMounted(() => {
@@ -107,23 +131,25 @@ onMounted(() => {
         CustomImage.configure({
           inline: true,
           allowBase64: true,
-          HTMLAttributes: {
-            class: 'custom-image',
-          },
         }),
       ],
       autofocus: !isH5,
       editable: true,
       injectCSS: false,
-
-      // handle input edtor typing (only in C2C and enable typing)
+      editorProps: {
+        transformPastedText() {
+          // prevent editor's default paste for resolve emoji
+          return '';
+        },
+      },
+      // handle input editor typing (only in C2C and enable typing)
       onUpdate({ editor, transaction }) {
         if (!enableTyping.value || !isC2C.value) return;
-        inputBlur.value = !editor.isFocused;
+        isEditorBlur.value = !editor.isFocused;
         if (transaction?.doc?.content?.size > 2) {
-          inputContentEmpty.value = false;
+          isEditorEmpty.value = false;
         } else {
-          inputContentEmpty.value = true;
+          isEditorEmpty.value = true;
         }
       },
       onFocus() {
@@ -138,7 +164,7 @@ onMounted(() => {
           ).style.height = `calc(100% - ${keyboardHeight}px)`;
         }
         if (!enableTyping.value || !isC2C.value) return;
-        inputBlur.value = true;
+        isEditorBlur.value = true;
       },
       onBlur() {
         if (isH5 && document?.getElementById('app')?.style) {
@@ -147,23 +173,34 @@ onMounted(() => {
           (document.getElementById('app') as any).style.height = `100%`;
         }
         if (!enableTyping.value || !isC2C.value) return;
-        inputBlur.value = true;
+        isEditorBlur.value = true;
       },
     })
     : null;
 
   TUIStore.watch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdated,
+    currentConversationID: onCurrentConversationIDUpdated,
+  });
+
+  TUIStore.watch(StoreName.CHAT, {
+    quoteMessage: onQuoteMessageUpdated,
   });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdated,
+    currentConversationID: onCurrentConversationIDUpdated,
   });
+
+  TUIStore.unwatch(StoreName.CHAT, {
+    quoteMessage: onQuoteMessageUpdated,
+  });
+
+  // clear map store
+  fileMap.clear();
 });
 
-const handleEnter = (e: any) => {
+function handleEnter(e: any) {
   if (isH5) {
     return;
   }
@@ -176,55 +213,67 @@ const handleEnter = (e: any) => {
     // enter only: send message
     emits('sendMessage');
   }
-};
+}
 
-const handleH5Input = (e: any) => {
+function handleH5Input(e: any) {
   if (isH5) {
     e.data === '@' && emits('onAt', true);
-    inputContentEmpty.value = editorDom.value?.childNodes ? false : true;
+    isEditorEmpty.value = editorDom.value?.childNodes ? false : true;
   }
-};
+}
 
-const handleH5Blur = () => {
-  isH5 && (inputBlur.value = true);
-};
+function handleH5Blur() {
+  isH5 && (isEditorBlur.value = true);
+}
 
-const handleH5Focus = () => {
-  isH5 && (inputBlur.value = false);
-};
+function handleH5Focus() {
+  isH5 && (isEditorBlur.value = false);
+}
 
-const insertAt = (atInfo: { id: string; label: string }) => {
-  if (!allInsertedAtInfo.has(atInfo.id)) {
-    allInsertedAtInfo.set(atInfo.id, atInfo.label);
-  }
+function insertAt(atInfo: { id: string; label: string }) {
   const mentionText = document.createElement('span');
   mentionText.innerHTML = atInfo.label;
   mentionText.className = 'mention';
+  mentionText.id = atInfo.id;
   editorDom.value?.appendChild(mentionText);
-};
+}
 
-// fileMap stores the mapping between fileURL and fileObject
-const fileMap = new Map<string, any>();
-const handleFileDrop = (e: any) => {
+function handlePCFileDrop(e: any) {
   // Only the PC version supports drag and drop upload of rich text
-  e.preventDefault();
-  e.stopPropagation();
-  if (isPC) {
-    handleFileDropOrPaste(e, 'drop');
-  }
-};
-const handleFilePaste = (e: any) => {
+  isPC && handleFileDropOrPaste(e, 'drop');
+}
+
+function handlePaste(e: ClipboardEvent) {
   // In the PC version, disable native copy and support rich text copy, and go through rich text copy upload parsing
   // In the mobile version, only text copy is supported, and default copy parsing is used
-  if (isPC) {
-    e.preventDefault();
-    e.stopPropagation();
-    handleFileDropOrPaste(e, 'paste');
+  if (!e.clipboardData) {
+    return;
   }
-};
+  if (isPC && e.clipboardData.files.length) {
+    handleFileDropOrPaste(e, 'paste');
+  } else {
+    handlePasteText(e);
+    // Caret: https://developer.mozilla.org/en-US/docs/Web/API/CaretPosition
+    scrollToCaret(editorDom.value);
+  }
+}
 
-const handleFileDropOrPaste = async (e: any, type: string) => {
-  if (!enableDragUpload?.value && type === 'drop') {
+function handlePasteText(e: ClipboardEvent) {
+  e.preventDefault();
+  const html = e.clipboardData?.getData('text/html');
+  const text = e.clipboardData?.getData('text/plain') || '';
+  // if paste html in pc, paste by tiptap editor default
+  // if paste text in pc or mobile, parse text to html to render emoji
+  if (!html) {
+    const renderArray = parseTextToRenderArray(text);
+    insertEditorContent(renderArray);
+  }
+}
+
+async function handleFileDropOrPaste(e: any, type: string) {
+  e.preventDefault();
+  e.stopPropagation();
+  if (!enableDragUpload.value && type === 'drop') {
     return;
   }
   if (
@@ -244,7 +293,6 @@ const handleFileDropOrPaste = async (e: any, type: string) => {
         attrs: {
           src: fileSrc,
           alt: file?.name,
-          title: file?.name,
           class: isImage ? 'normal' : 'file',
         },
       });
@@ -257,7 +305,7 @@ const handleFileDropOrPaste = async (e: any, type: string) => {
       }
     }
   }
-};
+}
 
 /**
  * create file icon image
@@ -361,9 +409,9 @@ const handleNameForShow = (value: string): string => {
   return res;
 };
 
-const getEditorContent = () => {
+function getEditorContent() {
   return isPC ? parsePCEditorContent() : parseH5EditorContent();
-};
+}
 
 function parsePCEditorContent(): ITipTapEditorContent[] {
   const editorJSON = editor?.getJSON();
@@ -372,10 +420,10 @@ function parsePCEditorContent(): ITipTapEditorContent[] {
   if (
     content.length > 0
     && content[content.length - 1]
-    && content[content.length - 1]?.type === 'text'
-    && content[content.length - 1]?.payload?.text?.endsWith('\n')
+    && content[content.length - 1].type === 'text'
+    && content[content.length - 1].payload?.text?.endsWith('\n')
   ) {
-    const text = content[content.length - 1].payload.text;
+    const text = content[content.length - 1].payload.text || '';
     content[content.length - 1].payload.text = text?.substring(
       0,
       text.lastIndexOf('\n'),
@@ -419,7 +467,7 @@ function handleEditorNode(node: JSONContent, content: ITipTapEditorContent[]) {
     }
   } else if (
     node.type === 'text'
-    || (node.type === 'custom-image' && node?.attrs?.class === 'emoji')
+    || (node.type === 'custom-image' && node?.attrs?.class?.includes('emoji'))
   ) {
     // Process text and emojis
     const text = node.type === 'text' ? node?.text : node?.attrs?.alt;
@@ -436,15 +484,14 @@ function handleEditorNode(node: JSONContent, content: ITipTapEditorContent[]) {
       });
     }
   } else if (
-    node.type === 'custom-image'
-    && node?.attrs?.class === 'normal'
+    node.type === 'custom-image' && node?.attrs?.class?.includes('normal')
   ) {
     // Process rich text images
     content.push({
       type: 'image',
       payload: { file: fileMap?.get(node?.attrs?.src) },
     });
-  } else if (node.type === 'custom-image' && node?.attrs?.class === 'file') {
+  } else if (node.type === 'custom-image' && node?.attrs?.class?.includes('file')) {
     const file = fileMap?.get(node?.attrs?.src);
     content.push({
       type: file?.type?.includes('video') ? 'video' : 'file',
@@ -484,7 +531,10 @@ function parseH5EditorContent() {
         || (child as HTMLElement).classList?.contains('custom-image-emoji')
         || (child as HTMLElement).classList?.contains('mention')
       ) {
-        text += child.nodeValue || (child as any).alt || child.innerHTML;
+        text += child.nodeValue || (child as any).alt || child.innerHTML || '';
+        if (child.classList?.contains('mention') && child.id && !atUserList?.includes(child.id)) {
+          atUserList.push(child.id);
+        }
       }
     }
   } catch (error) {
@@ -492,12 +542,6 @@ function parseH5EditorContent() {
       throw error;
     }
   }
-
-  allInsertedAtInfo?.forEach((value: string, key: string) => {
-    if (text.includes('@' + value)) {
-      atUserList.push(key);
-    }
-  });
   return [
     {
       type: 'text',
@@ -509,7 +553,7 @@ function parseH5EditorContent() {
   ];
 }
 
-const addEmoji = (emojiData: any) => {
+function addEmoji(emojiData: any) {
   if (isPC) {
     editor?.commands?.insertContent({
       type: 'custom-image',
@@ -529,39 +573,105 @@ const addEmoji = (emojiData: any) => {
     emojiImgNode?.setAttribute('width', '20px');
     emojiImgNode?.setAttribute('height', '20px');
     editorDom.value?.appendChild(emojiImgNode);
+    const spanNode = document.createElement('span');
+    spanNode.contentEditable = 'true';
+    editorDom.value?.appendChild(spanNode);
   }
   if (!isH5) {
     editor?.commands?.focus();
     editor?.commands?.scrollIntoView();
   }
-};
+}
 
-const blur = () => {
+function blur() {
   isPC ? editor?.commands?.blur() : editorDom.value?.blur();
-};
+}
 
-const resetEditor = () => {
+function resetEditor() {
   editor?.commands?.clearContent(true);
-  fileMap?.clear();
-  inputBlur.value = true;
-  inputContentEmpty.value = true;
-  if (!isH5) {
-    editor?.commands?.focus();
-  } else {
-    allInsertedAtInfo?.clear();
-    editorDom.value.innerHTML = '';
-  }
-};
+  isEditorBlur.value = true;
+  isEditorEmpty.value = true;
+  isH5 && (editorDom.value.innerHTML = '');
+}
 
-const setEditorContent = (content: any) => {
-  editor?.commands?.insertContent(content);
-};
+function getEditorHTML(): string {
+  if (isPC) {
+    return editor?.getHTML();
+  }
+  return editorDom.value.innerHTML;
+}
+
+function setEditorContent(content: any) {
+  if (isPC) {
+    editor?.commands?.setContent(content);
+  } else {
+    editorDom.value!.innerHTML = content;
+  }
+}
+
+function insertEditorContent(content: Array<{ type: 'text' | 'image'; content: string; emojiKey?: string }>) {
+  const selection = window.getSelection();
+  if (selection && selection.rangeCount) {
+    const currentRange = selection.getRangeAt(0);
+    content.forEach((item) => {
+      const newNode = item.type === 'image' ? createEmojiNode(item.emojiKey || '', item.content) : createTextNode(item.content);
+      currentRange.insertNode(newNode);
+      currentRange.setStartAfter(newNode);
+      if (item.type === 'image' && isH5) {
+        // insert empty span instead of caret after emoji
+        const textNode = document.createElement('span');
+        textNode.contentEditable = 'true';
+        currentRange.insertNode(textNode);
+        currentRange.setStartAfter(textNode);
+      }
+    });
+    // update caret to current range and scroll to caret
+    currentRange.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(currentRange);
+  }
+}
+
+function createTextNode(text: string) {
+  return document.createTextNode(text);
+}
+
+function createEmojiNode(key: string, url: string) {
+  const imgNode = document.createElement('img');
+  imgNode.src = url;
+  imgNode.alt = key || '';
+  imgNode.classList.add('custom-image', 'custom-image-emoji');
+  imgNode.width = 20;
+  imgNode.height = 20;
+  return imgNode;
+}
+
+function scrollToCaret(el: HTMLElement) {
+  const selection = window.getSelection();
+  if (selection && selection.rangeCount > 0) {
+    const range = selection.getRangeAt(0);
+    // create a new range with zero width space text node in current caret
+    const newRange = document.createRange();
+    const emptyPlaceholder = '\u200B';
+    const textNode = document.createTextNode(emptyPlaceholder);
+    newRange.setStart(range.startContainer, range.startOffset);
+    newRange.insertNode(textNode);
+    // get new range bounding rect for caret position information
+    const rect = newRange.getBoundingClientRect();
+    // remove text node
+    if (textNode.parentNode) {
+      textNode.parentNode.removeChild(textNode);
+    }
+    // scroll to caret
+    el.scrollTop = rect.top - el.getBoundingClientRect().top;
+  }
+}
 
 watch(
-  () => [inputContentEmpty.value, inputBlur.value],
-  (newVal: any, oldVal: any) => {
+  () => [isEditorEmpty.value, isEditorBlur.value],
+  (newVal: boolean[], oldVal: boolean[]) => {
     if (newVal !== oldVal) {
-      emits('onTyping', inputContentEmpty.value, inputBlur.value);
+      emits('onTyping', isEditorEmpty.value, isEditorBlur.value);
     }
   },
   {
@@ -576,6 +686,8 @@ defineExpose({
   resetEditor,
   insertAt,
   setEditorContent,
+  getEditorHTML,
+  insertEditorContent,
   blur,
 });
 </script>
@@ -627,13 +739,17 @@ defineExpose({
   overflow: hidden;
 
   .message-input-editor-area {
-    line-height: 20px;
-    overflow: hidden;
+    overflow: auto;
     user-select: text;
     hyphens: auto;
     word-wrap: break-word;
     word-break: break-word;
     flex-wrap: wrap;
+
+    .custom-image,
+    .custom-image-emoji {
+      display: inline;
+    }
   }
 }
 </style>

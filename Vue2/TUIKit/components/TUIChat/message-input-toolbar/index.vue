@@ -140,46 +140,36 @@ watch(() => props.displayType, (newValue) => {
   }
 });
 
-const getExtensionList = (conversationID: string) => {
-  if (!conversationID) {
-    return currentExtensionList.value = extensionList;
-  }
-  const chatType = TUIChatConfig.getChatType();
-  const options: any = {
-    chatType,
-  };
-  // Backward compatibility: When callkit does not have chatType judgment, use filterVoice and filterVideo to filter
-  if (chatType === 'customerService') {
-    options.filterVoice = true;
-    options.filterVideo = true;
-    enableSampleTaskStatus('customerService');
-  }
-  currentExtensionList.value = [
-    ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, options),
-  ];
-};
-
 const onCurrentConversationUpdate = (conversation: IConversationModel) => {
-  if (conversation?.conversationID && currentConversation.value?.conversationID !== conversation?.conversationID) {
-    getExtensionList(conversation?.conversationID);
+  if (conversation?.conversationID && conversation.conversationID !== currentConversation.value?.conversationID) {
+    getExtensionList(conversation.conversationID);
   }
   currentConversation.value = conversation;
-  if (currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_GROUP) {
-    isGroup.value = true;
-  } else {
-    isGroup.value = false;
-  }
+  isGroup.value = currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_GROUP;
 };
 
-// extensions
-const extensionList: ExtensionInfo[] = [
-  ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID),
-];
+const getExtensionList = (conversationID: string) => {
+  if (!conversationID) {
+    return;
+  }
+  const chatType = TUIChatConfig.getChatType();
+  const params: Record<string, boolean | string> = { chatType };
+  // Backward compatibility: When callkit does not have chatType judgment, use filterVoice and filterVideo to filter
+  if (chatType === TUIConstants.TUIChat.TYPE.CUSTOMER_SERVICE) {
+    params.filterVoice = true;
+    params.filterVideo = true;
+    enableSampleTaskStatus('customerService');
+  }
+  currentExtensionList.value = [...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, params)];
+};
 
-const extensionListShowInStart = computed(
-  (): ExtensionInfo[] =>
-    isPC ? currentExtensionList.value.filter((extension: ExtensionInfo) => extension?.data?.name !== 'search') : currentExtensionList.value,
-);
+const extensionListShowInStart = computed<ExtensionInfo[]>(() => {
+  if (isPC) {
+    const extensionList = currentExtensionList.value.filter((extension: ExtensionInfo) => extension?.data?.name !== 'search');
+    return extensionList;
+  }
+  return currentExtensionList.value;
+});
 
 const extensionListShowInEnd = computed<ExtensionInfo[]>(() => {
   if (isPC) {
@@ -199,7 +189,7 @@ const onExtensionClick = (extension: ExtensionInfo) => {
       onCallExtensionClicked(extension, 2);
       break;
     default:
-      extension?.listener?.onClicked(currentConversation.value?._conversation);
+      (extension as any)?.listener?.onClicked(currentConversation.value?._conversation);
       break;
   }
 };
@@ -264,6 +254,12 @@ const dialogCloseInH5 = (dialogDom: any) => {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   &-list {
     display: flex;

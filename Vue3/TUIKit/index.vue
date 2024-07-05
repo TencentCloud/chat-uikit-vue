@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :key="currentLanguage">
     <slot>
       <div :class="['TUIKit', isH5 && 'TUIKit-h5']">
         <div
@@ -12,12 +12,12 @@
             :class="['TUIKit-navbar-item', currentNavbar === item.id && 'TUIKit-navbar-item-active']"
             @click="currentNavbar = item.id"
           >
-            {{ item.label }}
+            {{ TUITranslateService.t(item.label) }}
           </div>
         </div>
         <div class="TUIKit-main-container">
           <div
-            v-if="currentNavbar === 'conversation'"
+            v-if="currentNavbar === 'message'"
             class="TUIKit-main"
           >
             <div
@@ -32,7 +32,7 @@
               class="TUIKit-main-main"
             >
               <TUIChat>
-                <h1>欢迎使用腾讯云即时通信IM</h1>
+                <h1>{{ TUITranslateService.t('欢迎使用腾讯云即时通信IM') }}</h1>
               </TUIChat>
               <TUIGroup :class="isH5 ? 'chat-popup' : 'chat-aside'" />
               <TUISearch
@@ -52,7 +52,7 @@
           >
             <TUIContact
               displayType="contactList"
-              @switchConversation="currentNavbar = 'conversation'"
+              @switchConversation="currentNavbar = 'message'"
             />
           </div>
         </div>
@@ -60,19 +60,20 @@
     </slot>
   </div>
 </template>
-<script lang="ts"  setup>
+<script lang="ts" setup>
 import { ref, onMounted, framework } from './adapter-vue';
 import { TUILogin } from '@tencentcloud/tui-core';
-import { TUIStore, StoreName, TUIConversationService } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName, TUIConversationService, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { TUISearch, TUIConversation, TUIChat, TUIContact, TUIGroup } from './components';
 import { isH5 } from './utils/env';
 
 const currentConversationID = ref<string>('');
-const currentNavbar = ref<string>('conversation');
+const currentNavbar = ref<string>('message');
+const currentLanguage = ref<string>('zh');
 const navbarList = [
   {
-    id: 'conversation',
-    label: '会话',
+    id: 'message',
+    label: '消息',
   },
   {
     id: 'contact',
@@ -115,6 +116,9 @@ onMounted(() => {
   // Default login logic
   login();
 
+  // init language by SDKAppID
+  initLanguage();
+
   // Modify CallKit style in H5 environment
   modifyCallKitStyle();
 });
@@ -133,9 +137,23 @@ function login() {
       if (conversationID.startsWith('C2C') || conversationID.startsWith('GROUP')) {
         TUIConversationService.switchConversation(conversationID);
       }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    }).catch((error) => {});
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    }).catch((error) => { });
   }
+}
+
+function isIntlSDKAppID(SDKAppID: number) {
+  if ((SDKAppID === 0)
+    || (SDKAppID >= 20000000 && SDKAppID < 90000000)
+    || (SDKAppID >= 1720000000 && SDKAppID < 1790000000)) {
+    return true;
+  }
+  return false;
+}
+
+function initLanguage() {
+  currentLanguage.value = isIntlSDKAppID(props.SDKAppID) ? 'en' : 'zh';
+  TUITranslateService.changeLanguage(currentLanguage.value);
 }
 
 function modifyCallKitStyle() {

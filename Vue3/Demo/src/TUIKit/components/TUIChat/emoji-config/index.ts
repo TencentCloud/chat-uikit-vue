@@ -89,9 +89,9 @@ const emojiConfig = {
  * Example: hello[TUIEmoji_Smile], I am happy.
  * -> [{type: 'text', content: 'hello'}, {type: 'image', content: 'https://.../smile.png'}, {type: 'text', content: ', I am happy.'}]
  * @param text
- * @returns Array<{ type: 'text' | 'image'; content: string }>
+ * @returns Array<{ type: 'text' | 'image'; content: string; emojiKey?: string; }>
  */
-const parseTextToRenderArray = (text: string): any[] => {
+const parseTextToRenderArray = (text: string): Array<{ type: 'text' | 'image'; content: string; emojiKey?: string }> => {
   const emojiRegex = /\[([^\]]+)\]/g;
   const result: any[] = [];
 
@@ -109,7 +109,7 @@ const parseTextToRenderArray = (text: string): any[] => {
 
     const emojiUrl = BASIC_EMOJI_URL + BASIC_EMOJI_URL_MAPPING[emojiKey];
     if (emojiUrl) {
-      result.push({ type: 'image', content: emojiUrl });
+      result.push({ type: 'image', content: emojiUrl, emojiKey });
     } else {
       result.push({ type: 'text', content: emojiKey });
     }
