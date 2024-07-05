@@ -71,16 +71,20 @@
             </label>
             <div class="middle-box">
               <span
-                v-if="
+                v-if="conversation.draftText && conversation.conversationID !== currentConversationID"
+                class="middle-box-draft"
+              >{{ TUITranslateService.t('TUIChat.[草稿]') }}</span>
+              <span
+                v-else-if="
                   conversation.type === 'GROUP' &&
                     conversation.groupAtInfoList &&
                     conversation.groupAtInfoList.length > 0
                 "
                 class="middle-box-at"
               >{{ conversation.getGroupAtInfo() }}</span>
-              <p class="middle-box-content">
+              <div class="middle-box-content">
                 {{ conversation.getLastMessage("text") }}
-              </p>
+              </div>
             </div>
           </div>
           <div class="content-footer">
@@ -111,6 +115,7 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUIConversationService,
+  TUITranslateService,
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal, isIOS, addLongPressListener } from '@tencentcloud/universal-api';

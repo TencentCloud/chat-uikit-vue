@@ -175,7 +175,7 @@ watchEffect(() => {
     props.listItem,
     props.type,
     props.keywordList as string[],
-    props?.displayType !== 'bubble',
+    props?.displayType === 'info',
   );
   timeForShow.value = (props.listItem as IMessageModel)?.time
     ? generateSearchResultTime((props.listItem as IMessageModel)?.time * 1000)
@@ -205,7 +205,7 @@ const navigateToChatPosition = () => {
 const getMessageAbstractType = (message: IMessageModel | ISearchResultListItem) => {
   return message?.type
     ? TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[message.type]}`)
-    : '';
+    : TUITranslateService.t(`TUISearch.[合并消息]`);
 };
 </script>
 <style lang="scss" scoped src="./style/index.scss"></style>

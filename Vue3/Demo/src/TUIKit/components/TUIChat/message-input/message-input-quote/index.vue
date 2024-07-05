@@ -51,19 +51,11 @@ onMounted(() => {
   TUIStore.watch(StoreName.CHAT, {
     quoteMessage: onQuoteMessageUpdated,
   });
-
-  TUIStore.watch(StoreName.CONV, {
-    currentConversationID: onConversationIDUpdated,
-  });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CHAT, {
     quoteMessage: onQuoteMessageUpdated,
-  });
-
-  TUIStore.unwatch(StoreName.CONV, {
-    currentConversationID: onConversationIDUpdated,
   });
 });
 
@@ -111,10 +103,6 @@ function onQuoteMessageUpdated(options?: { message: IMessageModel; type: string 
   } else {
     quoteMessage.value = undefined;
   }
-}
-
-function onConversationIDUpdated() {
-  cancelQuote();
 }
 </script>
 

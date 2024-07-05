@@ -17,19 +17,14 @@
       :style="{
         backgroundColor: props.maskColor,
       }"
-      @click.stop="onOverlayClick"
-      @click.right.stop.prevent
-      @touchstart.stop
-      @touchmove.stop
-      @touchend.stop
+      @click="onOverlayClick"
+      @touchstart.prevent.stop="onOverlayClick"
     />
     <div
       :class="{
         'overlay-content': true,
         'full-screen': props.isFullScreen,
       }"
-      @click.stop
-      @click.right.stop.prevent
     >
       <slot />
     </div>

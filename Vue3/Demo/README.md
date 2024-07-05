@@ -9,6 +9,11 @@
 
 [chat-uikit-vue](https://www.npmjs.com/package/@tencentcloud/chat-uikit-vue) is a Vue UI component library based on Tencent Cloud Chat SDK. It provides universally used UI components that include Conversation, Chat, and Group components. Leveraging these meticulously crafted UI components, you can quickly construct an elegant, reliable, and scalable Chat application.
 
+> [!IMPORTANT]
+> In respect for the copyright of the emoji design, the Chat Demo/TUIKit project does not include the cutouts of large emoji elements. Please replace them with your own designed or copyrighted emoji packs before the official launch for commercial use. The default small yellow face emoji pack is copyrighted by Tencent Cloud and can be authorized for a fee. If you wish to obtain authorization, please submit a ticket to contact us.
+> 
+> submit a ticket url：https://console.tencentcloud.com/workorder/category?level1_id=29&level2_id=40&source=14&data_title=Chat&step=1
+
 ![image](https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/7bd24604-1e5e-4541-8992-245dccbbc810)
 ![image](https://github.com/TencentCloud/chat-uikit-vue/assets/57951148/40ae2f49-39ae-432d-8d1b-5b46414bc3b4)
 

@@ -17,12 +17,12 @@
         :file="audioIcon"
       />
     </div>
-    <label
+    <span
       class="time"
       :style="{ width: `${data.second * 10 + 20}px` }"
     >
       {{ data.second || 1 }} "
-    </label>
+    </span>
     <audio
       ref="audioRef"
       :src="data.url"
@@ -36,6 +36,11 @@ import Icon from '../../../common/Icon.vue';
 import audioIcon from '../../../../assets/icon/msg-audio.svg';
 import { isMobile } from '../../../../utils/env';
 
+interface IEmits {
+  (e: 'setAudioPlayed', messageID: string): void;
+}
+
+const emits = defineEmits<IEmits>();
 const props = defineProps({
   content: {
     type: Object,
@@ -90,6 +95,9 @@ function play() {
   });
   audioRef.value.play();
   isAudioPlaying.value = true;
+  if (message.value.flow === 'in') {
+    emits('setAudioPlayed', message.value.ID);
+  }
 }
 
 function onAudioEnded() {

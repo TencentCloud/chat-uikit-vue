@@ -127,7 +127,6 @@ const insertAt = (atInfo: any) => {
 
 const reEdit = (content: any) => {
   editor.value?.resetEditor();
-  // resetReplyOrReference();
   editor.value?.setEditorContent(content);
 };
 

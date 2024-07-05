@@ -1,10 +1,11 @@
 /**
  * Emoji input interface in the chat screen.
- * It should be noted that the emoticons in TUIKit are copyrighted. The purchased IM service does not include the right to use the emoticons. Please replace
- * them with your own emoticons when you go online, otherwise you will face legal risks.
- * The yellow face emoji is copyrighted by Tencent Cloud. To use it, authorization is required. Please contact us through the following link.
+ * In respect for the copyright of the emoji design, the Chat Demo/TUIKit project does not include the cutouts of large emoji elements.
+ * Please replace them with your own designed or copyrighted emoji packs before the official launch for commercial use.
+ * The default small yellow face emoji pack is copyrighted by Tencent Cloud and can be authorized for a fee.
+ * If you wish to obtain authorization, please submit a ticket to contact us.
  *
- * https://cloud.tencent.com/document/product/269/59590
+ * submit a ticket url：https://console.tencentcloud.com/workorder/category?level1_id=29&level2_id=40&source=14&data_title=Chat&step=1
  */
 import { default as emojiCNLocales } from './locales/zh_cn';
 import { default as emojiENLocales } from './locales/en';

@@ -17,7 +17,7 @@
     </div>
     <div :class="['chat-header-setting', !isPC && 'chat-header-h5-setting']">
       <div
-        v-for="(item, index) in extensions"
+        v-for="(item, index) in props.headerExtensionList"
         :key="index"
         @click.stop="handleExtensions(item)"
       >
@@ -27,25 +27,33 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from '../../../adapter-vue';
-import TUIChatEngine, {
+import { ref, onMounted, onUnmounted, withDefaults } from '../../../adapter-vue';
+import {
   TUIStore,
   StoreName,
   TUITranslateService,
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
-import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
+import { ExtensionInfo } from '@tencentcloud/tui-core';
 // import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
 import Icon from '../../common/Icon.vue';
 import backSVG from '../../../assets/icon/back.svg';
 import { isPC } from '../../../utils/env';
+
+const props = withDefaults(
+  defineProps<{
+    headerExtensionList: ExtensionInfo[];
+  }>(),
+  {
+    headerExtensionList: () => ([]),
+  },
+);
 
 const emits = defineEmits(['closeChat']);
 const currentConversation = ref<IConversationModel>();
 const currentConversationName = ref('');
 const typingStatus = ref(false);
 const groupID = ref('');
-const extensions = ref<ExtensionInfo[]>([]);
 
 onMounted(() => {
   TUIStore.watch(StoreName.CONV, {
@@ -76,13 +84,6 @@ const handleExtensions = (item: ExtensionInfo) => {
 };
 
 function onCurrentConversationUpdated(conversation: IConversationModel) {
-  const isGroup = conversation?.type === TUIChatEngine.TYPES.CONV_GROUP;
-  if (isGroup && currentConversation.value?.conversationID !== conversation?.conversationID) {
-    extensions.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID, { filterManageGroup: !isGroup });
-  }
-  if (!isGroup) {
-    extensions.value = [];
-  }
   currentConversation.value = conversation;
   groupID.value = currentConversation.value?.groupProfile?.groupID;
   currentConversationName.value = currentConversation?.value?.getShowName();

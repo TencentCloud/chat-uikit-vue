@@ -50,16 +50,13 @@
           TUITranslateService.t(`关闭`)
         }}</span>
       </header>
-      <div class="memeber-profile">
+      <div class="edit-h5-profile">
         <div class="memeber-profile-main">
-          <img
+          <Avatar
             class="avatar"
-            :src="
-              userInfoManager.avatar ||
-                'https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'
-            "
-            onerror="this.onerror=null;this.src='https://web.sdk.qcloud.com/component/TUIKit/assets/avatar_21.png'"
-          >
+            :url="userInfoManager.avatar"
+            size="60px"
+          />
           <ul class="list">
             <h1>{{ userInfoManager.nick || userInfoManager.userID }}</h1>
             <li>
@@ -96,6 +93,7 @@ import TUIChatEngine, {
   StoreName,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
+import Avatar from '../../common/Avatar/index.vue';
 import { IUserProfile } from '../../../interface';
 import { isUniFrameWork } from '../../../utils/env';
 
@@ -182,7 +180,7 @@ const close = (tabName: string) => {
     width: 100%;
     overflow: hidden;
 
-    img {
+    .avatar {
       width: 60px;
       height: 60px;
       border-radius: 8px;
@@ -209,7 +207,7 @@ const close = (tabName: string) => {
   }
 
   &-footer {
-    border-top: 10px solid #f4f5f9;
+    border-top: 1px solid #f4f5f9;
     padding: 14px;
     display: flex;
     flex-direction: column;
@@ -248,41 +246,28 @@ const close = (tabName: string) => {
     padding: 18px;
     border-radius: 12px 12px 0 0;
     width: 80vw;
-  }
 
-  &-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    .edit-h5-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-    .close {
-      font-family: PingFangSC-Regular;
-      font-weight: 400;
-      font-size: 18px;
-      color: #3370ff;
-      letter-spacing: 0;
-      line-height: 27px;
+      .close {
+        font-family: PingFangSC-Regular;
+        font-weight: 400;
+        font-size: 18px;
+        color: #3370ff;
+        letter-spacing: 0;
+        line-height: 27px;
+      }
     }
-  }
 
-  &-footer {
-    display: flex;
+    .edit-h5-profile {
+      .memeber-profile-main {
+        .avatar {
+          margin: 20px;
+        }
 
-    .btn {
-      flex: 1;
-      border: none;
-      background: #147aff;
-      border-radius: 5px;
-      font-family: PingFangSC-Regular;
-      font-weight: 400;
-      font-size: 16px;
-      color: #fff;
-      letter-spacing: 0;
-      line-height: 27px;
-      padding: 8px 0;
-
-      &:disabled {
-        opacity: 0.3;
       }
     }
   }

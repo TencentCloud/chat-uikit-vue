@@ -197,9 +197,9 @@ export const generateSearchResultShowContent = (
       const text
         = message?.payload?.text || message?.payload?.fileName || message?.payload?.description;
       const abstract: any[] = [];
-      if ((result as IMessageModel)?.type !== TUIChatEngine.TYPES.MSG_TEXT && isTypeShow) {
+      if (message?.type && isTypeShow && message.type !== TUIChatEngine.TYPES.MSG_TEXT) {
         abstract.push({
-          text: TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[(result as IMessageModel)?.type]}`),
+          text: TUITranslateService.t(`TUISearch.${messageTypeAbstractMap[message.type]}`),
           isHighlight: false,
         });
       }

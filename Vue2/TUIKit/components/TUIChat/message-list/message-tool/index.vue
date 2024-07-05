@@ -15,6 +15,7 @@
           :key="item.key"
           class="list-item"
           @click="getFunction(index)"
+          @mousedown="beforeCopy(item.key)"
         >
           <Icon
             :file="item.iconUrl"
@@ -47,10 +48,14 @@ import translateIcon from '../../../../assets/icon/translate.svg';
 import multipleSelectIcon from '../../../../assets/icon/multiple-select.svg';
 import convertText from '../../../../assets/icon/convertText_zh.svg';
 import { enableSampleTaskStatus } from '../../../../utils/enableSampleTaskStatus';
-import { copyText } from '../../utils/utils';
 import { transformTextWithKeysToEmojiNames } from '../../emoji-config';
-import { isPC, isUniFrameWork } from '../../../../utils/env';
+import { isH5, isPC, isUniFrameWork } from '../../../../utils/env';
 import { ITranslateInfo, IConvertInfo } from '../../../../interface';
+
+// uni-app conditional compilation will not run the following code
+// #ifndef APP || APP-PLUS || MP || H5
+import CopyManager from '../../utils/copy';
+// #endif
 
 interface IProps {
   messageItem: IMessageModel;
@@ -244,14 +249,29 @@ function deleteMessage() {
 }
 
 async function copyMessage() {
-  const text = transformTextWithKeysToEmojiNames(message.value?.payload?.text);
   if (isUniFrameWork) {
     TUIGlobal?.setClipboardData({
-      data: text,
+      data: transformTextWithKeysToEmojiNames(message.value?.payload?.text),
     });
   } else {
-    copyText(text);
+    // uni-app conditional compilation will not run the following code
+    // #ifndef APP || APP-PLUS || MP || H5
+    CopyManager.copySelection(message.value?.payload?.text);
+    // #endif
   }
+}
+
+function beforeCopy(key: string) {
+  // only pc support copy selection or copy full message text
+  // uni-app and h5 only support copy full message text
+  if (key !== 'copy' || isH5) {
+    return;
+  }
+
+  // uni-app conditional compilation will not run the following code
+  // #ifndef APP || APP-PLUS || MP || H5
+  CopyManager.saveCurrentSelection();
+  // #endif
 }
 
 function forwardSingleMessage() {

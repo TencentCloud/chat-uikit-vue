@@ -63,21 +63,19 @@ export default class TUIGroupServer {
     }
   }
 
-  public onGetExtension(extensionID: string, params: any): Array<ExtensionInfo> {
-    const list: Array<ExtensionInfo> = [];
+  public onGetExtension(extensionID: string): ExtensionInfo[] {
+    const list: ExtensionInfo[] = [];
     switch (extensionID) {
       case TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID:
-        if (!params?.filterManageGroup) {
-          list.push({
-            weight: 100,
-            icon: settingSVG,
-            text: '更多',
-            data: {},
-            listener: {
-              onClicked: this.groupManage.bind(this),
-            },
-          });
-        }
+        list.push({
+          weight: 100,
+          icon: settingSVG,
+          text: '更多',
+          data: {},
+          listener: {
+            onClicked: this.groupManage.bind(this),
+          },
+        });
         break;
     }
     return list;

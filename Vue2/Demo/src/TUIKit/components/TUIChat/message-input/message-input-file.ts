@@ -1,5 +1,4 @@
 import Image from '@tiptap/extension-image';
-import { mergeAttributes } from '@tiptap/core';
 
 export default Image.extend({
   name: 'custom-image',
@@ -30,11 +29,10 @@ export default Image.extend({
   },
 
   renderHTML({ node, HTMLAttributes }) {
-    HTMLAttributes.class = 'custom-image-' + node.attrs.class;
-
+    HTMLAttributes.class = (node.attrs.class?.includes('custom-image-') ? '' : 'custom-image-') + node.attrs.class;
     return [
       'img',
-      mergeAttributes(this.options.HTMLAttributes, HTMLAttributes),
+      HTMLAttributes,
     ];
   },
 });

@@ -17,7 +17,7 @@
       v-else
       class="max-double-line"
     >
-      {{ messageQuoteContent.messageSender }}: {{ transformTextWithKeysToEmojiNames(messageQuoteContent.messageAbstract) || TUITranslateService.t('TUIChat.聊天记录') }}
+      {{ messageQuoteContent.messageSender }}: {{ transformTextWithKeysToEmojiNames(messageQuoteText) }}
     </div>
   </div>
 </template>
@@ -33,7 +33,7 @@ import {
 import { getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { isUniFrameWork } from '../../../../../utils/env';
 import { Toast, TOAST_TYPE } from '../../../../../components/common/Toast/index';
-import type { ICloudCustomData, IQuoteContent } from './interface.ts';
+import { ICloudCustomData, IQuoteContent, MessageQuoteTypeEnum } from './interface.ts';
 import { transformTextWithKeysToEmojiNames } from '../../../emoji-config';
 
 export interface IProps {
@@ -51,6 +51,7 @@ const props = withDefaults(defineProps<IProps>(), {
 });
 
 let selfAddValue = 0;
+const messageQuoteText = ref<string>('');
 const hasQuoteContent = ref(false);
 const messageQuoteContent = ref<IQuoteContent>({} as IQuoteContent);
 
@@ -70,11 +71,61 @@ onMounted(() => {
     hasQuoteContent.value = Boolean(cloudCustomData.messageReply);
     if (hasQuoteContent.value) {
       messageQuoteContent.value = cloudCustomData.messageReply;
+      messageQuoteText.value = performQuoteContent(messageQuoteContent.value);
     }
   } catch (error) {
     hasQuoteContent.value = false;
   }
 });
+
+function performQuoteContent(params: IQuoteContent) {
+  let messageKey: string = '';
+  let quoteContent: string = '';
+  switch (params.messageType) {
+    case MessageQuoteTypeEnum.TYPE_TEXT:
+      messageKey = '[文本]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_CUSTOM:
+      messageKey = '[自定义消息]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_IMAGE:
+      messageKey = '[图片]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_SOUND:
+      messageKey = '[音频]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_VIDEO:
+      messageKey = '[视频]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_FILE:
+      messageKey = '[文件]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_LOCATION:
+      messageKey = '[定位]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_FACE:
+      messageKey = '[动画表情]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_GROUP_TIPS:
+      messageKey = '[群提示]';
+      break;
+    case MessageQuoteTypeEnum.TYPE_MERGER:
+      messageKey = '[聊天记录]';
+      break;
+    default:
+      messageKey = '[消息]';
+      break;
+  }
+  if (
+    [
+      MessageQuoteTypeEnum.TYPE_TEXT,
+      MessageQuoteTypeEnum.TYPE_MERGER,
+    ].includes(params.messageType)
+  ) {
+    quoteContent = params.messageAbstract;
+  }
+  return quoteContent ? quoteContent : TUITranslateService.t(`TUIChat.${messageKey}`);
+}
 
 async function scrollToOriginalMessage() {
   if (isMessageRevoked.value) {

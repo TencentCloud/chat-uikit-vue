@@ -66,6 +66,11 @@
                   {{ riskContentText }}
                 </div>
               </div>
+              <!-- audio unplay mark -->
+              <div
+                v-if="isDisplayUnplayMark"
+                class="audio-unplay-mark"
+              />
               <!-- Send Fail Icon -->
               <div
                 v-if="message.status === 'fail' || message.hasRiskContent"
@@ -138,6 +143,7 @@ interface IProps {
   classNameList?: string[];
   blinkMessageIDList?: string[];
   isMultipleSelectMode?: boolean;
+  isAudioPlayed?: boolean | undefined;
   multipleSelectedMessageIDList?: string[];
 }
 
@@ -155,6 +161,7 @@ const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   messageItem: () => ({} as IMessageModel),
   content: () => ({}),
+  isAudioPlayed: false,
   blinkMessageIDList: () => [],
   classNameList: () => [],
   isMultipleSelectMode: false,
@@ -175,6 +182,13 @@ const { blinkMessageIDList, messageItem: message } = toRefs(props);
 
 const isMultipleSelected = computed<boolean>(() => {
   return props.multipleSelectedMessageIDList.includes(message.value.ID);
+});
+
+const isDisplayUnplayMark = computed<boolean>(() => {
+  return message.value.flow === 'in'
+    && message.value.status === 'success'
+    && message.value.type === TYPES.MSG_AUDIO
+    && !props.isAudioPlayed;
 });
 
 const containerClassNameList = computed(() => {
@@ -311,6 +325,15 @@ function openReadUserPanel() {
 
         &-reverse {
           flex-direction: row-reverse;
+        }
+
+        .audio-unplay-mark {
+          flex: 0 0 auto;
+          width: 5px;
+          height: 5px;
+          border-radius: 50%;
+          background-color: #f00;
+          margin: 5px;
         }
 
         .message-body-content {

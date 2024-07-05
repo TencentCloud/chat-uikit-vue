@@ -211,7 +211,6 @@ const updateShowDeleteConversationDialog = (isShow: boolean) => {
 .actions-menu {
   position: absolute;
   left: 164px;
-  cursor: pointer;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
   box-shadow: 0 -4px 12px 0 rgba(0, 0, 0, 0.06);
@@ -220,7 +219,8 @@ const updateShowDeleteConversationDialog = (isShow: boolean) => {
   opacity: 0;
 
   .actions-menu-item {
-    padding: 7px 20px;
+    cursor: pointer;
+    padding: 10px 20px;
     font-size: 12px;
     word-break: keep-all;
   }

@@ -10,7 +10,10 @@
       @click="closeChatPop"
     >
       <!-- Safe Tips -->
-      <div class="tui-chat-safe-tips">
+      <div
+        v-if="isOfficial"
+        class="tui-chat-safe-tips"
+      >
         <span>
           {{
             TUITranslateService.t(
@@ -86,6 +89,7 @@
             >
               <MessageBubble
                 :content="item.getMessageContent()"
+                :isAudioPlayed="Boolean(audioPlayedMapping[item.ID])"
                 :blinkMessageIDList="blinkMessageIDList"
                 :isMultipleSelectMode="isMultipleSelectMode"
                 :messageItem="JSON.parse(JSON.stringify(item))"
@@ -125,6 +129,7 @@
                     v-else-if="item.type === TYPES.MSG_AUDIO"
                     :content="item.getMessageContent()"
                     :messageItem="item"
+                    @setAudioPlayed="setAudioPlayed"
                   />
                   <ProgressMessage
                     v-else-if="item.type === TYPES.MSG_FILE"
@@ -262,6 +267,7 @@ import ImagePreviewer from '../../common/ImagePreviewer/index.vue';
 import ProgressMessage from '../../common/ProgressMessage/index.vue';
 import { emojiConfig } from '../emoji-config';
 import { isPC, isH5 } from '../../../utils/env';
+import chatStorage from '../utils/chatStorage';
 import { isEnabledMessageReadReceiptGlobal, shallowCopyMessage, isCreateGroupCustomMessage, deepCopy } from '../utils/utils';
 
 interface ScrollConfig {
@@ -291,10 +297,12 @@ const props = withDefaults(defineProps<IProps>(), {
   groupID: '',
   isMultipleSelectMode: false,
 });
-let observer: IntersectionObserver | null = null;
+
 let groupType: string | undefined;
-const enabledEmojiPlugin = TUIStore.getData(StoreName.APP, 'enabledEmojiPlugin');
+let observer: IntersectionObserver | null = null;
 const sentReceiptMessageIDSet = new Set<string>();
+const isOfficial = TUIStore.getData(StoreName.APP, 'isOfficial');
+const enabledEmojiPlugin = TUIStore.getData(StoreName.APP, 'enabledEmojiPlugin');
 
 const messageListRef = ref<HTMLElement>();
 const messageToolListRef = ref<Array<{ messageToolDom: HTMLElement }>>();
@@ -319,6 +327,7 @@ const isShowReadUserStatusPanel = ref<boolean>(false);
 const readStatusMessage = ref<IMessageModel>();
 const beforeHistoryGetScrollHeight = ref<number>(0);
 const isTopMessageDom = ref<boolean>(false);
+const audioPlayedMapping = ref<Record<string, boolean>>({});
 
 // image preview
 const showImagePreview = ref(false);
@@ -341,7 +350,11 @@ const isShowEmojiPlugin = computed(() => {
     return item.text === 'TUIEmojiPlugin';
   });
 });
+
 onMounted(() => {
+  // Retrieve the information about whether the audio has been played from localStorage
+  audioPlayedMapping.value = chatStorage.getChatStorage('audioPlayedMapping') || {};
+
   TUIStore.watch(StoreName.CHAT, {
     messageList: onMessageListUpdated,
     messageSource: onMessageSourceUpdated,
@@ -377,6 +390,11 @@ onUnmounted(() => {
   });
 
   messageListRef.value?.removeEventListener('scroll', handelScrollListScroll);
+
+  if (Object.keys(audioPlayedMapping.value).length > 0) {
+    // Synchronize storage about whether the audio has been played when the component is unmounted
+    chatStorage.setChatStorage('audioPlayedMapping', audioPlayedMapping.value);
+  }
 
   sentReceiptMessageIDSet.clear();
   observer?.disconnect();
@@ -509,6 +527,10 @@ const onCurrentConversationIDUpdated = (conversationID: string) => {
   if (isEnabledMessageReadReceiptGlobal()) {
     const { groupProfile } = TUIStore.getConversationModel(conversationID) || {};
     groupType = groupProfile?.type;
+  }
+  if (Object.keys(audioPlayedMapping.value).length > 0) {
+    // Synchronize storage about whether the audio has been played when converstaion switched
+    chatStorage.setChatStorage('audioPlayedMapping', audioPlayedMapping.value);
   }
 };
 
@@ -767,6 +789,13 @@ function oneByOneForwardMessage() {
     isMergeForward: false,
     messageIDList: multipleSelectedMessageIDList.value,
   });
+}
+
+function setAudioPlayed(messageID: string) {
+  audioPlayedMapping.value = {
+    ...audioPlayedMapping.value,
+    [messageID]: true,
+  };
 }
 
 defineExpose({
