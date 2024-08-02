@@ -4,7 +4,10 @@
     ref="messageToolDom"
     :class="['dialog-item', !isPC ? 'dialog-item-h5' : 'dialog-item-web']"
   >
-    <slot name="TUIEmojiPlugin" />
+    <slot
+      v-if="featureConfig.EmojiReaction"
+      name="TUIEmojiPlugin"
+    />
     <div
       class="dialog-item-list"
       :class="!isPC ? 'dialog-item-list-h5' : 'dialog-item-list-web'"
@@ -51,6 +54,7 @@ import { enableSampleTaskStatus } from '../../../../utils/enableSampleTaskStatus
 import { transformTextWithKeysToEmojiNames } from '../../emoji-config';
 import { isH5, isPC, isUniFrameWork } from '../../../../utils/env';
 import { ITranslateInfo, IConvertInfo } from '../../../../interface';
+import TUIChatConfig from '../../config';
 
 // uni-app conditional compilation will not run the following code
 // #ifndef APP || APP-PLUS || MP || H5
@@ -71,6 +75,7 @@ const props = withDefaults(defineProps<IProps>(), {
   isMultipleSelectMode: false,
   messageItem: () => ({}) as IMessageModel,
 });
+const featureConfig = TUIChatConfig.getFeatureConfig();
 
 const TYPES = TUIChatEngine.TYPES;
 
@@ -80,7 +85,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.打开'),
     iconUrl: copyIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.DownloadFile || !message.value) return false;
       return isPC && (message.value?.type === TYPES.MSG_FILE
         || message.value.type === TYPES.MSG_VIDEO
         || message.value.type === TYPES.MSG_IMAGE);
@@ -92,7 +97,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.复制'),
     iconUrl: copyIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.CopyMessage || !message.value) return false;
       return message.value.type === TYPES.MSG_TEXT;
     },
     clickEvent: copyMessage,
@@ -102,7 +107,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.撤回'),
     iconUrl: revokeIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.RevokeMessage || !message.value) return false;
       return message.value.flow === 'out' && message.value.status === 'success';
     },
     clickEvent: revokeMessage,
@@ -112,7 +117,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.删除'),
     iconUrl: delIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.DeleteMessage || !message.value) return false;
       return message.value.status === 'success';
     },
     clickEvent: deleteMessage,
@@ -122,7 +127,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.转发'),
     iconUrl: forwardIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.ForwardMessage || !message.value) return false;
       return message.value.status === 'success';
     },
     clickEvent: forwardSingleMessage,
@@ -132,7 +137,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.引用'),
     iconUrl: quoteIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.QuoteMessage || !message.value) return false;
       const _message = TUIStore.getMessageModel(message.value.ID);
       return message.value.status === 'success' && !_message.getSignalingInfo();
     },
@@ -144,7 +149,7 @@ const actionItems = ref([
     visible: false,
     iconUrl: translateIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.TranslateMessage || !message.value) return false;
       return message.value.status === 'success' && message.value.type === TYPES.MSG_TEXT;
     },
     clickEvent: translateMessage,
@@ -155,7 +160,7 @@ const actionItems = ref([
     visible: false,
     iconUrl: convertText,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.VoiceToText || !message.value) return false;
       return message.value.status === 'success' && message.value.type === TYPES.MSG_AUDIO;
     },
     clickEvent: convertVoiceToText,
@@ -165,7 +170,7 @@ const actionItems = ref([
     text: TUITranslateService.t('TUIChat.多选'),
     iconUrl: multipleSelectIcon,
     renderCondition() {
-      if (!message.value) return false;
+      if (!featureConfig.MultiSelection || !message.value) return false;
       return message.value.status === 'success';
     },
     clickEvent: multipleSelectMessage,
@@ -374,7 +379,7 @@ defineExpose({
     align-items: baseline;
     white-space: nowrap;
     flex-wrap: wrap;
-    width: 280px;
+    max-width: 280px;
 
     .list-item {
       padding: 4px 12px;
@@ -397,10 +402,10 @@ defineExpose({
   padding: 0;
 
   .dialog-item-list {
-    flex-wrap: nowrap;
     margin: 10px;
-    justify-content: space-around;
-    width: 280px;
+    white-space: nowrap;
+    flex-wrap: wrap;
+    max-width: 280px;
 
     .list-item {
       padding: 0 8px;

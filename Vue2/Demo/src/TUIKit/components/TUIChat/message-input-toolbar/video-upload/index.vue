@@ -25,12 +25,13 @@
   </ToolbarItemContainer>
 </template>
 <script lang="ts" setup>
-import {
+import TUIChatEngine, {
   TUIChatService,
   TUIStore,
   StoreName,
   IConversationModel,
   SendMessageParams,
+  SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ref } from '../../../../adapter-vue';
@@ -40,6 +41,7 @@ import videoIcon from '../../../../assets/icon/video.png';
 import videoUniIcon from '../../../../assets/icon/video-uni.png';
 import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
+import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
 
 const props = defineProps({
   // Video source, only valid for uni-app version, web version only supports selecting videos from files
@@ -133,7 +135,15 @@ const sendVideoMessage = (file: any) => {
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
-  TUIChatService.sendVideoMessage(options);
+  const offlinePushInfoCreateParams: IOfflinePushInfoCreateParams = {
+    conversation: currentConversation.value,
+    payload: options.payload,
+    messageType: TUIChatEngine.TYPES.MSG_VIDEO,
+  };
+  const sendMessageOptions: SendMessageOptions = {
+    offlinePushInfo: OfflinePushInfoManager.create(offlinePushInfoCreateParams),
+  };
+  TUIChatService.sendVideoMessage(options, sendMessageOptions);
 };
 </script>
 

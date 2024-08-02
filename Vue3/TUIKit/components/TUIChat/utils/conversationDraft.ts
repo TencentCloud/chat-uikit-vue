@@ -13,7 +13,7 @@ class ConversationDraftManager {
   private static instance: ConversationDraftManager | null = null;
   private quoteMessageMap = new Map<string, IMessageModel>();
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): ConversationDraftManager {
     if (!ConversationDraftManager.instance) {
@@ -44,6 +44,9 @@ class ConversationDraftManager {
 
   public getStore(conversationID: string, setEditorContentCallback: (...args: any[]) => void) {
     const conversation = TUIStore.getConversationModel(conversationID);
+    if (!conversation) {
+      return;
+    }
     if (conversation.conversationID && conversation.draftText) {
       const draftObject = JSONToObject(conversation.draftText);
       TUIStore.update(StoreName.CHAT, 'quoteMessage', { message: this.quoteMessageMap.get(draftObject.messageID) || undefined, type: draftObject.type });

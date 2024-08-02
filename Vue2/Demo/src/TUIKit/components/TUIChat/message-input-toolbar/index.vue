@@ -14,7 +14,7 @@
       ]"
     >
       <EmojiPicker
-        v-if="!isUniFrameWork"
+        v-if="isRenderedEmojiPicker"
         ref="emojiPickerRef"
         @insertEmoji="insertEmoji"
         @dialogShowInH5="dialogShowInH5"
@@ -22,18 +22,16 @@
         @changeToolbarDisplayType="(type) => emits('changeToolbarDisplayType', type)"
       />
       <ImageUpload
-        v-if="isUniFrameWork"
-        imageSourceType="camera"
+        v-if="featureConfig.InputImage"
+        imageSourceType="album"
       />
-      <ImageUpload imageSourceType="album" />
-      <FileUpload v-if="!isUniFrameWork" />
-      <VideoUpload videoSourceType="album" />
+      <FileUpload v-if="featureConfig.InputFile" />
       <VideoUpload
-        v-if="isUniFrameWork"
-        videoSourceType="camera"
+        v-if="featureConfig.InputVideo"
+        videoSourceType="album"
       />
-      <Evaluate />
-      <Words />
+      <Evaluate v-if="featureConfig.InputEvaluation" />
+      <Words v-if="featureConfig.InputQuickReplies" />
       <template v-if="extensionListShowInStart[0]">
         <ToolbarItemContainer
           v-for="extension in extensionListShowInStart"
@@ -119,6 +117,9 @@ const userSelectorRef = ref();
 const emojiPickerRef = ref<InstanceType<typeof EmojiPicker>>();
 const currentUserSelectorExtension = ref<ExtensionInfo>();
 const currentExtensionList = ref<ExtensionInfo[]>([]);
+const featureConfig = TUIChatConfig.getFeatureConfig();
+const isRenderedEmojiPicker = ref<boolean>(true);
+isRenderedEmojiPicker.value = featureConfig.InputEmoji || featureConfig.InputStickers;
 
 onMounted(() => {
   TUIStore.watch(StoreName.CONV, {
@@ -160,7 +161,14 @@ const getExtensionList = (conversationID: string) => {
     params.filterVideo = true;
     enableSampleTaskStatus('customerService');
   }
-  currentExtensionList.value = [...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, params)];
+  currentExtensionList.value = [
+    ...TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID, params),
+  ].filter((extension: ExtensionInfo) => {
+    if (extension?.data?.name === 'search') {
+      return featureConfig.MessageSearch;
+    }
+    return true;
+  });
 };
 
 const extensionListShowInStart = computed<ExtensionInfo[]>(() => {

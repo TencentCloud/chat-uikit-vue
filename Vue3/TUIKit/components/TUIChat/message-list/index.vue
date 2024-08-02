@@ -241,7 +241,7 @@ import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import { outsideClick, getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { TUIEmojiPlugin } from '@tencentcloud/tui-emoji-plugin';
 // import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash';
 import Link from './link';
 import MessageGroupApplication from './message-group-application/index.vue';
 import MessageText from './message-elements/message-text.vue';
@@ -282,6 +282,7 @@ interface ScrollConfig {
 interface IProps {
   isGroup: boolean;
   groupID: string;
+  isNotInGroup: boolean;
   isMultipleSelectMode: boolean;
 }
 
@@ -295,6 +296,7 @@ const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   isGroup: false,
   groupID: '',
+  isNotInGroup: false,
   isMultipleSelectMode: false,
 });
 
@@ -562,7 +564,7 @@ const onImagePreviewerClose = () => {
 
 // toggle message
 const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = false) => {
-  if (props.isMultipleSelectMode) {
+  if (props.isMultipleSelectMode || props.isNotInGroup) {
     return;
   }
   if (isLongpress) {
@@ -573,7 +575,7 @@ const handleToggleMessageItem = (e: any, message: IMessageModel, isLongpress = f
 };
 
 const handleToggleMessageItemForPC = (e: MouseEvent, message: IMessageModel) => {
-  if (props.isMultipleSelectMode) {
+  if (props.isMultipleSelectMode || props.isNotInGroup) {
     return;
   }
   if (isPC) {
@@ -603,7 +605,7 @@ function filterTopMessageDom(toggleMessageElement: any) {
 // h5 long press
 let timer: number;
 const handleH5LongPress = (e: any, message: IMessageModel, type: string) => {
-  if (props.isMultipleSelectMode) {
+  if (props.isMultipleSelectMode || props.isNotInGroup) {
     return;
   }
   if (!isH5) return;
@@ -741,6 +743,9 @@ const isSignalingMessage = (message: IMessageModel) => {
 };
 
 function setReadReceiptPanelVisible(visible: boolean, message?: IMessageModel) {
+  if (visible && props.isNotInGroup) {
+    return;
+  }
   if (!visible) {
     readStatusMessage.value = undefined;
   } else {

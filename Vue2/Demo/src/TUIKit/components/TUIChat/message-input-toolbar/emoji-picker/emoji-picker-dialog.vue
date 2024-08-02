@@ -82,15 +82,17 @@ import { isPC, isUniFrameWork } from '../../../../utils/env';
 import { IEmojiGroupList, IEmojiGroup } from '../../../../interface';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import { EMOJI_GROUP_LIST, BASIC_EMOJI_URL_MAPPING, convertKeyToEmojiName } from '../../emoji-config';
+import TUIChatConfig from '../../config';
 
 const emits = defineEmits(['insertEmoji', 'onClose', 'sendMessage']);
-const list = ref<IEmojiGroupList>(EMOJI_GROUP_LIST);
 const currentTabIndex = ref<number>(0);
-const currentTabItem = ref<IEmojiGroup>(list?.value[0]);
-const currentEmojiList = ref<string[]>(list?.value[0]?.list);
 const currentConversation = ref();
 const emojiPickerDialog = ref();
 const emojiPickerListRef = ref();
+const featureConfig = TUIChatConfig.getFeatureConfig();
+const list = ref<IEmojiGroupList>(initEmojiList());
+const currentTabItem = ref<IEmojiGroup>(list?.value[0]);
+const currentEmojiList = ref<string[]>(list?.value[0]?.list);
 
 onMounted(() => {
   TUIStore.watch(StoreName.CONV, {
@@ -161,6 +163,17 @@ function sendMessage() {
 
 function onCurrentConversationUpdate(conversation: IConversationModel) {
   currentConversation.value = conversation;
+}
+
+function initEmojiList() {
+  return EMOJI_GROUP_LIST.filter((item) => {
+    if (item.type === EMOJI_TYPE.BASIC) {
+      return featureConfig.InputEmoji;
+    }
+    if (item.type === EMOJI_TYPE.BIG) {
+      return featureConfig.InputStickers;
+    }
+  });
 }
 </script>
 

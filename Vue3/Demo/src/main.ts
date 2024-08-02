@@ -21,7 +21,7 @@ app.use(router);
 app.mount('#app');
 
 const SDKAppID = 0; // Your SDKAppID
-const secretKey = ''; // Your secretKey
+const secretKey = ""; // Your secretKey
 
 TUIChatKit.components(TUIComponents, app);
 TUIChatKit.init();

@@ -1,14 +1,17 @@
 <template>
   <div :class="['chat-header', !isPC && 'chat-header-h5']">
     <div
-      v-if="!isPC"
+      v-if="!isPC && isNotRoomChat"
       :class="['chat-header-back', !isPC && 'chat-header-h5-back']"
       @click="closeChat(currentConversation.conversationID)"
     >
       <Icon :file="backSVG" />
     </div>
     <div class="chat-header-container">
-      <div :class="['chat-header-content', !isPC && 'chat-header-h5-content']">
+      <div
+        v-if="isNotRoomChat"
+        :class="['chat-header-content', !isPC && 'chat-header-h5-content']"
+      >
         {{ currentConversationName }}
       </div>
       <div>
@@ -34,11 +37,12 @@ import {
   TUITranslateService,
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
-import { ExtensionInfo } from '@tencentcloud/tui-core';
+import { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
 // import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
 import Icon from '../../common/Icon.vue';
 import backSVG from '../../../assets/icon/back.svg';
 import { isPC } from '../../../utils/env';
+import TUIChatConfig from '../config';
 
 const props = withDefaults(
   defineProps<{
@@ -54,6 +58,7 @@ const currentConversation = ref<IConversationModel>();
 const currentConversationName = ref('');
 const typingStatus = ref(false);
 const groupID = ref('');
+const isNotRoomChat = ref<boolean>(TUIChatConfig.getChatType() !== TUIConstants.TUIChat.TYPE.ROOM);
 
 onMounted(() => {
   TUIStore.watch(StoreName.CONV, {

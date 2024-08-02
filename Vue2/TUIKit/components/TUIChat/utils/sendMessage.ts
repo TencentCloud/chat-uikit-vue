@@ -10,6 +10,7 @@ import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
 import { ITipTapEditorContent } from '../../../interface';
 import { enableSampleTaskStatus } from '../../../utils/enableSampleTaskStatus';
+import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../offlinePushInfoManager/index';
 
 export const sendMessageErrorCodeMap: Map<number, string> = new Map([
   [3123, '文本包含本地审核拦截词'],
@@ -26,9 +27,11 @@ export const createOfflinePushInfo = (conversation: IConversationModel) => {
   const androidInfo = {
     sound: 'private_ring.mp3',
     XiaoMiChannelID: 'high_custom_1',
+    OPPOChannelID: 'tuikit',
   };
   const apnsInfo = {
     sound: '01.caf',
+    image: 'https://web.sdk.qcloud.com/im/demo/latest/faviconnew.png',
   };
   const userInfo = TUIStore.getData(StoreName.USER, 'userProfile');
   const entity = {
@@ -39,9 +42,9 @@ export const createOfflinePushInfo = (conversation: IConversationModel) => {
     action: 1,
   };
   return {
+    extension: JSON.stringify({ entity }),
     androidInfo,
     apnsInfo,
-    extension: JSON.stringify({ entity }),
   };
 };
 
@@ -68,8 +71,13 @@ export const sendMessages = async (
       };
       // handle message typing
       let textMessageContent;
-      const sendMessageOptions: any = {
-        offlinePushInfo: createOfflinePushInfo(currentConversation),
+      const sendMessageOptions = {
+        offlinePushInfo: {},
+      };
+      const offlinePushInfoCreateParams: IOfflinePushInfoCreateParams = {
+        conversation: currentConversation,
+        payload: content.payload,
+        messageType: '',
       };
       switch (content?.type) {
         case 'text':
@@ -78,16 +86,15 @@ export const sendMessages = async (
           if (!textMessageContent) {
             break;
           }
+          options.payload = {
+            text: textMessageContent,
+          };
+          offlinePushInfoCreateParams.messageType = TUIChatEngine.TYPES.MSG_TEXT;
+          sendMessageOptions.offlinePushInfo = OfflinePushInfoManager.create(offlinePushInfoCreateParams);
           if (content.payload?.atUserList) {
-            options.payload = {
-              text: textMessageContent,
-              atUserList: content.payload.atUserList,
-            };
+            options.payload.atUserList = content.payload.atUserList;
             await TUIChatService.sendTextAtMessage(options, sendMessageOptions);
           } else {
-            options.payload = {
-              text: textMessageContent,
-            };
             await TUIChatService.sendTextMessage(options, sendMessageOptions);
           }
           break;
@@ -95,18 +102,24 @@ export const sendMessages = async (
           options.payload = {
             file: content.payload?.file,
           };
+          offlinePushInfoCreateParams.messageType = TUIChatEngine.TYPES.MSG_IMAGE;
+          sendMessageOptions.offlinePushInfo = OfflinePushInfoManager.create(offlinePushInfoCreateParams);
           await TUIChatService.sendImageMessage(options, sendMessageOptions);
           break;
         case 'video':
           options.payload = {
             file: content.payload?.file,
           };
+          offlinePushInfoCreateParams.messageType = TUIChatEngine.TYPES.MSG_VIDEO;
+          sendMessageOptions.offlinePushInfo = OfflinePushInfoManager.create(offlinePushInfoCreateParams);
           await TUIChatService.sendVideoMessage(options, sendMessageOptions);
           break;
         case 'file':
           options.payload = {
             file: content.payload?.file,
           };
+          offlinePushInfoCreateParams.messageType = TUIChatEngine.TYPES.MSG_FILE;
+          sendMessageOptions.offlinePushInfo = OfflinePushInfoManager.create(offlinePushInfoCreateParams);
           await TUIChatService.sendFileMessage(options, sendMessageOptions);
           break;
         default:

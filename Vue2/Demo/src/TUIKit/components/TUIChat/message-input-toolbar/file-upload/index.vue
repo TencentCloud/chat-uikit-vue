@@ -20,18 +20,20 @@
   </ToolbarItemContainer>
 </template>
 <script lang="ts" setup>
-import {
+import TUIChatEngine, {
   TUIChatService,
   TUIStore,
   StoreName,
   IConversationModel,
   SendMessageParams,
+  SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
 import { ref } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import fileIcon from '../../../../assets/icon/files.png';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
+import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
 
 const inputRef = ref();
 const currentConversation = ref<IConversationModel>();
@@ -64,7 +66,15 @@ const sendFileMessage = (e: any) => {
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
-  TUIChatService.sendFileMessage(options);
+  const offlinePushInfoCreateParams: IOfflinePushInfoCreateParams = {
+    conversation: currentConversation.value,
+    payload: options.payload,
+    messageType: TUIChatEngine.TYPES.MSG_FILE,
+  };
+  const sendMessageOptions: SendMessageOptions = {
+    offlinePushInfo: OfflinePushInfoManager.create(offlinePushInfoCreateParams),
+  };
+  TUIChatService.sendFileMessage(options, sendMessageOptions);
   e.target.value = '';
 };
 </script>

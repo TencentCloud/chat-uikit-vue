@@ -1,8 +1,32 @@
 class TUIChatConfig {
   static instance: TUIChatConfig;
   private chatType: string;
+  private features: Record<string, any>;
   constructor() {
     this.chatType = '';
+    this.features = {
+      DownloadFile: true,
+      CopyMessage: true,
+      DeleteMessage: true,
+      RevokeMessage: true,
+      QuoteMessage: true,
+      ForwardMessage: true,
+      TranslateMessage: true,
+      VoiceToText: true,
+      MultiSelection: true,
+      EmojiReaction: true,
+      InputEmoji: true,
+      InputStickers: true,
+      InputImage: true,
+      InputVoice: true,
+      InputVideo: true,
+      InputFile: true,
+      InputEvaluation: true,
+      InputQuickReplies: true,
+      InputMention: true,
+      MessageSearch: true,
+      ReadStatus: true,
+    };
   }
 
   static getInstance(): TUIChatConfig {
@@ -19,6 +43,31 @@ class TUIChatConfig {
   getChatType() {
     return this.chatType;
   }
+
+  hideTUIChatFeatures(features: string[]) {
+    if (!features) {
+      return;
+    }
+    features.forEach((feature: string) => {
+      if (this.features[feature]) {
+        this.features[feature] = false;
+      }
+    });
+  }
+
+  getFeatureConfig(key?: string) {
+    if (key) {
+      return this.features[key];
+    }
+    return this.features;
+  }
 }
 
-export default TUIChatConfig.getInstance();
+const ChatConfig = TUIChatConfig.getInstance();
+const hideTUIChatFeatures = ChatConfig.hideTUIChatFeatures.bind(ChatConfig);
+
+export {
+  hideTUIChatFeatures,
+};
+
+export default ChatConfig;

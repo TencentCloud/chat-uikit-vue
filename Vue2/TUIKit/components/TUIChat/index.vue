@@ -26,13 +26,23 @@
           :class="['tui-chat-message-list', !isPC && 'tui-chat-h5-message-list']"
           :isGroup="isGroup"
           :groupID="groupID"
+          :isNotInGroup="isNotInGroup"
           :isMultipleSelectMode="isMultipleSelectMode"
           @handleEditor="handleEditor"
           @closeInputToolBar="() => changeToolbarDisplayType('none')"
           @toggleMultipleSelectMode="toggleMultipleSelectMode"
         />
+        <div
+          v-if="isNotInGroup"
+          :class="{
+            'tui-chat-leave-group': true,
+            'tui-chat-leave-group-mobile': isMobile,
+          }"
+        >
+          {{ leaveGroupReasonText }}
+        </div>
         <MultipleSelectPanel
-          v-if="isMultipleSelectMode"
+          v-else-if="isMultipleSelectMode"
           @oneByOneForwardMessage="oneByOneForwardMessage"
           @mergeForwardMessage="mergeForwardMessage"
           @toggleMultipleSelectMode="toggleMultipleSelectMode"
@@ -58,6 +68,7 @@
               isUniFrameWork && 'tui-chat-uni-message-input',
               isWeChat && 'tui-chat-wx-message-input',
             ]"
+            :enableAt="featureConfig.InputMention"
             :isMuted="false"
             :muteText="TUITranslateService.t('TUIChat.您已被管理员禁言')"
             :placeholder="TUITranslateService.t('TUIChat.请输入消息')"
@@ -68,7 +79,7 @@
       </div>
       <!-- Group Management -->
       <div
-        v-if="isUniFrameWork && isGroup && headerExtensionList.length > 0"
+        v-if="!isNotInGroup && isUniFrameWork && isGroup && headerExtensionList.length > 0"
         class="group-profile"
         @click="handleGroup"
       >
@@ -85,6 +96,7 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   IMessageModel,
+  IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
 import ChatHeader from './chat-header/index.vue';
@@ -93,7 +105,7 @@ import MessageInput from './message-input/index.vue';
 import MultipleSelectPanel from './mulitple-select-panel/index.vue';
 import Forward from './forward/index.vue';
 import MessageInputToolbar from './message-input-toolbar/index.vue';
-import { isPC, isWeChat, isUniFrameWork } from '../../utils/env';
+import { isPC, isWeChat, isUniFrameWork, isMobile } from '../../utils/env';
 import { ToolbarDisplayType } from '../../interface';
 import TUIChatConfig from './config';
 
@@ -101,28 +113,52 @@ const emits = defineEmits(['closeChat']);
 
 const groupID = ref(undefined);
 const isGroup = ref(false);
+const isNotInGroup = ref(false);
+const notInGroupReason = ref<number>();
 const currentConversationID = ref();
 const isMultipleSelectMode = ref(false);
 const inputToolbarDisplayType = ref<ToolbarDisplayType>('none');
 const messageInputRef = ref();
 const messageListRef = ref<InstanceType<typeof MessageList>>();
 const headerExtensionList = ref<ExtensionInfo[]>([]);
+const featureConfig = TUIChatConfig.getFeatureConfig();
 
 onMounted(() => {
   TUIStore.watch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdate,
+    currentConversation: onCurrentConversationUpdate,
   });
 });
 
 onUnmounted(() => {
   TUIStore.unwatch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdate,
+    currentConversation: onCurrentConversationUpdate,
   });
   reset();
 });
 
 const isInputToolbarShow = computed<boolean>(() => {
   return isUniFrameWork ? inputToolbarDisplayType.value !== 'none' : true;
+});
+
+const leaveGroupReasonText = computed<string>(() => {
+  let text = '';
+  switch (notInGroupReason.value) {
+    case 4:
+      text = TUITranslateService.t('TUIChat.您已被管理员移出群聊');
+      break;
+    case 5:
+      text = TUITranslateService.t('TUIChat.该群聊已被解散');
+      break;
+    case 8:
+      text = TUITranslateService.t('TUIChat.您已退出该群聊');
+      break;
+    default:
+      text = TUITranslateService.t('TUIChat.您已退出该群聊');
+      break;
+  }
+  return text;
 });
 
 const reset = () => {
@@ -182,6 +218,22 @@ function mergeForwardMessage() {
 
 function oneByOneForwardMessage() {
   messageListRef.value?.oneByOneForwardMessage();
+}
+
+function onCurrentConversationUpdate(conversation: IConversationModel) {
+  if (conversation?.operationType > 0) {
+    headerExtensionList.value = [];
+    isNotInGroup.value = true;
+    /**
+     * 4 - be removed from the group
+     * 5 - group is dismissed
+     * 8 - quit group
+     */
+    notInGroupReason.value = conversation?.operationType;
+  } else {
+    isNotInGroup.value = false;
+    notInGroupReason.value = undefined;
+  }
 }
 
 function onCurrentConversationIDUpdate(conversationID: string) {

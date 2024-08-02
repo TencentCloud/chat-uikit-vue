@@ -16,6 +16,7 @@ const message = {
     "成为新的群主": "became the new group owner",
     "修改群名为": "changed the group name to",
     "发布新公告": "posted a new notice",
+    "把群公告修改为": "changed the group notice to",
     "申请加入群组": "requested to join the group",
     "成功加入群组": "Successfully joined the group",
     "被拒绝": "The request to join the group was refused",

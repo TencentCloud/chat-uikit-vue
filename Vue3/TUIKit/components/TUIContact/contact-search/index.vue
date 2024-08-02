@@ -66,7 +66,7 @@ import {
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import { TUIGlobal } from '@tencentcloud/universal-api';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash';
 import { isPC } from '../../../utils/env';
 import Icon from '../../common/Icon.vue';
 import addSVG from '../../../assets/icon/add.svg';

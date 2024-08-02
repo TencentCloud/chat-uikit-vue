@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { onMounted, onUnmounted, ref } from '../../../adapter-vue';
-import {
+import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUIChatService,
@@ -28,7 +28,7 @@ import Transfer from '../../common/Transfer/index.vue';
 import { Toast, TOAST_TYPE } from '../../../components/common/Toast';
 import { isUniFrameWork } from '../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
-import { createOfflinePushInfo } from '../utils/sendMessage';
+import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../offlinePushInfoManager/index';
 
 interface IEmits {
   (e: 'toggleMultipleSelectMode', visible?: boolean): void;
@@ -112,12 +112,16 @@ function finishSelected(selectedConvIDWrapperList: Array<{ userID: string }>): v
     .map(messageID => TUIStore.getMessageModel(messageID))
     .sort((a, b) => a.time - b.time);
   const forwardPromises = selectedConversationList.map((conversation) => {
+    const offlinePushInfoCreateParams: IOfflinePushInfoCreateParams = {
+      conversation,
+      messageType: TUIChatEngine.TYPES.MSG_MERGER,
+    };
     return TUIChatService.sendForwardMessage(
       [conversation],
       unsentMessageQueue,
       {
         needMerge: isMergeForward,
-        offlinePushInfo: createOfflinePushInfo(conversation),
+        offlinePushInfo: OfflinePushInfoManager.create(offlinePushInfoCreateParams),
         params: {
           needReadReceipt: isEnabledMessageReadReceiptGlobal(),
         },
