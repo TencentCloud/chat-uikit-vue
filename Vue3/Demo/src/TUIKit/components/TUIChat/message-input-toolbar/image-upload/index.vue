@@ -23,12 +23,13 @@
   </ToolbarItemContainer>
 </template>
 <script lang="ts" setup>
-import {
+import TUIChatEngine, {
   TUIChatService,
   TUIStore,
   StoreName,
   IConversationModel,
   SendMessageParams,
+  SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ref, computed } from '../../../../adapter-vue';
@@ -38,6 +39,7 @@ import imageIcon from '../../../../assets/icon/image.png';
 import imageUniIcon from '../../../../assets/icon/image-uni.png';
 import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
+import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
 
 const props = defineProps({
   // Image source: only valid for uni-app version, web version only supports selecting images from the album.
@@ -134,7 +136,15 @@ const sendImageMessage = (files: any) => {
     },
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   } as SendMessageParams;
-  TUIChatService.sendImageMessage(options);
+  const offlinePushInfoCreateParams: IOfflinePushInfoCreateParams = {
+    conversation: currentConversation.value,
+    payload: options.payload,
+    messageType: TUIChatEngine.TYPES.MSG_IMAGE,
+  };
+  const sendMessageOptions: SendMessageOptions = {
+    offlinePushInfo: OfflinePushInfoManager.create(offlinePushInfoCreateParams),
+  };
+  TUIChatService.sendImageMessage(options, sendMessageOptions);
 };
 </script>
 

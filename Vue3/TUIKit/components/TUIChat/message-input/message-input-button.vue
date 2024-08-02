@@ -7,7 +7,10 @@
       :disabled="false"
       @click="sendMessage"
     >
-      <p class="message-input-button-hover">
+      <p
+        v-if="displayHover"
+        class="message-input-button-hover"
+      >
         {{ TUITranslateService.t("TUIChat.按Enter发送，Ctrl+Enter换行") }}
       </p>
       {{ TUITranslateService.t("发送") }}
@@ -15,14 +18,20 @@
   </div>
 </template>
 <script setup lang="ts">
+import { ref } from '../../../adapter-vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUIConstants } from '@tencentcloud/tui-core';
 import { isPC } from '../../../utils/env';
+import TUIChatConfig from '../config';
+
 const props = defineProps({
   enableSend: {
     type: Boolean,
     default: true,
   },
 });
+
+const displayHover = ref(TUIChatConfig.getChatType() !== TUIConstants.TUIChat.TYPE.ROOM);
 
 const emits = defineEmits(['sendMessage']);
 

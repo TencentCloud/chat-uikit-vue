@@ -27,6 +27,18 @@
     display: flex;
   }
 
+  &-leave-group {
+    font-size: 14px;
+    height: 160px;
+    border-top: 1px solid #efefef;
+    justify-content: center;
+    align-items: center;
+
+    &-mobile {
+      height: 50px;
+    }
+  }
+
   &-message-input {
     height: 160px;
     display: flex;

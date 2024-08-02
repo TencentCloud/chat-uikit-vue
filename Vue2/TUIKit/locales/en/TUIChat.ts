@@ -131,9 +131,10 @@ const TUIChat = {
   '[自定义消息]': '[Custom Message]',
   '[图片]': '[Image]',
   '[音频]': '[Voice]',
+  '[语音]': '[Voice]',
   '[视频]': '[Video]',
   '[文件]': '[File]',
-  '[定位]': '[Location]',
+  '[地理位置]': '[Location]',
   '[动画表情]': '[Animated Sticker]',
   '[群提示]': '[Group Tip]',
   '[聊天记录]': '[Chat History]',
@@ -142,6 +143,9 @@ const TUIChat = {
   '和': 'and',
   '的聊天记录': 'chat history',
   '请升级IMSDK到v2.10.1或更高版本查看此消息': 'Please upgrade IMSDK to v2.10.1 or higher to view this message',
+  '该群聊已被解散': 'The group has been dismissed',
+  '您已被管理员移出群聊': 'You have been removed from the group by the admin.',
+  '您已退出该群聊': 'You have left the group.',
 };
 
 export default TUIChat;

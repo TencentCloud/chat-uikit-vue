@@ -129,11 +129,18 @@
               alt="face"
             >
           </div>
+          <!-- file -->
+          <div
+            v-else-if="item.messageBody[0].type === TYPES.MSG_FILE"
+            class="message-file"
+          >
+            {{ TUITranslateService.t('TUIChat.[文件]') }}
+          </div>
           <!-- location -->
           <div
             v-else-if="item.messageBody[0].type === TYPES.MSG_LOCATION"
           >
-            [location]
+            {{ TUITranslateService.t('TUIChat.[地理位置]') }}
           </div>
           <!-- merger -->
           <div
@@ -148,7 +155,7 @@
           </div>
           <!-- custom -->
           <div v-else-if="item.messageBody[0].type === TYPES.MSG_CUSTOM">
-            {{ `[${TUITranslateService.t('TUIChat.自定义消息')}]` }}
+            {{ TUITranslateService.t('TUIChat.[自定义消息]') }}
           </div>
         </MessageContainer>
       </div>

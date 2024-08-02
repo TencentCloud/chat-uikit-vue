@@ -20,6 +20,7 @@ import TUIChatEngine, {
   IMessageModel,
   TUITranslateService,
 } from '@tencentcloud/chat-uikit-engine';
+import TUIChatConfig from '../../../config';
 
 interface IProps {
   message: IMessageModel;
@@ -33,6 +34,7 @@ const emits = defineEmits<IEmits>();
 const props = withDefaults(defineProps<IProps>(), {
   message: () => ({}) as IMessageModel,
 });
+const ReadStatus = TUIChatConfig.getFeatureConfig('ReadStatus');
 
 enum ReadState {
   Read,
@@ -59,10 +61,12 @@ onUnmounted(() => {
 });
 
 const isShowReadStatus = computed<boolean>(() => {
+  if (!ReadStatus) {
+    return false;
+  }
   if (!isDisplayMessageReadReceipt.value) {
     return false;
   }
-
   const {
     ID,
     type,

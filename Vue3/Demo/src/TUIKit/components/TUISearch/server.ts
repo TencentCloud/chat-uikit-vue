@@ -28,28 +28,26 @@ export default class TUISearchServer {
     }
   }
 
-  public onGetExtension(extensionID: string, params?: Record<string, string>) {
+  public onGetExtension(extensionID: string) {
     if (extensionID === TUIConstants.TUIChat.EXTENSION.INPUT_MORE.EXT_ID) {
       const list: any[] = [];
-      if (params?.chatType !== TUIConstants.TUIChat.TYPE.ROOM) {
-        const searchExtension = {
-          weight: 3000,
-          text: '搜索',
-          icon: 'https://web.sdk.qcloud.com/component/TUIKit/assets/message-search.svg',
-          data: {
-            name: 'search',
+      const searchExtension = {
+        weight: 3000,
+        text: '搜索',
+        icon: 'https://web.sdk.qcloud.com/component/TUIKit/assets/message-search.svg',
+        data: {
+          name: 'search',
+        },
+        listener: {
+          onClicked: () => {
+            TUIStore.update(StoreName.SEARCH, 'isShowInConversationSearch', true);
+            isUniFrameWork && TUIGlobal?.navigateTo({
+              url: '/TUIKit/components/TUISearch/index',
+            });
           },
-          listener: {
-            onClicked: () => {
-              TUIStore.update(StoreName.SEARCH, 'isShowInConversationSearch', true);
-              isUniFrameWork && TUIGlobal?.navigateTo({
-                url: '/TUIKit/components/TUISearch/index',
-              });
-            },
-          },
-        };
-        list.push(searchExtension);
-      }
+        },
+      };
+      list.push(searchExtension);
       return list;
     }
   }

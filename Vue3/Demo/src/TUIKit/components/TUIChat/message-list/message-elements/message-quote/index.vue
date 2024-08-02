@@ -101,7 +101,7 @@ function performQuoteContent(params: IQuoteContent) {
       messageKey = '[文件]';
       break;
     case MessageQuoteTypeEnum.TYPE_LOCATION:
-      messageKey = '[定位]';
+      messageKey = '[地理位置]';
       break;
     case MessageQuoteTypeEnum.TYPE_FACE:
       messageKey = '[动画表情]';

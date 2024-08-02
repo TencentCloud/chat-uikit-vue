@@ -8,6 +8,7 @@ import TUIComponents, {
   TUIGroup,
 } from './components';
 import TUIKit from './index.vue';
+import { hideTUIChatFeatures } from './components/TUIChat/config';
 
 const TUIChatKit = new Server();
 TUIChatKit.init();
@@ -21,5 +22,6 @@ export {
   TUIContact,
   TUISearch,
   TUIGroup,
+  hideTUIChatFeatures,
   genTestUserSig,
 };

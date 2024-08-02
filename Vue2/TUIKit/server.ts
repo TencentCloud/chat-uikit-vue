@@ -25,11 +25,8 @@ export default class TUIChatKit {
     this.TUIGlobal = TUIGlobal;
     this.SDKAppID = 0;
     this.TUIGlobal._isTIMCallKit = true;
-    TUICore.registerEvent(
-      TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED,
-      TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS,
-      this,
-    );
+    TUICore.registerEvent(TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED, TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS, this);
+    TUICore.registerEvent(TUIConstants.TUITranslate.EVENT.LANGUAGE_CHANGED, TUIConstants.TUITranslate.EVENT_SUB_KEY.CHANGE_SUCCESS, this);
     // register translate and voiceToText service event tracking
     TUICore.registerService(TUIConstants.TUITranslatePlugin.SERVICE.NAME, 1);
     TUICore.registerService(TUIConstants.TUIVoiceToTextPlugin.SERVICE.NAME, 1);
@@ -38,11 +35,20 @@ export default class TUIChatKit {
   /**
    * Listen for the success notification of TUILogin.login
    */
-  public onNotifyEvent(eventName: string, subKey: string) {
+  public onNotifyEvent(eventName: string, subKey: string, params?: Record<string, any>) {
     if (eventName === TUIConstants.TUILogin.EVENT.LOGIN_STATE_CHANGED) {
       switch (subKey) {
         case TUIConstants.TUILogin.EVENT_SUB_KEY.USER_LOGIN_SUCCESS:
           this.login();
+          break;
+      }
+    }
+    if (eventName === TUIConstants.TUITranslate.EVENT.LANGUAGE_CHANGED) {
+      switch (subKey) {
+        case TUIConstants.TUITranslate.EVENT_SUB_KEY.CHANGE_SUCCESS:
+          if (params?.language) {
+            TUITranslateService.changeLanguage(params.language);
+          }
           break;
       }
     }

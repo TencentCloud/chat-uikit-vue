@@ -93,13 +93,14 @@
   </ToolbarItemContainer>
 </template>
 <script setup lang="ts">
-import {
+import TUIChatEngine, {
   TUITranslateService,
   TUIStore,
   StoreName,
   IConversationModel,
   TUIChatService,
   SendMessageParams,
+  SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
 import { ref, computed } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
@@ -111,7 +112,7 @@ import starLightIcon from '../../../../assets/icon/star-light.png';
 import { CHAT_MSG_CUSTOM_TYPE } from '../../../../constant';
 import { isPC, isH5, isUniFrameWork } from '../../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
-import { createOfflinePushInfo } from '../../utils/sendMessage';
+import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
 
 const props = defineProps({
   starTotal: {
@@ -173,25 +174,31 @@ const submitEvaluate = () => {
   if (currentStarIndex.value < 0 && !comment.value.length) {
     return;
   }
+  const payload = {
+    data: JSON.stringify({
+      businessID: CHAT_MSG_CUSTOM_TYPE.EVALUATE,
+      version: 1,
+      score: currentStarIndex.value + 1,
+      comment: comment.value,
+    }),
+    description: '对本次的服务评价',
+    extension: '对本次的服务评价',
+  };
   const options = {
     to:
       currentConversation?.value?.groupProfile?.groupID
       || currentConversation?.value?.userProfile?.userID,
     conversationType: currentConversation?.value?.type,
-    payload: {
-      data: JSON.stringify({
-        businessID: CHAT_MSG_CUSTOM_TYPE.EVALUATE,
-        version: 1,
-        score: currentStarIndex.value + 1,
-        comment: comment.value,
-      }),
-      description: '对本次的服务评价',
-      extension: '对本次的服务评价',
-    },
+    payload,
     needReadReceipt: isEnabledMessageReadReceiptGlobal(),
   };
-  const sendMessageOptions: any = {
-    offlinePushInfo: createOfflinePushInfo(currentConversation),
+  const offlinePushInfoCreateParams: IOfflinePushInfoCreateParams = {
+    conversation: currentConversation.value,
+    payload: options.payload,
+    messageType: TUIChatEngine.TYPES.MSG_CUSTOM,
+  };
+  const sendMessageOptions: SendMessageOptions = {
+    offlinePushInfo: OfflinePushInfoManager.create(offlinePushInfoCreateParams),
   };
   TUIChatService.sendCustomMessage(options as SendMessageParams, sendMessageOptions);
   // close dialog after submit evaluate
