@@ -46,11 +46,14 @@ import {
 } from '@tencentcloud/chat-uikit-engine';
 import { ref } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
-import wordsIcon from '../../../../assets/icon/words.svg';
+import wordsIconLight from '../../../../assets/icon/words-light.svg';
+import wordsIconDark from '../../../../assets/icon/words-dark.svg';
 import { wordsList } from '../../utils/wordsList';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
+import TUIChatConfig from '../../config';
 
+const wordsIcon = TUIChatConfig.getTheme() === 'dark' ? wordsIconDark : wordsIconLight;
 const emits = defineEmits(['onDialogPopupShowOrHide']);
 const currentConversation = ref<IConversationModel>();
 const container = ref();

@@ -2,7 +2,7 @@
   <ToolbarItemContainer
     :iconFile="imageToolbarForShow.icon"
     :title="imageToolbarForShow.title"
-    :iconWidth="isUniFrameWork ? '32px' : '21px'"
+    :iconWidth="isUniFrameWork ? '32px' : '20px'"
     :iconHeight="isUniFrameWork ? '25px' : '18px'"
     :needDialog="false"
     @onIconClick="onIconClick"
@@ -35,11 +35,13 @@ import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ref, computed } from '../../../../adapter-vue';
 import { isPC, isWeChat, isUniFrameWork } from '../../../../utils/env';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
-import imageIcon from '../../../../assets/icon/image.png';
+import imageIconLight from '../../../../assets/icon/image-light.svg';
+import imageIconDark from '../../../../assets/icon/image-dark.svg';
 import imageUniIcon from '../../../../assets/icon/image-uni.png';
 import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
+import TUIChatConfig from '../../config';
 
 const props = defineProps({
   // Image source: only valid for uni-app version, web version only supports selecting images from the album.
@@ -53,9 +55,10 @@ const props = defineProps({
 
 const inputRef = ref();
 const currentConversation = ref<IConversationModel>();
+const theme = TUIChatConfig.getTheme();
 const IMAGE_TOOLBAR_SHOW_MAP = {
   web_album: {
-    icon: imageIcon,
+    icon: theme === 'dark' ? imageIconDark : imageIconLight,
     title: '图片',
   },
   uni_album: {

@@ -14,6 +14,8 @@ export default class TUIChatServer {
   constructor() {
     // register service
     TUICore.registerService(TUIConstants.TUIChat.SERVICE.NAME, this);
+    // register event
+    TUICore.registerEvent(TUIConstants.TUITheme.EVENT.THEME_CHANGED, TUIConstants.TUITheme.EVENT_SUB_KEY.CHANGE_SUCCESS, this);
     // watch current conversationID
     TUIStore.watch(StoreName.CONV, {
       currentConversationID: (id: string) => {
@@ -61,8 +63,27 @@ export default class TUIChatServer {
       case TUIConstants.TUIChat.SERVICE.METHOD.CLOSE_MESSAGE_POP_MENU:
         TUIStore.update(StoreName.CUSTOM, 'isShowMessagePopMenu', false);
         break;
+      case TUIConstants.TUIChat.SERVICE.METHOD.UPDATE_MESSAGE_INFO:
+        TUIChatService.updateMessageInfo(params?.userInfo);
+        break;
       default:
         break;
+    }
+  }
+
+  /**
+ * Listen for the success notification of Theme changed
+ */
+  public onNotifyEvent(eventName: string, subKey: string, params?: Record<string, any>) {
+    if (eventName === TUIConstants.TUITheme.EVENT.THEME_CHANGED) {
+      switch (subKey) {
+        case TUIConstants.TUITheme.EVENT_SUB_KEY.CHANGE_SUCCESS:
+          if (params?.theme) {
+            const theme = params.theme || '';
+            TUIChatConfig.setTheme(theme.toLowerCase()); // Room use 'DARK' or 'LIGHT'
+          }
+          break;
+      }
     }
   }
 }

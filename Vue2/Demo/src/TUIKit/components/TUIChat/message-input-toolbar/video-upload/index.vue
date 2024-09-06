@@ -3,7 +3,7 @@
     :iconFile="handleIcon()"
     :title="handleTitle()"
     :needDialog="false"
-    :iconWidth="isUniFrameWork ? '32px' : '21px'"
+    :iconWidth="isUniFrameWork ? '32px' : '20px'"
     :iconHeight="isUniFrameWork
       ? props.videoSourceType === 'album'
         ? '20px'
@@ -37,11 +37,13 @@ import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ref } from '../../../../adapter-vue';
 import { isPC, isWeChat, isUniFrameWork } from '../../../../utils/env';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
-import videoIcon from '../../../../assets/icon/video.png';
+import videoIconLight from '../../../../assets/icon/video-light.svg';
+import videoIconDark from '../../../../assets/icon/video-dark.svg';
 import videoUniIcon from '../../../../assets/icon/video-uni.png';
 import cameraUniIcon from '../../../../assets/icon/camera-uni.png';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
+import TUIChatConfig from '../../config';
 
 const props = defineProps({
   // Video source, only valid for uni-app version, web version only supports selecting videos from files
@@ -73,6 +75,7 @@ const handleIcon = (): string => {
         return videoUniIcon;
     }
   } else {
+    const videoIcon = TUIChatConfig.getTheme() === 'dark' ? videoIconDark : videoIconLight;
     return videoIcon;
   }
 };

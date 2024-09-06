@@ -19,7 +19,7 @@
 import { withDefaults } from '../../../../adapter-vue';
 import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import Icon from '../../../common/Icon.vue';
-import files from '../../../../assets/icon/files.png';
+import files from '../../../../assets/icon/file-light.svg';
 import type { IFileMessageContent } from '../../../../interface';
 
 const props = withDefaults(

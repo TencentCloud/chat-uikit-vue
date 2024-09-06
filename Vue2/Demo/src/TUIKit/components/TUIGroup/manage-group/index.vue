@@ -22,7 +22,7 @@
     >
       <ManageName
         class="space-top"
-        :isAuthor="isAuthor"
+        :isAuthor="isOwner || isAdmin || isWorkGroup"
         :data="currentGroup"
         @update="updateProfile"
       />
@@ -111,7 +111,7 @@
           />
         </li>
         <li
-          v-if="isAdmin && isSetMuteTime"
+          v-if="(isAdmin || isOwner) && isSetMuteTime"
           class="list-item"
           @click="setCurrentTab('admin')"
         >
@@ -202,7 +202,7 @@
     />
     <ManageNotification
       v-if="currentTab === 'notification'"
-      :isAuthor="isAuthor"
+      :isAuthor="isOwner || isAdmin || isWorkGroup"
       :data="currentGroup"
       @update="updateProfile"
       @close="setCurrentTab('')"
@@ -319,7 +319,7 @@ const transferType = ref('');
 const mask = ref(false);
 const currentGroupID = ref('');
 const userInfo = ref({
-  list: [] as Array<IGroupMember>,
+  list: [] as IGroupMember[],
 });
 const currentMember = ref<IGroupMember>({});
 const typeName = ref({
@@ -333,17 +333,17 @@ const typeName = ref({
   [TUIChatEngine.TYPES.JOIN_OPTIONS_DISABLE_APPLY]: '禁止加群',
 });
 const member = ref({
-  admin: [] as Array<IGroupMember>,
-  member: [] as Array<IGroupMember>,
-  muteMember: [] as Array<IGroupMember>,
+  admin: [] as IGroupMember[],
+  member: [] as IGroupMember[],
+  muteMember: [] as IGroupMember[],
 });
-const transferList = ref<Array<IGroupMember>>([]);
+const transferList = ref<IGroupMember[]>([]);
 const transferTitle = ref('');
 const isSearch = ref(false);
 const isRadio = ref(false);
 const selectedList = ref([]);
 const delDialogShow = ref(false);
-const groupMemberList = ref<Array<IGroupMember>>([]);
+const groupMemberList = ref<IGroupMember[]>([]);
 const deletedUserList = ref([]);
 const currentGroup = ref<IGroupModel>();
 const currentSelfRole = ref('');
@@ -367,7 +367,7 @@ TUIStore.watch(StoreName.GRP, {
       currentSelfRole.value = currentGroup.value?.selfInfo?.role;
     }
   },
-  currentGroupMemberList: (memberList: Array<IGroupMember>) => {
+  currentGroupMemberList: (memberList: IGroupMember[]) => {
     groupMemberList.value = memberList;
     member.value = {
       admin: [],
@@ -425,35 +425,23 @@ const TabName = computed(() => {
   return name;
 });
 
-const isAuthor = computed(() => {
+const isOwner = computed(() => {
   // Determine whether the person is the group owner/administrator
-  const userRole = currentGroup?.value?.selfInfo?.role;
-
-  const isOwner = userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER;
-  const isAdmin = userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_ADMIN;
-
-  return isOwner || isAdmin;
+  const userRole = currentGroup.value?.selfInfo?.role;
+  return userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER;
 });
 
 const isAdmin = computed(() => {
-  const groupType = currentGroup?.value?.type;
-  const userRole = currentGroup?.value?.selfInfo?.role;
+  const userRole = currentGroup.value?.selfInfo?.role;
+  return userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER;
+});
 
-  const isOwner = userRole === TUIChatEngine.TYPES.GRP_MBR_ROLE_OWNER;
-  const isWork = groupType === TUIChatEngine.TYPES.GRP_WORK;
-  const isAVChatRoom = groupType === TUIChatEngine.TYPES.GRP_AVCHATROOM;
-
-  if (!isWork && !isAVChatRoom && isOwner) {
-    return true;
-  }
-  return false;
+const isWorkGroup = computed(() => {
+  return currentGroup.value?.type === TUIChatEngine.TYPES.GRP_WORK;
 });
 
 const isSetMuteTime = computed(() => {
-  const groupType = currentGroup?.value?.type;
-  const isWork = groupType === TUIChatEngine.TYPES.GRP_WORK;
-
-  if (isWork || !isAuthor.value) {
+  if (isWorkGroup.value || !(isOwner.value || isAdmin.value)) {
     return false;
   }
   return true;

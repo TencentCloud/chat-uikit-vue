@@ -19,7 +19,7 @@ const groupIntroConfig = [
     icon: 'https://web.sdk.qcloud.com/im/assets/images/Work.svg',
     label: '好友工作群（Work）',
     type: TUIChatEngine.TYPES.GRP_WORK,
-    detail: '类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主神奇。详见',
+    detail: '类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主审批。详见',
     src: '产品文档',
   },
   {

@@ -20,11 +20,13 @@ import {
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
 import { ref } from '../../../../adapter-vue';
-import faceIcon from '../../../../assets/icon/face.png';
+import faceIconLight from '../../../../assets/icon/face-light.svg';
+import faceIconDark from '../../../../assets/icon/face-dark.svg';
 import EmojiPickerDialog from './emoji-picker-dialog.vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import { isH5 } from '../../../../utils/env';
 import { ToolbarDisplayType } from '../../../../interface';
+import TUIChatConfig from '../../config';
 
 interface IEmits {
   (e: 'sendMessage'): void;
@@ -35,6 +37,7 @@ interface IEmits {
   (e: 'changeToolbarDisplayType', type: ToolbarDisplayType): void;
 }
 
+const faceIcon = TUIChatConfig.getTheme() === 'dark' ? faceIconDark : faceIconLight;
 const emits = defineEmits<IEmits>();
 const currentConversation = ref();
 const container = ref<InstanceType<typeof ToolbarItemContainer>>();

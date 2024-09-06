@@ -2,7 +2,7 @@
   <ToolbarItemContainer
     :iconFile="fileIcon"
     title="文件"
-    :iconWidth="isUniFrameWork ? '32px' : '21px'"
+    :iconWidth="isUniFrameWork ? '32px' : '20px'"
     :iconHeight="isUniFrameWork ? '25px' : '18px'"
     :needDialog="false"
     @onIconClick="onIconClick"
@@ -30,11 +30,14 @@ import TUIChatEngine, {
 } from '@tencentcloud/chat-uikit-engine';
 import { ref } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
-import fileIcon from '../../../../assets/icon/files.png';
+import fileIconLight from '../../../../assets/icon/file-light.svg';
+import fileIconDark from '../../../../assets/icon/file-dark.svg';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
+import TUIChatConfig from '../../config';
 
+const fileIcon = TUIChatConfig.getTheme() === 'dark' ? fileIconDark : fileIconLight;
 const inputRef = ref();
 const currentConversation = ref<IConversationModel>();
 

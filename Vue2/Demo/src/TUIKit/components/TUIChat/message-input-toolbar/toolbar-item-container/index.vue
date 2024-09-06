@@ -32,6 +32,7 @@
       ref="dialogRef"
       :class="[
         'toolbar-item-container-dialog',
+        isDark && 'toolbar-item-container-dialog-dark',
         !isPC && 'toolbar-item-container-h5-dialog',
         isUniFrameWork && 'toolbar-item-container-uni-dialog',
       ]"
@@ -55,6 +56,7 @@ import { outsideClick } from '@tencentcloud/universal-api';
 import Icon from '../../../common/Icon.vue';
 import BottomPopup from '../../../common/BottomPopup/index.vue';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
+import TUIChatConfig from '../../config';
 
 const props = defineProps({
   iconFile: {
@@ -87,6 +89,7 @@ const props = defineProps({
 
 const emits = defineEmits(['onIconClick', 'onDialogClose', 'onDialogShow']);
 
+const isDark = ref(TUIChatConfig.getTheme() === 'dark');
 const showDialog = ref(false);
 const toolbarItemRef = ref();
 const dialogRef = ref();
