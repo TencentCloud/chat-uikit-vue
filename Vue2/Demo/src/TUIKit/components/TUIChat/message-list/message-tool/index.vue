@@ -391,6 +391,7 @@ defineExpose({
         padding-left: 4px;
         font-size: 12px;
         line-height: 17px;
+        color: #000;
       }
     }
   }
@@ -416,6 +417,7 @@ defineExpose({
 
       .list-item-text {
         padding-left: 0;
+        color: #000;
       }
     }
   }

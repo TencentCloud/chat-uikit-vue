@@ -85,7 +85,7 @@ const translate = {
   "TUIKit-TUIConversation-10": "选填",
   "TUIKit-TUIConversation-11": "取消",
   "TUIKit-TUIConversation-12": "创建",
-  "TUIKit-TUIConversation-13": "类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主神奇。详见产品文档",
+  "TUIKit-TUIConversation-13": "类似普通微信群，创建后仅支持已在群内的好友邀请加群，且无需被邀请方同意或群主审批。详见产品文档",
   "TUIKit-TUIConversation-14": "类似 QQ 群，创建后群主可以指定群管理员，用户搜索群 ID 发起加群申请后，需要群主或管理员审批通过才能入群。详见产品文档",
   "TUIKit-TUIConversation-15": "创建后可以随意进出，且支持查看入群前消息；适合用于音视频会议场景、在线教育场景等与实时音视频产品结合的场景。详见产品文档",
   "TUIKit-TUIConversation-16": "创建后可以随意进出，没有群成员数量上限，但不支持历史消息存储；适合与直播产品结合，用于弹幕聊天场景。详见产品文档",

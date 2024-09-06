@@ -2,6 +2,7 @@ class TUIChatConfig {
   static instance: TUIChatConfig;
   private chatType: string;
   private features: Record<string, any>;
+  private theme: string;
   constructor() {
     this.chatType = '';
     this.features = {
@@ -27,6 +28,7 @@ class TUIChatConfig {
       MessageSearch: true,
       ReadStatus: true,
     };
+    this.theme = 'light';
   }
 
   static getInstance(): TUIChatConfig {
@@ -60,6 +62,14 @@ class TUIChatConfig {
       return this.features[key];
     }
     return this.features;
+  }
+
+  setTheme(theme: string) {
+    this.theme = theme;
+  }
+
+  getTheme() {
+    return this.theme;
   }
 }
 

@@ -76,7 +76,8 @@ import {
   SendMessageParams,
 } from '@tencentcloud/chat-uikit-engine';
 import Icon from '../../../common/Icon.vue';
-import faceIcon from '../../../../assets/icon/face.png';
+import faceIconLight from '../../../../assets/icon/face-light.svg';
+import faceIconDark from '../../../../assets/icon/face-dark.svg';
 import { EMOJI_TYPE } from '.././../../../constant';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
 import { IEmojiGroupList, IEmojiGroup } from '../../../../interface';
@@ -84,6 +85,7 @@ import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import { EMOJI_GROUP_LIST, BASIC_EMOJI_URL_MAPPING, convertKeyToEmojiName } from '../../emoji-config';
 import TUIChatConfig from '../../config';
 
+const faceIcon = TUIChatConfig.getTheme() === 'dark' ? faceIconDark : faceIconLight;
 const emits = defineEmits(['insertEmoji', 'onClose', 'sendMessage']);
 const currentTabIndex = ref<number>(0);
 const currentConversation = ref();

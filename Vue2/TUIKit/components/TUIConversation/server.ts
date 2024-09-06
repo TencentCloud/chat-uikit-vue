@@ -120,7 +120,7 @@ export default class TUIConversationServer {
         memberList,
       },
       callback: async (group: any) => {
-        let conversationID = null;
+        let conversationID: string | null = null;
         if (group) {
           const { groupID } = group;
           await this.generateConversation(`GROUP${groupID}`);
