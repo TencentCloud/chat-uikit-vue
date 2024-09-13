@@ -22,12 +22,6 @@ export default class TUIChatServer {
         this.currentConversationID = id;
       },
     });
-    // watch current conversation message list
-    TUIStore.watch(StoreName.CHAT, {
-      messageList: (list: IMessageModel[]) => {
-        this.currentMessageList = list;
-      },
-    });
   }
 
   public onCall(method: string, params: any, callback: any): any {
@@ -43,8 +37,7 @@ export default class TUIChatServer {
         // The next time you switch to the conversation where the call message is located, getMessageList can get all the call messages you sent
         // No need to process here
         if (message?.conversationID === this.currentConversationID) {
-          const messageList = [...this.currentMessageList, message];
-          TUIStore.update(StoreName.CHAT, 'messageList', messageList);
+          TUIChatService.updateMessageList([message], 'push');
         }
         break;
       case TUIConstants.TUIChat.SERVICE.METHOD.SEND_CUSTOM_MESSAGE:

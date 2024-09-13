@@ -241,7 +241,6 @@ import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import { outsideClick, getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { TUIEmojiPlugin } from '@tencentcloud/tui-emoji-plugin';
 // import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
-import { throttle } from 'lodash';
 import Link from './link';
 import MessageGroupApplication from './message-group-application/index.vue';
 import MessageText from './message-elements/message-text.vue';
@@ -268,6 +267,7 @@ import ProgressMessage from '../../common/ProgressMessage/index.vue';
 import { emojiConfig } from '../emoji-config';
 import { isPC, isH5 } from '../../../utils/env';
 import chatStorage from '../utils/chatStorage';
+import { throttle } from '../../../utils/lodash';
 import { isEnabledMessageReadReceiptGlobal, shallowCopyMessage, isCreateGroupCustomMessage, deepCopy } from '../utils/utils';
 
 interface ScrollConfig {

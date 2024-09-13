@@ -46,6 +46,14 @@ const message = {
     "已接听": "Answered",
     "拒绝通话": "Decline",
     "无应答": "No answer",
+    "已取消": "Canceled",
+    "对方已取消": "Call canceled by caller",
+    "已拒绝": "Declined",
+    "对方已拒绝": "Call declined by user",
+    "对方忙线中": "Line busy",
+    "忙线未接听": "	Line busy. Call not received.",
+    "对方无应答": "Call wasn't answered",
+    "超时无应答": "Call canceled by caller",
     "对本次服务评价": "Rate this service",
     "查看详情>>": "View details >>"
   }
