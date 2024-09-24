@@ -29,7 +29,7 @@ import {
   StoreName,
   IMessageModel,
 } from '@tencentcloud/chat-uikit-engine';
-import { Editor, JSONContent } from '@tiptap/core';
+import { Editor, JSONContent, Extension } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
@@ -87,6 +87,13 @@ const currentQuoteMessage = ref<{ message: IMessageModel; type: string }>();
 const editorDom = ref();
 let editor: Editor | null = null;
 const fileMap = new Map<string, any>();
+const DisableDefaultEnter = Extension.create({
+  addKeyboardShortcuts() {
+    return {
+      Enter: () => true,
+    };
+  },
+});
 
 function onCurrentConversationIDUpdated(conversationID: string) {
   if (currentConversationID.value !== conversationID) {
@@ -118,6 +125,7 @@ onMounted(() => {
         Document,
         Paragraph,
         Text,
+        DisableDefaultEnter,
         Placeholder.configure({
           emptyEditorClass: 'is-editor-empty',
           placeholder: placeholder.value,
