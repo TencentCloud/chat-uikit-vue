@@ -1,10 +1,16 @@
 
 import en from './en';
-import zh from './zh_cn';
+import zh_cn from './zh_cn';
+import zh_tw from './zh_tw';
 
-const messages = {
+export interface ILanguageResources {
+  [key: string]: string | ILanguageResources;
+}
+
+const messages: Record<string, ILanguageResources> = {
   ...en,
-  ...zh,
+  ...zh_cn,
+  ...zh_tw,
 };
 
 export default messages;

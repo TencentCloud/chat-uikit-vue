@@ -1,6 +1,6 @@
 {
   "name": "@tencentcloud/chat-uikit-vue",
-  "version": "2.2.7",
+  "version": "2.2.8",
   "repository": "https://github.com/TencentCloud/chat-uikit-vue",
   "description": "Build In-App Chat & Audio/Video Call & Live Streaming in minutes with UIKit components for Vue.",
   "scripts": {},
