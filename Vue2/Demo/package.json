@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue2",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "description": "",
   "keywords": [],
   "author": "",
@@ -44,7 +44,7 @@
   "devDependencies": {
     "@stylistic/eslint-plugin": "^1.6.2",
     "@types/lodash": "^4.14.202",
-    "@types/node": "^18.15.11",
+    "@types/node": "18.19.45",
     "@types/qs": "^6.9.7",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^5.4.0",

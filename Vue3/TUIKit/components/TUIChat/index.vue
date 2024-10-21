@@ -250,7 +250,6 @@ function onCurrentConversationIDUpdate(conversationID: string) {
   }
 
   headerExtensionList.value = [];
-  currentConversationID.value = conversationID;
   isMultipleSelectMode.value = false;
   // Initialize chatType
   TUIChatConfig.setChatType(conversationType);
@@ -262,10 +261,20 @@ function onCurrentConversationIDUpdate(conversationID: string) {
     method: TUIConstants.TUICustomerServicePlugin.SERVICE.METHOD.ACTIVE_CONVERSATION,
     params: { conversationID: conversationID },
   });
+  // When open chat in room, close main chat ui and reset theme.
+  if (TUIChatConfig.getChatType() === TUIConstants.TUIChat.TYPE.ROOM) {
+    if (TUIChatConfig.getFeatureConfig(TUIConstants.TUIChat.FEATURE.InputVoice) === true) {
+      TUIChatConfig.setTheme('light');
+      currentConversationID.value = '';
+      return;
+    }
+  }
   // Get chat header extensions
   if (TUIChatConfig.getChatType() === TUIConstants.TUIChat.TYPE.GROUP) {
     headerExtensionList.value = TUICore.getExtensionList(TUIConstants.TUIChat.EXTENSION.CHAT_HEADER.EXT_ID);
   }
+  TUIStore.update(StoreName.CUSTOM, 'activeConversation', conversationID);
+  currentConversationID.value = conversationID;
 }
 </script>
 

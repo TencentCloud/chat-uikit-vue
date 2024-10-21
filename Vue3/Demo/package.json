@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue3",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -42,7 +42,7 @@
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
     "@stylistic/eslint-plugin": "^1.6.2",
-    "@types/node": "^18.14.2",
+    "@types/node": "18.19.45",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitejs/plugin-vue-jsx": "^3.0.0",

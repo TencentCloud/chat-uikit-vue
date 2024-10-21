@@ -53,7 +53,7 @@ const message = {
     "对方忙线中": "Line busy",
     "忙线未接听": "	Line busy. Call not received.",
     "对方无应答": "Call wasn't answered",
-    "超时无应答": "Call canceled by caller",
+    "超时无应答": "Call not answered",
     "对本次服务评价": "Rate this service",
     "查看详情>>": "View details >>"
   }

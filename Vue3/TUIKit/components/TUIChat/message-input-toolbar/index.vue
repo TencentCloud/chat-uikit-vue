@@ -122,14 +122,14 @@ const isRenderedEmojiPicker = ref<boolean>(true);
 isRenderedEmojiPicker.value = featureConfig.InputEmoji || featureConfig.InputStickers;
 
 onMounted(() => {
-  TUIStore.watch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdate,
+  TUIStore.watch(StoreName.CUSTOM, {
+    activeConversation: onActiveConversationUpdate,
   });
 });
 
 onUnmounted(() => {
-  TUIStore.unwatch(StoreName.CONV, {
-    currentConversation: onCurrentConversationUpdate,
+  TUIStore.unwatch(StoreName.CUSTOM, {
+    activeConversation: onActiveConversationUpdate,
   });
 });
 
@@ -141,18 +141,18 @@ watch(() => props.displayType, (newValue) => {
   }
 });
 
-const onCurrentConversationUpdate = (conversation: IConversationModel) => {
-  if (conversation?.conversationID && conversation.conversationID !== currentConversation.value?.conversationID) {
-    getExtensionList(conversation.conversationID);
-  }
-  currentConversation.value = conversation;
-  isGroup.value = currentConversation?.value?.type === TUIChatEngine.TYPES.CONV_GROUP;
-};
-
-const getExtensionList = (conversationID: string) => {
+const onActiveConversationUpdate = (conversationID: string) => {
   if (!conversationID) {
     return;
   }
+  if (conversationID !== currentConversation.value?.conversationID) {
+    getExtensionList();
+    currentConversation.value = TUIStore.getConversationModel(conversationID);
+    isGroup.value = conversationID.startsWith(TUIChatEngine.TYPES.CONV_GROUP);
+  }
+};
+
+const getExtensionList = () => {
   const chatType = TUIChatConfig.getChatType();
   const params: Record<string, boolean | string> = { chatType };
   // Backward compatibility: When callkit does not have chatType judgment, use filterVoice and filterVideo to filter
