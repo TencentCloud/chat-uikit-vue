@@ -9,9 +9,9 @@
       v-if="!isPC"
       :class="[
         'bottom-popup',
-        isUniFrameWork && 'bottom-popup-uni',
         !isPC && 'bottom-popup-h5',
         !isPC && props.modal && 'bottom-popup-modal',
+        isUniFrameWork && 'bottom-popup-uni',
       ]"
       @click="closeBottomPopup"
     >

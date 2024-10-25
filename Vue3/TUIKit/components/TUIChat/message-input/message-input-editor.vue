@@ -39,6 +39,7 @@ import CustomImage from './message-input-file';
 import { ITipTapEditorContent } from '../../../interface';
 import MessageInputAtSuggestion from './message-input-at/index';
 import { parseTextToRenderArray } from '../emoji-config';
+import riseInput from '../../../utils/riseInput';
 import { isH5, isPC } from '../../../utils/env';
 import DraftManager from '../utils/conversationDraft';
 
@@ -185,6 +186,11 @@ onMounted(() => {
       },
     })
     : null;
+
+  if (isH5) {
+    const targetBottomDom = document.querySelector('.message-input-toolbar') as HTMLElement || editorDom.value;
+    riseInput(editorDom.value, targetBottomDom);
+  }
 
   TUIStore.watch(StoreName.CONV, {
     currentConversationID: onCurrentConversationIDUpdated,

@@ -4,7 +4,7 @@ const TUIChat = {
   '表情': '[Face]',
   '查看更多': 'View more',
   '撤回': 'Recall',
-  '撤回了一条消息': 'recalled a message',
+  '撤回了一条消息': ' recalled a message',
   '打开': 'Open',
   '单击下载': 'Click download',
   '点此投诉': 'Complain',

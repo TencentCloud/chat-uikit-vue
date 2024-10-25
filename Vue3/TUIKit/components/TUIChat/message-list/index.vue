@@ -65,7 +65,7 @@
             <MessageRevoked
               v-else-if="item.isRevoked"
               :isEdit="item.type === TYPES.MSG_TEXT"
-              :messageItem="item"
+              :messageItem="shallowCopyMessage(item)"
               @messageEdit="handleEdit(item)"
             />
             <MessagePlugin

@@ -103,6 +103,11 @@ defineExpose({
     transition: opacity 0.15s linear;
     animation: fade-in 0.15s linear;
   }
+
+  .full-screen{
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .overlay-mask.fade-in {

@@ -237,7 +237,8 @@ function revokeMessage() {
       enableSampleTaskStatus('revokeMessage');
     })
     .catch((error: any) => {
-      if (error.code === 20016) {
+      // The message cannot be recalled after the time limit was reached, which is 2 minutes by default.
+      if (error.code === 20016 || error.code === 10031) {
         const message = TUITranslateService.t('TUIChat.已过撤回时限');
         Toast({
           message,
