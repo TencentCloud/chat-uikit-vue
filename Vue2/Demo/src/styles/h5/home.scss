@@ -1,8 +1,10 @@
+/* stylelint-disable */
 .home-h5 {
   flex-direction: column;
   min-width: 100%;
   min-height: 100%;
-  background: #ffffff;
+  background: #fff;
+
   .home-menu {
     position: fixed;
     width: 100%;
@@ -11,35 +13,42 @@
     z-index: 10;
     align-items: flex-end;
   }
+
   .home-container {
     .home-main {
-      padding: 0px;
-      min-width: 0px;
+      padding: 0;
+      min-width: 0;
+
       .home-TUIKit {
         flex-direction: column-reverse;
-        border-radius: 0px;
+        border-radius: 0;
         max-width: 100%;
+
         .home-TUIKit-navbar {
           width: 100%;
           padding: 12px 18px;
         }
+
         .home-TUIKit-main {
           flex: 1;
           display: flex;
           flex-direction: column;
+
           .chat-popup {
             position: absolute;
           }
         }
+
         .callkit-drag-container {
           &-h5 {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             left: 0;
             top: 0;
             border-radius: 0;
             box-shadow: none;
           }
+
           &-mini {
             width: 72px;
             height: 72px;

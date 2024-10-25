@@ -7,6 +7,7 @@
       :class="{
         'read-receipt-panel': true,
         'read-receipt-panel-mobile': isMobile,
+        'read-receipt-panel-uni': isUniFrameWork,
         'read-receipt-panel-close-mobile': isMobile && isPanelClose,
       }"
     >
@@ -107,7 +108,7 @@ import Overlay from '../../../common/Overlay/index.vue';
 import Avatar from '../../../common/Avatar/index.vue';
 import FetchMore from '../../../common/FetchMore/index.vue';
 import type { IGroupMessageReadMemberData, IMemberData, ITabInfo, TabName } from './interface';
-import { isMobile } from '../../../../utils/env';
+import { isMobile, isUniFrameWork } from '../../../../utils/env';
 
 type ReadType = 'unread' | 'read' | 'all';
 
@@ -431,8 +432,8 @@ function closeReadReceiptPanel(): void {
   @extend .read-receipt-panel;
 
   box-shadow: none;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   border-radius: 0;
   animation: slide-in-from-right 0.3s ease-out;
   transition: transform 0.2s ease-out;
@@ -442,6 +443,11 @@ function closeReadReceiptPanel(): void {
       transform: translateX(100%);
     }
   }
+}
+
+.read-receipt-panel-uni {
+  width: 100vw;
+  height: 100vh;
 }
 
 .read-receipt-panel-close-mobile {

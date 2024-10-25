@@ -38,7 +38,8 @@
           @click="selectItem(contactListItem)"
         >
           <ContactListItem
-            :item="contactListItem"
+            :key="contactListItem.renderKey"
+            :item="deepCopy(contactListItem)"
             :displayOnlineStatus="displayOnlineStatus && key === 'friendList'"
           />
         </li>
@@ -108,6 +109,7 @@ import {
   IContactInfoType,
 } from '../../../interface';
 import ContactListItem from './contact-list-item/index.vue';
+import { deepCopy } from '../../TUIChat/utils/utils';
 import { isPC } from '../../../utils/env';
 
 const currentContactListKey = ref<keyof IContactList>('');

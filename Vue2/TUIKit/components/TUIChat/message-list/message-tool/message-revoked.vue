@@ -1,11 +1,7 @@
 <template>
   <div class="revoke">
-    <span v-if="message.flow === 'in'">{{
-      message.nick || message.from
-    }}</span>
-    <span v-else-if="message.from === message.revoker">{{
-      TUITranslateService.t("TUIChat.您")
-    }}</span>
+    <span v-if="message.flow === 'in'">{{ message.nick || message.from }}</span>
+    <span v-else-if="message.from === message.revoker">{{ TUITranslateService.t("TUIChat.您") }}</span>
     <span v-else>{{ message.revoker }}</span>
     <span>{{ TUITranslateService.t("TUIChat.撤回了一条消息") }}</span>
     <span
@@ -33,6 +29,7 @@ const props = defineProps({
 const message = ref<IMessageModel>();
 const isEditMsg = ref(false);
 const emits = defineEmits(['messageEdit']);
+
 watchEffect(() => {
   message.value = props.messageItem;
   isEditMsg.value = props.isEdit;
@@ -51,6 +48,7 @@ const messageEdit = () => {
   color: #999;
   font-size: 12px;
   margin-bottom: 10px;
+  white-space: pre;
 
   .edit {
     padding: 0 5px;

@@ -7,7 +7,7 @@ const message = {
     "踢出群组": "was kicked out of the group",
     "成为管理员": "was set as an admin",
     "被撤销管理员": "was revoked",
-    "被禁言": " was unmuted",
+    "被禁言": " was muted",
     "被取消禁言": "cancel the prohibition",
     "群提示消息": "group prompt message",
     "管理员": "The admin",

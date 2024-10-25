@@ -79,6 +79,13 @@
       max-height: 100vh;
     }
 
+    body {
+      padding-top: constant(safe-area-inset-top, 20px);
+      /* Older iOS */
+      padding-top: env(safe-area-inset-top, 20px);
+      /* Newer iOS */
+    }
+
     @supports (-webkit-touch-callout: none) {
       body {
         min-height: -webkit-fill-available;

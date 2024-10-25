@@ -17,7 +17,8 @@
             !isPC && 'tui-chat-H5-header',
             isUniFrameWork && 'tui-chat-uniapp-header',
           ]"
-          :headerExtensionList="headerExtensionList"
+          :isGroup="isGroup"
+          @openGroupManagement="handleGroup"
           @closeChat="closeChat"
         />
         <Forward @toggleMultipleSelectMode="toggleMultipleSelectMode" />
@@ -79,7 +80,7 @@
       </div>
       <!-- Group Management -->
       <div
-        v-if="!isNotInGroup && isUniFrameWork && isGroup && headerExtensionList.length > 0"
+        v-if="!isNotInGroup && !isApp && isUniFrameWork && isGroup && headerExtensionList.length > 0"
         class="group-profile"
         @click="handleGroup"
       >
@@ -105,7 +106,7 @@ import MessageInput from './message-input/index.vue';
 import MultipleSelectPanel from './mulitple-select-panel/index.vue';
 import Forward from './forward/index.vue';
 import MessageInputToolbar from './message-input-toolbar/index.vue';
-import { isPC, isWeChat, isUniFrameWork, isMobile } from '../../utils/env';
+import { isPC, isWeChat, isUniFrameWork, isMobile, isApp } from '../../utils/env';
 import { ToolbarDisplayType } from '../../interface';
 import TUIChatConfig from './config';
 
