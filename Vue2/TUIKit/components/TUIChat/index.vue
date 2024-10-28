@@ -18,8 +18,9 @@
             isUniFrameWork && 'tui-chat-uniapp-header',
           ]"
           :isGroup="isGroup"
-          @openGroupManagement="handleGroup"
+          :headerExtensionList="headerExtensionList"
           @closeChat="closeChat"
+          @openGroupManagement="handleGroup"
         />
         <Forward @toggleMultipleSelectMode="toggleMultipleSelectMode" />
         <MessageList

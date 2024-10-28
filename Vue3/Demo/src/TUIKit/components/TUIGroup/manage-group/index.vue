@@ -351,7 +351,7 @@ const groupIDValue = ref<string>('');
 
 onMounted(() => {
   nextTick(() => {
-    if (manageRef.value) {
+    if (manageRef.value && !isUniFrameWork) {
       outsideClick.listen({
         domRefs: manageRef.value,
         handler: handleCompleteManage,
@@ -402,7 +402,7 @@ TUIStore.watch(StoreName.CONV, {
 
 watchEffect(() => {
   const params = TUIGroupServer.getOnCallParams(TUIConstants.TUIGroup.SERVICE.METHOD.OPEN_GROUP_MANAGEMENT);
-  currentGroupID.value = params.groupID || groupIDValue.value;
+  currentGroupID.value = params?.groupID || groupIDValue.value;
   currentTab.value = props.groupCurrentTab;
 });
 
