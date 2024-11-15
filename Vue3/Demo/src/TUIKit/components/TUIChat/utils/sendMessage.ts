@@ -21,6 +21,7 @@ export const sendMessageErrorCodeMap: Map<number, string> = new Map([
   [8001, '消息长度超出限制,消息长度不要超过12K'],
   [80001, '消息或者资料中文本存在敏感内容,发送失败'],
   [80004, '消息中图片存在敏感内容,发送失败'],
+  [10017, '您已被禁止聊天'],
 ]);
 
 export const createOfflinePushInfo = (conversation: IConversationModel) => {

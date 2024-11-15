@@ -148,6 +148,7 @@ const TUIChat = {
   '该群聊已被解散': 'The group has been dismissed',
   '您已被管理员移出群聊': 'You have been removed from the group by the admin.',
   '您已退出该群聊': 'You have left the group.',
+  '您已被禁止聊天': 'you have been forbidden to speak',
 };
 
 export default TUIChat;
