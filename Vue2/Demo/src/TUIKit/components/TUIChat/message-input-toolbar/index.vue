@@ -147,7 +147,7 @@ const onActiveConversationUpdate = (conversationID: string) => {
   }
   if (conversationID !== currentConversation.value?.conversationID) {
     getExtensionList();
-    currentConversation.value = TUIStore.getConversationModel(conversationID);
+    currentConversation.value = TUIStore.getData(StoreName.CONV, 'currentConversation');
     isGroup.value = conversationID.startsWith(TUIChatEngine.TYPES.CONV_GROUP);
   }
 };
