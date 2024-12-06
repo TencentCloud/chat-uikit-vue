@@ -299,7 +299,6 @@ function resolveBigFaceUrl(bigFaceKey: string): string {
 }
 
 .simple-message-list-container {
-  flex: 1;
   position: relative;
   overflow: hidden;
   width: calc(40vw);

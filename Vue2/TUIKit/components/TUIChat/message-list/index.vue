@@ -154,6 +154,12 @@
                     v-else-if="item.type === TYPES.MSG_LOCATION"
                     :content="item.getMessageContent()"
                   />
+                  <MessageStreamMarkdown
+                    v-else-if="isBotMessage(item)"
+                    :payloadData="item.payload.data"
+                    :message="item"
+                    @onStreaming="scrollStreamMessageToBottom"
+                  />
                   <MessageCustom
                     v-else-if="item.type === TYPES.MSG_CUSTOM"
                     :content="item.getMessageContent()"
@@ -258,6 +264,8 @@ import MessageVideo from './message-elements/message-video.vue';
 import MessageTool from './message-tool/index.vue';
 import MessageRevoked from './message-tool/message-revoked.vue';
 import MessagePlugin from '../../../plugins/plugin-components/message-plugin.vue';
+import MessageStreamMarkdown from './message-elements/message-stream-markdown/index.vue';
+import { isBotMessage } from './message-elements/message-stream-markdown/index';
 import ScrollButton from './scroll-button/index.vue';
 import ReadReceiptPanel from './read-receipt-panel/index.vue';
 import { isPluginMessage } from '../../../plugins/plugin-components/index';
@@ -461,6 +469,10 @@ function isCurrentListInBottomPosition() {
       messageListRef.value.scrollTop + messageListRef.value.clientHeight,
     ) >= messageListRef.value.scrollHeight
   );
+}
+
+async function scrollStreamMessageToBottom() {
+  await scrollToPosition({ scrollToBottom: true });
 }
 
 async function scrollToPosition(config: ScrollConfig = {}): Promise<void> {

@@ -22,3 +22,8 @@ declare module "dayjs";
 declare module "dayjs/plugin/localeData.js";
 declare module "dayjs/plugin/isSameOrAfter.js";
 declare module "dayjs/plugin/isSameOrBefore.js";
+
+declare module "marked-highlight";
+declare module "highlight.js";
+declare module "dompurify";
+declare module "marked";

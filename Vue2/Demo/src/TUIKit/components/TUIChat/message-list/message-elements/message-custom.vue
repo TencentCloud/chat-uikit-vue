@@ -1,6 +1,6 @@
 <template>
   <div class="custom">
-    <template v-if="isCustom.businessID === CHAT_MSG_CUSTOM_TYPE.SERVICE">
+    <template v-if="customData.businessID === CHAT_MSG_CUSTOM_TYPE.SERVICE">
       <div>
         <h1>
           <label>{{ extension.title }}</label>
@@ -28,12 +28,12 @@
         <article>{{ extension.description }}</article>
       </div>
     </template>
-    <template v-else-if="isCustom.businessID === CHAT_MSG_CUSTOM_TYPE.EVALUATE">
+    <template v-else-if="customData.businessID === CHAT_MSG_CUSTOM_TYPE.EVALUATE">
       <div class="evaluate">
         <h1>{{ TUITranslateService.t("message.custom.对本次服务评价") }}</h1>
         <ul class="evaluate-list">
           <li
-            v-for="(item, index) in Math.max(isCustom.score, 0)"
+            v-for="(item, index) in Math.max(customData.score, 0)"
             :key="index"
             class="evaluate-list-item"
           >
@@ -43,29 +43,29 @@
             />
           </li>
         </ul>
-        <article>{{ isCustom.comment }}</article>
+        <article>{{ customData.comment }}</article>
       </div>
     </template>
-    <template v-else-if="isCustom.businessID === CHAT_MSG_CUSTOM_TYPE.ORDER">
+    <template v-else-if="customData.businessID === CHAT_MSG_CUSTOM_TYPE.ORDER">
       <div
         class="order"
-        @click="openLink(isCustom.link)"
+        @click="openLink(customData.link)"
       >
         <img
-          :src="isCustom.imageUrl"
+          :src="customData.imageUrl"
         >
         <main>
-          <h1>{{ isCustom.title }}</h1>
-          <p>{{ isCustom.description }}</p>
-          <span>{{ isCustom.price }}</span>
+          <h1>{{ customData.title }}</h1>
+          <p>{{ customData.description }}</p>
+          <span>{{ customData.price }}</span>
         </main>
       </div>
     </template>
-    <template v-else-if="isCustom.businessID === CHAT_MSG_CUSTOM_TYPE.LINK">
+    <template v-else-if="customData.businessID === CHAT_MSG_CUSTOM_TYPE.LINK">
       <div class="textLink">
-        <p>{{ isCustom.text }}</p>
+        <p>{{ customData.text }}</p>
         <a
-          :href="isCustom.link"
+          :href="customData.link"
           target="view_window"
         >{{
           TUITranslateService.t("message.custom.查看详情>>")
@@ -99,7 +99,7 @@ const props = withDefaults(defineProps<Props>(), {
 const custom = ref();
 const message = ref<IMessageModel>();
 const extension = ref();
-const isCustom = ref<ICustomMessagePayload>({
+const customData = ref<ICustomMessagePayload>({
   businessID: '',
 });
 
@@ -107,8 +107,8 @@ watchEffect(() => {
   custom.value = props.content;
   message.value = props.messageItem;
   const { payload } = props.messageItem;
-  isCustom.value = payload.data || '';
-  isCustom.value = JSONToObject(payload.data);
+  customData.value = payload.data || '';
+  customData.value = JSONToObject(payload.data);
   if (payload.data === CHAT_MSG_CUSTOM_TYPE.SERVICE) {
     extension.value = JSONToObject(payload.extension);
   }
