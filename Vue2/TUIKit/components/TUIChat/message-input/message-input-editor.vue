@@ -33,6 +33,7 @@ import { Editor, JSONContent, Extension } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';
 import Placeholder from '@tiptap/extension-placeholder';
+import HardBreak from '@tiptap/extension-hard-break';
 import Text from '@tiptap/extension-text';
 import Mention from '@tiptap/extension-mention';
 import CustomImage from './message-input-file';
@@ -126,6 +127,7 @@ onMounted(() => {
         Document,
         Paragraph,
         Text,
+        HardBreak,
         DisableDefaultEnter,
         Placeholder.configure({
           emptyEditorClass: 'is-editor-empty',
@@ -146,9 +148,9 @@ onMounted(() => {
       editable: true,
       injectCSS: false,
       editorProps: {
-        transformPastedText() {
-          // prevent editor's default paste for resolve emoji
-          return '';
+        handlePaste() {
+          // prevent editor's default paste for resolve emoji & marked down line break
+          return true;
         },
       },
       // handle input editor typing (only in C2C and enable typing)
@@ -274,14 +276,11 @@ function handlePaste(e: ClipboardEvent) {
 
 function handlePasteText(e: ClipboardEvent) {
   e.preventDefault();
-  const html = e.clipboardData?.getData('text/html');
   const text = e.clipboardData?.getData('text/plain') || '';
-  // if paste html in pc, paste by tiptap editor default
   // if paste text in pc or mobile, parse text to html to render emoji
-  if (!html) {
-    const renderArray = parseTextToRenderArray(text);
-    insertEditorContent(renderArray);
-  }
+  // if paste html, for safety,use text parse to html
+  const renderArray = parseTextToRenderArray(text);
+  insertEditorContent(renderArray);
 }
 
 async function handleFileDropOrPaste(e: any, type: string) {
@@ -455,7 +454,7 @@ function handleEditorContent(root: JSONContent, content: ITipTapEditorContent[])
     && root.type !== 'custom-image'
     && root.type !== 'mention'
   ) {
-    if (root.type === 'paragraph') {
+    if (root.type === 'paragraph' || root.type === 'hardBreak') {
       handleEditorNode(root, content);
     }
     if (root.content?.length) {
@@ -471,7 +470,19 @@ function handleEditorContent(root: JSONContent, content: ITipTapEditorContent[])
 
 function handleEditorNode(node: JSONContent, content: ITipTapEditorContent[]) {
   // handle enter
-  if (node.type === 'paragraph') {
+  if (node.type === 'hardBreak') {
+    if (content.length > 0
+      && content[content.length - 1]
+      && content[content.length - 1]?.type === 'text'
+    ) {
+      content[content.length - 1].payload.text += '\n';
+    } else {
+      content.push({
+        type: 'text',
+        payload: { text: '\n' },
+      });
+    }
+  } else if (node.type === 'paragraph') {
     if (
       content.length > 0
       && content[content.length - 1]
@@ -628,16 +639,29 @@ function insertEditorContent(content: Array<{ type: 'text' | 'image'; content: s
   if (selection && selection.rangeCount) {
     const currentRange = selection.getRangeAt(0);
     content.forEach((item) => {
-      const newNode = item.type === 'image' ? createEmojiNode(item.emojiKey || '', item.content) : createTextNode(item.content);
-      currentRange.insertNode(newNode);
-      currentRange.setStartAfter(newNode);
-      if (item.type === 'image' && isH5) {
-        // insert empty span instead of caret after emoji
-        const textNode = document.createElement('span');
-        textNode.contentEditable = 'true';
-        currentRange.insertNode(textNode);
-        currentRange.setStartAfter(textNode);
+      const nodes: any = [];
+      if (item.type === 'image') {
+        nodes.push(createEmojiNode(item.emojiKey || '', item.content));
+      } else {
+        const blocks = item.content.split(/\n/g);
+        blocks.forEach((block: string, index: number) => {
+          nodes.push(createTextNode(block));
+          if (index !== blocks.length - 1) {
+            nodes.push(document.createElement('br'));
+          }
+        });
       }
+      nodes.forEach((newNode: any) => {
+        currentRange.insertNode(newNode);
+        currentRange.setStartAfter(newNode);
+        if (item.type === 'image' && isH5) {
+          // insert empty span instead of caret after emoji
+          const textNode = document.createElement('span');
+          textNode.contentEditable = 'true';
+          currentRange.insertNode(textNode);
+          currentRange.setStartAfter(textNode);
+        }
+      });
     });
     // update caret to current range and scroll to caret
     currentRange.collapse(false);

@@ -95,6 +95,10 @@ class CopyManager {
         const contentBlob = new Blob([content], { type: mimeType });
         const clipboardItem = new ClipboardItem({ [mimeType]: contentBlob });
         await navigator.clipboard.write([clipboardItem]);
+        Toast({
+          message: TUITranslateService.t('TUIChat.复制成功'),
+          type: TOAST_TYPE.SUCCESS,
+        });
         return;
       } catch (err) {
         // ignore error
@@ -126,6 +130,10 @@ class CopyManager {
 
     try {
       document.execCommand('copy');
+      Toast({
+        message: TUITranslateService.t('TUIChat.复制成功'),
+        type: TOAST_TYPE.SUCCESS,
+      });
     } catch (err) {
       Toast({
         message: TUITranslateService.t('TUIChat.此机型暂不支持复制'),
