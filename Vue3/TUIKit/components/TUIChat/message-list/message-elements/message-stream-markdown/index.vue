@@ -13,7 +13,7 @@
 </template>
 <script lang="ts" setup>
 import { watch, ref, computed, onMounted, onUnmounted } from '../../../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, TUIReportService } from '@tencentcloud/chat-uikit-engine';
 import { TypeWriter } from './type-writer';
 import { markedWithPurify } from './marked';
 import { JSONToObject } from '../../../../../utils';
@@ -82,6 +82,14 @@ watch(() => props.payloadData,
     if (newValue === oldValue) {
       return;
     }
+
+    if(props.enableMarkdown){
+      TUIReportService.reportFeature(206);
+    }
+    if(props.enableStreaming){
+      TUIReportService.reportFeature(207);
+    }
+
     const _payloadDataObject = JSONToObject(props.payloadData);
 
     if (_payloadDataObject.chunks) {

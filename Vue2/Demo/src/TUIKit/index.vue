@@ -63,7 +63,7 @@
 <script lang="ts" setup>
 import { ref, onMounted, framework } from './adapter-vue';
 import { TUILogin } from '@tencentcloud/tui-core';
-import { TUIStore, StoreName, TUIConversationService, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName, TUIConversationService, TUITranslateService, TUIReportService } from '@tencentcloud/chat-uikit-engine';
 import { TUISearch, TUIConversation, TUIChat, TUIContact, TUIGroup } from './components';
 import { isH5 } from './utils/env';
 
@@ -137,6 +137,8 @@ function login() {
       if (conversationID.startsWith('C2C') || conversationID.startsWith('GROUP')) {
         TUIConversationService.switchConversation(conversationID);
       }
+      // report language
+      TUIReportService.reportFeature(201, currentLanguage.value);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     }).catch((error) => { });
   }

@@ -73,14 +73,33 @@ const Link = {
       url: 'https://cloud.tencent.com/act/pro/imnew?from=16262',
     },
   ],
-  TIMPush: {
-    type: 'android',
-    label: '扫码体验 TIMPush (by uni-app)',
-    url: 'https://qcloudimg.tencent-cloud.cn/raw/c1fed062d91cd95fdfb57059edcd5890.png',
-  },
+  apkQRCodeList: [
+    {
+      type: 'android',
+      label: '扫码体验 Chat (React Native)',
+      url: 'https://web.sdk.qcloud.com/component/TUIKit/chat_react-native_demo_apk.png',
+    },
+    {
+      type: 'android',
+      label: '扫码体验 Chat&Push (uni-app)',
+      url: 'https://qcloudimg.tencent-cloud.cn/raw/c1fed062d91cd95fdfb57059edcd5890.png',
+    },
+  ],
 };
 
 const qrList = [
+  {
+    icon: 'https://web.sdk.qcloud.com/im/assets/images/react_native.svg',
+    name: 'React Native',
+    link: 'https://web.sdk.qcloud.com/component/TUIKit/chat_react-native_demo_apk.png',
+    detail: '扫描二维码下载',
+  },
+  {
+    icon: 'https://web.sdk.qcloud.com/im/assets/images/uniapp.svg',
+    name: 'Uniapp',
+    link: 'https://qcloudimg.tencent-cloud.cn/raw/c1fed062d91cd95fdfb57059edcd5890.png',
+    detail: '扫描二维码下载',
+  },
   {
     icon: 'https://web.sdk.qcloud.com/im/assets/images/Android.svg',
     name: 'Android',
@@ -98,20 +117,6 @@ const qrList = [
     name: '小程序',
     link: 'https://web.sdk.qcloud.com/im/assets/images/mini.png',
     detail: '微信扫码进入',
-  },
-  {
-    icon: 'https://web.sdk.qcloud.com/im/assets/images/Windows.svg',
-    name: 'Windows',
-    link: 'https://web.sdk.qcloud.com/im/assets/images/download.svg',
-    detail: '点击直接下载',
-    download: 'https://comm.qq.com/im_demo_download/index.html#/pc-windows',
-  },
-  {
-    icon: 'https://web.sdk.qcloud.com/im/assets/images/Mac%20OS.svg',
-    name: 'Mac OS',
-    link: 'https://web.sdk.qcloud.com/im/assets/images/download.svg',
-    detail: '点击直接下载',
-    download: 'https://comm.qq.com/im_demo_download/index.html#/pc',
   },
 ];
 
