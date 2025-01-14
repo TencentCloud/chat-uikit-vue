@@ -175,6 +175,9 @@ function initEmojiList() {
     if (item.type === EMOJI_TYPE.BIG) {
       return featureConfig.InputStickers;
     }
+    if (item.type === EMOJI_TYPE.CUSTOM) {
+      return featureConfig.InputStickers;
+    }
   });
 }
 </script>

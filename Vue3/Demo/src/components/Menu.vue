@@ -31,14 +31,18 @@
       </div>
     </div>
     <div class="main">
-      <div class="task">
+      <div
+        v-for="item in apkQRCodeList"
+        :key="item.url"
+        class="task"
+      >
         <div class="task-title">
-          {{ TUITranslateService.t(`Home.${TIMPushAdv.label}`) }}
+          {{ TUITranslateService.t(`Home.${item.label}`) }}
         </div>
         <div class="task-list qr-box">
           <img
             class="qr-code"
-            :src="TIMPushAdv.url"
+            :src="item.url"
           >
         </div>
       </div>
@@ -120,7 +124,7 @@ interface ITasks {
 const emits = defineEmits(['closeMenu']);
 const stepList = Link.stepList;
 const advList = Link.advList;
-const TIMPushAdv = Link.TIMPush;
+const apkQRCodeList = Link.apkQRCodeList;
 const tasks = ref<ITasks>({
   sendMessage: false,
   revokeMessage: false,

@@ -69,5 +69,6 @@
   "关闭在线状态": "If disabled, the users' online status will not displayed in your session and contact list.",
   "消息通知": "Message Notification",
   "IM首购低至1折": "Up to 90% off for first purchase Chat",
-  "扫码体验 TIMPush (by uni-app)": "TIMPush Demo (by uni-app)"
+  "扫码体验 Chat&Push (uni-app)": "Try Chat&Push (uni-app)",
+  "扫码体验 Chat (React Native)": "Try Chat (React Native)"
 }

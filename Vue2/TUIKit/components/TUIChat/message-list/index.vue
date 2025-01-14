@@ -103,6 +103,7 @@
                   <MessageText
                     v-if="item.type === TYPES.MSG_TEXT"
                     :content="item.getMessageContent()"
+                    :messageItem="item"
                   />
                   <ProgressMessage
                     v-else-if="item.type === TYPES.MSG_IMAGE"

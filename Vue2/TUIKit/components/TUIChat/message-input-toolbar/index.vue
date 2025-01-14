@@ -81,6 +81,7 @@ import TUIChatEngine, {
   IConversationModel,
   TUIStore,
   StoreName,
+  TUIReportService,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { ExtensionInfo, TUIConstants } from '@tencentcloud/tui-core';
 import EmojiPicker from './emoji-picker/index.vue';
@@ -102,7 +103,7 @@ interface IProps {
 interface IEmits {
   (e: 'scrollToLatestMessage'): void;
   (e: 'changeToolbarDisplayType', type: ToolbarDisplayType): void;
-  (e: 'insertEmoji', emoji: any): void;
+  (e: 'insertEmoji', emoji: any): void
 }
 const props = withDefaults(defineProps<IProps>(), {
   displayType: 'none',
@@ -169,7 +170,21 @@ const getExtensionList = () => {
     }
     return true;
   });
+  reportExtension(currentExtensionList.value);
 };
+
+function reportExtension(extensionList:ExtensionInfo[]){
+  extensionList.forEach((extension: ExtensionInfo)=>{
+    const _name = extension?.data?.name;
+    if(_name === 'voiceCall'){
+      TUIReportService.reportFeature(203, 'voice-call');
+    } else if (_name === 'videoCall') {
+      TUIReportService.reportFeature(203, 'video-call');
+    } else if(_name === 'quickRoom'){
+      TUIReportService.reportFeature(204);
+    }
+  });
+}
 
 const extensionListShowInStart = computed<ExtensionInfo[]>(() => {
   if (isPC) {

@@ -67,5 +67,7 @@
   "关闭在线状态": "关闭后，您将不可以在会话列表和通讯录中看到好友在线或离线的状态提示。",
   "消息通知": "消息通知",
   "IM首购低至1折": "IM 首购低至1折",
-  "扫码体验 TIMPush (by uni-app)": "扫码体验 TIMPush (by uni-app)"
+  "扫码体验 Chat&Push (uni-app)": "扫码体验 Chat&Push (uni-app)",
+  "扫码体验 Chat (React Native)": "扫码体验 Chat (React Native)"
+
 }
