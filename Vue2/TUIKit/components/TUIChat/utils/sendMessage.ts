@@ -25,15 +25,8 @@ export const sendMessageErrorCodeMap: Map<number, string> = new Map([
 ]);
 
 export const createOfflinePushInfo = (conversation: IConversationModel) => {
-  const androidInfo = {
-    sound: 'private_ring.mp3',
-    XiaoMiChannelID: 'high_custom_1',
-    OPPOChannelID: 'tuikit',
-  };
-  const apnsInfo = {
-    sound: '01.caf',
-    image: 'https://web.sdk.qcloud.com/im/demo/latest/faviconnew.png',
-  };
+  const androidInfo = {};
+  const apnsInfo = {};
   const userInfo = TUIStore.getData(StoreName.USER, 'userProfile');
   const entity = {
     sender: conversation.type === TUIChatEngine.TYPES.CONV_GROUP ? conversation.groupProfile?.groupID : userInfo.userID,
