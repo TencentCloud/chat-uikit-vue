@@ -13,7 +13,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from '../../../../../adapter-vue';
+import { computed } from 'vue';
 import Icon from '../../../../common/Icon.vue';
 import playIcon from '../../../../../assets/icon/video-play.png';
 import { IVideoMessageContent } from '../../../../../interface';

@@ -132,7 +132,7 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
 } from '@tencentcloud/chat-uikit-engine';
-import { computed, reactive, watchEffect } from '../../../adapter-vue';
+import { computed, reactive, watchEffect } from 'vue';
 import documentLink from '../../../utils/documentLink';
 import { isPC } from '../../../utils/env';
 import Icon from '../../common/Icon.vue';

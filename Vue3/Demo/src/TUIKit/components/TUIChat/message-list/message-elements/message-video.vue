@@ -71,7 +71,7 @@ import {
   nextTick,
   watchEffect,
   withDefaults,
-} from '../../../../adapter-vue';
+} from 'vue';
 import { IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import { handleSkeletonSize } from '../../utils/utils';
 import Icon from '../../../common/Icon.vue';

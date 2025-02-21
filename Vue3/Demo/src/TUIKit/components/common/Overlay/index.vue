@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, withDefaults } from '../../../adapter-vue';
+import { ref, watch, withDefaults } from 'vue';
 export interface IOverlayProps {
   visible?: boolean;
   zIndex?: number | undefined;

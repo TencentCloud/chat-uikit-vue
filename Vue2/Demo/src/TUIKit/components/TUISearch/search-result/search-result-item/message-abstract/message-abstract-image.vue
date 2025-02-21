@@ -27,7 +27,7 @@ const imageUrl = computed<string>(() => (props.messageContent as IImageMessageCo
   width: 100px;
   height: 100px;
   overflow: hidden;
-  background-color: #fff;
+  background-color: var(--bg-color-input);
 
   .message-abstract-image {
     max-width: 100px;

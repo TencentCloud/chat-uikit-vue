@@ -28,7 +28,7 @@ import TUIChatEngine, {
   SendMessageParams,
   SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref } from '../../../../adapter-vue';
+import { ref } from 'vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import fileIconLight from '../../../../assets/icon/file-light.svg';
 import fileIconDark from '../../../../assets/icon/file-dark.svg';

@@ -83,7 +83,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, watchEffect } from '../../../adapter-vue';
+import { ref, watch, watchEffect } from 'vue';
 import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
@@ -207,7 +207,7 @@ const close = (tabName: string) => {
   }
 
   &-footer {
-    border-top: 1px solid #f4f5f9;
+    border-top: 1px solid var(--text-color-module);
     padding: 14px;
     display: flex;
     flex-direction: column;
@@ -217,8 +217,8 @@ const close = (tabName: string) => {
     .button {
       width: 100px;
       cursor: pointer;
-      background-color: #006eff;
-      color: #fff;
+      background-color: var(--text-color-link);
+      color: var(--text-color-button);
       padding: 8px 20px;
       border-radius: 4px;
       border: none;

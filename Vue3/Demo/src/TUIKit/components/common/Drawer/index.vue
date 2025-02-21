@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from '../../../adapter-vue';
+import { ref, watch } from 'vue';
 import Overlay from '../../common/Overlay/index.vue';
 
 interface IProps {

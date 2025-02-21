@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, toRefs, watchEffect } from '../../../adapter-vue';
+import { ref, toRefs, watchEffect } from 'vue';
 import {
   TUIGlobal,
   TUITranslateService,

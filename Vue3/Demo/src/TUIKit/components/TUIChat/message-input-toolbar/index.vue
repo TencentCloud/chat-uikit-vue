@@ -76,7 +76,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, watch } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import TUIChatEngine, {
   IConversationModel,
   TUIStore,
@@ -271,7 +271,7 @@ const dialogCloseInH5 = (dialogDom: any) => {
 @import "../../../assets/styles/common";
 
 .message-input-toolbar {
-  border-top: 1px solid #f4f5f9;
+  border-top: 1px solid var(--stroke-color-primary);
   width: 100%;
   max-width: 100%;
   display: flex;

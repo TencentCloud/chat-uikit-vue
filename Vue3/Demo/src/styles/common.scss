@@ -7,21 +7,20 @@
 }
 @mixin btn-default {
   @include btn;
-  background: #006eff;
-  border: 1px solid #006eff;
-  color: #fff;
+  background: var(--text-color-link);
+  border: 1px solid var(--text-color-link);
+  color: var(--text-color-button);
 }
 @mixin btn-error {
   @include btn;
-  border: 1px solid #e54545;
-  color: #e54545;
-  background: #fff;
+  border: 1px solid var(--button-color-hangup);
+  color: var(--button-color-hangup);
 }
 @mixin btn-normal {
   @include btn;
-  background: #fff;
-  border: 1px solid #ddd;
-  color: #000;
+  background: var(--bg-color-operate);
+  border: 1px solid var(--stroke-color-primary);
+  color: var(--text-color-secondary);
 }
 
 // flex
@@ -81,14 +80,14 @@
   top: 0;
   left: 0;
   z-index: 3;
-  background: rgba(0, 0, 0, 0.3);
+  background: var(--uikit-color-black-5);
   overflow: hidden;
   .box {
     @include flex;
     border-radius: 0.5rem;
-    background: #fff;
+    background: var(--bg-color-operate);
     overflow: hidden;
-    color: #000;
+    color: var(--text-color-primary);
   }
   .box-h5 {
     width: 100%;

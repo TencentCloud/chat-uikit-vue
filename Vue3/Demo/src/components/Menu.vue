@@ -111,8 +111,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, onMounted, ref, onUnmounted } from '../TUIKit/adapter-vue';
 import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { defineEmits, onMounted, ref, onUnmounted } from 'vue';
 import { Link } from '../utils/link';
 import { isPC, isH5 } from '../TUIKit/utils/env';
 import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
@@ -122,9 +122,7 @@ interface ITasks {
 }
 
 const emits = defineEmits(['closeMenu']);
-const stepList = Link.stepList;
-const advList = Link.advList;
-const apkQRCodeList = Link.apkQRCodeList;
+const { stepList, advList, apkQRCodeList } = Link;
 const tasks = ref<ITasks>({
   sendMessage: false,
   revokeMessage: false,

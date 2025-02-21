@@ -54,7 +54,7 @@ import {
   getCurrentInstance,
   nextTick,
   watch,
-} from '../../../adapter-vue';
+} from 'vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/zh-cn';
@@ -210,7 +210,7 @@ watch(
 
   &-body {
     width: 100%;
-    background-color: #fff;
+    background-color: var(--bg-color-operate);
 
     &-weeks,
     &-days {
@@ -226,14 +226,14 @@ watch(
       width: 100%;
 
       &-item {
-        color: #666;
+        color: var(--text-color-secondary);
         font-size: 12px;
         font-weight: 400px;
       }
     }
 
     &-days {
-      color: #000;
+      color: var(--text-color-primary);
 
       &-item {
         &-cell {
@@ -284,18 +284,18 @@ watch(
 
       .prev-month,
       .next-month {
-        color: #666;
-        background-color: #fff;
+        color: var(--text-color-secondary);
+        background-color: var(--bg-color-operate);
 
         .range {
-          color: #666;
-          background-color: #fff;
+          color: var(--text-color-secondary);
+          background-color: var(--bg-color-operate);
         }
 
         .selected {
           .tui-date-table-body-days-item-cell-text {
             box-sizing: border-box;
-            color: #666;
+            color: var(--text-color-secondary);
             border: none;
           }
         }

@@ -22,7 +22,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { withDefaults, computed } from '../../adapter-vue';
+import { withDefaults, computed } from 'vue';
 import { isApp, isPC } from '../../utils/env';
 
 interface IProps {

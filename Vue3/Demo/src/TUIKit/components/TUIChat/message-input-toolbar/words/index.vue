@@ -44,7 +44,7 @@ import {
   SendMessageParams,
   TUIChatService,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref } from '../../../../adapter-vue';
+import { ref } from 'vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import wordsIconLight from '../../../../assets/icon/words-light.svg';
 import wordsIconDark from '../../../../assets/icon/words-dark.svg';

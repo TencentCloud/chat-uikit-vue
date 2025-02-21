@@ -102,7 +102,7 @@ import TUIChatEngine, {
   SendMessageParams,
   SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref, computed } from '../../../../adapter-vue';
+import { ref, computed } from 'vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import evaluateIconLight from '../../../../assets/icon/evalute-light.svg';
 import evaluateIconDark from '../../../../assets/icon/evalute-dark.svg';

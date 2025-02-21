@@ -230,12 +230,12 @@
 <script lang="ts" setup>
 import { TUITranslateService, TUIUserService } from '@tencentcloud/chat-uikit-engine';
 import { TUILogin } from '@tencentcloud/tui-core';
-import { SDKAppID, secretKey } from '../main';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';
 import { ElMessage } from 'element-plus';
+import { ref } from 'vue';
+import { SDKAppID, secretKey } from '../main';
 import Header from '../components/Header.vue';
-import { ref, vueVersion } from '../TUIKit/adapter-vue';
 import AdvList from '../components/AdvList.vue';
 import AdvListItem from '../components/AdvListItem.vue';
 import { Link, qrList, mobileList } from '../utils/link';
@@ -296,8 +296,12 @@ if (localStorage.getItem('TUIKit-userInfo')) {
 }
 
 const openDownloadLink = (type: any) => {
-  type.download && openFullPlatformLink(type.download);
-  !type.download && type.url && openFullPlatformLink(type.url);
+  if (type.download) {
+    openFullPlatformLink(type.download);
+  }
+  if (!type.download && type.url) {
+    openFullPlatformLink(type.url);
+  }
 };
 
 const openFullPlatformLink = (link: string) => {
@@ -318,22 +322,22 @@ const submitForm = (formEl: any) => {
         userID: ruleForm.value.userID,
         userSig: options.userSig,
         useUploadPlugin: true,
-        framework: `vue${vueVersion}`,
+        framework: 'vue3',
       };
       login(loginInfo);
-    } else {
-      return false;
+      return true;
     }
+    return false;
   });
 };
 
 const login = (loginInfo: any) => {
   TUILogin.login(loginInfo)
-    .then((res: any) => {
+    .then(() => {
       router.push({ path: 'home' });
       TUIUserService.switchUserStatus({ displayOnlineStatus: true });
     })
-    .catch((error: any) => {
+    .catch(() => {
       ElMessage({
         message: TUITranslateService.t('登录失败'),
         grouping: true,
@@ -358,6 +362,8 @@ const handleJump = (item: any) => {
       break;
     case 'miniprogram':
       showMini.value = true;
+      break;
+    default:
       break;
   }
 };

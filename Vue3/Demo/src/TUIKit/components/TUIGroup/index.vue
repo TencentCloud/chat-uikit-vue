@@ -10,7 +10,7 @@ import {
   TUIStore,
   StoreName,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref } from '../../adapter-vue';
+import { ref } from 'vue';
 
 import CreateGroup from './create-group/index.vue';
 import ManageGroup from './manage-group/index.vue';

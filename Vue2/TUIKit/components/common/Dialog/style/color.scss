@@ -1,18 +1,18 @@
 .dialog {
-  background: rgba(0, 0, 0, 0.6);
+  background: var(--uikit-color-black-4);
 
   &-main {
-    background: #FFF;
+    background: var(--bg-color-dialog);
 
     &-header {
       font-weight: 500;
-      color: #333;
+      color: var(--text-color-primary);
     }
 
     &-title {
       font-family: PingFangSC-Medium;
       font-weight: 500;
-      color: #333;
+      color: var(--text-color-primary);
     }
 
     &-back {
@@ -21,23 +21,24 @@
 
     &-content {
       font-weight: 400;
-      color: #333;
+      color: var(--text-color-primary);
     }
   }
 }
 
 .btn {
   font-weight: 400;
-  color: #FFF;
+  color: var(--text-color-button);;
   letter-spacing: 0;
 
   &-cancel {
-    border: 1px solid #ddd;
-    color: #666;
+    background: var(--bg-color-function);
+    border: 1px solid var(--stroke-color-primary);
+    color: var(--text-color-secondary);
   }
 
   &-default {
-    background: #006EFF;
-    border: 1px solid #006EFF;
+    background: var(--text-color-link);
+    border: 1px solid var(--text-color-link);
   }
 }

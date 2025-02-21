@@ -12,7 +12,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { watch, ref, computed, onMounted, onUnmounted } from '../../../../../adapter-vue';
+import { watch, ref, computed, onMounted, onUnmounted } from 'vue';
 import { TUITranslateService, TUIReportService } from '@tencentcloud/chat-uikit-engine';
 import { TypeWriter } from './type-writer';
 import { markedWithPurify } from './marked';

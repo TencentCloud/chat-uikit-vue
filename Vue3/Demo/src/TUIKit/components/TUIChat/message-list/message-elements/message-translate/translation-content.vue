@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, nextTick } from '../../../../../adapter-vue';
+import { ref, watch, nextTick } from 'vue';
 import {
   IMessageModel,
   TUITranslateService,

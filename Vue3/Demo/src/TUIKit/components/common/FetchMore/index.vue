@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, watch, getCurrentInstance, withDefaults } from '../../../adapter-vue';
+import { onMounted, onUnmounted, ref, watch, getCurrentInstance, withDefaults } from 'vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { isUniFrameWork } from '../../../utils/env';
 

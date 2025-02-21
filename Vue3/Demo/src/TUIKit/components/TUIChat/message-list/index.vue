@@ -236,7 +236,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, nextTick, computed, onMounted, onUnmounted, watch } from '../../../adapter-vue';
+import { ref, nextTick, computed, onMounted, onUnmounted, watch } from 'vue';
 import TUIChatEngine, {
   IMessageModel,
   TUIStore,

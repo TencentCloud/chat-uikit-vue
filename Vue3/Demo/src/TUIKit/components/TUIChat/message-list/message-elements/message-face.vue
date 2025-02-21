@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted } from '../../../../adapter-vue';
+import { ref, onMounted } from 'vue';
 import { CUSTOM_BIG_EMOJI_URL } from '../../emoji-config';
 
 const props = defineProps({

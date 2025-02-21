@@ -142,18 +142,19 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, withDefaults, defineProps, defineEmits } from '../TUIKit/adapter-vue';
-import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
 import { TUICallKit } from '@tencentcloud/call-uikit-vue2';
-import { TUIChat, TUIConversation, TUIContact, TUIGroup, TUISearch } from '../TUIKit';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import ChatDefaultContent from '../components/ChatDefaultContent.vue';
 import Header from '../components/Header.vue';
 import Menu from '../components/Menu.vue';
 import NavBar from '../components/NavBar.vue';
-import Profile from './Profile.vue';
-import ChatDefaultContent from '../components/ChatDefaultContent.vue';
+import { TUIChat, TUIConversation, TUIContact, TUIGroup, TUISearch } from '../TUIKit';
+import { ref, withDefaults, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import Drag from '../TUIKit/components/common/Drag';
-import { isPC, isH5 } from '../TUIKit/utils/env';
 import { enableSampleTaskStatus } from '../TUIKit/utils/enableSampleTaskStatus';
+import { isPC, isH5 } from '../TUIKit/utils/env';
+import Profile from './Profile.vue';
+
 const props = withDefaults(
   defineProps<{
     language: string;

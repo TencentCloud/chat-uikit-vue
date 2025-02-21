@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from '../../../../adapter-vue';
+import { computed } from 'vue';
 const props = defineProps({
   content: {
     type: Object,
@@ -20,7 +20,7 @@ const tipContent = computed(() => props.content?.text || props.content?.custom |
 .message-tip {
   margin: 0 auto;
   padding: 0 20px;
-  color: #999;
+  color: var(--text-color-disabled);
   font-size: 12px;
   overflow-wrap: anywhere;
   display: flex;

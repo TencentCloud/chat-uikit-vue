@@ -100,11 +100,11 @@ function cancelMultipleSelect() {
 
 .mulitple-select-panel {
   height: 196px;
-  border-top: 1px solid #ebebeb;
+  border-top: 1px solid var(--stroke-color-primary);
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  background-color: #EBF0F6;
+  background-color: var(--bg-color-operate);
 
   &-mobile {
     height: 64px;

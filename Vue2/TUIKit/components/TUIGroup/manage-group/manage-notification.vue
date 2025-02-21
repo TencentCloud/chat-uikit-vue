@@ -175,7 +175,9 @@ const close = (tabName: string) => {
     margin-bottom: 20px;
     box-sizing: border-box;
     padding: 10px;
-    border: 1px solid #e8e8e9;
+    background-color: var(--bg-color-input);
+    border: 1px solid var(--stroke-color-module);
+    color: var(--text-color-secondary);
     resize: none;
     font-size: 14px;
     height: 100%;
@@ -193,19 +195,19 @@ const close = (tabName: string) => {
 }
 
 .btn {
-  background: #3370ff;
-  border: 0 solid #2f80ed;
   padding: 4px 28px;
   font-weight: 400;
   font-size: 12px;
-  color: #fff;
   line-height: 24px;
   border-radius: 4px;
+  background: var(--text-color-link);
+  border: 1px solid var(--text-color-link);
+  color: var(--text-color-button);
 
   &-cancel {
-    background: #fff;
-    border: 1px solid #ddd;
-    color: #828282;
+    background: var(--bg-color-operate);
+    border: 1px solid var(--stroke-color-primary);
+    color: var(--text-color-secondary);
   }
 }
 

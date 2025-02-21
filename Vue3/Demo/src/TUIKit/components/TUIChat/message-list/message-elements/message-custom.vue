@@ -79,7 +79,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref } from '../../../../adapter-vue';
+import { watchEffect, ref } from 'vue';
 import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import { isUrl, JSONToObject } from '../../../../utils/index';
 import { CHAT_MSG_CUSTOM_TYPE } from '../../../../constant';

@@ -1,7 +1,8 @@
+import TUILocales from '../TUIKit/locales/index';
 import en from './en';
 import zh_cn from './zh_cn';
 import zh_tw from './zh_tw';
-import TUILocales, { ILanguageResources } from '../TUIKit/locales/index';
+import type { ILanguageResources } from '../TUIKit/locales/index';
 
 const demoLocales: Record<string, ILanguageResources> = {
   ...en,

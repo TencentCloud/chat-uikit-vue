@@ -1,5 +1,6 @@
 import axios from 'axios';
 import qs from 'qs';
+
 const baseURL = 'https://demos.trtc.tencent-cloud.com';
 // const baseURL = 'https://demos3w.trtc.tencent-cloud.com';
 const ENV = 'prod';

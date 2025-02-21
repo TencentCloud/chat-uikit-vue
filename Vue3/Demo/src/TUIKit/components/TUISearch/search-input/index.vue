@@ -55,7 +55,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import {
   TUIStore,
   StoreName,
@@ -162,7 +162,7 @@ const onBlur = () => {
     flex-direction: row;
     width: calc(100% - 20px);
     margin: 10px;
-    background: #ededed;
+    background: var(--bg-color-input);
     justify-content: center;
     align-items: center;
     height: 28px;
@@ -172,7 +172,8 @@ const onBlur = () => {
       flex: 1;
       background: transparent;
       border: none;
-      caret-color: #007aff;
+      color: var(--text-color-secondary);
+      caret-color: var(--text-color-link);
       font-size: 14px;
 
       &:focus {

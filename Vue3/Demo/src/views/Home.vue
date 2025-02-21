@@ -140,9 +140,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from '../TUIKit/adapter-vue';
 import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
 import { TUICallKit } from '@tencentcloud/call-uikit-vue';
+import { ref } from 'vue';
 import { TUIChat, TUIConversation, TUIContact, TUIGroup, TUISearch } from '../TUIKit';
 import Header from '../components/Header.vue';
 import Menu from '../components/Menu.vue';

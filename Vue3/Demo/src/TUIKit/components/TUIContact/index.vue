@@ -19,7 +19,7 @@
 <script lang="ts" setup>
 import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
-import { ref, watchEffect } from '../../adapter-vue';
+import { ref, watchEffect } from 'vue';
 import { isPC, isUniFrameWork } from '../../utils/env';
 
 import SelectFriend from './select-friend/index.vue';
@@ -101,7 +101,7 @@ const switchConversation = (data: any) => {
   }
 
   &-right {
-    border-left: 1px solid #f4f5f9;
+    border-left: 1px solid var(--stroke-color-primary);
     flex: 1;
     overflow: hidden;
   }

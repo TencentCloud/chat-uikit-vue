@@ -1,14 +1,14 @@
 .manage {
-  background: #FFF;
-  box-shadow: 0 1px 10px 0 rgba(2, 16, 43, 0.15);
+  background: var(--bg-color-operate);
+  box-shadow: 0 1px 10px 0 var(--uikit-color-black-7);
 
   &-header {
-    border-bottom: 1px solid #E8E8E9;
+    border-bottom: 1px solid var(--stroke-color-module);
 
     .manage-header-content {
       font-family: PingFangSC-Medium;
       font-weight: 500;
-      color: #000;
+      color: var(--text-color-primary);
     }
   }
 
@@ -16,38 +16,38 @@
     .footer {
       .list-item {
         font-weight: 400;
-        color: #dc2113;
-        border-bottom: 1px solid #E8E8E9;
+        color: var(--text-color-error);
+        border-bottom: 1px solid var(--stroke-color-module);
       }
     }
   }
 }
 
 .input {
-  border: 1px solid #E8E8E9;
+  border: 1px solid var(--stroke-color-module);
   font-weight: 400;
-  color: #000;
+  color: var(--text-color-primary);
   opacity: 0.6;
 }
 
 .avatar {
-  background: #F4F5F9;
-  color: #000;
+  background: var(--bg-color-operate);
+  color: var(--text-color-primary);
 }
 
 .space-top {
-  border-top: 10px solid #F4F5F9;
+  border-top: 10px solid var(--stroke-color-secondary);
 }
 
 .btn {
-  background: #3370FF;
-  border: 0 solid #2F80ED;
-  color: #FFF;
+  background: var(--text-color-link);
+  border: 1px solid var(--text-color-link);
+  color: var(--text-color-button);
 
   &-cancel {
-    background: #FFF;
-    border: 1px solid #DDD;
-    color: #828282;
+    background: var(--bg-color-operate);
+    border: 1px solid var(--stroke-color-primary);
+    color: var(--text-color-secondary);
   }
 }
 

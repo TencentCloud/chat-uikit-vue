@@ -370,9 +370,9 @@ defineExpose({
 @import "../../../../assets/styles/common";
 
 .dialog-item-web {
-  background: #fff;
+  background: var(--bg-color-dialog);
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--stroke-color-module);
   padding: 12px 0;
 
   .dialog-item-list {
@@ -392,7 +392,7 @@ defineExpose({
         padding-left: 4px;
         font-size: 12px;
         line-height: 17px;
-        color: #000;
+        color: var(--text-color-secondary);
       }
     }
   }

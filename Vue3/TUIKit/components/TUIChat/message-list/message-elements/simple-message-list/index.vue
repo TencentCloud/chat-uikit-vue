@@ -304,8 +304,8 @@ function resolveBigFaceUrl(bigFaceKey: string): string {
   width: calc(40vw);
   min-width: 550px;
   height: calc(100vh - 200px);
-  background-color: #fff;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-color-operate);
+  box-shadow: 0 2px 12px 0 var(--uikit-color-black-7);
   border-radius: 8px;
 
   &-mobile {
@@ -327,7 +327,7 @@ function resolveBigFaceUrl(bigFaceKey: string): string {
     justify-content: center;
     align-items: center;
     padding: 0 70px;
-    background-color: #fff;
+    background-color: var(--bg-color-operate);
 
     .back {
       flex-direction: row;

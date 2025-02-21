@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from '../../adapter-vue';
+import { computed } from 'vue';
 import { TUIStore, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import MessageBubble from '../../components/TUIChat/message-list/message-elements/message-bubble.vue';
 import { isUniFrameWork } from '../../utils/env';

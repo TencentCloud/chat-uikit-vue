@@ -10,8 +10,8 @@
   &-dialog {
     z-index: 5;
     position: absolute;
-    background: #fff;
-    box-shadow: 0 2px 4px -3px rgba(32, 77, 141, 0.03), 0 6px 10px 1px rgba(32, 77, 141, 0.06), 0 3px 14px 2px rgba(32, 77, 141, 0.05);
+    background: var(--bg-color-operate);
+    box-shadow: 0 2px 4px -3px var(--uikit-color-black-8), 0 6px 10px 1px var(--uikit-color-black-8), 0 3px 14px 2px var(--uikit-color-black-8);
     width: fit-content;
     height: fit-content;
     bottom: 35px;

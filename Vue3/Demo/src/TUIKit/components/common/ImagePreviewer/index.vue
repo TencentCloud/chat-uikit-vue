@@ -126,7 +126,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from '../../../adapter-vue';
+import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from 'vue';
 import { IMessageModel, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal, getPlatform } from '@tencentcloud/universal-api';
 import Icon from '../../common/Icon.vue';

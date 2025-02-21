@@ -61,7 +61,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, framework } from './adapter-vue';
+import { ref, onMounted } from 'vue';
 import { TUILogin } from '@tencentcloud/tui-core';
 import { TUIStore, StoreName, TUIConversationService, TUITranslateService, TUIReportService } from '@tencentcloud/chat-uikit-engine';
 import { TUISearch, TUIConversation, TUIChat, TUIContact, TUIGroup } from './components';
@@ -131,7 +131,7 @@ function login() {
       userID,
       userSig,
       useUploadPlugin: true,
-      framework,
+      framework: 'vue3',
     }).then(() => {
       // Execute the following code when integrating Chat independently
       if (conversationID.startsWith('C2C') || conversationID.startsWith('GROUP')) {

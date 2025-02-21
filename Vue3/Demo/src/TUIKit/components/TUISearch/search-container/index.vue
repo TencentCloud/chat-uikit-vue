@@ -111,7 +111,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import {
   TUITranslateService,
   TUIStore,

@@ -23,7 +23,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onMounted } from '../../../../../adapter-vue';
+import { computed, ref, onMounted } from 'vue';
 import {
   TUIStore,
   StoreName,
@@ -169,10 +169,10 @@ async function scrollToOriginalMessage() {
   margin-left: 44px;
   padding: 12px;
   font-size: 12px;
-  color: #666;
+  color: var(--text-color-secondary);
   word-wrap: break-word;
   word-break: break-all;
-  background-color: #fbfbfb;
+  background-color: var(--list-color-focused);
   border-radius: 8px;
   line-height: 16.8px;
   cursor: pointer;

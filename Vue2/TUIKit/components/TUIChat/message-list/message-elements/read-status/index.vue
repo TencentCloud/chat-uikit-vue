@@ -184,12 +184,12 @@ function onDisplayMessageReadReceiptUpdate(isDisplay: boolean) {
 .message-label {
   align-self: flex-end;
   font-size: 12px;
-  color: #b6b8ba;
+  color: var(--text-color-secondary);
   word-break: keep-all;
   flex: 0 0 auto;
 
   &.unread {
-    color: #679ce1 !important;
+    color: var(--text-color-secondary) !important;
   }
 }
 

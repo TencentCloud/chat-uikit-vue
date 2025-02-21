@@ -19,7 +19,7 @@ import TUIChatEngine, {
 } from '@tencentcloud/chat-uikit-engine';
 import {
   ref,
-} from '../../../adapter-vue';
+} from 'vue';
 
 const isNotNetwork = ref(false);
 

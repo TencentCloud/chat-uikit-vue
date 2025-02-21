@@ -64,7 +64,7 @@ watch(
 
 .message-timestamp {
   margin: 10px auto;
-  color: #999;
+  color: var(--text-color-disabled);
   font-size: 12px;
   overflow-wrap: anywhere;
   display: flex;

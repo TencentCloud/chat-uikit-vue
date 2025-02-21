@@ -2,25 +2,41 @@
   <div class="welcome">
     <div class="welcome-title">
       {{ TUITranslateService.t("Home.欢迎使用") }}
-      <img class="logo" src="../assets/image/logo.svg" alt="" />
+      <img
+        class="logo"
+        src="../assets/image/logo.svg"
+        alt=""
+      >
       {{ TUITranslateService.t("即时通信") }}
     </div>
-    <div v-if="isOfficial" class="welcome-content">
+    <div
+      v-if="isOfficial"
+      class="welcome-content"
+    >
       {{
         TUITranslateService.t(
           "Home.我们为您默认提供了一位“示例好友”和一个“示例客服群”您不用额外添加好友和群聊就可完整体验腾讯云 IM 单聊、群聊的所有功能。"
         )
       }}
-      <br />
+      <br>
       {{ TUITranslateService.t("Home.随时随地") }}
     </div>
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
-const isOfficial = TUIStore.getData(StoreName.APP, "isOfficial");
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+
+const isOfficial = TUIStore.getData(StoreName.APP, 'isOfficial');
 </script>
 <style lang="scss" scoped>
+:root[tui-theme-mode="light"] {
+  --welcome-background: url("../assets/image/login-background.png") no-repeat;
+}
+
+:root[tui-theme-mode="dark"] {
+  --welcome-background: var(--bg-color-topbar);
+}
+
 .welcome {
   width: 100%;
   height: 100%;
@@ -29,7 +45,7 @@ const isOfficial = TUIStore.getData(StoreName.APP, "isOfficial");
   padding-top: 100px;
   display: flex;
   flex-direction: column;
-  background: url("../assets/image/login-background.png") no-repeat;
+  background: var(--welcome-background);
   background-size: cover;
   background-position-x: -17px;
   background-position-y: 173px;
@@ -39,7 +55,7 @@ const isOfficial = TUIStore.getData(StoreName.APP, "isOfficial");
     align-items: center;
     font-family: PingFangSC-Medium;
     font-weight: 500;
-    color: #000;
+    color: var(--text-color-primary);
     .logo {
       width: 40px;
       padding-left: 0.98rem;
@@ -53,7 +69,7 @@ const isOfficial = TUIStore.getData(StoreName.APP, "isOfficial");
     line-height: 24px;
     font-family: PingFangSC-Regular;
     font-weight: 400;
-    color: #666;
+    color: var(--text-color-secondary);
   }
 }
 </style>

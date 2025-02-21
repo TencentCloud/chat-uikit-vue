@@ -91,7 +91,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted, computed } from '../../adapter-vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import TUIChatEngine, {
   TUITranslateService,
   TUIConversationService,

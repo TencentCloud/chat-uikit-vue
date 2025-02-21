@@ -96,7 +96,7 @@ import {
   TUIUserService,
 } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
-import { ref, computed, onMounted, onUnmounted, provide } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted, provide } from 'vue';
 import Icon from '../../common/Icon.vue';
 import downSVG from '../../../assets/icon/down-icon.svg';
 import rightSVG from '../../../assets/icon/right-icon.svg';

@@ -23,7 +23,7 @@ import {
   onMounted,
   ref,
   watch,
-} from '../../../adapter-vue';
+} from 'vue';
 import { isH5 } from '../../../utils/env';
 import TOAST_TYPE from './type';
 
@@ -128,7 +128,7 @@ const handleStyle = (type?: string) => {
   align-items: center;
 
   p {
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 12px 0 var(--uikit-color-black-8);
     border-radius: 3px;
     padding: 10px 15px;
     width: fit-content;
@@ -158,26 +158,22 @@ const handleStyle = (type?: string) => {
 }
 
 .success {
-  border: 1px solid #e4f2da;
-  background: #f2f9ec;
-  color: #7ebf50;
+  background: var(--toast-color-success);
+  color: var(--text-color-success);
 }
 
 .error {
-  border: 1px solid #fde2e2;
-  background: #fef0f0;
-  color: #f46c6e;
+  background: var(--toast-color-error);
+  color: var(--text-color-error);
 }
 
 .normal {
-  border: 1px solid #e9e9eb;
-  background: #f4f4f5;
-  color: #909398;
+  background: var(--toast-color-default);
+  color: var(--text-color-primary);
 }
 
 .warning {
-  border: 1px solid #faf0e2;
-  background: #fdf8f1;
-  color: #e4b877;
+  background: var(--toast-color-warning);
+  color: var(--text-color-warning);
 }
 </style>

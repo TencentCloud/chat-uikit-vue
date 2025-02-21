@@ -99,7 +99,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, nextTick } from '../../../../adapter-vue';
+import { ref, onMounted, watch, nextTick } from 'vue';
 
 import { IMessageModel, TUIStore, TUIChatService, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import closeIcon from '../../../../assets/icon/icon-close.svg';

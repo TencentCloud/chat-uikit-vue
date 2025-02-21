@@ -42,7 +42,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, toRefs } from '../../../adapter-vue';
+import { ref, toRefs } from 'vue';
 import { isUniFrameWork } from '../../../utils/env';
 
 interface IProps {

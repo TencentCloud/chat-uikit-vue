@@ -22,11 +22,11 @@
       cursor: pointer;
       padding: 4px 0;
       font-size: 14px;
-      color: #50545c;
+      color: var(--text-color-secondary);
       line-height: 18px;
     }
     &-item:hover {
-      color: #006eff;
+      color: var(--text-color-link);
     }
   }
 }

@@ -23,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from '../../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,
@@ -115,7 +115,7 @@ function onQuoteMessageUpdated(options?: { message: IMessageModel; type: string 
   .input-quote-content {
     display: flex;
     flex: 0 1 auto;
-    background-color: #fafafa;
+    background-color: var(--bg-color-input);
     border-radius: 8px;
     padding: 12px;
     font-size: 12px;

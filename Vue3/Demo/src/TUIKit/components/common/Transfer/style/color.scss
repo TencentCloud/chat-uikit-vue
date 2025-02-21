@@ -1,15 +1,11 @@
 .main {
-  background: #FFF;
-  border: 1px solid #E0E0E0;
-  box-shadow: 0 -4px 12px 0 rgba(0, 0, 0, 0.06);
-
-  .left {
-    border-right: 1px solid #E8E8E9;
-  }
+  background: var(--bg-color-operate);
+  border: 1px solid var(--stroke-color-primary);
+  box-shadow: 0 -4px 12px 0 var(--uikit-color-black-8);
 
   .transfer-header {
     font-weight: 500;
-    color: #000;
+    color: var(--text-color-primary);
     letter-spacing: 0;
 
     input {
@@ -37,23 +33,22 @@
 }
 
 .btn {
-  background: #3370FF;
-  border: 0 solid #2F80ED;
+  background: var(--text-color-link);
+  border: 1px solid var(--stroke-color-primary);
+  color: var(--text-color-button);
   font-weight: 400;
-  color: #FFF;
 
   &-cancel {
-    background: #FFF;
-    border: 1px solid #DDD;
-    color: #828282;
+    background: var(--bg-color-operate);
+    border: 1px solid var(--stroke-color-primary);
+    color: var(--text-color-secondary);
   }
 }
 
 .btn-no {
-  background: #e8e8e9;
-  border: 1px solid #DDD;
-  font-weight: 400;
-  color: #FFF;
+  background: var(--text-color-link);
+  border: 1px solid var(--text-color-link);
+  color: var(--text-color-button);
 }
 
 .transfer-h5-header {

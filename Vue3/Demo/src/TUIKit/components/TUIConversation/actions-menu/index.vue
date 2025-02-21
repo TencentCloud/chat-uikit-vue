@@ -72,7 +72,7 @@ import {
   onMounted,
   computed,
   getCurrentInstance,
-} from '../../../adapter-vue';
+} from 'vue';
 import TUIChatEngine, {
   IConversationModel,
   TUIStore,
@@ -212,9 +212,10 @@ const updateShowDeleteConversationDialog = (isShow: boolean) => {
   position: absolute;
   left: 164px;
   border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 -4px 12px 0 rgba(0, 0, 0, 0.06);
-  background-color: #fff;
+  border: 1px solid var(--stroke-color-module);
+  box-shadow: 0 -4px 12px 0 var(--uikit-color-black-8);
+  background-color: var(--dropdown-color-default);
+  color: var(--text-color-secondary);
   overflow: hidden;
   opacity: 0;
 
@@ -226,7 +227,7 @@ const updateShowDeleteConversationDialog = (isShow: boolean) => {
   }
 
   &.actions-menu-pc .actions-menu-item:hover {
-    background-color: #eee;
+    background-color: var(---list-color-focused);
   }
 }
 </style>

@@ -7,12 +7,11 @@
   display: flex;
   flex-direction: column;
   border-radius: 8px;
-  background: url("https://web.sdk.qcloud.com/im/assets/images/login-background.png") no-repeat;
-  background-color: #fff;
   background-size: cover;
   background-position-x: 128px;
   background-position-y: 77px;
   user-select: none;
+  background-color: var(--dropdown-color-default);
 
   &-header {
     &-content {
@@ -67,16 +66,16 @@
         line-height: 24px;
         padding: 2px 46px;
         font-weight: 400;
-        color: #fff;
+        color: var(--text-color-button);
       }
 
       .btn-valid {
-        background-color: #3370ff;
+        background-color: var(--text-color-link);
         cursor: pointer;
       }
 
       .btn-invalid{
-        background-color: rgb(160, 207, 255);
+        background-color: var(--button-color-primary-disabled);
         cursor: not-allowed;
       }
     }

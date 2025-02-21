@@ -13,7 +13,7 @@ import {
   watchEffect,
   getCurrentInstance,
   nextTick,
-} from '../../../adapter-vue';
+} from 'vue';
 const props = defineProps({
   show: {
     type: Boolean,

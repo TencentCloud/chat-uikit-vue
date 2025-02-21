@@ -77,7 +77,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, onBeforeMount } from '../../../adapter-vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import dayjs, { Dayjs, ManipulateType } from 'dayjs';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { DateCell } from './date-picker';

@@ -5,20 +5,46 @@
     @click="closeEditProfileBox"
     @mousedown.stop
   >
-    <div :class="['edit-profile-box']" @click.stop>
+    <div
+      :class="['edit-profile-box']"
+      @click.stop
+    >
       <header class="title">
-        <div v-if="isH5" class="title-back" @click="closeEditProfileBox">
-          <Icon :file="backSVG"></Icon>
+        <div
+          v-if="isH5"
+          class="title-back"
+          @click="closeEditProfileBox"
+        >
+          <Icon :file="backSVG" />
         </div>
-        <div class="title-name">{{ TUITranslateService.t("Profile.编辑资料") }}</div>
+        <div class="title-name">
+          {{ TUITranslateService.t("Profile.编辑资料") }}
+        </div>
       </header>
       <div class="edit-form">
-        <div v-if="isH5" class="edit-form-space"></div>
+        <div
+          v-if="isH5"
+          class="edit-form-space"
+        />
         <div class="edit-form-item">
-          <div class="form-label">{{ TUITranslateService.t("Profile.头像") }}</div>
-          <div v-if="isH5" class="form-info" @click="showBottomPopup('avatar')">
-            <Avatar useSkeletonAnimation :url="userProfile.avatar" size="60px" />
-            <Icon class="form-info-arrow" :file="rightArrowIcon" size="14px"></Icon>
+          <div class="form-label">
+            {{ TUITranslateService.t("Profile.头像") }}
+          </div>
+          <div
+            v-if="isH5"
+            class="form-info"
+            @click="showBottomPopup('avatar')"
+          >
+            <Avatar
+              use-skeleton-animation
+              :url="userProfile.avatar"
+              size="60px"
+            />
+            <Icon
+              class="form-info-arrow"
+              :file="rightArrowIcon"
+              size="14px"
+            />
           </div>
           <EditProfilePopup
             class="form-item"
@@ -29,25 +55,44 @@
           >
             <ul class="avatar-list">
               <li
+                v-for="avatar in avatarList"
+                :key="avatar"
                 :class="[
                   'avatar-list-item',
                   currentEditProfile.avatar === avatar && 'avatar-list-item-selected',
                 ]"
-                v-for="avatar in avatarList"
-                :key="avatar"
                 @click="changeCurrentEditProfile('avatar', avatar)"
               >
-                <Avatar useSkeletonAnimation :url="avatar" :size="isPC ? '36px' : '50px'" />
+                <Avatar
+                  useSkeletonAnimation
+                  :url="avatar"
+                  :size="isPC ? '36px' : '50px'"
+                />
               </li>
             </ul>
           </EditProfilePopup>
         </div>
-        <div v-if="isH5" class="edit-form-space"></div>
+        <div
+          v-if="isH5"
+          class="edit-form-space"
+        />
         <div class="edit-form-item">
-          <div class="form-label">{{ TUITranslateService.t("Profile.昵称") }}</div>
-          <div v-if="isH5" class="form-info" @click="showBottomPopup('nick')">
-            <div class="form-info-content">{{ userProfile.nick }}</div>
-            <Icon class="form-info-arrow" :file="rightArrowIcon" size="14px"></Icon>
+          <div class="form-label">
+            {{ TUITranslateService.t("Profile.昵称") }}
+          </div>
+          <div
+            v-if="isH5"
+            class="form-info"
+            @click="showBottomPopup('nick')"
+          >
+            <div class="form-info-content">
+              {{ userProfile.nick }}
+            </div>
+            <Icon
+              class="form-info-arrow"
+              :file="rightArrowIcon"
+              size="14px"
+            />
           </div>
           <EditProfilePopup
             class="form-item"
@@ -56,19 +101,42 @@
             @onClose="closeBottomPopup"
             @onSubmit="submitEditProfileBox"
           >
-            <input class="form-item-input" type="text" v-model="currentEditProfile.nick" />
+            <input
+              v-model="currentEditProfile.nick"
+              class="form-item-input"
+              type="text"
+            >
           </EditProfilePopup>
         </div>
         <div class="edit-form-item">
-          <div class="form-label">{{ TUITranslateService.t("Profile.账号") }}</div>
-          <div class="form-info">{{ userProfile.userID }}</div>
+          <div class="form-label">
+            {{ TUITranslateService.t("Profile.账号") }}
+          </div>
+          <div class="form-info">
+            {{ userProfile.userID }}
+          </div>
         </div>
-        <div v-if="isH5" class="edit-form-space"></div>
+        <div
+          v-if="isH5"
+          class="edit-form-space"
+        />
         <div class="edit-form-item">
-          <div class="form-label">{{ TUITranslateService.t("Profile.个性签名") }}</div>
-          <div v-if="isH5" class="form-info" @click="showBottomPopup('selfSignature')">
-            <div class="form-info-content">{{ userProfile.selfSignature }}</div>
-            <Icon class="form-info-arrow" :file="rightArrowIcon" size="14px"></Icon>
+          <div class="form-label">
+            {{ TUITranslateService.t("Profile.个性签名") }}
+          </div>
+          <div
+            v-if="isH5"
+            class="form-info"
+            @click="showBottomPopup('selfSignature')"
+          >
+            <div class="form-info-content">
+              {{ userProfile.selfSignature }}
+            </div>
+            <Icon
+              class="form-info-arrow"
+              :file="rightArrowIcon"
+              size="14px"
+            />
           </div>
           <EditProfilePopup
             class="form-item"
@@ -77,20 +145,34 @@
             @onClose="closeBottomPopup"
             @onSubmit="submitEditProfileBox"
           >
-            <input class="form-item-input" type="text" v-model="currentEditProfile.selfSignature" />
+            <input
+              v-model="currentEditProfile.selfSignature"
+              class="form-item-input"
+              type="text"
+            >
           </EditProfilePopup>
         </div>
         <div class="edit-form-item">
-          <div class="form-label">{{ TUITranslateService.t("Profile.性别") }}</div>
-          <div v-if="isH5" class="form-info" @click="showBottomPopup('gender')">
+          <div class="form-label">
+            {{ TUITranslateService.t("Profile.性别") }}
+          </div>
+          <div
+            v-if="isH5"
+            class="form-info"
+            @click="showBottomPopup('gender')"
+          >
             <div>
               {{
                 (userProfile.gender &&
                   TUITranslateService.t(`Profile.${genderLabelList[userProfile.gender]}`)) ||
-                ""
+                  ""
               }}
             </div>
-            <Icon class="form-info-arrow" :file="rightArrowIcon" size="14px"></Icon>
+            <Icon
+              class="form-info-arrow"
+              :file="rightArrowIcon"
+              size="14px"
+            />
           </div>
           <EditProfilePopup
             class="form-item"
@@ -101,9 +183,9 @@
           >
             <ul class="gender-list">
               <li
-                class="gender-list-li"
                 v-for="(value, key) in genderLabelList"
                 :key="key"
+                class="gender-list-li"
                 @click="changeCurrentEditProfile('gender', key)"
               >
                 <div
@@ -120,7 +202,7 @@
                     name="gender"
                     :value="key"
                     :checked="currentEditProfile.gender === key"
-                  />
+                  >
                   {{ TUITranslateService.t(`Profile.${value}`) }}
                 </div>
               </li>
@@ -128,10 +210,22 @@
           </EditProfilePopup>
         </div>
         <div class="edit-form-item">
-          <div class="form-label">{{ TUITranslateService.t("Profile.出生年月") }}</div>
-          <div v-if="isH5" class="form-info" @click="showBottomPopup('birthday')">
-            <div class="form-info-content">{{ birthdayObj.format }}</div>
-            <Icon class="form-info-arrow" :file="rightArrowIcon" size="14px"></Icon>
+          <div class="form-label">
+            {{ TUITranslateService.t("Profile.出生年月") }}
+          </div>
+          <div
+            v-if="isH5"
+            class="form-info"
+            @click="showBottomPopup('birthday')"
+          >
+            <div class="form-info-content">
+              {{ birthdayObj.format }}
+            </div>
+            <Icon
+              class="form-info-arrow"
+              :file="rightArrowIcon"
+              size="14px"
+            />
           </div>
           <EditProfilePopup
             class="form-item"
@@ -151,18 +245,30 @@
                 @pick="pickBirthday"
               >
                 <template #end-icon>
-                  <Icon :file="calendarSVG" size="16px"></Icon>
+                  <Icon
+                    :file="calendarSVG"
+                    size="16px"
+                  />
                 </template>
               </DatePicker>
             </div>
           </EditProfilePopup>
         </div>
       </div>
-      <footer v-if="!isH5" class="edit-footer">
-        <button class="btn-close" @click="closeEditProfileBox">
+      <footer
+        v-if="!isH5"
+        class="edit-footer"
+      >
+        <button
+          class="btn-close"
+          @click="closeEditProfileBox"
+        >
           {{ TUITranslateService.t("Profile.取消") }}
         </button>
-        <button class="btn-save" @click="submitEditProfileBox">
+        <button
+          class="btn-save"
+          @click="submitEditProfileBox"
+        >
           {{ TUITranslateService.t("Profile.保存") }}
         </button>
       </footer>
@@ -170,38 +276,38 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, defineEmits } from "../TUIKit/adapter-vue";
 import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
   TUIStore,
   StoreName,
-} from "@tencentcloud/chat-uikit-engine";
-import dayjs, { Dayjs } from "dayjs";
-import { Toast, TOAST_TYPE } from "../TUIKit/components/common/Toast/index";
-import EditProfilePopup from "./EditProfilePopup.vue";
-import DatePicker from "../TUIKit/components/common/DatePicker";
-import Avatar from "../TUIKit/components/common/Avatar/index.vue";
-import Icon from "../TUIKit/components/common/Icon.vue";
-import backSVG from "../TUIKit/assets/icon/back.svg";
-import rightArrowIcon from "../TUIKit/assets/icon/right-icon.svg";
-import calendarSVG from "../assets/icon/calendar.svg";
-import { IUserProfile } from "../TUIKit/interface";
-import { isH5, isPC } from "../TUIKit/utils/env";
-import { enableSampleTaskStatus } from "../TUIKit/utils/enableSampleTaskStatus";
+} from '@tencentcloud/chat-uikit-engine';
+import dayjs, { Dayjs } from 'dayjs';
+import { ref, defineEmits } from 'vue';
+import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
+import EditProfilePopup from './EditProfilePopup.vue';
+import DatePicker from '../TUIKit/components/common/DatePicker';
+import Avatar from '../TUIKit/components/common/Avatar/index.vue';
+import Icon from '../TUIKit/components/common/Icon.vue';
+import backSVG from '../TUIKit/assets/icon/back.svg';
+import rightArrowIcon from '../TUIKit/assets/icon/right-icon.svg';
+import calendarSVG from '../assets/icon/calendar.svg';
+import { IUserProfile } from '../TUIKit/interface';
+import { isH5, isPC } from '../TUIKit/utils/env';
+import { enableSampleTaskStatus } from '../TUIKit/utils/enableSampleTaskStatus';
 
-const emits = defineEmits(["closeEditProfileBox"]);
+const emits = defineEmits(['closeEditProfileBox']);
 // config
-const avatarListBaseUrl = "https://im.sdk.qcloud.com/download/tuikit-resource/avatar/avatar_";
-const avatarList = ["1.png", "2.png", "3.png", "4.png", "5.png", "6.png"].map(
-  (url: string) => avatarListBaseUrl + url
+const avatarListBaseUrl = 'https://im.sdk.qcloud.com/download/tuikit-resource/avatar/avatar_';
+const avatarList = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png'].map(
+  (url: string) => avatarListBaseUrl + url,
 );
 const genderLabelList: {
   [propsName: string]: string;
 } = {
-  [TUIChatEngine.TYPES.GENDER_MALE]: "男",
-  [TUIChatEngine.TYPES.GENDER_FEMALE]: "女",
-  [TUIChatEngine.TYPES.GENDER_UNKNOWN]: "不显示",
+  [TUIChatEngine.TYPES.GENDER_MALE]: '男',
+  [TUIChatEngine.TYPES.GENDER_FEMALE]: '女',
+  [TUIChatEngine.TYPES.GENDER_UNKNOWN]: '不显示',
 };
 const userProfile = ref<IUserProfile>({});
 // current edit value
@@ -213,7 +319,7 @@ const currentEditProfile = ref<IUserProfile>({
   birthday: userProfile.value?.birthday,
 });
 const birthdayObj = ref<{ obj: typeof Dayjs; format: string; value: number }>({});
-const currentBottomPopupShow = ref<string>("");
+const currentBottomPopupShow = ref<string>('');
 
 TUIStore.watch(StoreName.USER, {
   userProfile: (userProfileData: IUserProfile) => {
@@ -226,10 +332,10 @@ TUIStore.watch(StoreName.USER, {
 
 function generateBirthdayObj(YYYYMMDD: any) {
   let birthdayDayjsObj: typeof Dayjs = null;
-  let birthdayFormat = "";
-  if (YYYYMMDD && typeof YYYYMMDD === "number") {
-    birthdayDayjsObj = dayjs(YYYYMMDD.toString(), "YYYYMMDD");
-    birthdayFormat = birthdayDayjsObj.format("YYYY/MM/DD");
+  let birthdayFormat = '';
+  if (YYYYMMDD && typeof YYYYMMDD === 'number') {
+    birthdayDayjsObj = dayjs(YYYYMMDD.toString(), 'YYYYMMDD');
+    birthdayFormat = birthdayDayjsObj.format('YYYY/MM/DD');
   }
   return {
     obj: birthdayDayjsObj,
@@ -242,11 +348,11 @@ function showBottomPopup(key: string) {
   currentBottomPopupShow.value = key;
 }
 function closeBottomPopup() {
-  currentBottomPopupShow.value = "";
+  currentBottomPopupShow.value = '';
 }
 
 function pickBirthday(date: typeof Dayjs) {
-  currentEditProfile.value.birthday = parseInt(date.format("YYYYMMDD"), 10);
+  currentEditProfile.value.birthday = parseInt(date.format('YYYYMMDD'), 10);
 }
 
 function changeCurrentEditProfile(key: keyof IUserProfile, value: any) {
@@ -256,31 +362,36 @@ function changeCurrentEditProfile(key: keyof IUserProfile, value: any) {
 }
 
 function closeEditProfileBox() {
-  emits("closeEditProfileBox");
+  emits('closeEditProfileBox');
 }
 
 function submitEditProfileBox() {
-  let isNickModified = currentEditProfile.value.nick !== userProfile.value.nick;
+  const isNickModified = currentEditProfile.value.nick !== userProfile.value.nick;
   const profileOptions = Object.fromEntries(
-    Object.entries(currentEditProfile.value).filter(([key, value]) => {
-      return value !== null && value !== undefined && value !== "";
-    })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Object.entries(currentEditProfile.value).filter(([key, value]) => value !== null && value !== undefined && value !== ''),
   );
   TUIUserService.updateMyProfile(profileOptions)
     .then(() => {
-      isNickModified && enableSampleTaskStatus("modifyNickName");
+      if (isNickModified) {
+        enableSampleTaskStatus('modifyNickName');
+      }
       Toast({
-        message: TUITranslateService.t("Profile.修改个人资料成功"),
+        message: TUITranslateService.t('Profile.修改个人资料成功'),
         type: TOAST_TYPE.SUCCESS,
       });
-      isPC && closeEditProfileBox();
+      if (isPC) {
+        closeEditProfileBox();
+      }
     })
     .catch((error: Error) => {
       Toast({
-        message: TUITranslateService.t("Profile.修改个人资料失败") + error?.message,
+        message: TUITranslateService.t('Profile.修改个人资料失败') + (error?.message || ''),
         type: TOAST_TYPE.ERROR,
       });
-      isPC && closeEditProfileBox();
+      if (isPC) {
+        closeEditProfileBox();
+      }
     });
 }
 </script>
@@ -303,7 +414,7 @@ function submitEditProfileBox() {
           box-sizing: border-box;
           width: 70px;
           margin-right: 20px;
-          color: #333;
+          color: var(--text-color-primary);
         }
         .form-item {
           @include flex(row, flex-start, stretch);
@@ -317,18 +428,19 @@ function submitEditProfileBox() {
               margin-left: 0px;
             }
             .avatar-list-item-selected {
-              border: 1px solid #006eff;
-              color: #006eff;
+              border: 1px solid var(--checkbox-color-selected);
+              color: var(--checkbox-color-selected);
               border-radius: 5px;
             }
           }
           .form-item-input {
             flex: 1;
             padding: 6px 10px;
-            border: 1px solid rgba(131, 137, 153, 0.4);
+            border: 1px solid var(--stroke-color-module);
             border-radius: 2px;
             line-height: 20px;
-            color: #596174;
+            color: var(--text-color-secondary);
+            background: var(--bg-color-input);
           }
           .gender-list {
             @include flex(row, space-between, center);
@@ -349,7 +461,7 @@ function submitEditProfileBox() {
             @include flex(row, space-between, stretch);
             flex: 1;
             padding: 6px 10px;
-            border: 1px solid rgba(131, 137, 153, 0.4);
+            border: 1px solid var(--stroke-color-module);
             .birthday-date-picker {
               @include flex(row);
               flex: 1;

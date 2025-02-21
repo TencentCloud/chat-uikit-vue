@@ -47,13 +47,13 @@
       }
 
       &-name {
-        color: #333;
+        color: var(--text-color-primary);
         font-size: 14px;
         height: 20px;
       }
 
       &-content {
-        color: #999;
+        color: var(--text-color-secondary);
         font-size: 12px;
 
         .highlight {
@@ -119,12 +119,12 @@
         padding: 12px;
         font-weight: 400;
         font-size: 14px;
-        color: #000;
+        color: var(--text-color-primary);
         letter-spacing: 0;
         word-wrap: break-word;
         word-break: break-all;
         overflow: hidden;
-        background: #eff0f1;
+        background: var(--bg-color-bubble-reciprocal);
         border-radius: 0 10px 10px;
 
         .highlight {
@@ -145,7 +145,7 @@
       &-time {
         font-weight: 400;
         font-size: 12px;
-        color: #999;
+        color: var(--text-color-disabled);
         letter-spacing: 0;
         white-space: nowrap;
       }
@@ -154,7 +154,7 @@
         cursor: pointer;
         font-weight: 400;
         font-size: 12px;
-        color: #007aff;
+        color: var(--text-color-link);
         letter-spacing: 0;
         white-space: nowrap;
       }
@@ -209,7 +209,7 @@
 
     &-main-content {
       padding: 10px;
-      background-color: #f1f1f1;
+      background: var(--bg-color-bubble-reciprocal);
     }
   }
 
@@ -254,9 +254,9 @@
 
 .hover-info {
   border-radius: 5px;
-  background-color: #f5f5f5;
+  background-color: var(--list-color-focused);
 }
 
 .hover-bubble {
-  background-color: #f5f5f5;
+  background-color: var(--list-color-focused);
 }

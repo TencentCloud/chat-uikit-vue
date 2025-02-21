@@ -268,7 +268,7 @@ import {
   watchEffect,
   onMounted,
   nextTick,
-} from '../../../adapter-vue';
+} from 'vue';
 import TUIChatEngine, {
   TUITranslateService,
   TUIGroupService,

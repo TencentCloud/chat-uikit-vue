@@ -7,7 +7,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { withDefaults, computed } from '../../../../../adapter-vue';
+import { withDefaults, computed } from 'vue';
 import { IImageMessageContent } from '../../../../../interface';
 interface IProps {
   messageContent: Record<string, unknown> | IImageMessageContent | undefined;
@@ -27,7 +27,7 @@ const imageUrl = computed<string>(() => (props.messageContent as IImageMessageCo
   width: 100px;
   height: 100px;
   overflow: hidden;
-  background-color: #fff;
+  background-color: var(--bg-color-input);
 
   .message-abstract-image {
     max-width: 100px;

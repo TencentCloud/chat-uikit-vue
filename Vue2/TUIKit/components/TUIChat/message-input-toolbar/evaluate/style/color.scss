@@ -5,13 +5,13 @@
   &-header {
     &-content {
       font-weight: 500;
-      color: #1c1c1c;
+      color: var(--text-color-primary);
     }
   }
 
   &-adv {
     font-weight: 500;
-    color: #999;
+    color: var(--text-color-secondary);
 
     a {
       color: #006eff;
@@ -20,8 +20,9 @@
 
   &-content {
     &-text {
-      background: #f8f8f8;
-      border: 1px solid #ececec;
+      background: var(--bg-color-input);
+      border: 1px solid var(--stroke-color-module);
+      color: var(--text-color-primary);
     }
 
     &-list {

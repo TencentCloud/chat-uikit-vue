@@ -1,12 +1,12 @@
 .tui-conversation {
-  background: #fff;
+  background: var(--bg-color-operate);
 }
 
 .network {
   &-content {
     font-family: PingFangSC-Regular;
     font-weight: 400;
-    color: #e54545;
+    color: var(--text-color-error);
     letter-spacing: 0;
   }
 }

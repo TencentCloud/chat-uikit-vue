@@ -59,7 +59,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch } from '../../../adapter-vue';
+import { ref, watch } from 'vue';
 import {
   TUITranslateService,
   TUIStore,
@@ -173,8 +173,8 @@ TUIGlobal.closeSearching = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #fff;
-  border-bottom: 1px solid #f4f5f9;
+  background: var(--bg-color-operate);
+  border-bottom: 1px solid var(--stroke-color-primary);
   flex-direction: column;
 
   &-header,
@@ -212,12 +212,14 @@ TUIGlobal.closeSearching = () => {
       font-size: 14px;
       border-radius: 5px;
       padding: 7px;
-      border: 1px solid #ddd;
+      color: var(--text-color-secondary);
+      background: var(--bg-color-input);
+      border: 1px solid var(--stroke-color-module);
     }
 
     &-input:focus {
       outline: none;
-      border: 1px solid #006eff;
+      border: 1px solid var(--text-color-link);
     }
 
     &-cancel {

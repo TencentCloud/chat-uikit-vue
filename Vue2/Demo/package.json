@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue2",
-  "version": "2.4.0",
+  "version": "2.4.2",
   "description": "",
   "keywords": [],
   "author": "",
@@ -11,13 +11,14 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@tencentcloud/call-uikit-vue2": "latest",
-    "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue": "latest",
+    "@tencentcloud/call-uikit-vue2": "3.3.9",
+    "@tencentcloud/chat-uikit-engine": "2.4.2",
+    "@tencentcloud/chat-uikit-vue": "2.4.2",
     "@tencentcloud/tui-core": "latest",
-    "@tencentcloud/universal-api": "latest",
-    "@tencentcloud/tui-customer-service-plugin": "latest",
-    "@tencentcloud/tui-emoji-plugin": "latest",
+    "@tencentcloud/universal-api": "2.4.0",
+    "@tencentcloud/tui-customer-service-plugin": "2.2.6",
+    "@tencentcloud/tui-emoji-plugin": "2.4.2",
+    "@tencentcloud/uikit-base-component-vue2": "0.3.1",
     "@tiptap/core": "2.0.0-beta.220",
     "@tiptap/extension-hard-break": "2.0.0-beta.220",
     "@tiptap/extension-document": "2.0.0-beta.220",

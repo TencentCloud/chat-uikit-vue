@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import { createVNode, render, VNode, vueVersion } from '../../../adapter-vue';
+import { createVNode, render, VNode } from 'vue';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import TOAST_TYPE from './type';
 import MessageConstructor from './index.vue';
@@ -19,7 +19,7 @@ interface IToastReturnType {
 const instances: any[] = [];
 let seed = 1;
 
-const vueVersionInt = Math.trunc(vueVersion);
+const vueVersionInt = Math.trunc(3);
 const appendTo: HTMLElement | null = document.body;
 
 const Toast = function (options: IToast): IToastReturnType {

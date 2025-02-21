@@ -1,18 +1,26 @@
 <template>
   <ul class="adv-list">
-    <li v-for="(item, index) of list" :key="index" :item="item">
-      <slot name="item" :data="item" />
+    <li
+      v-for="(item, index) of list"
+      :key="index"
+      :item="item"
+    >
+      <slot
+        name="item"
+        :data="item"
+      />
     </li>
   </ul>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "../TUIKit/adapter-vue";
+import { defineProps } from 'vue';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const props = defineProps({
   list: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 });
 </script>
 

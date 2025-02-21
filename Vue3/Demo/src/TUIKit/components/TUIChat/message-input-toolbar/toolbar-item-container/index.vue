@@ -51,7 +51,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from '../../../../adapter-vue';
+import { ref } from 'vue';
 import { outsideClick } from '@tencentcloud/universal-api';
 import Icon from '../../../common/Icon.vue';
 import BottomPopup from '../../../common/BottomPopup/index.vue';

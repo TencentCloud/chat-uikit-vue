@@ -1,30 +1,31 @@
 .group {
-  background: #FFF;
+  background: var(--bg-color-dialog);
 
   &-list {
     &-item {
-      background: #FFF;
+      background: var(--bg-color-dialog);
 
       label {
         font-family: PingFangSC-Regular;
         font-weight: 400;
-        color: #333;
+        color: var(--text-color-primary);
       }
     }
 
     input {
-      border: 1px solid rgba(131, 137, 153, 0.40);
+      background: var(--bg-color-input);
+      border: 1px solid var(--stroke-color-primary);
       font-weight: 400;
-      color: #333;
+      color: var(--text-color-primary);
     }
 
     &-edit {
-      background: #FFF;
+      background: var(--bg-color-dialog);
     }
   }
 
   &-profile-footer {
-    background: #FFF;
+    background: var(--bg-color-dialog);
   }
 
   &-h5 {
@@ -36,7 +37,7 @@
       color: #888;
 
       a {
-        color: #006EFF;
+        color: var(--text-color-link);
       }
     }
   }
@@ -46,59 +47,59 @@
   flex: 1;
 
   a {
-    color: #006EFF;
+    color: var(--text-color-link);
   }
 
   &-item {
-    border: 1px solid rgba(131, 137, 153, 0.40);
+    border: 1px solid var(--stroke-color-module);
 
     &-header {
       .left {
         font-weight: 500;
-        color: #333;
+        color: var(--text-color-primary);
       }
     }
 
     &-detail {
-      color: #4F4F4F;
+      color: var(--text-color-secondary);
     }
   }
 
   .selected {
-    border: 1px solid #006EFF;
+    border: 1px solid var(--text-color-link);;
   }
 }
 
 header {
-  background: #FFF;
+  background: var(--bg-color-dialog);
 
   h1 {
     font-family: PingFangSC-Medium;
     font-weight: 500;
-    color: #000;
+    color: var(--text-color-primary);
     letter-spacing: 0;
   }
 }
 
 .btn-default {
-  background: #FFF;
-  border: 1px solid #DDD;
   font-family: PingFangSC-Medium;
   font-weight: 500;
-  color: #828282;
+  background: var(--bg-color-operate);
+  border: 1px solid var(--stroke-color-primary);
+  color: var(--text-color-secondary);
 }
 
 .btn-submit {
-  background: #3370FF;
-  border: 0 solid #2F80ED;
   font-family: PingFangSC-Regular;
   font-weight: 400;
-  color: #FFF;
   letter-spacing: 0;
+  background: var(--text-color-link);
+  border: 1px solid var(--text-color-link);
+  color: var(--text-color-button);
 
   &:disabled {
-    background: #e8e8e9;
-    border: 1px solid #DDD;
-    color: #FFF;
+    background: var(--button-color-primary-disabled);
+    border: 1px solid var(--stroke-color-primary);
+    color: var(--text-color-button);
   }
 }

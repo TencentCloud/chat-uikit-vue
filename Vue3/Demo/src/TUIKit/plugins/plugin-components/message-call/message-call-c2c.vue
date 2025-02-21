@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
 import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
-import { computed, ref } from '../../../adapter-vue';
+import { computed, ref } from 'vue';
 import { JSONToObject } from '../../../utils/index';
 import Icon from '../../../components/common/Icon.vue';
 import callVideoSVG from '../../../assets/icon/call-video.svg';

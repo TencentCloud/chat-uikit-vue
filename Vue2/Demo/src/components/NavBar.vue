@@ -1,10 +1,16 @@
 <template>
   <div :class="['navbar', isH5 && 'navbar-h5']">
-    <div v-if="isPC" class="header">
+    <div
+      v-if="isPC"
+      class="header"
+    >
       <div class="user-info">
-        <Avatar useSkeletonAnimation :url="avatar" />
+        <Avatar
+          useSkeletonAnimation
+          :url="avatar"
+        />
         <div class="user-info-main">
-          <slot name="profile"></slot>
+          <slot name="profile" />
         </div>
       </div>
     </div>
@@ -21,30 +27,52 @@
         <Icon
           :file="
             (currentSelectedNav === item.name && item.selectedIcon) ||
-            (isPC && item.icon) ||
-            (!isPC && item.h5Icon)
+              (isPC && item.icon) ||
+              (!isPC && item.h5Icon)
           "
           :width="isH5 ? '20px' : '24px'"
           :height="isH5 ? '20px' : '24px'"
-        ></Icon>
-        <div v-if="isH5" class="navbar-list-item-name">
+        />
+        <div
+          v-if="isH5"
+          class="navbar-list-item-name"
+        >
           {{ TUITranslateService.t(`Home.${item.label}`) }}
         </div>
       </div>
     </div>
-    <div v-if="isPC" class="footer">
+    <div
+      v-if="isPC"
+      class="footer"
+    >
       <div class="setting">
-        <div @click="toggleSetting" @mousedown.stop>
-          <Icon :file="settingPNG"></Icon>
+        <div
+          @click="toggleSetting"
+          @mousedown.stop
+        >
+          <Icon :file="settingPNG" />
         </div>
-        <div v-if="isSettingShow" class="setting-more">
-          <slot name="setting"></slot>
+        <div
+          v-if="isSettingShow"
+          class="setting-more"
+        >
+          <slot name="setting" />
         </div>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
+import { TUIStore, StoreName, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import messageH5SVG from '../assets/icon/message-real.svg';
+import messageSelectedSVG from '../assets/icon/message-selected.svg';
+import messageWebSVG from '../assets/icon/message.svg';
+import profileSelectedSVG from '../assets/icon/profile-selected.svg';
+import profileH5SVG from '../assets/icon/profile.svg';
+import relationH5SVG from '../assets/icon/relation-real.svg';
+import relationSelectedSVG from '../assets/icon/relation-selected.svg';
+import relationWebSVG from '../assets/icon/relation.svg';
+import settingPNG from '../assets/icon/setting.png';
 import {
   ref,
   computed,
@@ -52,21 +80,11 @@ import {
   watch,
   withDefaults,
   defineProps,
-} from "../TUIKit/adapter-vue";
-import { TUIStore, StoreName, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
-import Icon from "../TUIKit/components/common/Icon.vue";
-import Avatar from "../TUIKit/components/common/Avatar/index.vue";
-import messageWebSVG from "../assets/icon/message.svg";
-import messageH5SVG from "../assets/icon/message-real.svg";
-import messageSelectedSVG from "../assets/icon/message-selected.svg";
-import relationWebSVG from "../assets/icon/relation.svg";
-import relationH5SVG from "../assets/icon/relation-real.svg";
-import relationSelectedSVG from "../assets/icon/relation-selected.svg";
-import profileH5SVG from "../assets/icon/profile.svg";
-import profileSelectedSVG from "../assets/icon/profile-selected.svg";
-import settingPNG from "../assets/icon/setting.png";
-import { IUserProfile } from "../TUIKit/interface";
-import { isPC, isH5 } from "../TUIKit/utils/env";
+} from '../TUIKit/adapter-vue';
+import Avatar from '../TUIKit/components/common/Avatar/index.vue';
+import Icon from '../TUIKit/components/common/Icon.vue';
+import { IUserProfile } from '../TUIKit/interface';
+import { isPC, isH5 } from '../TUIKit/utils/env';
 
 export interface INavBarItem {
   icon: any;
@@ -82,58 +100,56 @@ const props = withDefaults(
     isSettingShow: boolean;
   }>(),
   {
-    currentNavBar: () => "message",
+    currentNavBar: () => 'message',
     isSettingShow: false,
-  }
+  },
 );
 
-const emits = defineEmits(["toggleSettingShow", "switchNavBar"]);
+const emits = defineEmits(['toggleSettingShow', 'switchNavBar']);
 
 const currentSettingStatus = ref<boolean>(props.isSettingShow);
 const currentSelectedNav = ref(props.currentNavBar);
-const navBarListForShow = computed<Array<INavBarItem>>(() => {
-  return isPC ? navBarList.filter((item: INavBarItem) => item.name !== "profile") : navBarList;
-});
-const avatar = ref<string>("");
+const navBarListForShow = computed<INavBarItem[]>(() => isPC ? navBarList.filter((item: INavBarItem) => item.name !== 'profile') : navBarList);
+const avatar = ref<string>('');
 
 TUIStore.watch(StoreName.USER, {
   userProfile: (userProfileData: IUserProfile) => {
-    avatar.value = userProfileData?.avatar || "";
+    avatar.value = userProfileData?.avatar || '';
   },
 });
 
-const navBarList: Array<INavBarItem> = [
+const navBarList: INavBarItem[] = [
   {
     icon: messageWebSVG,
     h5Icon: messageH5SVG,
     selectedIcon: messageSelectedSVG,
-    name: "message",
-    label: "消息",
+    name: 'message',
+    label: '消息',
   },
   {
     icon: relationWebSVG,
     h5Icon: relationH5SVG,
     selectedIcon: relationSelectedSVG,
-    name: "relation",
-    label: "通讯录",
+    name: 'relation',
+    label: '通讯录',
   },
   {
     icon: profileH5SVG,
     h5Icon: profileH5SVG,
     selectedIcon: profileSelectedSVG,
-    name: "profile",
-    label: "个人中心",
+    name: 'profile',
+    label: '个人中心',
   },
 ];
 
 function toggleSetting() {
   currentSettingStatus.value = !currentSettingStatus.value;
-  emits("toggleSettingShow", currentSettingStatus.value);
+  emits('toggleSettingShow', currentSettingStatus.value);
 }
 
 function switchNavBar(name: string) {
   currentSelectedNav.value = name;
-  emits("switchNavBar", name);
+  emits('switchNavBar', name);
 }
 
 watch(
@@ -143,7 +159,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 watch(
   () => props.isSettingShow,
@@ -152,7 +168,7 @@ watch(
   },
   {
     immediate: true,
-  }
+  },
 );
 </script>
 <style scoped lang="scss">
@@ -164,7 +180,7 @@ watch(
   justify-content: space-between;
   align-items: center;
   padding: 56px 0 17px;
-  background: #e8e8e9;
+  background: var(--bg-color-topbar);
   user-select: none;
 
   .navbar-list {
@@ -177,9 +193,6 @@ watch(
     .navbar-list-item {
       padding: 13px;
       cursor: pointer;
-    }
-    .navbar-list-item-selected {
-      background: #ddd;
     }
   }
   .header,
@@ -215,8 +228,8 @@ watch(
         z-index: 5;
         padding: 14px 20px;
         border-radius: 0 4px 4px 0;
-        background: #fff;
-        box-shadow: 0 1px 10px 0 rgba(2, 16, 43, 0.15);
+        background: var(--dropdown-color-default);
+        box-shadow: 0 1px 10px 0 var(--uikit-color-black-8);
       }
     }
   }

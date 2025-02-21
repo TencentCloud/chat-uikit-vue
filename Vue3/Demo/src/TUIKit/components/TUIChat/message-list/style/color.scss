@@ -1,7 +1,7 @@
 .tui-chat {
   .tui-message-list {
     .message-more {
-      color: #999;
+      color: var(--text-color-secondary);
       cursor: pointer;
     }
   }

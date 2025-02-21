@@ -110,7 +110,7 @@ interface IUserStatusMap {
   [userID: string]: IUserStatus;
 }
 
-import { ref, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,

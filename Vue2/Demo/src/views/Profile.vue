@@ -148,7 +148,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, nextTick, onMounted, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
@@ -157,18 +156,19 @@ import TUIChatEngine, {
   TUIChatService,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUILogin } from '@tencentcloud/tui-core';
-import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
-import BottomPopup from '../TUIKit/components/common/BottomPopup/index.vue';
-import Icon from '../TUIKit/components/common/Icon.vue';
 import AboutDialog from '../components/About.vue';
 import EditProfileDialog from '../components/EditProfile.vue';
+import router from '../router/index';
+import { ref, watch, nextTick, onMounted, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import rightArrowIcon from '../TUIKit/assets/icon/right-icon.svg';
 import selectedIcon from '../TUIKit/assets/icon/selected.svg';
+import BottomPopup from '../TUIKit/components/common/BottomPopup/index.vue';
+import Icon from '../TUIKit/components/common/Icon.vue';
+import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
+import { translator } from '../TUIKit/components/TUIChat/utils/translation';
+import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
 import { IUserProfile } from '../TUIKit/interface';
 import { isPC } from '../TUIKit/utils/env';
-import router from '../router/index';
-import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
-import { translator } from '../TUIKit/components/TUIChat/utils/translation';
 
 const props = defineProps({
   displayType: {
@@ -384,8 +384,8 @@ const closeEditProfileBox = () => {
   emits('toggleSettingShow', false);
 };
 
-const updateMyProfile = (props: object) => {
-  TUIUserService.updateMyProfile(props)
+const updateMyProfile = (profile: object) => {
+  TUIUserService.updateMyProfile(profile)
     .then(() => {
       Toast({
         message: '更新用户资料成功',
@@ -424,7 +424,9 @@ let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
   document.addEventListener('mousedown', onClickDocument);
-  component?.addEventListener && component?.addEventListener('mousedown', onClickTarget);
+  if (component?.addEventListener) {
+    component?.addEventListener('mousedown', onClickTarget);
+  }
 };
 const onClickDocument = () => {
   clickOutside = true;
@@ -440,7 +442,9 @@ const onClickTarget = () => {
 };
 const removeClickListener = (component: any) => {
   document.removeEventListener('mousedown', onClickDocument);
-  component?.removeEventListener && component?.removeEventListener('mousedown', onClickTarget);
+  if (component?.removeEventListener) {
+    component?.removeEventListener('mousedown', onClickTarget);
+  }
 };
 
 watch(

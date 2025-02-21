@@ -186,7 +186,7 @@ import TUIChatEngine, {
   FriendApplication,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
-import { ref, computed, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { isPC } from '../../../utils/env';
 
 import {

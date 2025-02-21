@@ -273,7 +273,7 @@ function openReadUserPanel() {
   -ms-user-select: none;
 
   &.multiple-selected {
-    background-color: #f0f0f0;
+    background-color: var(--uikit-color-gray-3);
   }
 
   .multiple-select-radio {
@@ -309,7 +309,7 @@ function openReadUserPanel() {
         display: block;
         margin-bottom: 4px;
         font-size: 12px;
-        color: #999;
+        color: var(--text-color-secondary);
         max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -332,7 +332,7 @@ function openReadUserPanel() {
           width: 5px;
           height: 5px;
           border-radius: 50%;
-          background-color: #f00;
+          background-color: var(--text-color-error);
           margin: 5px;
         }
 
@@ -343,7 +343,7 @@ function openReadUserPanel() {
           box-sizing: border-box;
           padding: 12px;
           font-size: 14px;
-          color: #000;
+          color: var(--text-color-primary);
           letter-spacing: 0;
           word-wrap: break-word;
           word-break: break-all;
@@ -368,7 +368,7 @@ function openReadUserPanel() {
 
           .content-has-risk-tips {
             font-size: 12px;
-            color: #fa5151;
+            color: var(--text-color-error);
             font-family: PingFangSC-Regular;
             margin-top: 5px;
             border-top: 1px solid #e5c7c7;
@@ -377,12 +377,12 @@ function openReadUserPanel() {
       }
 
       .content-in {
-        background: #fbfbfb;
+        background: var(--bg-color-bubble-reciprocal);
         border-radius: 0 10px 10px;
       }
 
       .content-out {
-        background: #dceafd;
+        background: var(--bg-color-bubble-own);
         border-radius: 10px 0 10px 10px;
       }
 
@@ -435,8 +435,8 @@ function openReadUserPanel() {
         width: 15px;
         height: 15px;
         border-radius: 15px;
-        background: red;
-        color: #fff;
+        background: var(--text-color-error);
+        color: var(--text-color-button);
         display: flex;
         justify-content: center;
         align-items: center;

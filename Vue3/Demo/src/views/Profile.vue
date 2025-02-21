@@ -148,7 +148,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, nextTick, onMounted } from '../TUIKit/adapter-vue';
 import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
@@ -157,6 +156,7 @@ import TUIChatEngine, {
   TUIChatService,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUILogin } from '@tencentcloud/tui-core';
+import { ref, watch, nextTick, onMounted } from 'vue';
 import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
 import BottomPopup from '../TUIKit/components/common/BottomPopup/index.vue';
 import Icon from '../TUIKit/components/common/Icon.vue';
@@ -384,8 +384,8 @@ const closeEditProfileBox = () => {
   emits('update:showSetting', false);
 };
 
-const updateMyProfile = (props: object) => {
-  TUIUserService.updateMyProfile(props)
+const updateMyProfile = (profile: object) => {
+  TUIUserService.updateMyProfile(profile)
     .then(() => {
       Toast({
         message: '更新用户资料成功',
@@ -425,7 +425,9 @@ let clickOutside = false;
 let clickInner = false;
 const onClickOutside = (component: any) => {
   document.addEventListener('mousedown', onClickDocument);
-  component?.addEventListener && component?.addEventListener('mousedown', onClickTarget);
+  if (component?.addEventListener) {
+    component?.addEventListener('mousedown', onClickTarget);
+  }
 };
 const onClickDocument = () => {
   clickOutside = true;
@@ -441,7 +443,9 @@ const onClickTarget = () => {
 };
 const removeClickListener = (component: any) => {
   document.removeEventListener('mousedown', onClickDocument);
-  component?.removeEventListener && component?.removeEventListener('mousedown', onClickTarget);
+  if (component?.removeEventListener) {
+    component?.removeEventListener('mousedown', onClickTarget);
+  }
 };
 
 watch(

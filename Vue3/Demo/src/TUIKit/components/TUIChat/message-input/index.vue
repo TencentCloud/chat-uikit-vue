@@ -35,7 +35,7 @@ import {
   StoreName,
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref } from '../../../adapter-vue';
+import { ref } from 'vue';
 import MessageInputEditor from './message-input-editor.vue';
 import MessageInputAt from './message-input-at/index.vue';
 import MessageInputButton from './message-input-button.vue';

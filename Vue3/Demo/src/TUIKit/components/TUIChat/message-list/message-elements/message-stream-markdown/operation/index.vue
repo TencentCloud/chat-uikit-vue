@@ -25,7 +25,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed } from '../../../../../../adapter-vue';
+import { computed } from 'vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import Icon from '../../../../../common/Icon.vue';
 import copySVG from '../../../../../../assets/icon/msg-copy.svg';

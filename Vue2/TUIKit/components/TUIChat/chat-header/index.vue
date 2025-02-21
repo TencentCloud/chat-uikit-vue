@@ -126,7 +126,7 @@ function onTypingStatusUpdated(status: boolean) {
     line-height: 30px;
     font-family: PingFangSC-Medium;
     font-weight: 500;
-    color: #000;
+    color: var(--text-color-primary);
     letter-spacing: 0;
     overflow: hidden;
     white-space: nowrap;

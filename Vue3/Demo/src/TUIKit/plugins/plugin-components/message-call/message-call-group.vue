@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from '../../../adapter-vue';
+import { computed } from 'vue';
 import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine';
 
 interface IProps {

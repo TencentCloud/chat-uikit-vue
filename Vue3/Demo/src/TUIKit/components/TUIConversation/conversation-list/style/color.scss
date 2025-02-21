@@ -1,15 +1,15 @@
 .tui-conversation {
   &-item {
     &-pinned {
-      background: #eef0f3;
+      background: var(--list-color-focused);
     }
 
     &-selected,
     &-toggled {
-      background: rgba(0, 110, 255, 0.1);
+      background: var(--list-color-focused);
     }
 
-    .left {
+    .left { 
       .num {
         background: red;
         color: #fff;
@@ -29,7 +29,7 @@
       .name {
         font-weight: 400;
         letter-spacing: 0;
-        color: #000;
+        color: var(--text-color-primary);
       }
     }
 
@@ -42,7 +42,7 @@
 
       &-content {
         font-weight: 400;
-        color: #999;
+        color: var(--text-color-secondary);
         letter-spacing: 0;
       }
     }

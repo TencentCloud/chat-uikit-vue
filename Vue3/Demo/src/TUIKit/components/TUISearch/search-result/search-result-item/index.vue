@@ -127,7 +127,7 @@
 </template>
 <script setup lang="ts">
 import TUIChatEngine, { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
-import { ref, watchEffect, withDefaults } from '../../../../adapter-vue';
+import { ref, watchEffect, withDefaults } from 'vue';
 import MessageAbstractText from './message-abstract/message-abstract-text.vue';
 import MessageAbstractFile from './message-abstract/message-abstract-file.vue';
 import MessageAbstractCustom from './message-abstract/message-abstract-custom.vue';

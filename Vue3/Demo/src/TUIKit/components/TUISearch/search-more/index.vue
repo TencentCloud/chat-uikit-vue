@@ -37,7 +37,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, onMounted } from '../../../adapter-vue';
+import { ref, watch, onMounted } from 'vue';
 import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
 import TUICore, { ExtensionInfo, TUIConstants } from '@tencentcloud/tui-core';
 import { outsideClick } from '@tencentcloud/universal-api';
@@ -124,13 +124,13 @@ watch(
     right: 6px;
     top: 20px;
     z-index: 1000;
-    background: #fff;
+    background: var(--dropdown-color-default);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     padding: 0;
-    box-shadow: rgba(0,0,0,0.16) 0 3px 6px, rgba(0,0,0,0.23) 0 3px 6px;
+    box-shadow: var(--uikit-color-black-8) 0 3px 6px, var(--uikit-color-black-8) 0 3px 6px;
 
     .list-item {
       display: flex;
@@ -148,6 +148,7 @@ watch(
         font-size: 14px;
         text-wrap: nowrap;
         word-break: keep-all;
+        color: var(--text-color-secondary);
       }
     }
   }

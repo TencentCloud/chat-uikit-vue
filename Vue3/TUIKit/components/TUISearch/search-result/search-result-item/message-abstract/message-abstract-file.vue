@@ -123,20 +123,20 @@ const handleFileIconForShow = (type: string) => {
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
-      color: #888;
+      color: var(--text-color-secondary);
       font-size: 12px;
     }
   }
 
   &-bubble {
-    background-color: #f1f1f1;
+    background: var(--bg-color-bubble-reciprocal);
 
     .message-abstract-file-main {
       .message-abstract-file-main-name {
-        color: #1f2329;
+        color: var(--text-color-primary);
 
         .normal {
-          color: #1f2329;
+          color: var(--text-color-primary);
         }
       }
     }

@@ -1,10 +1,10 @@
 <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-<mask id="path-1-inside-1_313_82772" fill="white">
+<mask id="path-1-inside-1_313_82772" fill="#8F959E">
 <rect x="7" y="7.62939e-06" width="12" height="12" rx="0.5"/>
 </mask>
 <rect x="7" y="7.62939e-06" width="12" height="12" rx="0.5" fill="#444444" stroke="#CCCCCC" stroke-width="4" mask="url(#path-1-inside-1_313_82772)"/>
 <path d="M12.7426 3.61601H12.6745L12.6496 3.67939L10.9636 7.96339L10.9098 8.10001H11.0566H11.5846H11.6536L11.6781 8.03553L12.1096 6.90001H13.9397L14.3712 8.03553L14.3957 8.10001H14.4646H14.9986H15.1455L15.0917 7.96339L13.4057 3.67939L13.3808 3.61601H13.3126H12.7426ZM13.7079 6.28601H12.3421L13.03 4.49341L13.7079 6.28601Z" fill="#CCCCCC" stroke="#CCCCCC" stroke-width="0.2"/>
-<mask id="path-3-inside-2_313_82772" fill="white">
+<mask id="path-3-inside-2_313_82772" fill="#8F959E">
 <rect y="6.00001" width="12" height="12" rx="0.5"/>
 </mask>
 <rect y="6.00001" width="12" height="12" rx="0.5" fill="#444444" stroke="#CCCCCC" stroke-width="4" mask="url(#path-3-inside-2_313_82772)"/>

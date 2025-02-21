@@ -199,7 +199,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect, computed } from '../../../adapter-vue';
+import { ref, watchEffect, computed } from 'vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { ITransferListItem } from '../../../interface';
 import Icon from '../Icon.vue';

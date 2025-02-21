@@ -106,7 +106,7 @@
 import TUIChatEngine, {
   TUITranslateService,
 } from '@tencentcloud/chat-uikit-engine';
-import { watchEffect, ref } from '../../../adapter-vue';
+import { watchEffect, ref } from 'vue';
 import Icon from '../../common/Icon.vue';
 import delIcon from '../../../assets/icon/del-icon.svg';
 import { IGroupSelfInfo, IGroupMember } from '../../../interface';
@@ -186,12 +186,12 @@ const close = (tabName: string) => {
 
 .member {
   flex: 1;
-  background: #fff;
+  background: var(--bg-color-operate);
 
   .list {
     display: flex;
     flex-direction: column;
-    background: #f4f5f9;
+    background: var(--bg-color-operate);
     padding-top: 22px;
 
     &-uniapp {
@@ -203,13 +203,13 @@ const close = (tabName: string) => {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #fff;
+      background: var(--bg-color-operate);
       font-size: 14px;
       overflow: hidden;
       cursor: pointer;
 
       &:hover {
-        background: #f1f2f6;
+        background: var(--list-color-focused);
       }
 
       .aside {
@@ -222,7 +222,7 @@ const close = (tabName: string) => {
           margin-left: 8px;
           font-weight: 400;
           font-size: 14px;
-          color: #000;
+          color: var(--text-color-primary);
           flex: 1;
           overflow: hidden;
           white-space: nowrap;

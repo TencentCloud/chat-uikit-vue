@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect } from '../../../adapter-vue';
+import { ref, watchEffect } from 'vue';
 
 const props = defineProps({
   open: {
@@ -42,11 +42,11 @@ const toggleSlider = () => {
     width: 40px;
     height: 20px;
     border-radius: 10px;
-    background: #e1e1e3;
+    background: var(--switch-color-off);
   }
 
   &-open {
-    background: #006eff !important;
+    background: var(--switch-color-on) !important;
     justify-content: flex-end;
   }
 
@@ -56,9 +56,8 @@ const toggleSlider = () => {
     height: 16px;
     border-radius: 8px;
     margin: 0 2px;
-    background: #fff;
-    border: 0 solid rgba(0, 0, 0, 0.85);
-    box-shadow: 0 2px 4px 0 #d1d1d1;
+    background: var(--switch-color-button);
+    border: 0 solid var(--uikit-color-black-2);
   }
 }
 </style>

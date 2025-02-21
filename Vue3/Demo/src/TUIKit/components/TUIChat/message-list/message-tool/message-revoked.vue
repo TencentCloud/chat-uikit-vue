@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref } from '../../../../adapter-vue';
+import { watchEffect, ref } from 'vue';
 import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 const props = defineProps({
   isEdit: {

@@ -4,6 +4,17 @@
   letter-spacing: 0;
   flex: 1;
   overflow: auto;
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: var(--bg-color-function);
+  }
 }
 
 .tui-conversation {
@@ -61,16 +72,16 @@
         height: 10px;
         left: 24px;
         top: 22px;
-        border: 2px solid #fff;
-        box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
+        border: 2px solid var(--text-color-button);
+        box-shadow: 0 0 4px var(--uikit-color-black-7);
         border-radius: 50%;
 
         &-online {
-          background: #29cc85;
+          background: var(--text-color-success);
         }
 
         &-offline {
-          background: #a4a4a4;
+          background: var(--uikit-color-gray-5);
         }
       }
     }

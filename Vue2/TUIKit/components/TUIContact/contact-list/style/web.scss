@@ -68,8 +68,8 @@
 
   &-title {
     font-size: 14px;
-    color: #999;
-    border-bottom: 1px solid #f4f5f9;
+    color: var(--text-color-secondary);
+    border-bottom: 1px solid var(--stroke-color-module);
   }
 
   &-item {
@@ -80,6 +80,6 @@
     padding: 20px;
     text-align: center;
     font-size: 14px;
-    color: #999;
+    color: var(--text-color-secondary);
   }
 }

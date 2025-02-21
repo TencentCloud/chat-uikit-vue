@@ -34,7 +34,7 @@ import TUIChatEngine, {
   SendMessageOptions,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
-import { ref } from '../../../../adapter-vue';
+import { ref } from 'vue';
 import { isPC, isWeChat, isUniFrameWork } from '../../../../utils/env';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import videoIconLight from '../../../../assets/icon/video-light.svg';

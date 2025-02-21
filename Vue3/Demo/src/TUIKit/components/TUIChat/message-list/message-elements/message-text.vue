@@ -28,7 +28,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watch, ref } from '../../../../adapter-vue';
+import { watch, ref } from 'vue';
 import { TUIStore, IMessageModel, TUIReportService } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal, parseTextAndValidateUrls } from '@tencentcloud/universal-api';
 import { CUSTOM_BASIC_EMOJI_URL, CUSTOM_BASIC_EMOJI_URL_MAPPING } from '../../emoji-config';

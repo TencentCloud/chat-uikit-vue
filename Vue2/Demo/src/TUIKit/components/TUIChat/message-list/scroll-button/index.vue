@@ -155,9 +155,8 @@ defineExpose({
   right: 10px;
   width: 92px;
   height: 28px;
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 12px -5px rgba(0, 0, 0, 0.1);
+  background: var(--bg-color-operate);
+  box-shadow: 0 4px 12px 0px var(--uikit-color-black-7);
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -169,7 +168,7 @@ defineExpose({
   &-text {
     font-family: PingFangSC-Regular, system-ui;
     font-size: 10px;
-    color: #147aff;
+    color: var(--button-color-primary-active);
     margin-left: 3px;
   }
 }

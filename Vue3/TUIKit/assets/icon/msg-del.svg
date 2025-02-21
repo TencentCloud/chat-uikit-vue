@@ -13,16 +13,16 @@
     <g id="消息状态" transform="translate(-779.000000, -326.000000)">
       <g id="编组-11" transform="translate(499.000000, 163.000000)">
         <g id="形状结合">
-          <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
-          <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+          <use fill="none" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+          <use fill="none" fill-rule="evenodd" xlink:href="#path-1"></use>
         </g>
         <g id="编组-13备份" transform="translate(246.000000, 131.583780)">
           <g id="编组-17" transform="translate(34.000000, 31.416220)">
             <g id="编组-18" transform="translate(4.000000, 2.847939)">
-              <path d="M27,8.04349833 L27,34.26099 L5,34.26099 L5,8.04349833 L27,8.04349833 Z" id="路径-5" stroke="#444444" stroke-width="4"></path>
-              <rect id="矩形" fill="#444444" x="9.14285714" y="0" width="14" height="4.02899889"></rect>
-              <rect id="矩形" fill="#444444" x="0" y="6.04349833" width="32" height="4.02899889"></rect>
-              <path d="M14,15.1087458 L14,27.1957425 L10,27.1957425 L10,15.1087458 L14,15.1087458 Z M22,15.1087458 L22,27.1957425 L18,27.1957425 L18,15.1087458 L22,15.1087458 Z" id="形状结合" fill="#444444"></path>
+              <path d="M27,8.04349833 L27,34.26099 L5,34.26099 L5,8.04349833 L27,8.04349833 Z" id="路径-5" stroke="#8F959E" stroke-width="4"></path>
+              <rect id="矩形" fill="#8F959E" x="9.14285714" y="0" width="14" height="4.02899889"></rect>
+              <rect id="矩形" fill="#8F959E" x="0" y="6.04349833" width="32" height="4.02899889"></rect>
+              <path d="M14,15.1087458 L14,27.1957425 L10,27.1957425 L10,15.1087458 L14,15.1087458 Z M22,15.1087458 L22,27.1957425 L18,27.1957425 L18,15.1087458 L22,15.1087458 Z" id="形状结合" fill="#8F959E"></path>
             </g>
           </g>
         </g>

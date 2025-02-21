@@ -101,7 +101,7 @@ const switchConversation = (data: any) => {
   }
 
   &-right {
-    border-left: 1px solid #f4f5f9;
+    border-left: 1px solid var(--stroke-color-primary);
     flex: 1;
     overflow: hidden;
   }

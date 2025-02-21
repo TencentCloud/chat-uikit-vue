@@ -49,7 +49,7 @@ import TUIChatEngine, {
   TUITranslateService,
 } from '@tencentcloud/chat-uikit-engine';
 import { TUIGlobal } from '@tencentcloud/universal-api';
-import { ref, watch } from '../../../../adapter-vue';
+import { ref, watch } from 'vue';
 import { isPC, isH5 } from '../../../../utils/env';
 import BottomPopup from '../../../common/BottomPopup/index.vue';
 
@@ -190,8 +190,8 @@ const handleMemberName = (item: any) => {
   max-width: 15rem;
   max-height: 10rem;
   overflow: hidden auto;
-  background: #fff;
-  box-shadow: 0 0.06rem 0.63rem 0 rgba(2,16,43,0.15);
+  background: var(--bg-color-operate);
+  box-shadow: 0 0.06rem 0.63rem 0 var(--uikit-color-black-7);
   border-radius: 0.13rem;
 }
 
@@ -202,7 +202,7 @@ const handleMemberName = (item: any) => {
     cursor: pointer;
 
     &:hover {
-      background: rgba(0,110,255,0.1);
+      background: var(---list-color-focused);
     }
   }
 
@@ -210,7 +210,7 @@ const handleMemberName = (item: any) => {
     font-family: PingFangSC-Regular;
     font-weight: 400;
     font-size: 12px;
-    color: #000;
+    color: var(--text-color-primary);
     letter-spacing: 0;
     padding: 5px;
   }
@@ -223,7 +223,7 @@ const handleMemberName = (item: any) => {
 
     .selected,
     &:hover {
-      background: rgba(0,110,255,0.1);
+      background: var(---list-color-focused);
     }
 
     &-name {
@@ -242,7 +242,7 @@ const handleMemberName = (item: any) => {
   }
 
   .selected {
-    background: rgba(0,110,255,0.1);
+    background: var(---list-color-focused);
   }
 }
 
@@ -252,7 +252,7 @@ const handleMemberName = (item: any) => {
     max-height: 500px;
     width: 100%;
     max-width: 100%;
-    background: white;
+    background: var(--bg-color-operate);
     border-radius: 12px 12px 0 0;
     display: flex;
     flex-direction: column;

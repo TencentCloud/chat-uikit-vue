@@ -19,7 +19,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from '../../../../../adapter-vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import {
   TUIStore,
   StoreName,
@@ -81,14 +81,14 @@ function onMessageConvertUpdated(info: Map<string, IConvertInfo[]>) {
   margin-top: 4px;
   margin-left: 44px;
   padding: 10px;
-  background-color: #f2f7ff;
+  background-color: var(--bg-color-input);
   border-radius: 10px;
   display: flex;
   flex-direction: column !important;
   transition: background-color 0.15s ease-out;
 
   &.error {
-    background-color: #ffdfdf;
+    background-color: var(--uikit-color-red-9);
   }
 }
 

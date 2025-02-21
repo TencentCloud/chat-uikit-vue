@@ -1,3 +1,11 @@
+## [2.4.2] (2025-02-21)
+
+### chore
+- 升级 @tencentcloud/call-uikit-vue 到 3.3.9。
+- 升级 @tencentcloud/call-uikit-vue2 到 3.3.9。
+- 升级 @tencentcloud/call-uikit-vue2.6 到 3.3.9。
+- 升级 @tencentcloud/roomkit-web-vue3 到 2.8.2。
+
 ## [2.4.0] (2025-01-16)
 
 ### Fix

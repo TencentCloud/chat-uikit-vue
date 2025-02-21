@@ -7,7 +7,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { toRefs, ref, watch } from '../../../../adapter-vue';
+import { toRefs, ref, watch } from 'vue';
 import { calculateTimestamp } from '../../utils/utils';
 
 const props = defineProps({
@@ -64,7 +64,7 @@ watch(
 
 .message-timestamp {
   margin: 10px auto;
-  color: #999;
+  color: var(--text-color-disabled);
   font-size: 12px;
   overflow-wrap: anywhere;
   display: flex;

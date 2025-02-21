@@ -72,7 +72,7 @@ const isNoPadding = computed(() => {
     white-space: nowrap;
     text-overflow: ellipsis;
     font-size: 11px;
-    color: #999;
+    color: var(--text-color-secondary);
   }
 
   .simple-message-body {
@@ -82,7 +82,7 @@ const isNoPadding = computed(() => {
 
   .simple-message-content {
     margin-top: 8px;
-    background-color: #dceafd;
+    background-color: var(--bg-color-bubble-reciprocal);
     border-radius: 0 10px 10px;
     padding: 10px 12px;
   }
@@ -90,7 +90,7 @@ const isNoPadding = computed(() => {
   .timestamp {
     flex: 0 0 auto;
     font-size: 12px;
-    color: #aaa;
+    color: var(--text-color-secondary);
     margin-left: 6px;
   }
 

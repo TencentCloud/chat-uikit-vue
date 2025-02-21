@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { watchEffect, ref, onMounted, onUnmounted } from '../../../../adapter-vue';
+import { watchEffect, ref, onMounted, onUnmounted } from 'vue';
 import Icon from '../../../common/Icon.vue';
 import audioIcon from '../../../../assets/icon/msg-audio.svg';
 import { isMobile } from '../../../../utils/env';

@@ -113,25 +113,25 @@ function closeMergeDetail() {
 
 .message-record-container {
   padding: 10px 15px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--stroke-color-module);
   border-radius: 10px;
   cursor: pointer;
-  background-color: #fff;
+  background-color: var(--bg-color-bubble-reciprocal);
   max-width: 400px;
   min-width: 180px;
   overflow: hidden;
 
   .record-abstract-container {
-    color: #bbb;
+    color: var(--uikit-color-gray-7);
     font-size: 12px;
     margin: 8px 0;
   }
 
   .record-footer {
-    color: #888;
+    color: var(--uikit-color-gray-7);
     font-size: 11px;
     padding-top: 5px;
-    border-top: 1px solid #eee;
+    border-top: 1px solid var(--stroke-color-module);
   }
 }
 </style>

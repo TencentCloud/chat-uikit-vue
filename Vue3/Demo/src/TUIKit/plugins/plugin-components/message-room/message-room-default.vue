@@ -30,12 +30,12 @@ const props = withDefaults(defineProps<IProps>(), {
   }
 
   &-in {
-    background: #fbfbfb;
+    background: var(--bg-color-input);
     border-radius: 0 10px;
   }
 
   &-out {
-    background: #dceafd;
+    background: var(--bg-color-input);
     border-radius: 10px 0 10px 10px;
   }
 }

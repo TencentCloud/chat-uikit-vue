@@ -58,7 +58,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, ref, onMounted } from '../../../adapter-vue';
+import { computed, ref, onMounted } from 'vue';
 import Icon from '../../common/Icon.vue';
 import Server, { IMenuItem } from './server';
 

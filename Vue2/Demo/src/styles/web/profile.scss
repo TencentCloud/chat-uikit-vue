@@ -1,6 +1,6 @@
 /* stylelint-disable-next-line selector-class-pattern */
 .TUI-profile {
-  background: #fff;
+  background: var(--dropdown-color-default);
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -26,6 +26,7 @@
       box-sizing: border-box;
       overflow: hidden;
       font-size: 14px;
+      color: var(--text-color-primary);
 
       &-nick {
         overflow: hidden;
@@ -40,7 +41,7 @@
 
         &-label {
           font-weight: 400;
-          color: #999;
+          color: var(--text-color-secondary);
         }
 
         &-value {
@@ -63,9 +64,10 @@
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
+      color: var(--text-color-primary);
 
       &:hover {
-        background-color: rgba(0, 110, 255, 0.1);
+        background-color: var(--list-color-focused);
 
         /* stylelint-disable-next-line selector-class-pattern */
         .TUI-profile-setting-item-children {
@@ -90,8 +92,8 @@
         min-width: 167px;
         border-radius: 0 4px 4px 0;
         z-index: 2;
-        background: #fff;
-        box-shadow: 2px 1px 6px 0 rgba(2, 16, 43, 0.15);
+        background: var(--dropdown-color-default);
+        box-shadow: 2px 1px 6px 0 var(--uikit-color-black-8);
 
         &-item {
           height: 40px;
@@ -105,7 +107,7 @@
           cursor: pointer;
 
           &:hover {
-            background-color: rgba(0, 110, 255, 0.1);
+            background-color: var(--list-color-focused);
           }
 
           &-label {

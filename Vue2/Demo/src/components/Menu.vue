@@ -1,15 +1,34 @@
 <template>
   <div :class="['menu', isH5 && 'menu-h5']">
-    <div v-if="isPC" class="header header-border">
+    <div
+      v-if="isPC"
+      class="header header-border"
+    >
       <div class="header-tencent-cloud">
-        <img class="header-icon" src="../assets/image/txc-logo.svg" alt="" />
+        <img
+          class="header-icon"
+          src="../assets/image/txc-logo.svg"
+          alt=""
+        >
         <span class="header-name">{{ TUITranslateService.t("腾讯云") }}</span>
       </div>
-      <div class="header-im header-name">{{ TUITranslateService.t("即时通信IM") }}</div>
+      <div class="header-im header-name">
+        {{ TUITranslateService.t("即时通信IM") }}
+      </div>
     </div>
-    <div v-if="isH5" class="header header-guide">
-      <div class="header-name">{{ TUITranslateService.t("使用指引") }}</div>
-      <div class="header-close" @click="closeMenu">{{ TUITranslateService.t("关闭") }}</div>
+    <div
+      v-if="isH5"
+      class="header header-guide"
+    >
+      <div class="header-name">
+        {{ TUITranslateService.t("使用指引") }}
+      </div>
+      <div
+        class="header-close"
+        @click="closeMenu"
+      >
+        {{ TUITranslateService.t("关闭") }}
+      </div>
     </div>
     <div class="main">
       <div class="task">
@@ -47,9 +66,19 @@
           {{ TUITranslateService.t("Home.用UI组件快速集成") }}
         </div>
         <div class="step-list">
-          <div v-for="(step, index) in stepList" :key="step.label" class="step-list-item">
-            <div class="step-list-item-index">{{ index + 1 }}</div>
-            <a class="step-list-item-label" :href="step.url" target="_blank">{{
+          <div
+            v-for="(step, index) in stepList"
+            :key="step.label"
+            class="step-list-item"
+          >
+            <div class="step-list-item-index">
+              {{ index + 1 }}
+            </div>
+            <a
+              class="step-list-item-label"
+              :href="step.url"
+              target="_blank"
+            >{{
               TUITranslateService.t(`Home.${step.label}`)
             }}</a>
           </div>
@@ -59,9 +88,9 @@
     <div class="footer">
       <div class="footer-card-list">
         <div
-          class="footer-card"
           v-for="advItem in advList"
           :key="advItem.label"
+          class="footer-card"
           @click="openLink(advItem.url)"
         >
           <div class="footer-card-content">
@@ -78,19 +107,18 @@
 </template>
 
 <script lang="ts" setup>
-import { defineEmits, onMounted, ref, onUnmounted } from "../TUIKit/adapter-vue";
-import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
-import { Link } from "../utils/link";
-import { isPC, isH5 } from "../TUIKit/utils/env";
-import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils";
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { defineEmits, onMounted, ref, onUnmounted } from '../TUIKit/adapter-vue';
+import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
+import { isPC, isH5 } from '../TUIKit/utils/env';
+import { Link } from '../utils/link';
 
 interface ITasks {
   [propsName: string]: boolean;
 }
 
-const emits = defineEmits(["closeMenu"]);
-const stepList = Link.stepList;
-const advList = Link.advList;
+const emits = defineEmits(['closeMenu']);
+const { stepList, advList } = Link;
 const TIMPushAdv = Link.TIMPush;
 const tasks = ref<ITasks>({
   sendMessage: false,
@@ -101,19 +129,19 @@ const tasks = ref<ITasks>({
   dismissGroup: false,
   call: false,
   searchCloudMessage: false,
-  customerService: false
+  customerService: false,
 });
 
 const taskLabelMap = {
-  sendMessage: "发送一条消息",
-  revokeMessage: "撤回一条消息",
-  modifyNickName: "修改一次我的昵称",
-  groupChat: "发起一个群聊",
-  muteGroup: "开启一次群禁言",
-  dismissGroup: "解散一个群聊",
-  call: "发起一次通话",
-  searchCloudMessage: "搜索一次消息",
-  customerService: "进行一次客服会话"
+  sendMessage: '发送一条消息',
+  revokeMessage: '撤回一条消息',
+  modifyNickName: '修改一次我的昵称',
+  groupChat: '发起一个群聊',
+  muteGroup: '开启一次群禁言',
+  dismissGroup: '解散一个群聊',
+  call: '发起一次通话',
+  searchCloudMessage: '搜索一次消息',
+  customerService: '进行一次客服会话',
 };
 
 onMounted(() => {
@@ -129,14 +157,14 @@ onUnmounted(() => {
 });
 
 function setTasksValue(tasksValue: ITasks) {
-  if (JSON.stringify(tasksValue) === "{}") {
+  if (JSON.stringify(tasksValue) === '{}') {
     return;
   }
   tasks.value = deepCopy(tasksValue);
 }
 
 function closeMenu() {
-  emits("closeMenu");
+  emits('closeMenu');
 }
 
 function openLink(url: string) {

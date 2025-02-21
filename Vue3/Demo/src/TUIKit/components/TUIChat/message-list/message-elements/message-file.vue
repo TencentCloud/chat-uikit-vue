@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { withDefaults } from '../../../../adapter-vue';
+import { withDefaults } from 'vue';
 import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import Icon from '../../../common/Icon.vue';
 import files from '../../../../assets/icon/file-light.svg';

@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, ref } from '../../../adapter-vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import TUIChatEngine, {
   TUIStore,
   StoreName,

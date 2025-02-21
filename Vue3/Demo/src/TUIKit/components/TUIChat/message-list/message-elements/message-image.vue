@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch, onMounted, withDefaults } from '../../../../adapter-vue';
+import { ref, watch, onMounted, withDefaults } from 'vue';
 import { IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import { isPC } from '../../../../utils/env';
 import { handleSkeletonSize } from '../../utils/utils';

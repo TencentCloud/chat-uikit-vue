@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watchEffect } from '../../../adapter-vue';
+import { ref, watchEffect } from 'vue';
 import { isWeChat } from '../../../utils/env';
 
 const props = defineProps({

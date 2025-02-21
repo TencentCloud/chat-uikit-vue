@@ -67,7 +67,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted, onUnmounted } from '../../../../adapter-vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import {
   TUIChatService,
   TUIStore,

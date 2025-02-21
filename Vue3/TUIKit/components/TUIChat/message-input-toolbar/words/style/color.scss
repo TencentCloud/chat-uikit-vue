@@ -1,8 +1,8 @@
 .words {
-  background-color: #ffffff;
+  background-color: var(--bg-color-dialog);
   &-header {
     &-close {
-      color: #3370ff;
+      color: var(--text-color-link);
     }
   }
 }

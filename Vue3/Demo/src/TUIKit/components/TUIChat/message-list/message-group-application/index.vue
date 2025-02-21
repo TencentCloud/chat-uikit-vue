@@ -104,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from '../../../../adapter-vue';
+import { ref, onMounted, onUnmounted, watch } from 'vue';
 import {
   TUIStore,
   StoreName,

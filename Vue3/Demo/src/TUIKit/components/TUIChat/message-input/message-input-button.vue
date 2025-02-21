@@ -18,7 +18,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref } from '../../../adapter-vue';
+import { ref } from 'vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { TUIConstants } from '@tencentcloud/tui-core';
 import { isPC } from '../../../utils/env';

@@ -43,7 +43,7 @@ import SearchDefaultIcon from '../../../../assets/icon/search-default.svg';
       font-size: 14px;
       font-weight: 400;
       line-height: 20px;
-      color: #666;
+      color: var(--text-color-secondary);
     }
   }
 }

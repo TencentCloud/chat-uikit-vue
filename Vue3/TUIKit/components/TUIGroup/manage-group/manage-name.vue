@@ -155,12 +155,12 @@ watch(
   padding: 14px 20px;
   font-weight: 400;
   font-size: 14px;
-  color: #000;
+  color: var(--text-color-primary);
   display: flex;
   flex-direction: column;
 
   .name {
-    color: #999;
+    color: var(--text-color-secondary);
     display: flex;
     align-items: center;
 
@@ -175,18 +175,19 @@ watch(
 
   .input {
     flex: 1;
-    border: 1px solid #e8e8e9;
+    border: 1px solid var(--stroke-color-module);;
     border-radius: 4px;
     padding: 4px 16px;
     font-weight: 400;
     font-size: 14px;
-    color: #000;
+    color: var(--text-color-primary);
     opacity: 0.6;
+    background-color: var(--bg-color-input);
   }
 }
 
 .space-top {
-  border-top: 10px solid #f4f5f9;
+  border-top: 10px solid var(--stroke-color-module);
 }
 
 .edit-h5 {

@@ -134,7 +134,7 @@ import {
   TUITranslateService,
   IGroupModel,
 } from '@tencentcloud/chat-uikit-engine';
-import { watchEffect, ref } from '../../../adapter-vue';
+import { watchEffect, ref } from 'vue';
 import Slider from '../../common/Slider/index.vue';
 import Icon from '../../common/Icon.vue';
 import plusSVG from '../../../assets/icon/plus.svg';
@@ -242,7 +242,7 @@ const removeMute = () => {
     overflow: hidden;
 
     .admin-manage {
-      border-bottom: 10px solid #f4f5f9;
+      border-bottom: 10px solid var(--stroke-color-module);
     }
 
     .admin-manage,
@@ -281,8 +281,8 @@ const removeMute = () => {
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #f4f5f9;
-            color: #000;
+            background: var(--bg-color-input);
+            color: var(--text-color-primary);
 
             &-avatar {
               width: 36px;
@@ -306,7 +306,7 @@ const removeMute = () => {
     .admin-mute-all {
       margin: 0 10px;
       padding: 20px 0;
-      border-bottom: 1px solid #e8e8e9;
+      border-bottom: 1px solid var(--stroke-color-module);
       display: flex;
       flex-direction: row;
       justify-content: space-between;

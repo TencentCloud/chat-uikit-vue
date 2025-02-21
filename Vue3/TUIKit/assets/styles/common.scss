@@ -17,8 +17,8 @@ img {
 }
 
 body {
-  color:#000;
-  background:#FFF;
+  color: var(--text-color-primary);
+  background: var(--bg-color-topbar);
 }
 
 .clear {

@@ -23,7 +23,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { toRefs, ref, onMounted, watch, onUnmounted } from '../../../adapter-vue';
+import { toRefs, ref, onMounted, watch, onUnmounted } from 'vue';
 import {
   TUIStore,
   StoreName,
@@ -757,7 +757,7 @@ defineExpose({
     box-sizing: border-box;
     flex: 1;
     display: flex;
-    color: #999;
+    color: var(--text-color-disabled);
     font-size: 14px;
     justify-content: center;
     align-items: center;

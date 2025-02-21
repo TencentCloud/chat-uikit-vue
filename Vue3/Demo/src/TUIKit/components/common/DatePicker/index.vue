@@ -68,7 +68,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed } from '../../../adapter-vue';
+import { ref, computed } from 'vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 // dayjs extension
 import dayjs, { Dayjs } from 'dayjs';
@@ -214,14 +214,14 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
     min-width: 160px;
     display: flex;
     flex-direction: row;
-    color: #666;
+    color: var(--text-color-secondary);
     border-radius: 5px;
     font-size: 12px;
 
     &-start,
     &-end {
       flex: 1;
-      color: #666;
+      color: var(--text-color-secondary);
       height: 17px;
       border: none;
       width: 67px;
@@ -249,8 +249,8 @@ const handleRightPanelChange = (value: typeof Dayjs) => {
       flex-direction: row;
       padding: 10px;
       left: 5px;
-      background-color: #fff;
-      box-shadow: rgba(0, 0, 0, 0.16) 0 3px 6px, rgba(0, 0, 0, 0.23) 0 3px 6px;
+      background-color: var(--bg-color-operate);
+      box-shadow: var(--uikit-color-black-7) 0 3px 6px, var(--uikit-color-black-7) 0 3px 6px;
       z-index: 1000;
 
       &-bottom {

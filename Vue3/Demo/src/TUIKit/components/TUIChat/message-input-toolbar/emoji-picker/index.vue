@@ -19,7 +19,7 @@ import {
   StoreName,
   IConversationModel,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref } from '../../../../adapter-vue';
+import { ref } from 'vue';
 import faceIconLight from '../../../../assets/icon/face-light.svg';
 import faceIconDark from '../../../../assets/icon/face-dark.svg';
 import EmojiPickerDialog from './emoji-picker-dialog.vue';

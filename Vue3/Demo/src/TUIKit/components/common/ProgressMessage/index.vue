@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import type { IMessageModel } from '@tencentcloud/chat-uikit-engine';
-import { withDefaults } from '../../../adapter-vue';
+import { withDefaults } from 'vue';
 import { isUniFrameWork } from '../../../utils/env';
 import type { IImageMessageContent } from '../../../interface';
 

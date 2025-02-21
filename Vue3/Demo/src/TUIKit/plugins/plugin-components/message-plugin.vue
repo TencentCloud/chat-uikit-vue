@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from '../../adapter-vue';
+import { computed } from 'vue';
 import { TUIStore } from '@tencentcloud/chat-uikit-engine';
 import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine';
 import {

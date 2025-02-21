@@ -55,7 +55,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { computed, withDefaults, inject, watch, ref, Ref } from '../../../../adapter-vue';
+import { computed, withDefaults, inject, watch, ref, Ref } from 'vue';
 import TUIChatEngine, {
   TUITranslateService,
   IGroupModel,
@@ -222,8 +222,8 @@ function getOnlineStatus(): boolean {
       font-size: 12px;
       border-radius: 1px;
       font-weight: 400;
-      color: rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(0, 0, 0, 0.3);
+      color: var(--text-color-tertiary);
+      border: 1px solid var(--text-color-tertiary);
     }
 
     &-application {

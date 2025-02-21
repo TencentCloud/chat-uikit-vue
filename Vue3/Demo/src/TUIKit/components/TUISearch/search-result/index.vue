@@ -199,7 +199,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, watch, computed, onMounted, onUnmounted } from '../../../adapter-vue';
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 import {
   TUITranslateService,
   TUIConversationService,

@@ -16,7 +16,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, withDefaults } from '../../../../../adapter-vue';
+import { ref, withDefaults } from 'vue';
 import { transformTextWithKeysToEmojiNames } from '../../../../TUIChat/emoji-config';
 import { IHighlightContent } from '../../../type';
 
@@ -52,7 +52,7 @@ const contentText = ref<Array<{ text: string; isHighlight: boolean }>>(props.con
   }
 
   &-background {
-    color: #1f2329;
+    color: var(--text-color-primary);
 
     .highlight {
       background-color: #007aff33;

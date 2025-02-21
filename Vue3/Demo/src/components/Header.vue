@@ -31,6 +31,35 @@
       </div>
     </div>
     <div class="right">
+      <el-dropdown @command="handleSwitchTheme">
+        <div class="dropdown">
+          <Icon :file="themeIcon" />
+          <div class="dropdown-label">
+            {{ TUITranslateService.t("切换主题") }}
+          </div>
+          <Icon
+            :file="arrowDownPNG"
+            width="10px"
+            height="5px"
+          />
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              command="light"
+              class="language-item"
+            >
+              {{ TUITranslateService.t("白色主题") }}
+            </el-dropdown-item>
+            <el-dropdown-item
+              command="dark"
+              class="language-item"
+            >
+              {{ TUITranslateService.t("黑色主题") }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
       <el-dropdown @command="changeLanguage">
         <div class="dropdown">
           <Icon :file="globalPNG" />
@@ -71,14 +100,18 @@
 </template>
 
 <script lang="ts" setup>
-import { withDefaults, defineProps, defineEmits, ref } from '../TUIKit/adapter-vue';
 import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
 import { TUICore, TUIConstants } from '@tencentcloud/tui-core';
+import { withDefaults, defineProps, defineEmits, ref } from 'vue';
 import Icon from '../TUIKit/components/common/Icon.vue';
 import menuPNG from '../assets/icon/menu.png';
 import globalPNG from '../assets/icon/global.png';
+import themeIcon from '../assets/icon/theme.svg';
 import arrowDownPNG from '../assets/icon/arrow-down.png';
 import { Link } from '../utils/link';
+import { useUIKit } from '@tencentcloud/uikit-base-component-vue3';
+
+const { setTheme } = useUIKit();
 
 const props = withDefaults(
   defineProps<{
@@ -111,6 +144,10 @@ function changeLanguage(value: string) {
       { language: locale.value },
     );
   });
+}
+
+function handleSwitchTheme(value: string) {
+  setTheme(value);
 }
 </script>
 
@@ -173,6 +210,7 @@ function changeLanguage(value: string) {
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      margin-left: 20px;
 
       .dropdown-label {
         padding: 0 8px;

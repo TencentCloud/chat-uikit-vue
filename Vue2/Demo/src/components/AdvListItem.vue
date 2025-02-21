@@ -1,14 +1,26 @@
 <template>
   <li class="adv-list-item">
-    <div class="show-box" @click="showEvent">
+    <div
+      class="show-box"
+      @click="showEvent"
+    >
       <label class="img-box">
-        <img :src="item?.icon" alt="" />
+        <img
+          :src="item?.icon"
+          alt=""
+        >
       </label>
       <span class="name">{{ item?.name && TUITranslateService.t(`Login.${item?.name}`) }}</span>
     </div>
-    <div class="show-box hover-box" @click="hoverEvent">
+    <div
+      class="show-box hover-box"
+      @click="hoverEvent"
+    >
       <label class="img-box">
-        <img :src="item?.link" alt="" />
+        <img
+          :src="item?.link"
+          alt=""
+        >
       </label>
       <span class="name">{{ item?.detail && TUITranslateService.t(`Login.${item?.name}`) }}</span>
       <span class="name">{{ item?.detail && TUITranslateService.t(`Login.${item?.detail}`) }}</span>
@@ -17,8 +29,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineEmits, withDefaults } from "../TUIKit/adapter-vue";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { defineProps, defineEmits, withDefaults } from '../TUIKit/adapter-vue';
 
 type IAdvListItem = {
   name?: string;
@@ -32,17 +44,17 @@ const props = withDefaults(
   }>(),
   {
     item: () => ({} as IAdvListItem),
-  }
+  },
 );
 
-const emits = defineEmits(["showEvent", "hoverEvent"]);
+const emits = defineEmits(['showEvent', 'hoverEvent']);
 
 const showEvent = () => {
-  emits("showEvent", props.item);
+  emits('showEvent', props.item);
 };
 
 const hoverEvent = () => {
-  emits("hoverEvent", props.item);
+  emits('hoverEvent', props.item);
 };
 </script>
 

@@ -3,17 +3,21 @@
     id="app"
     class="container"
   >
-    <router-view
-      :key="locale"
-      :language="locale"
-      @changeLanguage="changeLanguage"
-    />
+    <UIKitProvider theme="light">
+      <router-view
+        :key="locale"
+        :language="locale"
+        @changeLanguage="changeLanguage"
+      />
+    </UIKitProvider>
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from './TUIKit/adapter-vue';
 import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { UIKitProvider } from '@tencentcloud/uikit-base-component-vue2';
 import router from './router/index';
+import { ref } from './TUIKit/adapter-vue';
+
 const locale = ref<string>('zh');
 TUIStore.watch(StoreName.USER, {
   kickedOut: (value: string) => {

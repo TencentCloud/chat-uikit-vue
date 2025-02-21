@@ -188,16 +188,16 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, withDefaults, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
 import { TUILogin } from '@tencentcloud/tui-core';
-import Icon from '../TUIKit/components/common/Icon.vue';
+import { cancellation } from '../api';
+import router from '../router';
+import { ref, withDefaults, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import backSVG from '../TUIKit/assets/icon/back.svg';
+import Icon from '../TUIKit/components/common/Icon.vue';
+import { IUserProfile } from '../TUIKit/interface';
 import { isH5 } from '../TUIKit/utils/env';
 import { Link } from '../utils/link';
-import { cancellation } from '../api';
-import { IUserProfile } from '../TUIKit/interface';
-import router from '../router';
 
 const props = withDefaults(
   defineProps<{
@@ -298,7 +298,7 @@ function submitCancellation() {
       }
 
       .main-version {
-        color: #999;
+        color: var(--text-color-secondary);
       }
     }
 
@@ -316,18 +316,18 @@ function submitCancellation() {
           .link {
             font-size: 16px;
             padding: 0 10px;
-            color: #006eff;
-            border-right: 1px solid #eee;
+            color: var(--text-color-link);
+            border-right: 1px solid var(--stroke-color-primary);
           }
 
           .link:last-child {
-            border-right: 0 solid #000;
+            border-right: 0 solid var(--text-color-primary);
           }
 
           .copyright {
             font-size: 14px;
             padding: 25px 0;
-            color: #999;
+            color: var(--text-color-secondary);
           }
         }
       }

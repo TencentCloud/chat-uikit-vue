@@ -15,7 +15,7 @@ import {
   StoreName,
   TUITranslateService,
 } from '@tencentcloud/chat-uikit-engine';
-import { ref, watchEffect } from '../../../adapter-vue';
+import { ref, watchEffect } from 'vue';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 import TUICore from '@tencentcloud/tui-core';
 import SelectUser from '../../common/SelectUser/index.vue';

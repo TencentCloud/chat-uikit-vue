@@ -757,7 +757,7 @@ defineExpose({
     box-sizing: border-box;
     flex: 1;
     display: flex;
-    color: #999;
+    color: var(--text-color-disabled);
     font-size: 14px;
     justify-content: center;
     align-items: center;
