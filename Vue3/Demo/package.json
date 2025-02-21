@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue3",
-  "version": "2.4.0",
+  "version": "2.4.3",
   "private": true,
   "scripts": {
     "dev": "vite",
@@ -12,10 +12,10 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@tencentcloud/call-uikit-vue": "latest",
+    "@tencentcloud/call-uikit-vue": "3.3.9",
     "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue": "latest",
-    "@tencentcloud/roomkit-web-vue3": "latest",
+    "@tencentcloud/chat-uikit-vue": "2.4.3",
+    "@tencentcloud/roomkit-web-vue3": "2.8.2",
     "@tencentcloud/tui-core": "latest",
     "@tencentcloud/tui-customer-service-plugin": "latest",
     "@tencentcloud/tui-emoji-plugin": "latest",
