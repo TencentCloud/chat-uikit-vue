@@ -1,6 +1,6 @@
 {
   "name": "sample-web-vue2",
-  "version": "2.4.0",
+  "version": "2.4.3",
   "description": "",
   "keywords": [],
   "author": "",
@@ -11,9 +11,9 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@tencentcloud/call-uikit-vue2": "latest",
+    "@tencentcloud/call-uikit-vue2": "3.3.9",
     "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/chat-uikit-vue": "latest",
+    "@tencentcloud/chat-uikit-vue": "2.4.3",
     "@tencentcloud/tui-core": "latest",
     "@tencentcloud/universal-api": "latest",
     "@tencentcloud/tui-customer-service-plugin": "latest",
