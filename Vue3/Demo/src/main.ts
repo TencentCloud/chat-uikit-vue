@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import i18next from 'i18next';
 import App from './App.vue';
 import router from './router';
 import { TUIComponents, TUIChatKit } from './TUIKit';
@@ -6,7 +7,7 @@ import {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import TUINotification from './TUIKit/components/TUINotification/index';
 import { locales } from './locales';
 // ------ The following is the introduction of TUIRoom related dependencies. If you do not need to use TUIRoom, please delete the following code ------
@@ -26,6 +27,7 @@ const secretKey = ""; // Your secretKey
 TUIChatKit.components(TUIComponents, app);
 TUIChatKit.init();
 
+TUITranslateService.setI18next(i18next);
 TUITranslateService.provideLanguages(locales);
 TUITranslateService.useI18n();
 

@@ -200,7 +200,7 @@
 
 <script lang="ts" setup>
 import { ref, watchEffect, computed } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { ITransferListItem } from '../../../interface';
 import Icon from '../Icon.vue';
 import selectedIcon from '../../../assets/icon/selected.svg';

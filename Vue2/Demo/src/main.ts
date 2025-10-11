@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import { TUIComponents, TUIChatKit } from "./TUIKit";
-import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine-lite";
 import TUINotification from "./TUIKit/components/TUINotification/index";
 import {
   Button,

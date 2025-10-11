@@ -82,7 +82,7 @@ import {
   withDefaults,
   onUnmounted,
 } from '../../adapter-vue';
-import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal, outsideClick } from '@tencentcloud/universal-api';
 import SearchInput from './search-input/index.vue';
 import SearchContainer from './search-container/index.vue';

@@ -1,5 +1,5 @@
 import { ref, computed } from '../../../../adapter-vue';
-import { TUIStore, StoreName, IConversationModel } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName, IConversationModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { isPC, isUniFrameWork } from '../../../../utils/env';
 import TUIChatConfig from '../../config';

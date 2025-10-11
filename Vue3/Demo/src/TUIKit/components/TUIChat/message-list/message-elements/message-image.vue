@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { ref, watch, onMounted, withDefaults } from '../../../../adapter-vue';
-import { IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { isPC } from '../../../../utils/env';
 import { handleSkeletonSize } from '../../utils/utils';
 import type { IImageMessageContent } from '../../../../interface';

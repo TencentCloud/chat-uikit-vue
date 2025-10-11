@@ -4,7 +4,7 @@ import TUIChatEngine, {
   TUIStore,
   TUITranslateService,
   TUIUserService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { IChatResponese, IUserProfile } from '../../../interface';
 
 /**

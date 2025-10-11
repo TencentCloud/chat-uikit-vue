@@ -1,4 +1,4 @@
-import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine from '@tencentcloud/chat-uikit-engine-lite';
 export interface ISearchMessageTypeList {
   [propsName: string]: {
     key: string;

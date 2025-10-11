@@ -1,5 +1,6 @@
-import TUICore, { TUILogin, TUIConstants } from '@tencentcloud/tui-core';
-import TUIChatEngine, { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import i18next from 'i18next';
+import TUICore, { TUILogin, TUIConstants } from '@tencentcloud/tui-core-lite';
+import TUIChatEngine, { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ITUIComponents, ITUIPlugins } from './interface';
 import { isFunction, isObject } from './utils';
@@ -47,7 +48,7 @@ export default class TUIChatKit {
       switch (subKey) {
         case TUIConstants.TUITranslate.EVENT_SUB_KEY.CHANGE_SUCCESS:
           if (params?.language) {
-            TUITranslateService.changeLanguage(params.language);
+            // TUITranslateService.changeLanguage(params.language);
           }
           break;
       }
@@ -69,6 +70,7 @@ export default class TUIChatKit {
     }
     // TUITranslateService init
     // #ifndef MP-WEIXIN
+    TUITranslateService.setI18next(i18next);
     TUITranslateService.provideLanguages({ ...TUILocales });
     TUITranslateService.useI18n();
     // #endif

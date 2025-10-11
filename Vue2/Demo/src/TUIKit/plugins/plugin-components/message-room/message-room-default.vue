@@ -10,7 +10,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { isUniFrameWork } from '../../../utils/env';
 
 interface IProps {

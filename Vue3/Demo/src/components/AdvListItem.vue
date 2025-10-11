@@ -18,7 +18,7 @@
 
 <script lang="ts" setup>
 import { defineProps, defineEmits, withDefaults } from "../TUIKit/adapter-vue";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine-lite";
 
 type IAdvListItem = {
   name?: string;

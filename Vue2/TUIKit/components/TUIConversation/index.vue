@@ -12,7 +12,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 import { ref } from '../../adapter-vue';
 import ConversationList from './conversation-list/index.vue';
 import ConversationHeader from './conversation-header/index.vue';

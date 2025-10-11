@@ -17,7 +17,7 @@
 
 <script lang="ts" setup>
 import { withDefaults } from '../../../../adapter-vue';
-import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../common/Icon.vue';
 import files from '../../../../assets/icon/file-light.svg';
 import type { IFileMessageContent } from '../../../../interface';

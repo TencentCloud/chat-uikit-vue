@@ -1,10 +1,10 @@
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
 import {
   IMessageModel,
   TUIStore,
   StoreName,
   TUIChatService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import TUIChatConfig from './config';
 
 export default class TUIChatServer {

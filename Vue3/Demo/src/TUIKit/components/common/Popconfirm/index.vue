@@ -48,7 +48,7 @@ import { ref, toRefs, watchEffect } from '../../../adapter-vue';
 import {
   TUIGlobal,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { isUniFrameWork } from '../../../utils/env';
 const props = withDefaults(
   defineProps<{

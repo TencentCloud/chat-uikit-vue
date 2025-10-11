@@ -18,7 +18,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watch, getCurrentInstance, withDefaults } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { isUniFrameWork } from '../../../utils/env';
 
 interface IProps {

@@ -32,8 +32,8 @@
 
 <script lang="ts" setup>
 import { computed } from '../../adapter-vue';
-import { TUIStore } from '@tencentcloud/chat-uikit-engine';
-import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore } from '@tencentcloud/chat-uikit-engine-lite';
+import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { isCallMessage, isRoomCardMessage } from './index';
 import MessagePluginLayout from './message-plugin-layout.vue';
 import MessageCallGroup from './message-call/message-call-group.vue';

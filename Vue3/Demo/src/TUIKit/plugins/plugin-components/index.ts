@@ -1,4 +1,4 @@
-import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine, { IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { JSONToObject } from '../../utils/type-check';
 
 export function isCallMessage(message: IMessageModel): boolean {

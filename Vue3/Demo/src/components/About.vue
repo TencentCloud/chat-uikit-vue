@@ -189,8 +189,8 @@
 </template>
 <script setup lang="ts">
 import { ref, withDefaults, defineProps, defineEmits } from '../TUIKit/adapter-vue';
-import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
-import { TUILogin } from '@tencentcloud/tui-core';
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
 import Icon from '../TUIKit/components/common/Icon.vue';
 import backSVG from '../TUIKit/assets/icon/back.svg';
 import { isH5 } from '../TUIKit/utils/env';

@@ -37,7 +37,7 @@ import TUIChatEngine, {
   StoreName,
   TUITranslateService,
   IMessageModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ref, watchEffect, computed, onMounted, onUnmounted } from '../../../../adapter-vue';
 import Icon from '../../../common/Icon.vue';

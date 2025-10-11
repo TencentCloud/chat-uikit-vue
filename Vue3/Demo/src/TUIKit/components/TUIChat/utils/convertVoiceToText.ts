@@ -2,7 +2,7 @@ import {
   IMessageModel,
   TUIChatService,
   TUIStore,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { IChatResponese } from '../../../interface';
 
 class Convertor {

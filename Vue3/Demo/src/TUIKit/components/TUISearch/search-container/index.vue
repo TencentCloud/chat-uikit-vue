@@ -116,7 +116,7 @@ import {
   TUITranslateService,
   TUIStore,
   StoreName,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { Dayjs } from 'dayjs';
 import {
   globalSearchTypeList,

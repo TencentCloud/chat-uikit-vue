@@ -1,3 +1,28 @@
+## [3.0.1] (2025-10-10)
+### Chore
+- 升级 callkit 相关版本到 4.2.2
+- 优化 callkit 融合参数
+
+## [3.0.0] (2025-10-09)
+
+### 💥 Breaking Changes（本次升级不支持向下兼容）
+
+#### 核心依赖包升级
+- **@tencentcloud/tui-core** → **@tencentcloud/tui-core-lite**
+  - 轻量化核心包，减少包体积，提升性能
+  - 需要更新所有相关导入路径
+
+- **@tencentcloud/chat-uikit-engine** → **@tencentcloud/chat-uikit-engine-lite**
+  - 优化引擎架构，提供更好的开发体验
+  - API 接口保持兼容，仅需更新包名
+
+#### CallKit 依赖调整
+CallKit 相关依赖包已重新组织，请根据您的 Vue 版本选择对应的包：
+
+- **Vue 3.x**: `@trtc/calls-uikit-vue`
+- **Vue 2.7.x**: `@trtc/calls-uikit-vue2`  
+- **Vue 2.6.x**: `@trtc/calls-uikit-vue2.6`
+
 ## [2.5.5] (2025-09-05)
 
 ### Feat

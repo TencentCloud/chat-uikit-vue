@@ -64,8 +64,8 @@ import {
   TUITranslateService,
   TUIStore,
   StoreName,
-} from '@tencentcloud/chat-uikit-engine';
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import Icon from '../../common/Icon.vue';
 import addSVG from '../../../assets/icon/add.svg';

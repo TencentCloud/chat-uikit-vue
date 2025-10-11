@@ -1,4 +1,4 @@
-import TUIChatEngine, { IConversationModel, StoreName, TUIStore, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine, { IConversationModel, StoreName, TUIStore, TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { transformTextWithKeysToEmojiNames } from '../emoji-config';
 import {
   IChatOfflinePushInfo,

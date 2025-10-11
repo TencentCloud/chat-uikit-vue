@@ -5,7 +5,7 @@ import TUIChatEngine, {
   IConversationModel,
   TUITranslateService,
   TUIConversationService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import {
   ITUINotification,
   NotificationType,

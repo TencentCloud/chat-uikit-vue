@@ -72,8 +72,8 @@
 
 <script lang="ts" setup>
 import { withDefaults, defineProps, defineEmits, ref } from '../TUIKit/adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
-import { TUICore, TUIConstants } from '@tencentcloud/tui-core';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
+import { TUICore, TUIConstants } from '@tencentcloud/tui-core-lite';
 import Icon from '../TUIKit/components/common/Icon.vue';
 import menuPNG from '../assets/icon/menu.png';
 import globalPNG from '../assets/icon/global.png';

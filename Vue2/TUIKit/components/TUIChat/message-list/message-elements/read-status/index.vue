@@ -19,7 +19,7 @@ import TUIChatEngine, {
   StoreName,
   IMessageModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import TUIChatConfig from '../../../config';
 
 interface IProps {

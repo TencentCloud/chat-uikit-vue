@@ -169,7 +169,7 @@ import TUIChatEngine, {
   TUIStore,
   TUIChatService,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import addIcon from '../../../../../assets/icon/back.svg';
 import playIcon from '../../../../../assets/icon/video-play.png';
 import Icon from '../../../../common/Icon.vue';

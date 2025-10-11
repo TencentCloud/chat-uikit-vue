@@ -69,7 +69,7 @@
 </template>
 <script setup lang="ts">
 import { ref, computed } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 // dayjs extension
 import dayjs, { Dayjs } from 'dayjs';
 import localeData from 'dayjs/plugin/localeData.js';

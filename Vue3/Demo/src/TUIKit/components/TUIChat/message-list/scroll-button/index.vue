@@ -23,7 +23,7 @@ import {
   IMessageModel,
   IConversationModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../common/Icon.vue';
 import doubleArrowIcon from '../../../../assets/icon/double-arrow.svg';
 import { getBoundingClientRect } from '@tencentcloud/universal-api';

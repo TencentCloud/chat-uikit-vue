@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import { ref, withDefaults } from '../../../../../adapter-vue';
-import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import Overlay from '../../../../common/Overlay/index.vue';
 import Drawer from '../../../../common/Drawer/index.vue';
 import SimpleMessageList from '../simple-message-list/index.vue';

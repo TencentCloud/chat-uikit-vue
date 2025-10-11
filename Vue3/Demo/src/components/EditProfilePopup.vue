@@ -15,7 +15,7 @@
 </template>
 <script setup lang="ts">
 import { withDefaults, defineProps, defineEmits } from "../TUIKit/adapter-vue";
-import { TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService } from "@tencentcloud/chat-uikit-engine-lite";
 import BottomPopup from "../TUIKit/components/common/BottomPopup";
 const props = withDefaults(
   defineProps<{

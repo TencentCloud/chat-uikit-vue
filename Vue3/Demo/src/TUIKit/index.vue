@@ -62,8 +62,8 @@
 </template>
 <script lang="ts" setup>
 import { ref, onMounted, framework } from './adapter-vue';
-import { TUILogin } from '@tencentcloud/tui-core';
-import { TUIStore, StoreName, TUIConversationService, TUITranslateService, TUIReportService } from '@tencentcloud/chat-uikit-engine';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
+import { TUIStore, StoreName, TUIConversationService, TUITranslateService, TUIReportService } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUISearch, TUIConversation, TUIChat, TUIContact, TUIGroup } from './components';
 import { isH5 } from './utils/env';
 

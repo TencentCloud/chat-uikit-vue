@@ -62,7 +62,7 @@
 </template>
 <script setup lang="ts">
 import { ref, watch, nextTick } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { outsideClick } from '@tencentcloud/universal-api';
 import { isPC, isH5, isUniFrameWork } from '../../../utils/env';
 

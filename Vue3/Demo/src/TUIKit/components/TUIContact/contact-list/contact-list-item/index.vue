@@ -61,7 +61,7 @@ import TUIChatEngine, {
   IGroupModel,
   FriendApplication,
   Friend,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { IContactInfoType, IUserStatus } from '../../../../interface';
 import Avatar from '../../../common/Avatar/index.vue';
 import { generateAvatar, generateName, acceptFriendApplication } from '../../utils';

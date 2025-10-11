@@ -28,7 +28,7 @@
 </template>
 <script setup lang="ts">
 import { computed } from '../../../../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../../../common/Icon.vue';
 import copySVG from '../../../../../../assets/icon/msg-copy.svg';
 import breakSVG from '../../../../../../assets/icon/break.svg';

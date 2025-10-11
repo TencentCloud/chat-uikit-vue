@@ -1,4 +1,4 @@
-import TUIChatEngine, { TUITranslateService, TUIStore, StoreName, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine, { TUITranslateService, TUIStore, StoreName, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 
 export function deepCopy(data: any, hash = new WeakMap()) {
   if (typeof data !== 'object' || data === null || data === undefined) {

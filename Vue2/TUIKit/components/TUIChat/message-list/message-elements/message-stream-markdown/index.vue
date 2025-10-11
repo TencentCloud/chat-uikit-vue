@@ -14,7 +14,7 @@
 </template>
 <script lang="ts" setup>
 import { watch, ref, computed, onMounted, onUnmounted } from '../../../../../adapter-vue';
-import { TUITranslateService, TUIReportService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, TUIReportService, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { TypeWriter } from './type-writer';
 import { markedWithPurify } from './marked';
 import StreamOperation from './operation/index.vue';

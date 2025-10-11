@@ -53,7 +53,7 @@ import { ref, watch, nextTick } from '../../../../../adapter-vue';
 import {
   IMessageModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { getBoundingClientRectSync } from '@tencentcloud/universal-api';
 import { TranslationTextType, translator } from '../../../utils/translation';
 

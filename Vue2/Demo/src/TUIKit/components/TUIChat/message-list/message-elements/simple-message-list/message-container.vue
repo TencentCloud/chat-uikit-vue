@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { computed } from '../../../../../adapter-vue';
-import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine from '@tencentcloud/chat-uikit-engine-lite';
 import Avatar from '../../../../common/Avatar/index.vue';
 import { calculateTimestamp } from '../../../utils/utils';
 

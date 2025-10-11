@@ -101,7 +101,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, nextTick } from '../../../../adapter-vue';
 
-import { IMessageModel, TUIStore, TUIChatService, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { IMessageModel, TUIStore, TUIChatService, TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import closeIcon from '../../../../assets/icon/icon-close.svg';
 import Icon from '../../../common/Icon.vue';
 import Overlay from '../../../common/Overlay/index.vue';

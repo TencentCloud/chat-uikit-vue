@@ -22,8 +22,8 @@
 </template>
 <script setup lang="ts">
 import { ref } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
-import { TUIConstants } from '@tencentcloud/tui-core';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
+import { TUIConstants } from '@tencentcloud/tui-core-lite';
 import { isPC } from '../../../utils/env';
 import TUIChatConfig from '../config';
 

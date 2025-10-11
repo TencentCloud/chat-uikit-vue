@@ -117,7 +117,7 @@ import TUIChatEngine, {
   TUIConversationService,
   TUITranslateService,
   IConversationModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal, isIOS, addLongPressListener } from '@tencentcloud/universal-api';
 import Icon from '../../common/Icon.vue';
 import Avatar from '../../common/Avatar/index.vue';

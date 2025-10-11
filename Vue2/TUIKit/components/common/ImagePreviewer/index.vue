@@ -127,7 +127,7 @@
 
 <script setup lang="ts">
 import { ref, watchEffect, onMounted, onUnmounted, withDefaults } from '../../../adapter-vue';
-import { IMessageModel, TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { IMessageModel, TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal, getPlatform } from '@tencentcloud/universal-api';
 import Icon from '../../common/Icon.vue';
 import iconClose from '../../../assets/icon/icon-close.svg';

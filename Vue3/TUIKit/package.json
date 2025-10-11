@@ -1,6 +1,6 @@
 {
   "name": "@tencentcloud/chat-uikit-vue",
-  "version": "2.5.5",
+  "version": "3.0.1",
   "repository": "https://github.com/TencentCloud/chat-uikit-vue",
   "description": "Build In-App Chat & Audio/Video Call & Live Streaming in minutes with UIKit components for Vue.",
   "scripts": {},
@@ -18,14 +18,10 @@
     "WebSocket"
   ],
   "dependencies": {
-    "@tencentcloud/chat-uikit-engine": "latest",
-    "@tencentcloud/tui-core": "latest",
-    "@tencentcloud/universal-api": "latest",
-    "@tencentcloud/call-uikit-vue": "latest",
-    "@tencentcloud/call-uikit-vue2": "latest",
-    "@tencentcloud/call-uikit-vue2.6": "latest",
-    "@tencentcloud/tui-emoji-plugin": "latest",
-    "@tencentcloud/roomkit-web-vue3": "latest",
+    "@tencentcloud/chat-uikit-engine-lite": "1.0.1",
+    "@tencentcloud/tui-core-lite": "1.0.0",
+    "@tencentcloud/universal-api": "^2.4.0",
+    "@tencentcloud/tui-emoji-plugin": "3.0.0",
     "@tiptap/core": "2.0.0-beta.220",
     "@tiptap/extension-hard-break": "2.0.0-beta.220",
     "@tiptap/extension-document": "2.0.0-beta.220",
@@ -41,7 +37,8 @@
     "dompurify": "^3.2.1",
     "marked": "6.0.0",
     "@types/marked": "6.0.0",
-    "marked-highlight": "^2.2.1"
+    "marked-highlight": "^2.2.1",
+    "i18next": "^22.4.10"
   },
   "peerDependencies": {
     "@tiptap/core": "^2.0.0-beta.220",
@@ -52,7 +49,10 @@
     "@tiptap/extension-placeholder": "^2.0.0-beta.220",
     "@tiptap/extension-text": "^2.0.0-beta.220",
     "@tiptap/pm": "^2.0.0-beta.220",
-    "@tiptap/suggestion": "^2.0.0-beta.220"
+    "@tiptap/suggestion": "^2.0.0-beta.220",
+    "@trtc/calls-uikit-vue": "4.2.2",
+    "@trtc/calls-uikit-vue2": "4.2.2",
+    "@trtc/calls-uikit-vue2.6": "4.2.2"
   },
   "author": "tencentcloud-im",
   "license": "ISC"

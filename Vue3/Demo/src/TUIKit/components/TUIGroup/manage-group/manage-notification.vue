@@ -100,7 +100,7 @@ import { nextTick } from '../../../adapter-vue';
 import {
   TUITranslateService,
   IGroupModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { watchEffect, ref } from '../../../adapter-vue';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 import { isUniFrameWork } from '../../../utils/env';

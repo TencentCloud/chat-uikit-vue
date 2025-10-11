@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { ref } from './TUIKit/adapter-vue';
 import { RouterView, useRouter } from 'vue-router';
-import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 // import ConferenceMainView from '@tencentcloud/roomkit-web-vue3';
 const router = useRouter();
 const locale = ref<string>('zh');

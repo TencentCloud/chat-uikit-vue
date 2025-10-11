@@ -3,7 +3,7 @@
 <br>
 
 <p align="center">
-  Globally interconnected In-App Chat, user profile and relationship chains and online/offline push.
+  全球化应用内聊天解决方案，集成用户资料、社交关系链和全渠道推送服务。
 </p>
 
 <br>
@@ -55,5 +55,5 @@ chat-uikit-vue 中的组件在实现 UI 功能的同时，会调用 Chat SDK 相
 - [SDK 更新日志](https://cloud.tencent.com/document/product/269/38492)
 
 ## 技术咨询
-[点此进入 IM 社群](https://zhiliao.qq.com/)，享有专业工程师的支持，解决您的难题。
+如遇任何问题，可联系 [官网售后](https://cloud.tencent.com/act/event/connect-service#/) 反馈，享有专业工程师的支持，解决您的难题。
 

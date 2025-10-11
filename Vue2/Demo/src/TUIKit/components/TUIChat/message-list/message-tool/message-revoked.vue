@@ -14,7 +14,7 @@
 
 <script lang="ts" setup>
 import { watchEffect, ref } from '../../../../adapter-vue';
-import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 const props = defineProps({
   isEdit: {
     type: Boolean,

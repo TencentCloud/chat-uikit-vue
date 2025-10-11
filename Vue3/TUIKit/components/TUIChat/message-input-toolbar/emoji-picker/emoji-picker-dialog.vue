@@ -74,7 +74,7 @@ import {
   StoreName,
   IConversationModel,
   SendMessageParams,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../common/Icon.vue';
 import faceIconLight from '../../../../assets/icon/face-light.svg';
 import faceIconDark from '../../../../assets/icon/face-dark.svg';

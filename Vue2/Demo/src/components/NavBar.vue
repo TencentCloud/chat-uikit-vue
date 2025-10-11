@@ -53,7 +53,7 @@ import {
   withDefaults,
   defineProps,
 } from "../TUIKit/adapter-vue";
-import { TUIStore, StoreName, TUITranslateService } from "@tencentcloud/chat-uikit-engine";
+import { TUIStore, StoreName, TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from "../TUIKit/components/common/Icon.vue";
 import Avatar from "../TUIKit/components/common/Avatar/index.vue";
 import messageWebSVG from "../assets/icon/message.svg";

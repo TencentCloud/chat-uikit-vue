@@ -281,7 +281,7 @@ import TUIChatEngine, {
   TUIConversationService,
   IConversationModel,
   GetMemberListParams,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal, outsideClick } from '@tencentcloud/universal-api';
 import MaskLayer from '../../common/MaskLayer/index.vue';
 import Dialog from '../../common/Dialog/index.vue';

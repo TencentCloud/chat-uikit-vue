@@ -34,7 +34,7 @@ import {
   StoreName,
   IMessageModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../../common/Icon.vue';
 import TranslationContent from './translation-content.vue';
 import checkIcon from '../../../../../assets/icon/check-sm.svg';

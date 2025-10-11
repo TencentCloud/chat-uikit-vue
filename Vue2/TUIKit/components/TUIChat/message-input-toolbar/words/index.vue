@@ -43,7 +43,7 @@ import {
   IConversationModel,
   SendMessageParams,
   TUIChatService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { ref } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import wordsIconLight from '../../../../assets/icon/words-light.svg';

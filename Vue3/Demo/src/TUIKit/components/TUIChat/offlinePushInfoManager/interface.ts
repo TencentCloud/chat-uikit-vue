@@ -1,4 +1,4 @@
-import { IConversationModel } from '@tencentcloud/chat-uikit-engine';
+import { IConversationModel } from '@tencentcloud/chat-uikit-engine-lite';
 
 export interface IOfflinePushInfoCreateParams {
   conversation: IConversationModel;

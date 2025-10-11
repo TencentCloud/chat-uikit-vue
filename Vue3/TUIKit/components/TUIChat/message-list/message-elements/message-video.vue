@@ -72,7 +72,7 @@ import {
   watchEffect,
   withDefaults,
 } from '../../../../adapter-vue';
-import { IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { handleSkeletonSize } from '../../utils/utils';
 import Icon from '../../../common/Icon.vue';
 import closeSVG from '../../../../assets/icon/icon-close.svg';

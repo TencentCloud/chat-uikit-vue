@@ -1,4 +1,4 @@
-import type { IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import type { IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 
 /**
  * Parses a JSON string and returns the resulting object.

@@ -24,7 +24,7 @@ import {
   TUIStore,
   StoreName,
   IMessageModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import ConvertContent from './convert-content.vue';
 import { IConvertInfo } from '../../../../../interface';
 

@@ -43,7 +43,7 @@
 ## TUILogin 
 
 ``` javascript
-import { TUILogin } from '@tencentcloud/tui-core';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
 ```
 The options parameter is of the Object type. It contains the following attribute values:
 | Name | Type | Description |

@@ -80,7 +80,7 @@ import { watchEffect, ref, nextTick, watch } from '../../../adapter-vue';
 import {
   TUITranslateService,
   IGroupModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../common/Icon.vue';
 import editIcon from '../../../assets/icon/edit.svg';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';

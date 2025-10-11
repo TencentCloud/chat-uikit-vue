@@ -60,7 +60,7 @@ import {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import Icon from '../../common/Icon.vue';
 import searchIcon from '../../../assets/icon/search.svg';

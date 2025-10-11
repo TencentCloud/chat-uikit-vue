@@ -1,5 +1,5 @@
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
-import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { isUniFrameWork } from '../../utils/env';
 
