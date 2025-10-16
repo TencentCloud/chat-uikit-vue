@@ -55,7 +55,7 @@ import {
   nextTick,
   watch,
 } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import dayjs, { Dayjs } from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { DateCell, DateCellType } from './date-picker';

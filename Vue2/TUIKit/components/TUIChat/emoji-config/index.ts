@@ -1,4 +1,4 @@
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { CUSTOM_BASIC_EMOJI_URL, CUSTOM_BIG_EMOJI_URL, CUSTOM_BASIC_EMOJI_URL_MAPPING, CUSTOM_BIG_EMOJI_GROUP_LIST } from './custom-emoji';
 import { DEFAULT_BASIC_EMOJI_URL, BIG_EMOJI_GROUP_LIST, DEFAULT_BASIC_EMOJI_URL_MAPPING, BASIC_EMOJI_NAME_TO_KEY_MAPPING, DEFAULT_BIG_EMOJI_URL } from './default-emoji';
 import { default as emojiCNLocales } from './locales/zh_cn';

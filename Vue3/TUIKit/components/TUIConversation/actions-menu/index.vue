@@ -77,7 +77,7 @@ import TUIChatEngine, {
   IConversationModel,
   TUIStore,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { CONV_OPERATION } from '../../../constant';
 import { isPC, isUniFrameWork } from '../../../utils/env';

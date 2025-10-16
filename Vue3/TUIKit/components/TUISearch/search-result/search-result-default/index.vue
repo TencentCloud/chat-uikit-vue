@@ -13,7 +13,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { isPC } from '../../../../utils/env';
 import Icon from '../../../common/Icon.vue';
 import SearchDefaultIcon from '../../../../assets/icon/search-default.svg';

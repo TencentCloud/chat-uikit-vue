@@ -46,7 +46,7 @@ import {
   StoreName,
   IConversationModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { computed, ref } from '../../../adapter-vue';
 import MessageInputEditor from './message-input-editor.vue';
 import MessageInputAt from './message-input-at/index.vue';

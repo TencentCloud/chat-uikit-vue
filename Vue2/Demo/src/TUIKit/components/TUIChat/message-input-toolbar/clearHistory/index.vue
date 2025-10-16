@@ -29,7 +29,7 @@ import {
   StoreName,
   IConversationModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { onMounted, onUnmounted, ref } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import clearIconLight from '../../../../assets/icon/clear-history.svg';

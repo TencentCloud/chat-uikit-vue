@@ -29,7 +29,7 @@ import {
   StoreName,
   IMessageModel,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { isUniFrameWork } from '../../../../../utils/env';
 import { Toast, TOAST_TYPE } from '../../../../../components/common/Toast/index';

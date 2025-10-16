@@ -246,11 +246,11 @@ import TUIChatEngine, {
   StoreName,
   TUITranslateService,
   TUIChatService,
-} from '@tencentcloud/chat-uikit-engine';
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
 import { outsideClick, getBoundingClientRect, getScrollInfo } from '@tencentcloud/universal-api';
 import { TUIEmojiPlugin } from '@tencentcloud/tui-emoji-plugin';
-// import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
+// import { JoinGroupCard } from '@trtc/calls-uikit-vue';
 import Link from './link';
 import MessageGroupApplication from './message-group-application/index.vue';
 import MessageText from './message-elements/message-text.vue';

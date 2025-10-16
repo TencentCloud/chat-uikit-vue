@@ -22,7 +22,7 @@ import TUIChatEngine, {
   StoreName,
   TUIChatService,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Overlay from '../../common/Overlay/index.vue';
 import Transfer from '../../common/Transfer/index.vue';
 import { Toast, TOAST_TYPE } from '../../../components/common/Toast';

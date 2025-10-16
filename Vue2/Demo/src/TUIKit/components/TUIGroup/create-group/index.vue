@@ -131,7 +131,7 @@ import TUIChatEngine, {
   TUIGroupService,
   TUIStore,
   StoreName,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { computed, reactive, watchEffect } from '../../../adapter-vue';
 import documentLink from '../../../utils/documentLink';
 import { isPC } from '../../../utils/env';

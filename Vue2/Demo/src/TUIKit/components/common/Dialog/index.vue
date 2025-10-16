@@ -51,7 +51,7 @@
 
 <script lang="ts" setup>
 import { ref, watchEffect } from '../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { isPC, isH5, isUniFrameWork } from '../../../utils/env';
 const clickType = {
   OUTSIDE: 'outside',

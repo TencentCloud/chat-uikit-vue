@@ -155,8 +155,8 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUIChatService,
-} from '@tencentcloud/chat-uikit-engine';
-import { TUILogin } from '@tencentcloud/tui-core';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
 import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
 import BottomPopup from '../TUIKit/components/common/BottomPopup/index.vue';
 import Icon from '../TUIKit/components/common/Icon.vue';

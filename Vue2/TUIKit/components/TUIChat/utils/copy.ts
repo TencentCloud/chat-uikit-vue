@@ -1,4 +1,4 @@
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { Toast, TOAST_TYPE } from '../../common/Toast';
 import { isH5 } from '../../../utils/env';
 

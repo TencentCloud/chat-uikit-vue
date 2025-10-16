@@ -29,7 +29,7 @@
 
 <script lang="ts" setup>
 import { watch, ref } from '../../../../adapter-vue';
-import { TUIStore, IMessageModel, TUIReportService } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, IMessageModel, TUIReportService } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal, parseTextAndValidateUrls } from '@tencentcloud/universal-api';
 import { CUSTOM_BASIC_EMOJI_URL, CUSTOM_BASIC_EMOJI_URL_MAPPING } from '../../emoji-config';
 import { isPC, isUniFrameWork } from '../../../../utils/env';

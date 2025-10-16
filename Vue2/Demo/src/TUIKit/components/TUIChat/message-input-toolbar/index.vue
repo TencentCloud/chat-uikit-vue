@@ -83,8 +83,8 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUIReportService,
-} from '@tencentcloud/chat-uikit-engine';
-import TUICore, { ExtensionInfo, TUIConstants } from '@tencentcloud/tui-core';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import TUICore, { ExtensionInfo, TUIConstants } from '@tencentcloud/tui-core-lite';
 import EmojiPicker from './emoji-picker/index.vue';
 import ImageUpload from './image-upload/index.vue';
 import FileUpload from './file-upload/index.vue';

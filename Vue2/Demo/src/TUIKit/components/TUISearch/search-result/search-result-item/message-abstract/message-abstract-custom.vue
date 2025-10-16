@@ -124,7 +124,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService, IMessageModel } from '@tencentcloud/chat-uikit-engine-lite';
 import { ref, computed, withDefaults } from '../../../../../adapter-vue';
 import { CHAT_MSG_CUSTOM_TYPE } from '../../../../../constant';
 import { JSONToObject, isUrl } from '../../../../../utils/index';

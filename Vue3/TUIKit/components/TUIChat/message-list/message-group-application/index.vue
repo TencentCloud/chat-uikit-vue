@@ -111,7 +111,7 @@ import {
   TUITranslateService,
   TUIUserService,
   TUIGroupService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../common/Icon.vue';
 import Avatar from '../../../common/Avatar/index.vue';
 import Drawer from '../../../common/Drawer/index.vue';

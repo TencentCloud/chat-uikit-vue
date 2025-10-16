@@ -12,14 +12,15 @@
   </div>
 </template>
 <script setup lang="ts">
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
-import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
+import TUIChatEngine from '@tencentcloud/chat-uikit-engine-lite';
 import { computed, ref } from '../../../adapter-vue';
 import { JSONToObject } from '../../../utils/index';
 import Icon from '../../../components/common/Icon.vue';
 import callVideoSVG from '../../../assets/icon/call-video.svg';
 import callVoiceSVG from '../../../assets/icon/call-voice.svg';
 import OfflinePushInfoManager, { PUSH_SCENE } from '../../../components/TUIChat/offlinePushInfoManager/index';
+
 const props = defineProps({
   message: {
     type: Object,
@@ -72,7 +73,6 @@ const callAgain = () => {
         callParams: {
           offlinePushInfo: OfflinePushInfoManager.getOfflinePushInfo(PUSH_SCENE.CALL),
         },
-        version: 'v3',
       },
     });
   }

@@ -60,7 +60,7 @@
 import { ref } from '../../../adapter-vue';
 import {
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../common/Icon.vue';
 import ForwardEachIcon from '../../../assets/icon/forward-each.svg';
 import ForwardMergeIcon from '../../../assets/icon/forward-merge.svg';

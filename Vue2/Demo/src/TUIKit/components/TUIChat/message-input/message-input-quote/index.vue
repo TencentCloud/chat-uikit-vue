@@ -29,7 +29,7 @@ import TUIChatEngine, {
   StoreName,
   TUITranslateService,
   IMessageModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import Icon from '../../../common/Icon.vue';
 import closeIcon from '../../../../assets/icon/icon-close.svg';
 import { isH5, isUniFrameWork } from '../../../../utils/env';

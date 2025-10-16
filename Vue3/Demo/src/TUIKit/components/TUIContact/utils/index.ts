@@ -6,7 +6,7 @@ import TUIChatEngine, {
   TUITranslateService,
   AddFriendParams,
   JoinGroupParams,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 

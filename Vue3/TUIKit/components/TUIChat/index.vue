@@ -99,8 +99,8 @@ import TUIChatEngine, {
   StoreName,
   IMessageModel,
   IConversationModel,
-} from '@tencentcloud/chat-uikit-engine';
-import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core-lite';
 import ChatHeader from './chat-header/index.vue';
 import MessageList from './message-list/index.vue';
 import MessageInput from './message-input/index.vue';

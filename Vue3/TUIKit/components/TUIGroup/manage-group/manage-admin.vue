@@ -133,7 +133,7 @@
 import {
   TUITranslateService,
   IGroupModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { watchEffect, ref } from '../../../adapter-vue';
 import Slider from '../../common/Slider/index.vue';
 import Icon from '../../common/Icon.vue';

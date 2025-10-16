@@ -57,7 +57,7 @@ import TUIChatEngine, {
   StoreName,
   TUIGroupService,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { ref, watch } from '../../../../adapter-vue';
 import { isPC, isH5 } from '../../../../utils/env';

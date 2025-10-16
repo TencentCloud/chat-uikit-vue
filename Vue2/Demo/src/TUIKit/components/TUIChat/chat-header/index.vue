@@ -36,9 +36,9 @@ import {
   StoreName,
   TUITranslateService,
   IConversationModel,
-} from '@tencentcloud/chat-uikit-engine';
-import { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
-// import { JoinGroupCard } from '@tencentcloud/call-uikit-vue';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core-lite';
+// import { JoinGroupCard } from '@trtc/calls-uikit-vue';
 import Icon from '../../common/Icon.vue';
 import backSVG from '../../../assets/icon/back.svg';
 import { isPC } from '../../../utils/env';

@@ -28,7 +28,7 @@ import {
   TUIStore,
   StoreName,
   IGroupModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { ref, computed } from '../../../../adapter-vue';
 import Dialog from '../../../common/Dialog/index.vue';
 import Transfer from '../../../common/Transfer/index.vue';

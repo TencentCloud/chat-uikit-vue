@@ -16,7 +16,7 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import {
   ref,
 } from '../../../adapter-vue';

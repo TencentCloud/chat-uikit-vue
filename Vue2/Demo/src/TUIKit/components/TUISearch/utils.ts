@@ -9,7 +9,7 @@ import TUIChatEngine, {
   TUIStore,
   StoreName,
   IMessageModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { ISearchCloudMessageResult, IFriendType, ISearchResultListItem, IUserProfile } from '../../interface';
 import { searchMessageTypeList } from './search-type-list';
 import { Toast, TOAST_TYPE } from '../common/Toast/index';

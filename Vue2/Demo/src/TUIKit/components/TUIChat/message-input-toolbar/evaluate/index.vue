@@ -101,7 +101,7 @@ import TUIChatEngine, {
   TUIChatService,
   SendMessageParams,
   SendMessageOptions,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { ref, computed } from '../../../../adapter-vue';
 import ToolbarItemContainer from '../toolbar-item-container/index.vue';
 import evaluateIconLight from '../../../../assets/icon/evalute-light.svg';

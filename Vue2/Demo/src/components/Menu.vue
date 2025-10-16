@@ -79,7 +79,7 @@
 
 <script lang="ts" setup>
 import { defineEmits, onMounted, ref, onUnmounted } from "../TUIKit/adapter-vue";
-import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 import { Link } from "../utils/link";
 import { isPC, isH5 } from "../TUIKit/utils/env";
 import { deepCopy } from "../TUIKit/components/TUIChat/utils/utils";

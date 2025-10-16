@@ -5,7 +5,7 @@ import {
   TUIConversationService,
   TUIStore,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { transformTextWithKeysToEmojiNames } from '../emoji-config';
 import { JSONToObject } from '../../../utils/index';
 

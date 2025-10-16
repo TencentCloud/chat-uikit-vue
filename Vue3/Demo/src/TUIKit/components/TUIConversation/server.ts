@@ -1,10 +1,10 @@
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
 import {
   TUITranslateService,
   TUIConversationService,
   TUIStore,
   StoreName,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { CONV_CREATE_TYPE } from '../../constant';
 import { isUniFrameWork } from '../../utils/env';

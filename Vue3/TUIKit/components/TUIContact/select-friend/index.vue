@@ -14,10 +14,10 @@ import {
   TUIStore,
   StoreName,
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { ref, watchEffect } from '../../../adapter-vue';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
-import TUICore from '@tencentcloud/tui-core';
+import TUICore from '@tencentcloud/tui-core-lite';
 import SelectUser from '../../common/SelectUser/index.vue';
 import Server from '../server';
 const TUIContactServer = Server.getInstance();

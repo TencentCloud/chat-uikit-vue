@@ -2,7 +2,7 @@ import { SuggestionProps, SuggestionKeyDownProps } from '@tiptap/suggestion';
 import TUIChatEngine, {
   TUIStore,
   StoreName,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import { isH5 } from '../../../../utils/env';
 

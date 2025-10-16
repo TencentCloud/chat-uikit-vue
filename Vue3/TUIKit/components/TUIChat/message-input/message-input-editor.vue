@@ -28,7 +28,7 @@ import {
   TUIStore,
   StoreName,
   IMessageModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { Editor, JSONContent, Extension } from '@tiptap/core';
 import Document from '@tiptap/extension-document';
 import Paragraph from '@tiptap/extension-paragraph';

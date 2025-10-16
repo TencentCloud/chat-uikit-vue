@@ -1,5 +1,5 @@
-import TUICore, { TUIConstants } from '@tencentcloud/tui-core';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import TUICore, { TUIConstants } from '@tencentcloud/tui-core-lite';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { isPC } from '../../../utils/env';
 import createGroup from '../../../assets/icon/start-group.svg';
 import C2C from '../../../assets/icon/icon-c2c.svg';

@@ -18,7 +18,7 @@ import {
   TUIStore,
   StoreName,
   IConversationModel,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { ref } from '../../../../adapter-vue';
 import faceIconLight from '../../../../assets/icon/face-light.svg';
 import faceIconDark from '../../../../assets/icon/face-dark.svg';

@@ -176,7 +176,7 @@ import TUIChatEngine, {
   TUIUserService,
   TUIStore,
   StoreName,
-} from "@tencentcloud/chat-uikit-engine";
+} from '@tencentcloud/chat-uikit-engine-lite';
 import dayjs, { Dayjs } from "dayjs";
 import { Toast, TOAST_TYPE } from "../TUIKit/components/common/Toast/index";
 import EditProfilePopup from "./EditProfilePopup.vue";

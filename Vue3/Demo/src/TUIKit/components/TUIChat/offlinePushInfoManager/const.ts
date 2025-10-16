@@ -1,4 +1,4 @@
-import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine from '@tencentcloud/chat-uikit-engine-lite';
 export const DEFAULT_DESC: any = {
   [TUIChatEngine.TYPES.MSG_TEXT]: '[文本]',
   [TUIChatEngine.TYPES.MSG_FACE]: '[动画表情]',

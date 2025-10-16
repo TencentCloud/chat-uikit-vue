@@ -35,7 +35,7 @@
 </template>
 <script lang="ts" setup>
 import { ref, watchEffect } from '../../../../adapter-vue';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import documentLink from '../../../../utils/documentLink';
 import Icon from '../../../common/Icon.vue';

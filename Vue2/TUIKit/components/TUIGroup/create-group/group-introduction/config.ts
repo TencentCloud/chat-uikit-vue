@@ -1,4 +1,4 @@
-import TUIChatEngine from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine from '@tencentcloud/chat-uikit-engine-lite';
 
 const groupIntroConfig = [
   {

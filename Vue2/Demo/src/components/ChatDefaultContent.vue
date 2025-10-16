@@ -17,7 +17,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUITranslateService, TUIStore, StoreName } from "@tencentcloud/chat-uikit-engine";
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 const isOfficial = TUIStore.getData(StoreName.APP, "isOfficial");
 </script>
 <style lang="scss" scoped>

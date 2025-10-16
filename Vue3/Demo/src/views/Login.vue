@@ -228,8 +228,8 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { TUITranslateService, TUIUserService } from '@tencentcloud/chat-uikit-engine';
-import { TUILogin } from '@tencentcloud/tui-core';
+import { TUITranslateService, TUIUserService } from '@tencentcloud/chat-uikit-engine-lite';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
 import { SDKAppID, secretKey } from '../main';
 import { useRouter } from 'vue-router';
 import type { FormInstance } from 'element-plus';

@@ -3,7 +3,7 @@ import TUIChatEngine, {
   IConversationModel,
   SendMessageParams,
   SendMessageOptions,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { isEnabledMessageReadReceiptGlobal } from '../../utils/utils';
 import OfflinePushInfoManager, { IOfflinePushInfoCreateParams } from '../../offlinePushInfoManager/index';
 

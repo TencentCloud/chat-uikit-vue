@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IConversationModel, IGroupModel, IMessageModel, Friend, FriendApplication } from '@tencentcloud/chat-uikit-engine';
+import { IConversationModel, IGroupModel, IMessageModel, Friend, FriendApplication } from '@tencentcloud/chat-uikit-engine-lite';
 
 export interface ITUIComponents {
   TUIChat?: any;

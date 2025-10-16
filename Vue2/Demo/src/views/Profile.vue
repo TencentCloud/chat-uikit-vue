@@ -148,27 +148,27 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, watch, nextTick, onMounted, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import TUIChatEngine, {
   TUITranslateService,
   TUIUserService,
   TUIStore,
   StoreName,
   TUIChatService,
-} from '@tencentcloud/chat-uikit-engine';
-import { TUILogin } from '@tencentcloud/tui-core';
-import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
-import BottomPopup from '../TUIKit/components/common/BottomPopup/index.vue';
-import Icon from '../TUIKit/components/common/Icon.vue';
+} from '@tencentcloud/chat-uikit-engine-lite';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
 import AboutDialog from '../components/About.vue';
 import EditProfileDialog from '../components/EditProfile.vue';
+import router from '../router/index';
+import { ref, watch, nextTick, onMounted, defineProps, defineEmits } from '../TUIKit/adapter-vue';
 import rightArrowIcon from '../TUIKit/assets/icon/right-icon.svg';
 import selectedIcon from '../TUIKit/assets/icon/selected.svg';
-import { IUserProfile } from '../TUIKit/interface';
-import { isPC } from '../TUIKit/utils/env';
-import router from '../router/index';
-import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
+import BottomPopup from '../TUIKit/components/common/BottomPopup/index.vue';
+import Icon from '../TUIKit/components/common/Icon.vue';
+import { Toast, TOAST_TYPE } from '../TUIKit/components/common/Toast/index';
 import { translator } from '../TUIKit/components/TUIChat/utils/translation';
+import { deepCopy } from '../TUIKit/components/TUIChat/utils/utils';
+import { isPC } from '../TUIKit/utils/env';
+import type { IUserProfile } from '../TUIKit/interface';
 
 const props = defineProps({
   displayType: {

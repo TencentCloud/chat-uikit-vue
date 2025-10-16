@@ -228,18 +228,18 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref, withDefaults, defineProps, defineEmits, vueVersion } from '../TUIKit/adapter-vue';
-import { TUILogin } from '@tencentcloud/tui-core';
-import { TUITranslateService } from '@tencentcloud/chat-uikit-engine';
-import { SDKAppID, secretKey } from '../main';
-import router from '../router/index';
+import { TUITranslateService } from '@tencentcloud/chat-uikit-engine-lite';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
 import { Message } from 'element-ui';
-import Header from '../components/Header.vue';
 import AdvList from '../components/AdvList.vue';
 import AdvListItem from '../components/AdvListItem.vue';
-import { Link, qrList, mobileList } from '../utils/link';
+import Header from '../components/Header.vue';
+import { SDKAppID, secretKey } from '../main';
+import router from '../router/index';
 import { genTestUserSig } from '../TUIKit';
+import { ref, withDefaults, defineProps, defineEmits, vueVersion } from '../TUIKit/adapter-vue';
 import { isPC, isH5 } from '../TUIKit/utils/env';
+import { Link, qrList, mobileList } from '../utils/link';
 
 const props = withDefaults(
   defineProps<{
@@ -303,7 +303,9 @@ const openFullPlatformLink = (link: string) => {
 };
 
 const submitForm = (formEl: any) => {
-  if (!formEl) return;
+  if (!formEl) {
+    return;
+  }
   formEl.validate((valid: any) => {
     if (valid) {
       const options = genTestUserSig({

@@ -1,9 +1,9 @@
-import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core';
+import TUICore, { TUIConstants, ExtensionInfo } from '@tencentcloud/tui-core-lite';
 import {
   TUIStore,
   StoreName,
   TUIGroupService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import settingSVG from '../../assets/icon/setting.svg';
 import { isUniFrameWork } from '../../utils/env';

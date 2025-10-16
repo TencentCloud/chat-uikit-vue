@@ -1,4 +1,4 @@
-import TUIChatEngine, { TUIChatService, IMessageModel, TUIUserService } from '@tencentcloud/chat-uikit-engine';
+import TUIChatEngine, { TUIChatService, IMessageModel, TUIUserService } from '@tencentcloud/chat-uikit-engine-lite';
 import { sendMessageOptions } from './info';
 import { breakAiRobotPayload, ChatbotBreakMsgType, ChatbotErrorMsgType, ChatbotPlugin } from './const';
 import TUIChatConfig, { FeaturesType } from '../config';

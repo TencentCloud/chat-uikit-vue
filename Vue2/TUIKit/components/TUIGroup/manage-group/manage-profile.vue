@@ -91,7 +91,7 @@ import TUIChatEngine, {
   TUIFriendService,
   TUIStore,
   StoreName,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { TUIGlobal } from '@tencentcloud/universal-api';
 import Avatar from '../../common/Avatar/index.vue';
 import { IUserProfile } from '../../../interface';

@@ -11,9 +11,10 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ref } from './TUIKit/adapter-vue';
-import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
+import { TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
 import router from './router/index';
+import { ref } from './TUIKit/adapter-vue';
+
 const locale = ref<string>('zh');
 TUIStore.watch(StoreName.USER, {
   kickedOut: (value: string) => {

@@ -5,7 +5,7 @@ import TUIChatEngine, {
   TUITranslateService,
   IConversationModel,
   SendMessageParams,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { Toast, TOAST_TYPE } from '../../common/Toast/index';
 import { isEnabledMessageReadReceiptGlobal } from '../utils/utils';
 import { ITipTapEditorContent } from '../../../interface';

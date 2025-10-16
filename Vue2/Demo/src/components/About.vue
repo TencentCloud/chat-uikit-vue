@@ -188,16 +188,16 @@
   </div>
 </template>
 <script setup lang="ts">
+import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine-lite';
+import { TUILogin } from '@tencentcloud/tui-core-lite';
+import { cancellation } from '../api';
+import router from '../router';
 import { ref, withDefaults, defineProps, defineEmits } from '../TUIKit/adapter-vue';
-import { TUITranslateService, TUIStore, StoreName } from '@tencentcloud/chat-uikit-engine';
-import { TUILogin } from '@tencentcloud/tui-core';
-import Icon from '../TUIKit/components/common/Icon.vue';
 import backSVG from '../TUIKit/assets/icon/back.svg';
+import Icon from '../TUIKit/components/common/Icon.vue';
 import { isH5 } from '../TUIKit/utils/env';
 import { Link } from '../utils/link';
-import { cancellation } from '../api';
-import { IUserProfile } from '../TUIKit/interface';
-import router from '../router';
+import type { IUserProfile } from '../TUIKit/interface';
 
 const props = withDefaults(
   defineProps<{

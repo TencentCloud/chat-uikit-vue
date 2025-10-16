@@ -105,7 +105,7 @@
 <script lang="ts" setup>
 import TUIChatEngine, {
   TUITranslateService,
-} from '@tencentcloud/chat-uikit-engine';
+} from '@tencentcloud/chat-uikit-engine-lite';
 import { watchEffect, ref } from '../../../adapter-vue';
 import Icon from '../../common/Icon.vue';
 import delIcon from '../../../assets/icon/del-icon.svg';
